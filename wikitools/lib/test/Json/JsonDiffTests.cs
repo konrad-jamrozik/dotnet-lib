@@ -42,14 +42,15 @@ namespace Wikitools.Lib.Tests.Json
                 "'0':'! ValueKind baseline: Number (1) | target: String (a)',"+
                 "'1':'! ValueKind baseline: String (a) | target: Number (1)'"+
                 "}"),
+
             ("[1,2,3]","['a','b',3,'c']",
                 "{"+
                 "'0':'! ValueKind baseline: Number (1) | target: String (a)',"+
                 "'1':'! ValueKind baseline: Number (2) | target: String (b)',"+
                 "'3':'+'"+
-                "}")
+                "}"),
 
-            // kja add deep nested cases: object in array in object, etc.
+            (DeeplyNestedJson("",""), DeeplyNestedJson("",""), "{}"),
             // @formatter:on
         };
 
@@ -65,12 +66,21 @@ namespace Wikitools.Lib.Tests.Json
         [Fact]
         public void DiffsComplexCases() => Verify(ComplexCases);
 
+        [Fact]
+        public void DiffsVeryComplexCase() => Verify(
+            0,
+            (DeeplyNestedJson(",'foo'", "'a',"), DeeplyNestedJson("", "'b',"), DeeplyNestedDiff),
+            useReadableString: true);
+
         private static void Verify(List<(string baseline, string target, string expectedDiff)> testsData) =>
             Enumerable.Range(0, testsData.Count)
                 .ToList()
                 .ForEach(i => { Verify(i + 1, testsData[i]); });
 
-        private static void Verify(int testIndex, (string baseline, string target, string expectedDiff) testData)
+        private static void Verify(
+            int testIndex,
+            (string baseline, string target, string expectedDiff) testData,
+            bool useReadableString = false)
         {
             var baseline     = testData.baseline.Replace('\'', '"');
             var target       = testData.target.Replace('\'', '"');
@@ -79,10 +89,12 @@ namespace Wikitools.Lib.Tests.Json
             // Act
             var actualDiff = new JsonDiff(
                 JsonDocument.Parse(baseline),
-                JsonDocument.Parse(target)).ToRawString();
+                JsonDocument.Parse(target));
+
+            var actualDiffStr = useReadableString ? actualDiff.ToString() : actualDiff.ToRawString();
 
             // Assert
-            if (expectedDiff != actualDiff)
+            if (expectedDiff != actualDiffStr)
             {
                 var exceptionMessage = $"Test no {testIndex} failed." + Environment.NewLine +
                                        $"Baseline     : {baseline}" + Environment.NewLine +
@@ -93,5 +105,74 @@ namespace Wikitools.Lib.Tests.Json
                 throw new XunitException(exceptionMessage);
             }
         }
+
+        private static string DeeplyNestedJson(string slot1, string slot2)
+        {
+            return @$"{{
+    'arrayProp': [
+        10,
+        20,
+        {{
+            'arrayProp/3/fooProp': {{
+                'x': 1,
+                'y': 'foo',
+                'z': [
+                    1,
+                    'bar'{slot1}
+                ]
+            }}
+        }}
+    ],
+    'objectProp': {{
+        'objectProp/arr1': [
+            11,
+            22,
+            33
+        ],
+        'objectProp/arr2': [
+            'arr2/1',
+            'arr2/2',
+            {{
+                'arr2/a3obj': {{
+                    'nested1': 1,
+                    'nested2': {{
+                        'maxNested': [
+                            19,
+                            {slot2}
+                            6,
+                            {{ 'qux': [42, {{}}, 24] }}
+                        ]
+                    }}
+                }}
+            }}
+        ]
+    }}
+}}";
+        }
+
+        private const string DeeplyNestedDiff = @"{
+  'arrayProp': {
+    '2': {
+      'arrayProp/3/fooProp': {
+        'z': {
+          '2': '-'
+        }
+      }
+    }
+  },
+  'objectProp': {
+    'objectProp/arr2': {
+      '2': {
+        'arr2/a3obj': {
+          'nested2': {
+            'maxNested': {
+              '1': '! baseline: a | target: b'
+            }
+          }
+        }
+      }
+    }
+  }
+}";
     }
 }
