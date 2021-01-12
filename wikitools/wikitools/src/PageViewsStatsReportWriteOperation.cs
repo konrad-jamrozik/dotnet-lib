@@ -1,21 +1,23 @@
 ﻿using System.IO;
 using System.Threading.Tasks;
 using Wikitools.AzureDevOps;
+using Wikitools.Lib.Primitives;
 using Wikitools.Lib.Tables;
 
 namespace Wikitools
 {
-    class PageViewsStatsReportWriteOperation
+    public class PageViewsStatsReportWriteOperation
     {
         private readonly MarkdownTable _table;
 
         public PageViewsStatsReportWriteOperation(
+            ITimeline timeline,
             string wikiUri,
             string patEnvVar, 
             int pageViewsForDays)
         {
             var wiki = new AdoWiki(new AdoWikiUri(wikiUri), patEnvVar, pageViewsForDays);
-            var report = new PageViewsStatsReport(wiki, pageViewsForDays);
+            var report = new PageViewsStatsReport(timeline, wiki, pageViewsForDays);
             _table = new MarkdownTable(report);
         }
 

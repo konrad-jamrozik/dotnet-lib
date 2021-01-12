@@ -22,6 +22,7 @@ namespace Wikitools
                 cfg.GitLogDays);
 
             var pageViewsStatsReportWriteOperation = new PageViewsStatsReportWriteOperation(
+                timeline,
                 cfg.AdoWikiUri,
                 cfg.AdoPatEnvVar, 
                 cfg.AdoWikiPageViewsForDays);

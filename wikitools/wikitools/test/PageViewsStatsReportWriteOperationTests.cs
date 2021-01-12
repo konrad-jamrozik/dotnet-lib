@@ -1,9 +1,9 @@
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
-using Wikitools.Lib;
+using Wikitools.AzureDevOps;
 using Wikitools.Lib.Git;
 using Wikitools.Lib.Json;
-using Wikitools.Lib.OS;
 using Wikitools.Lib.Primitives;
 using Wikitools.Lib.Tables;
 using Xunit;
@@ -12,42 +12,42 @@ namespace Wikitools.Tests
 {
     public class PageViewsStatsReportWriteOperationTests
     {
-        // kja work on PageViewsStatsReportWriteOperationSucceeds
         [Fact]
         public async Task PageViewsStatsReportWriteOperationSucceeds()
         {
             // Arrange inputs
-            var changesStats      = Data.ChangesStats;
-            var logDays           = 15;
-            var gitExecutablePath = @"C:\Program Files\Git\bin\sh.exe";
-            var gitRepoDirPath    = @"C:\Users\fooUser\barRepo";
+            var    changesStats            = new List<GitChangeStats>(); // kja provide actual data, adopt Data.Expectation() body.
+            var    logDays                 = 15;
+            string adoWikiUri              = "https://dev.azure.com/adoOrg/adoProject/_wiki/wikis/wikiName";
+            string adoPatEnvVar            = "fakeEnvVarName";
+            int    adoWikiPageViewsForDays = 30;
+            var    wikiPagesCount          = 10;
 
             // Arrange simulations
             var timeline = new SimulatedTimeline();
-            var os       = new SimulatedOS(new GitLogSimulation(changesStats, logDays));
+            // kja simulate Wikitools.AzureDevOps.AdoWiki.WikiHttpClient
 
             // Arrange SUT declaration
-            var sut = new GitAuthorsStatsReportWriteOperation(
+            var sut = new PageViewsStatsReportWriteOperation(
                 timeline,
-                os,
-                gitRepoDirPath,
-                gitExecutablePath,
-                logDays);
+                adoWikiUri,
+                adoPatEnvVar, 
+                adoWikiPageViewsForDays);
 
             // Arrange expectations
             var expected = new TabularData(
-                Description: string.Format(GitAuthorsStatsReport.DescriptionFormat, logDays, timeline.UtcNow),
-                HeaderRow: GitAuthorsStatsReport.HeaderRowLabels,
+                Description: string.Format(PageViewsStatsReport.DescriptionFormat, logDays, timeline.UtcNow, wikiPagesCount),
+                HeaderRow: PageViewsStatsReport.HeaderRowLabels,
                 Rows: Data.Expectation(changesStats));
 
             await Verify(sut, expected);
         }
 
-        // kja deduplicate
-        private static async Task Verify(GitAuthorsStatsReportWriteOperation sut, TabularData expected) =>
+        // kja deduplicate with the other op test; add interface for op
+        private static async Task Verify(PageViewsStatsReportWriteOperation sut, TabularData expected) =>
             AssertNoDiffBetween(expected, await Act(sut));
 
-        private static async Task<TabularData> Act(GitAuthorsStatsReportWriteOperation sut)
+        private static async Task<TabularData> Act(PageViewsStatsReportWriteOperation sut)
         {
             // Arrange output sink
             await using var sw = new StringWriter();

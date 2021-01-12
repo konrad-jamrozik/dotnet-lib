@@ -10,13 +10,18 @@ namespace Wikitools.AzureDevOps
 {
     public record PageViewsStatsReport : ITabularData
     {
+        public const string DescriptionFormat = "Page views since last {0} days as of {1}. Total wiki pages: {2}";
+        public static readonly List<object> HeaderRowLabels = new() { "Place", "Path", "Views" };
+
         private readonly AsyncLazy<List<List<object>>> _rows;
+        private readonly ITimeline _timeline;
         private readonly int _days;
         private readonly AsyncLazy<List<WikiPageDetail>> _pagesDetails;
 
-        public PageViewsStatsReport(AdoWiki adoWiki, int days)
+        public PageViewsStatsReport(ITimeline timeline, AdoWiki adoWiki, int days)
         {
             _rows = new AsyncLazy<List<List<object>>>(Rows);
+            _timeline = timeline;
             _days = days;
             _pagesDetails = new AsyncLazy<List<WikiPageDetail>>(
                 async () => await adoWiki.GetPagesDetails());
@@ -44,10 +49,11 @@ namespace Wikitools.AzureDevOps
             }
         }
 
-        public async Task<string> GetDescription() => 
-            $"Page views since last {_days} days as of {DateTime.UtcNow}. " +
-            $"Total wiki pages: {(await _pagesDetails.Value).Count}";
-        public List<object> HeaderRow => new() { "Place", "Path", "Views" };
+        public async Task<string> GetDescription() => string.Format(DescriptionFormat,
+            _days,
+            _timeline.UtcNow,
+            (await _pagesDetails.Value).Count);
+        public List<object> HeaderRow => HeaderRowLabels;
         public Task<List<List<object>>> GetRows() => _rows.Value;
     }
 }
