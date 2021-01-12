@@ -14,14 +14,14 @@ namespace Wikitools.Lib
         public static readonly List<object> HeaderRowLabels = new() { "Place", "Author", "Insertions", "Deletions" };
 
         private readonly ITimeline _timeline;
-        private readonly AsyncLazy<List<List<object>>> _rows;
         private readonly int _days;
+        private readonly AsyncLazy<List<List<object>>> _rows;
 
-        public GitAuthorsStatsReport(ITimeline timeline, GitLog gitLog, int days)
+        public GitAuthorsStatsReport(ITimeline timeline, int days, GitLog gitLog)
         {
             _timeline = timeline;
-            _rows = new AsyncLazy<List<List<object>>>(Rows);
             _days = days;
+            _rows = new AsyncLazy<List<List<object>>>(Rows);
 
             async Task<List<List<object>>> Rows()
             {

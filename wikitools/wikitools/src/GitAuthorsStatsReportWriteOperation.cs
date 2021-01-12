@@ -25,7 +25,7 @@ namespace Wikitools
                 gitRepoDirPath
             );
             var gitLog = new GitLog(repo, logDays);
-            var report = new GitAuthorsStatsReport(timeline, gitLog, logDays);
+            var report = new GitAuthorsStatsReport(timeline, logDays, gitLog);
             _table = new MarkdownTable(report);
         }
 
