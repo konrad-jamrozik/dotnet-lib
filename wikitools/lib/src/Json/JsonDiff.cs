@@ -37,20 +37,13 @@ namespace Wikitools.Lib.Json
 
         public override string ToString()
             => JsonSerializer.Serialize(_diff.Value,
-                new JsonSerializerOptions { WriteIndented = true, MaxDepth = MaxDepth });
+                new JsonSerializerOptions(JsonSerializerOptions) { WriteIndented = true });
 
-        public JsonDocument JsonDocument
-        {
-            get
-            {
-                byte[] utf8bytes = JsonSerializer.SerializeToUtf8Bytes(
-                    _diff.Value,
-                    JsonSerializerOptions);
-                var jsonDocument = JsonDocument.Parse(
-                    System.Text.Encoding.UTF8.GetString(utf8bytes),
-                    new JsonDocumentOptions {MaxDepth = MaxDepth});
-                return jsonDocument;
-            }
-        }
+        public JsonDocument JsonDocument => 
+            JsonSerializer.Deserialize<JsonDocument>(
+                JsonSerializer.SerializeToUtf8Bytes(
+                    _diff.Value, 
+                    JsonSerializerOptions), 
+                JsonSerializerOptions);
     }
 }

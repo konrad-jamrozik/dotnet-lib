@@ -9,22 +9,6 @@ using JsonElementDiff = System.Object;
 
 namespace Wikitools.Lib.Json
 {
-    // kja write tests
-    // kja known problem with diffing collections: serialized into string. Need to have compare cases for (leaf, coll) instead of only (leaf, leaf) and (coll, coll)
-    // {
-    //     "Rows": {
-    //         "1": {
-    //             "3": "! ValueKind mismatch. baseline: Array ([\u0022a\u0022,\u0022b\u0022]) | target: Number (66)"
-    //         }
-    //     }
-    // }
-    // To reproduce this, do in Data:
-    // public static List<List<object>> GitAuthorsStatsReportRows = new()
-    // {
-    //     new() {1, "AuthorB", 60000, 606 },
-    //     new() {2, "AuthorC", 6000, new List<string>() {"a","b"} },
-    //     new() {3, "AuthorA", 600, 60 }
-    // };
     public class JsonDocumentDiff
     {
         private enum ComparisonResult
@@ -53,7 +37,9 @@ namespace Wikitools.Lib.Json
 
             JsonElementDiff Diff(JsonDocument baseline, JsonDocument target)
             {
-                (string name, JsonElementDiff value) diff = ComputePropertyDiff(name: "root", baseline.RootElement, target.RootElement);
+                var discardedPropName = string.Empty;
+                (string name, JsonElementDiff value) diff = 
+                    ComputePropertyDiff(discardedPropName, baseline.RootElement, target.RootElement);
 
                 return diff.value;
             }

@@ -24,6 +24,7 @@ namespace Wikitools.Lib.Tests.Json
             var json2 = JsonDocument.Parse(@"{ 'a': 5 }".Replace('\'','"'));
             var jsonDiff = new JsonDiff(json1, json2);
             var jsonDiffJsonDocumentText = jsonDiff.JsonDocument.RootElement.GetRawText();
+            output.WriteLine(jsonDiff.ToString());
             output.WriteLine(jsonDiffJsonDocumentText);
         }
     }
