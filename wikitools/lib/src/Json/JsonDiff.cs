@@ -46,7 +46,6 @@ namespace Wikitools.Lib.Json
             _jsonElement = new Lazy<JsonElement>(() =>
                 JsonSerializer.Deserialize<JsonElement>(_rawString.Value, JsonSerializerOptions)
             );
-
         }
 
         public bool IsEmpty => _diff.Value == null;
