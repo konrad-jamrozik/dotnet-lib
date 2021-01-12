@@ -28,7 +28,7 @@ namespace Wikitools.Tests
             var os = new SimulatedOS(new GitLogSimulation(changesStats, logDays));
 
             // Arrange SUT declaration
-            var authorsStatsReportWriteOperation = new GitAuthorsStatsReportWriteOperation(
+            var sut = new GitAuthorsStatsReportWriteOperation(
                 timeline,
                 os,
                 gitRepoDirPath,
@@ -41,16 +41,22 @@ namespace Wikitools.Tests
                 HeaderRow: GitAuthorsStatsReport.HeaderRowLabels,
                 Rows: Data.Expectation(changesStats));
 
-            // Arrange output sink
-            var sw = new StringWriter(new StringBuilder());
-
             // Act
-            await authorsStatsReportWriteOperation.ExecuteAsync(sw);
-
-            var actual = new MarkdownTable(sw).Data as TabularData;
+            var actual = await Act(sut);
 
             var jsonDiff = new JsonDiff(expected, actual);
             Assert.True(jsonDiff.IsEmpty, $"The expected baseline is different than actual target. Diff:\r\n{jsonDiff}");
+        }
+
+        private static async Task<TabularData> Act(GitAuthorsStatsReportWriteOperation sut)
+        {
+            // Arrange output sink
+            await using var sw = new StringWriter();
+
+            // Act
+            await sut.ExecuteAsync(sw);
+
+            return new MarkdownTable(sw).Data as TabularData;
         }
     }
 }
