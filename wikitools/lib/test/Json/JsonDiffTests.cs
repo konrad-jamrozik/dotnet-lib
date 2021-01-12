@@ -1,56 +1,69 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.Json;
 using Wikitools.Lib.Json;
 using Xunit;
-using Xunit.Abstractions;
 using Xunit.Sdk;
 
 namespace Wikitools.Lib.Tests.Json
 {
     public class JsonDiffTests
     {
+        private static readonly List<(string baseline, string target, string expectedDiff)> SimpleCases = new()
+        {
+            // @formatter:off
+            ("1"          , "1"          , "{}"),
+            ("1"          , "2"          , "'! baseline: 1 | target: 2'"),
+            ("{}"         , "{}"         , "{}"),
+            ("[]"         , "[]"         , "{}"),
+            ("{}"         , "[]"         , "'! ValueKind baseline: Object ({}) | target: Array ([])'"),
+            ("[]"         , "{}"         , "'! ValueKind baseline: Array ([]) | target: Object ({})'"),
+            ("{}"         , "{ 'a': 1 }" , "{'a':'+'}"),
+            ("{ 'b': 2 }" , "{}"         , "{'b':'-'}"),
+            ("{ 'a': 2 }" , "{ 'b': 3 }" , "{'b':'+','a':'-'}"),
+
+            ("{ 'c': 2 }"    , "{ 'c': 'x' }"   , "{'c':'! ValueKind baseline: Number (2) | target: String (x)'}"),
+            ("{ 'd': {} }"   , "{ 'd': [] }"    , "{'d':'! ValueKind baseline: Object ({}) | target: Array ([])'}"),
+            ("{ 'e': 'xyz' }", "{ 'e': 'xyw' }" , "{'e':'! baseline: xyz | target: xyw'}"),
+
+            // @formatter:on
+        };
+
+        private static readonly List<(string baseline, string target, string expectedDiff)> ComplexCases = new()
+        {
+            // @formatter:off
+            ("[1,2,3]","['a','b',3,'c']",
+                "{"+
+                "'0':'! ValueKind baseline: Number (1) | target: String (a)',"+
+                "'1':'! ValueKind baseline: Number (2) | target: String (b)',"+
+                "'3':'+'"+
+                "}")
+            // @formatter:on
+        };
+
         [Fact]
         public void DiffIsEmptyTrue() => Assert.True(new JsonDiff("{}", "{}").IsEmpty);
 
         [Fact]
         public void DiffIsEmptyFalse() => Assert.False(new JsonDiff("{}", "[]").IsEmpty);
 
-        // kja write more tests
         [Fact]
-        public void DiffsSimpleCases()
-        {
-            var testsData = new List<(string baseline, string target, string expectedDiff)>
-            {
-                // @formatter:off
-                ("1"          , "1"          , "{}"),
-                ("1"          , "2"          , "'! baseline: 1 | target: 2'"),
-                ("{}"         , "{}"         , "{}"),
-                ("[]"         , "[]"         , "{}"),
-                ("{}"         , "[]"         , "'! ValueKind mismatch. baseline: Object ({}) | target: Array ([])'"),
-                ("[]"         , "{}"         , "'! ValueKind mismatch. baseline: Array ([]) | target: Object ({})'"),
-                ("{}"         , "{ 'a': 1 }" , "{'a':'+'}"),
-                ("{ 'b': 2 }" , "{}"         , "{'b':'-'}"),
-                ("{ 'a': 2 }" , "{ 'b': 3 }" , "{'b':'+','a':'-'}"),
+        public void DiffsSimpleCases() => Verify(SimpleCases);
 
-                ("{ 'c': 2 }"    , "{ 'c': 'x' }"   , "{'c':'! ValueKind mismatch. baseline: Number (2) | target: String (x)'}"),
-                ("{ 'd': {} }"   , "{ 'd': [] }"    , "{'d':'! ValueKind mismatch. baseline: Object ({}) | target: Array ([])'}"),
-                ("{ 'e': 'xyz' }", "{ 'e': 'xyw' }" , "{'e':'! baseline: xyz | target: xyw'}")
-                // @formatter:on
-            };
+        [Fact]
+        public void DiffsComplexCases() => Verify(ComplexCases);
+
+        private static void Verify(List<(string baseline, string target, string expectedDiff)> testsData) =>
             Enumerable.Range(0, testsData.Count)
                 .ToList()
                 .ForEach(i => { Verify(i + 1, testsData[i]); });
-        }
 
-        private static void Verify(int testIndex, (string baseline, string target, string expectedDiff) data)
+        private static void Verify(int testIndex, (string baseline, string target, string expectedDiff) testData)
         {
-            var baseline     = data.baseline.Replace('\'', '"');
-            var target       = data.target.Replace('\'', '"');
-            var expectedDiff = data.expectedDiff.Replace('\'', '"');
+            var baseline     = testData.baseline.Replace('\'', '"');
+            var target       = testData.target.Replace('\'', '"');
+            var expectedDiff = testData.expectedDiff.Replace('\'', '"');
 
             // Act
             var actualDiff = new JsonDiff(

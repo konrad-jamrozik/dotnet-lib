@@ -86,7 +86,7 @@ namespace Wikitools.Lib.Json
             var baselineValueKind = baseline.ValueKind;
             var targetValueKind = target.ValueKind;
             if (baselineValueKind != targetValueKind)
-                return (neq, "ValueKind mismatch. " +
+                return (neq, "ValueKind " +
                              $"baseline: {baselineValueKind} ({baseline}) | " +
                              $"target: {targetValueKind} ({target})");
 
