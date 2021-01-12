@@ -10,21 +10,17 @@ namespace Wikitools.Lib.Tests.Json
 {
     public class JsonDiffTests
     {
-        private readonly ITestOutputHelper output;
-
-        public JsonDiffTests(ITestOutputHelper output)
-        {
-            this.output = output;
-        }
-
+        // kja write more tests
         [Fact]
         public void DiffsAddedProperty()
         {
-            var json1 = JsonDocument.Parse("{}");
-            var json2 = JsonDocument.Parse(@"{ 'a': 5 }".Replace('\'','"'));
-            var diff = new JsonDiff(json1, json2);
+            var baseline = JsonDocument.Parse("{}");
+            var target = JsonDocument.Parse(@"{ 'a': 5 }".Replace('\'','"'));
+            var diff = new JsonDiff(baseline, target);
+
+            Assert.Equal(@"{""a"":""+""}", diff.ToRawString());
             Assert.Equal("+", diff.JsonElement.GetProperty("a").GetString());
-            output.WriteLine(diff.ToString());
+            
             
         }
     }

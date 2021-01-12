@@ -39,6 +39,9 @@ namespace Wikitools.Lib.Json
             => JsonSerializer.Serialize(_diff.Value,
                 new JsonSerializerOptions(JsonSerializerOptions) { WriteIndented = true });
 
+        public string ToRawString()
+            => JsonSerializer.Serialize(_diff.Value, JsonSerializerOptions);
+
         public JsonElement JsonElement => 
             JsonSerializer.Deserialize<JsonElement>(
                 JsonSerializer.SerializeToUtf8Bytes(
