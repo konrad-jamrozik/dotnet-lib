@@ -21,7 +21,7 @@ namespace Wikitools.Tests
             var changesStats = Data.ChangesStats;
             var logDays = 15;
             var gitExecutablePath = @"C:\Program Files\Git\bin\sh.exe";
-            var saceDocsGitRepoClonePath = @"C:\Users\spawa\repos\sace-docs";
+            var gitRepoDirPath = @"C:\Users\fooUser\barRepo";
 
             // Arrange simulations
             var timeline = new SimulatedTimeline();
@@ -31,9 +31,9 @@ namespace Wikitools.Tests
             var authorsStatsReportWriteOperation = new GitAuthorsStatsReportWriteOperation(
                 timeline,
                 os,
-                gitRepoDirPath: saceDocsGitRepoClonePath,
-                gitExecutablePath: gitExecutablePath,
-                logDays: logDays);
+                gitRepoDirPath,
+                gitExecutablePath,
+                logDays);
 
             // Arrange expectations
             var expected = new TabularData(
