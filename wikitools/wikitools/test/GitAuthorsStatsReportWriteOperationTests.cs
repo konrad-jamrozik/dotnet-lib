@@ -41,11 +41,9 @@ namespace Wikitools.Tests
                 HeaderRow: GitAuthorsStatsReport.HeaderRowLabels,
                 Rows: Data.Expectation(changesStats));
 
-            // Act
             var actual = await Act(sut);
 
-            var jsonDiff = new JsonDiff(expected, actual);
-            Assert.True(jsonDiff.IsEmpty, $"The expected baseline is different than actual target. Diff:\r\n{jsonDiff}");
+            AssertNoDiffBetween(expected, actual);
         }
 
         private static async Task<TabularData> Act(GitAuthorsStatsReportWriteOperation sut)
@@ -57,6 +55,12 @@ namespace Wikitools.Tests
             await sut.ExecuteAsync(sw);
 
             return new MarkdownTable(sw).Data as TabularData;
+        }
+
+        private static void AssertNoDiffBetween(TabularData expected, TabularData actual)
+        {
+            var jsonDiff = new JsonDiff(expected, actual);
+            Assert.True(jsonDiff.IsEmpty, $"The expected baseline is different than actual target. Diff:\r\n{jsonDiff}");
         }
     }
 }
