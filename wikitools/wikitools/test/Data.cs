@@ -22,12 +22,12 @@ namespace Wikitools.Tests
 
         public static readonly List<List<object>> GitAuthorsStatsReportRows = new()
         {
-            new() {1, "AuthorB", 60000, 606 },
-            new() {2, "AuthorC", 6000, 66 },
-            new() {3, "AuthorA", 600, 60 }
+            new() { 1, "AuthorB", 60000, 606 },
+            new() { 2, "AuthorC", 6000, 66 },
+            new() { 3, "AuthorA", 600, 60 }
         };
 
-        public static List<List<object>> Expectation(List<GitChangeStats> changesStats) =>
+        public static List<List<object>> Expectation(IEnumerable<GitChangeStats> changesStats) =>
             changesStats.SequenceEqual(ChangesStats)
                 ? GitAuthorsStatsReportRows
                 : throw new InvalidOperationException();
