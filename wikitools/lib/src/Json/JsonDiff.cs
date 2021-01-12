@@ -10,6 +10,10 @@ namespace Wikitools.Lib.Json
         private const int MaxDepth = 64;
 
         private readonly Lazy<DiffObject> _diff;
+        private readonly Lazy<JsonElement> _jsonElement;
+        private readonly Lazy<string> _string;
+        private readonly Lazy<string> _rawString;
+
         private static readonly JsonSerializerOptions JsonSerializerOptions = new()
         {
             MaxDepth = MaxDepth, 
@@ -31,22 +35,26 @@ namespace Wikitools.Lib.Json
                 DiffObject diff = new JsonElementDiff(baselineJson, targetJson).Value;
                 return diff;
             });
+
+            _string = new Lazy<string>(() => 
+                JsonSerializer.Serialize(_diff.Value,
+                    new JsonSerializerOptions(JsonSerializerOptions) { WriteIndented = true }));
+            
+            _rawString = new Lazy<string>(() =>
+                JsonSerializer.Serialize(_diff.Value, JsonSerializerOptions));
+            
+            _jsonElement = new Lazy<JsonElement>(() =>
+                JsonSerializer.Deserialize<JsonElement>(_rawString.Value, JsonSerializerOptions)
+            );
+
         }
 
         public bool IsEmpty => _diff.Value == null;
 
-        public override string ToString()
-            => JsonSerializer.Serialize(_diff.Value,
-                new JsonSerializerOptions(JsonSerializerOptions) { WriteIndented = true });
+        public override string ToString() => _string.Value;
 
-        public string ToRawString()
-            => JsonSerializer.Serialize(_diff.Value, JsonSerializerOptions);
+        public string ToRawString() => _rawString.Value;
 
-        public JsonElement JsonElement => 
-            JsonSerializer.Deserialize<JsonElement>(
-                JsonSerializer.SerializeToUtf8Bytes(
-                    _diff.Value, 
-                    JsonSerializerOptions), 
-                JsonSerializerOptions);
+        public JsonElement JsonElement => _jsonElement.Value;
     }
 }
