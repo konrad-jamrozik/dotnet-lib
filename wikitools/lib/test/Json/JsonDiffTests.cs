@@ -25,21 +25,21 @@ namespace Wikitools.Lib.Tests.Json
         {
             var testsData = new List<(string baseline, string target, string expectedDiff)>
             {
-                ("1", "1", "{}"),
-                ("1", "2", "'! baseline: 1 | target: 2'"),
-                ("{}", "{}", "{}"),
-                ("[]", "[]", "{}"),
-                ("{}", "[]", "'! ValueKind mismatch. baseline: Object ({}) | target: Array ([])'"),
-                ("[]", "{}", "'! ValueKind mismatch. baseline: Array ([]) | target: Object ({})'"),
-                ("{}", "{ 'a': 1 }", "{'a':'+'}"),
-                ("{ 'b': 2 }", "{}", "{'b':'-'}"),
-                ("{ 'a': 2 }", "{ 'b': 3 }", "{'b':'+','a':'-'}"),
-                ("{ 'c': 2 }", "{ 'c': 'x' }",
-                    "{'c':'! ValueKind mismatch. baseline: Number (2) | target: String (x)'}"),
-                ("{ 'd': {} }", "{ 'd': [] }",
-                    "{'d':'! ValueKind mismatch. baseline: Object ({}) | target: Array ([])'}"),
-                ("{ 'e': 'xyz' }", "{ 'e': 'xyw' }",
-                    "{'e':'! baseline: xyz | target: xyw'}"),
+                // @formatter:off
+                ("1"          , "1"          , "{}"),
+                ("1"          , "2"          , "'! baseline: 1 | target: 2'"),
+                ("{}"         , "{}"         , "{}"),
+                ("[]"         , "[]"         , "{}"),
+                ("{}"         , "[]"         , "'! ValueKind mismatch. baseline: Object ({}) | target: Array ([])'"),
+                ("[]"         , "{}"         , "'! ValueKind mismatch. baseline: Array ([]) | target: Object ({})'"),
+                ("{}"         , "{ 'a': 1 }" , "{'a':'+'}"),
+                ("{ 'b': 2 }" , "{}"         , "{'b':'-'}"),
+                ("{ 'a': 2 }" , "{ 'b': 3 }" , "{'b':'+','a':'-'}"),
+
+                ("{ 'c': 2 }"    , "{ 'c': 'x' }"   , "{'c':'! ValueKind mismatch. baseline: Number (2) | target: String (x)'}"),
+                ("{ 'd': {} }"   , "{ 'd': [] }"    , "{'d':'! ValueKind mismatch. baseline: Object ({}) | target: Array ([])'}"),
+                ("{ 'e': 'xyz' }", "{ 'e': 'xyw' }" , "{'e':'! baseline: xyz | target: xyw'}")
+                // @formatter:on
             };
             Enumerable.Range(0, testsData.Count)
                 .ToList()
