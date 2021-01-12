@@ -10,7 +10,6 @@ namespace Wikitools.Lib.Json
         private const int MaxDepth = 64;
         private static readonly JsonElement EmptyDiff = JsonSerializer.Deserialize<JsonElement>("{}");
 
-        private readonly Lazy<object> _diff;
         private readonly Lazy<string> _string;
         private readonly Lazy<string> _rawString;
         private readonly Lazy<JsonElement> _jsonElement;
@@ -29,7 +28,7 @@ namespace Wikitools.Lib.Json
 
         public JsonDiff(object baseline, object target)
         {
-            _diff = new Lazy<DiffObject>(() =>
+            var diff = new Lazy<DiffObject>(() =>
             {
                 var        baselineJson = JsonDocument.Parse(JsonSerializer.SerializeToUtf8Bytes(baseline));
                 var        targetJson   = JsonDocument.Parse(JsonSerializer.SerializeToUtf8Bytes(target));
@@ -37,16 +36,13 @@ namespace Wikitools.Lib.Json
                 return elementDiff ?? EmptyDiff;
             });
 
-            _string = new Lazy<string>(() =>
-                JsonSerializer.Serialize(_diff.Value,
-                    new JsonSerializerOptions(JsonSerializerOptions) {WriteIndented = true}));
+            _string = new Lazy<string>(() => JsonSerializer.Serialize(diff.Value,
+                new JsonSerializerOptions(JsonSerializerOptions) { WriteIndented = true }));
 
-            _rawString = new Lazy<string>(() =>
-                JsonSerializer.Serialize(_diff.Value, JsonSerializerOptions));
+            _rawString = new Lazy<string>(() => JsonSerializer.Serialize(diff.Value, JsonSerializerOptions));
 
             _jsonElement = new Lazy<JsonElement>(() =>
-                JsonSerializer.Deserialize<JsonElement>(_rawString.Value, JsonSerializerOptions)
-            );
+                JsonSerializer.Deserialize<JsonElement>(_rawString.Value, JsonSerializerOptions));
         }
 
         public bool IsEmpty => JsonElement.GetRawText() == EmptyDiff.GetRawText();
