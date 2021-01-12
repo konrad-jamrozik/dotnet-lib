@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Wikitools.Lib.Primitives;
 
 namespace Wikitools.Lib.Git
 {

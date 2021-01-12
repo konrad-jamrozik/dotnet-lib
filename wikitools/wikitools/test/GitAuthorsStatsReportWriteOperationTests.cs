@@ -1,7 +1,5 @@
 using System.IO;
-using System.Text;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 using Wikitools.Lib;
 using Wikitools.Lib.Git;
 using Wikitools.Lib.Json;
