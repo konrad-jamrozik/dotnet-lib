@@ -28,6 +28,7 @@ namespace Wikitools.Lib.Tests.Json
             ("{ 'e': 'xyz' }", "{ 'e': 'xyw' }" , "{'e':'! baseline: xyz | target: xyw'}"),
 
             // kja add cases for array
+            // kja add cases of ValueKind diff between primitive and coll
 
             // @formatter:on
         };
