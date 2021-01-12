@@ -27,6 +27,8 @@ namespace Wikitools.Lib.Tests.Json
             ("{ 'd': {} }"   , "{ 'd': [] }"    , "{'d':'! ValueKind baseline: Object ({}) | target: Array ([])'}"),
             ("{ 'e': 'xyz' }", "{ 'e': 'xyw' }" , "{'e':'! baseline: xyz | target: xyw'}"),
 
+            // kja add cases for array
+
             // @formatter:on
         };
 
@@ -39,6 +41,8 @@ namespace Wikitools.Lib.Tests.Json
                 "'1':'! ValueKind baseline: Number (2) | target: String (b)',"+
                 "'3':'+'"+
                 "}")
+
+            // kja add deep nested cases: object in array in object, etc.
             // @formatter:on
         };
 
