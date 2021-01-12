@@ -39,10 +39,11 @@ namespace Wikitools.Tests
                 HeaderRow: GitAuthorsStatsReport.HeaderRowLabels,
                 Rows: Data.Expectation(changesStats));
 
-            var actual = await Act(sut);
-
-            AssertNoDiffBetween(expected, actual);
+            await Verify(sut, expected);
         }
+
+        private static async Task Verify(GitAuthorsStatsReportWriteOperation sut, TabularData expected) =>
+            AssertNoDiffBetween(expected, await Act(sut));
 
         private static async Task<TabularData> Act(GitAuthorsStatsReportWriteOperation sut)
         {
