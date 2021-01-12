@@ -4,12 +4,12 @@ using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Linq;
 using System.Text.Json;
-// For explanation of this alias, please see comment on Wikitools.Lib.Json.JsonDocumentDiff.Value.
-using JsonElementDiff = System.Object;
+// For explanation of this alias, please see comment on Wikitools.Lib.Json.JsonElementDiff.Value.
+using DiffObject = System.Object;
 
 namespace Wikitools.Lib.Json
 {
-    public class JsonDocumentDiff
+    public class JsonElementDiff
     {
         private enum ComparisonResult
         {
@@ -29,16 +29,16 @@ namespace Wikitools.Lib.Json
             [ComparisonResult.MissingFromTarget] = "-"
         };
 
-        private readonly Lazy<JsonElementDiff> _diff;
+        private readonly Lazy<DiffObject> _diff;
 
-        public JsonDocumentDiff(JsonDocument baseline, JsonDocument target)
+        public JsonElementDiff(JsonDocument baseline, JsonDocument target)
         {
-            _diff = new Lazy<JsonElementDiff>(() => Diff(baseline, target));
+            _diff = new Lazy<DiffObject>(() => Diff(baseline, target));
 
-            JsonElementDiff Diff(JsonDocument baseline, JsonDocument target)
+            DiffObject Diff(JsonDocument baseline, JsonDocument target)
             {
                 var discardedPropName = string.Empty;
-                (string name, JsonElementDiff value) diff = 
+                (string name, DiffObject value) diff = 
                     ComputePropertyDiff(discardedPropName, baseline.RootElement, target.RootElement);
 
                 return diff.value;
@@ -47,20 +47,22 @@ namespace Wikitools.Lib.Json
 
         /// <summary>
         /// An object representing the diff between the input baseline and target.
-        /// This object can be serialized with JsonSerializer.Serialize.
+        /// This object can be serialized with JsonSerializer.SerializeToUtf8Bytes, retaining all the diff information.
         /// </summary>
         /// <remarks>
-        /// The type is JsonElementDiff which due to C# limitations is modeled just as an 'object'.
-        /// However, in fact, it is a recursive type just like JsonElement. Here that JsonElement
+        /// The type is DiffObject which, due to C# limitations, is modeled just as an 'object'.
+        /// However, in fact, it is a recursive type that is a valid JsonElement. Here that JsonElement
         /// is used to represent, as json, the diff of given JsonElement between baseline and target,
-        /// hence we alias it as JsonElementDiff.
+        /// hence we alias it.
         ///
         /// It is recursive because the difference between two JsonElements might be in fact a set
         /// of differences in their children properties. The same logic applies recursively to these children.
+        ///
+        /// To actually obtain JsonElement from this Value, cf. Wikitools.Lib.Json.JsonDiff.JsonElement
         /// </remarks>
-        public JsonElementDiff Value => _diff.Value;
+        public DiffObject Value => _diff.Value;
 
-        private static (string name, JsonElementDiff value) ComputePropertyDiff(string name, JsonElement baseline, JsonElement target)
+        private static (string name, DiffObject value) ComputePropertyDiff(string name, JsonElement baseline, JsonElement target)
         {
             (ComparisonResult res, string msg) = CompareElements(baseline, target);
 
@@ -107,7 +109,7 @@ namespace Wikitools.Lib.Json
             };
         }
 
-        private static IDictionary<string, JsonElementDiff> ComputeElementsDiffRecursively(JsonElement baseline, JsonElement target)
+        private static IDictionary<string, DiffObject> ComputeElementsDiffRecursively(JsonElement baseline, JsonElement target)
         {
             var baselineValueKind = baseline.ValueKind;
 
@@ -115,14 +117,14 @@ namespace Wikitools.Lib.Json
             Debug.Assert(baselineValueKind == JsonValueKind.Object 
                          || baselineValueKind == JsonValueKind.Array);
 
-            IDictionary<string, JsonElementDiff> result = baselineValueKind == JsonValueKind.Object
+            IDictionary<string, DiffObject> result = baselineValueKind == JsonValueKind.Object
                 ? ComputeObjectsDiff(baseline, target)
                 : ComputeArraysDiff(baseline, target);
 
             return result.Any() ? result : null;
         }
 
-        private static IDictionary<string, JsonElementDiff> ComputeObjectsDiff(JsonElement baseline, JsonElement target)
+        private static IDictionary<string, DiffObject> ComputeObjectsDiff(JsonElement baseline, JsonElement target)
         {
             var baselineProps = baseline.EnumerateObject().ToDictionary(prop => prop.Name);
             var targetProps = target.EnumerateObject().ToDictionary(prop => prop.Name);
@@ -145,7 +147,7 @@ namespace Wikitools.Lib.Json
             return result;
         }
 
-        private static IDictionary<string, JsonElementDiff> ComputeArraysDiff(JsonElement baseline, JsonElement target)
+        private static IDictionary<string, DiffObject> ComputeArraysDiff(JsonElement baseline, JsonElement target)
         {
             var baselineElems = baseline.EnumerateArray().ToImmutableArray();
             var targetElems = target.EnumerateArray().ToImmutableArray();
@@ -164,7 +166,7 @@ namespace Wikitools.Lib.Json
             return result;
         }
 
-        private static (string name, JsonElementDiff value) Leaf(string name, ComparisonResult res, string msg) 
+        private static (string name, DiffObject value) Leaf(string name, ComparisonResult res, string msg) 
             => (name, $"{ComparisonResultSymbols[res]} {msg}".Trim());
     }
 }

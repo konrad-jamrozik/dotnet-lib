@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text.Json;
-// For explanation of this alias, please see comment on Wikitools.Lib.Json.JsonDocumentDiff.Value.
-using JsonElementDiff = System.Object;
+// For explanation of this alias, please see comment on Wikitools.Lib.Json.JsonElementDiff.Value.
+using DiffObject = System.Object;
 
 namespace Wikitools.Lib.Json
 {
@@ -9,7 +9,7 @@ namespace Wikitools.Lib.Json
     {
         private const int MaxDepth = 64;
 
-        private readonly Lazy<JsonElementDiff> _diff;
+        private readonly Lazy<DiffObject> _diff;
         private static readonly JsonSerializerOptions JsonSerializerOptions = new()
         {
             MaxDepth = MaxDepth, 
@@ -24,11 +24,11 @@ namespace Wikitools.Lib.Json
 
         public JsonDiff(object baseline, object target)
         {
-            _diff = new Lazy<JsonElementDiff>(() =>
+            _diff = new Lazy<DiffObject>(() =>
             {
                 var baselineJson = JsonDocument.Parse(JsonSerializer.SerializeToUtf8Bytes(baseline));
                 var targetJson = JsonDocument.Parse(JsonSerializer.SerializeToUtf8Bytes(target));
-                JsonElementDiff diff = new JsonDocumentDiff(baselineJson, targetJson).Value;
+                DiffObject diff = new JsonElementDiff(baselineJson, targetJson).Value;
                 return diff;
             });
         }
@@ -39,8 +39,8 @@ namespace Wikitools.Lib.Json
             => JsonSerializer.Serialize(_diff.Value,
                 new JsonSerializerOptions(JsonSerializerOptions) { WriteIndented = true });
 
-        public JsonDocument JsonDocument => 
-            JsonSerializer.Deserialize<JsonDocument>(
+        public JsonElement JsonElement => 
+            JsonSerializer.Deserialize<JsonElement>(
                 JsonSerializer.SerializeToUtf8Bytes(
                     _diff.Value, 
                     JsonSerializerOptions), 
