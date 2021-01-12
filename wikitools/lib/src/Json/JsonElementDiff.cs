@@ -47,7 +47,7 @@ namespace Wikitools.Lib.Json
 
         /// <summary>
         /// An object representing the diff between the input baseline and target.
-        /// This object can be serialized with JsonSerializer.SerializeToUtf8Bytes, retaining all the diff information.
+        /// This object can be serialized with JsonSerializer.Serialize, retaining all the diff information.
         /// </summary>
         /// <remarks>
         /// The type is DiffObject which, due to C# limitations, is modeled just as an 'object'.
