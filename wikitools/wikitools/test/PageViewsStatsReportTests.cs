@@ -1,11 +1,10 @@
 using System.Collections.Generic;
-using System.IO;
 using System.Threading.Tasks;
 using Wikitools.AzureDevOps;
-using Wikitools.Lib.Json;
 using Wikitools.Lib.Primitives;
 using Wikitools.Lib.Tables;
 using Xunit;
+using static Wikitools.Lib.Tests.Tables.TabularDataAssertionExtensions;
 
 namespace Wikitools.Tests
 {
@@ -37,29 +36,7 @@ namespace Wikitools.Tests
                 HeaderRow: PageViewsStatsReport.HeaderRowLabels,
                 Rows: (List<List<object>>) Data.Expectation[pageStats]);
 
-            await Verify(sut, expected);
-        }
-
-        // kja deduplicate with the other op test; add interface for op
-        private static async Task Verify(ITabularData sut, TabularData expected) =>
-            AssertNoDiffBetween(expected, await Act(sut));
-
-        private static async Task<TabularData> Act(ITabularData sut)
-        {
-            // Arrange output sink
-            await using var sw = new StringWriter();
-
-            // Act
-            await new MarkdownTable(sut).WriteAsync(sw);
-
-            return (TabularData) new MarkdownTable(sw).Data;
-        }
-
-        private static void AssertNoDiffBetween(TabularData expected, TabularData actual)
-        {
-            var jsonDiff = new JsonDiff(expected, actual);
-            Assert.True(jsonDiff.IsEmpty,
-                $"The expected baseline is different than actual target. Diff:\r\n{jsonDiff}");
+            await Verify(expected, sut);
         }
     }
 }
