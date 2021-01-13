@@ -12,11 +12,12 @@ namespace Wikitools
 
         public PageViewsStatsReportWriteOperation(
             ITimeline timeline,
+            IAdoApi adoApi,
             string wikiUri,
-            string patEnvVar, 
+            string patEnvVar,
             int pageViewsForDays)
         {
-            var wiki = new AdoWiki(new AdoWikiUri(wikiUri), patEnvVar, pageViewsForDays);
+            var wiki   = new AdoWiki(adoApi, new AdoWikiUri(wikiUri), patEnvVar, pageViewsForDays);
             var report = new PageViewsStatsReport(timeline, wiki, pageViewsForDays);
             _table = new MarkdownTable(report);
         }

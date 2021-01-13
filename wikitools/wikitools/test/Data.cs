@@ -1,6 +1,4 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using Wikitools.Lib.Git;
 
 namespace Wikitools.Tests
@@ -20,16 +18,21 @@ namespace Wikitools.Tests
             new("AuthorC", 6, 3000, 33)
         };
 
-        public static readonly List<List<object>> GitAuthorsStatsReportRows = new()
+        private static readonly List<List<object>> GitAuthorsStatsReportRows = new()
         {
             new() { 1, "AuthorB", 60000, 606 },
             new() { 2, "AuthorC", 6000, 66 },
             new() { 3, "AuthorA", 600, 60 }
         };
 
-        public static List<List<object>> Expectation(IEnumerable<GitChangeStats> changesStats) =>
-            changesStats.SequenceEqual(ChangesStats)
-                ? GitAuthorsStatsReportRows
-                : throw new InvalidOperationException();
+        private static readonly List<List<object>> EmptyRows = new()
+        {
+        };
+
+        public static readonly Dictionary<object, object> Expectation = new()
+        {
+            [ChangesStats] = GitAuthorsStatsReportRows,
+            [string.Empty] = EmptyRows
+        };
     }
 }

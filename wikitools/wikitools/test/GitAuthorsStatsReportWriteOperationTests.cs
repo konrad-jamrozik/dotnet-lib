@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using Wikitools.Lib;
@@ -37,7 +38,7 @@ namespace Wikitools.Tests
             var expected = new TabularData(
                 Description: string.Format(GitAuthorsStatsReport.DescriptionFormat, logDays, timeline.UtcNow),
                 HeaderRow: GitAuthorsStatsReport.HeaderRowLabels,
-                Rows: Data.Expectation(changesStats));
+                Rows: Data.Expectation[changesStats] as List<List<object>>);
 
             await Verify(sut, expected);
         }

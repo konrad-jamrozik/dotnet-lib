@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Wikitools.AzureDevOps;
 using Wikitools.Lib.OS;
 using Wikitools.Lib.Primitives;
 
@@ -12,7 +13,8 @@ namespace Wikitools
             var cfg = WikitoolsConfig.From("wikitools_config.json");
 
             var timeline = new Timeline();
-            var os = new WindowsOS();
+            var os       = new WindowsOS();
+            var adoApi   = new AdoApi();
 
             var authorsStatsReportWriteOperation = new GitAuthorsStatsReportWriteOperation(
                 timeline,
@@ -23,9 +25,10 @@ namespace Wikitools
 
             var pageViewsStatsReportWriteOperation = new PageViewsStatsReportWriteOperation(
                 timeline,
-                cfg.AdoWikiUri,
-                cfg.AdoPatEnvVar, 
-                cfg.AdoWikiPageViewsForDays);
+                adoApi,
+                wikiUri: cfg.AdoWikiUri,
+                patEnvVar: cfg.AdoPatEnvVar,
+                pageViewsForDays: cfg.AdoWikiPageViewsForDays);
 
             await authorsStatsReportWriteOperation.ExecuteAsync(Console.Out);
             await pageViewsStatsReportWriteOperation.ExecuteAsync(Console.Out);
