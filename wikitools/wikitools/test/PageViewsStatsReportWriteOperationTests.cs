@@ -39,7 +39,7 @@ namespace Wikitools.Tests
                     timeline.UtcNow,
                     pageStats.Count),
                 HeaderRow: PageViewsStatsReport.HeaderRowLabels,
-                Rows: Data.Expectation[pageStats] as List<List<object>>);
+                Rows: (List<List<object>>) Data.Expectation[pageStats]);
 
             await Verify(sut, expected);
         }
@@ -56,7 +56,7 @@ namespace Wikitools.Tests
             // Act
             await sut.ExecuteAsync(sw);
 
-            return new MarkdownTable(sw).Data as TabularData;
+            return (TabularData) new MarkdownTable(sw).Data;
         }
 
         private static void AssertNoDiffBetween(TabularData expected, TabularData actual)

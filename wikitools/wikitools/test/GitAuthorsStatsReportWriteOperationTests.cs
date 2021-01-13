@@ -38,7 +38,7 @@ namespace Wikitools.Tests
             var expected = new TabularData(
                 Description: string.Format(GitAuthorsStatsReport.DescriptionFormat, logDays, timeline.UtcNow),
                 HeaderRow: GitAuthorsStatsReport.HeaderRowLabels,
-                Rows: Data.Expectation[changesStats] as List<List<object>>);
+                Rows: (List<List<object>>) Data.Expectation[changesStats]);
 
             await Verify(sut, expected);
         }
@@ -54,7 +54,7 @@ namespace Wikitools.Tests
             // Act
             await sut.ExecuteAsync(sw);
 
-            return new MarkdownTable(sw).Data as TabularData;
+            return (TabularData) new MarkdownTable(sw).Data;
         }
 
         private static void AssertNoDiffBetween(TabularData expected, TabularData actual)

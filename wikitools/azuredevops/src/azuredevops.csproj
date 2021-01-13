@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
@@ -7,15 +7,12 @@
     <WarningsAsErrors>nullable</WarningsAsErrors>
   </PropertyGroup>
   
-  
   <ItemGroup>
     <PackageReference Include="Microsoft.TeamFoundationServer.Client" Version="16.178.1-preview" />
   </ItemGroup>
   
-  
   <ItemGroup>
     <ProjectReference Include="..\..\lib\src\lib.csproj" />
   </ItemGroup>
-
 
 </Project>

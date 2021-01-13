@@ -5,6 +5,7 @@
     <IsPackable>false</IsPackable>
     <RootNamespace>Wikitools.Tests</RootNamespace>
     <Nullable>enable</Nullable>
+    <WarningsAsErrors>nullable</WarningsAsErrors>
   </PropertyGroup>
 
   <ItemGroup>
