@@ -47,16 +47,15 @@ namespace Wikitools.Lib.Git
         public async Task<List<GitFileChangeStats>> GetFileChangesStats()
         {
             List<string> stdOutLines =
-                await _repo.GetStdOutLines($"git log --since={_days}.days  -format=\"\" --numstat --ignore-all-space --ignore-blank-lines");
-            // kja curr work
-            return new List<GitFileChangeStats>();
+                await _repo.GetStdOutLines($"git log --since={_days}.days --format= --numstat --ignore-all-space --ignore-blank-lines");
+            return stdOutLines.Select(line => line.ToGitFileChangeStats()).ToList();
         }
 
         private static void RemoveLogEntriesWithNoLineChanges(List<string> stdOutLines)
         {
             for (var i = 0; i < stdOutLines.Count; i++)
             {
-                if (i % 2 == 0) // assert: If true, stdOutLines[i] is an Author line
+                if (i % 2 == 0) // assert: If true, stdOutLines[i] is an author line and [i+1] is a stats line.
                     // Known limitation: ArgumentOutOfRangeException on empty log.
                     if (!(stdOutLines[i + 1].Contains("(+)") || stdOutLines[i + 1].Contains("(-)")))
                     {

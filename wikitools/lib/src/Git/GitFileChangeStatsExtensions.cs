@@ -14,5 +14,11 @@ namespace Wikitools.Lib.Git
                 fileStats.Sum(log => log.Deletions)));
             return statsSumByFile.ToList();
         }
+
+        public static GitFileChangeStats ToGitFileChangeStats(this string gitLogStdOutLine)
+        {
+            // kja to implement
+            return new GitFileChangeStats("", 0, 0);
+        }
     }
 }
