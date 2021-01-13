@@ -25,7 +25,7 @@ namespace Wikitools.Lib.Git
             // SOQ: How can I calculate the number of lines changed between two commits in GIT?
             // A: https://stackoverflow.com/a/2528129/986533
             List<string> stdOutLines =
-                await _repo.GetStdOutLines($"git log --since={_days}.days --pretty=\"%an\" --shortstat");
+                await _repo.GetStdOutLines($"git log --since={_days}.days --pretty=\"%an\" --shortstat --ignore-all-space --ignore-blank-lines");
 
             stdOutLines.RemoveAll(string.IsNullOrWhiteSpace);
             RemoveLogEntriesWithNoLineChanges(stdOutLines);
@@ -42,6 +42,14 @@ namespace Wikitools.Lib.Git
                 .ToList();
 
             return changesStats;
+        }
+
+        public async Task<List<GitFileChangeStats>> GetFileChangesStats()
+        {
+            List<string> stdOutLines =
+                await _repo.GetStdOutLines($"git log --since={_days}.days  -format=\"\" --numstat --ignore-all-space --ignore-blank-lines");
+            // kja curr work
+            return new List<GitFileChangeStats>();
         }
 
         private static void RemoveLogEntriesWithNoLineChanges(List<string> stdOutLines)
