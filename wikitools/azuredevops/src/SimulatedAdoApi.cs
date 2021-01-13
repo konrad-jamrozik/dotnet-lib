@@ -5,13 +5,14 @@ namespace Wikitools.AzureDevOps
 {
     public class SimulatedAdoApi : IAdoApi
     {
+        private readonly List<WikiPageStats> _pageStats;
+
+        public SimulatedAdoApi(List<WikiPageStats> pageStats) => _pageStats = pageStats;
+
         public Task<List<WikiPageStats>> GetWikiPagesStats(
             AdoWikiUri adoWikiUri,
             string patEnvVar,
-            int pageViewsForDays)
-        {
-            // kja to implement
-            return Task.FromResult(new List<WikiPageStats>());
-        }
+            int pageViewsForDays) =>
+            Task.FromResult(_pageStats);
     }
 }

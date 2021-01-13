@@ -15,16 +15,14 @@ namespace Wikitools.Tests
         public async Task PageViewsStatsReportWriteOperationSucceeds()
         {
             // Arrange inputs
-            var    wikiStats               = string.Empty; // kja fill out and inject to simulated ado API. Also provide proper expectation.
-            var    logDays                 = 15;
-            string adoWikiUri              = "https://dev.azure.com/adoOrg/adoProject/_wiki/wikis/wikiName";
-            string adoPatEnvVar            = "fakeEnvVarName";
-            int    adoWikiPageViewsForDays = 30;
-            var    wikiPagesCount          = 10;
-            
+            var    pageStats    = Data.PageStats;
+            string adoWikiUri   = "https://dev.azure.com/adoOrg/adoProject/_wiki/wikis/wikiName";
+            string adoPatEnvVar = string.Empty;
+            int    days         = 30;
+
             // Arrange simulations
             var timeline = new SimulatedTimeline();
-            var adoApi   = new SimulatedAdoApi();
+            var adoApi   = new SimulatedAdoApi(pageStats);
 
             // Arrange SUT declaration
             var sut = new PageViewsStatsReportWriteOperation(
@@ -32,13 +30,16 @@ namespace Wikitools.Tests
                 adoApi,
                 adoWikiUri,
                 adoPatEnvVar,
-                adoWikiPageViewsForDays);
+                days);
 
             // Arrange expectations
             var expected = new TabularData(
-                Description: string.Format(PageViewsStatsReport.DescriptionFormat, logDays, timeline.UtcNow, wikiPagesCount),
+                Description: string.Format(PageViewsStatsReport.DescriptionFormat,
+                    days,
+                    timeline.UtcNow,
+                    pageStats.Count),
                 HeaderRow: PageViewsStatsReport.HeaderRowLabels,
-                Rows: Data.Expectation[wikiStats] as List<List<object>>);
+                Rows: Data.Expectation[pageStats] as List<List<object>>);
 
             await Verify(sut, expected);
         }

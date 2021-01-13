@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Wikitools.AzureDevOps;
 using Wikitools.Lib.Git;
 
 namespace Wikitools.Tests
@@ -25,15 +26,23 @@ namespace Wikitools.Tests
             new() { 3, "AuthorA", 600, 60 }
         };
 
-
-        private static readonly List<List<object>> EmptyRows = new()
+        public static readonly List<WikiPageStats> PageStats = new()
         {
+            // kja increase the data size. Make sure to provide more entries than day count, and make the AdoApi simulation cut out the extra days
+            new WikiPageStats("/Home", new List<int> { 1, 20 })
         };
+
+        private static readonly List<List<object>> PageViewsStatsReportRows = new()
+        {
+            new() { 1, "/Home", 21 },
+        };
+
+        private static readonly List<List<object>> EmptyRows = new();
 
         public static readonly Dictionary<object, object> Expectation = new()
         {
             [ChangesStats] = GitAuthorsStatsReportRows,
-            [string.Empty] = EmptyRows
+            [PageStats] = PageViewsStatsReportRows,
         };
     }
 }
