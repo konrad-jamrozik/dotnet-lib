@@ -24,7 +24,7 @@ namespace Wikitools.Lib
 
             async Task<List<List<object>>> Rows()
             {
-                var changesStats = await gitLog.GetChangesStats();
+                var changesStats = await gitLog.GetAuthorChangesStats();
 
                 List<GitAuthorChangeStats> authorsStatsOrdered = 
                     changesStats.SumByAuthor()

@@ -16,7 +16,7 @@ namespace Wikitools.Lib.Git
             _days = days;
         }
 
-        public async Task<List<GitAuthorChangeStats>> GetChangesStats()
+        public async Task<List<GitAuthorChangeStats>> GetAuthorChangesStats()
         {
             // Reference:
             // https://git-scm.com/docs/git-log#_commit_limiting
