@@ -7,18 +7,9 @@ using Wikitools.Lib.Primitives;
 
 namespace Wikitools.Lib.Tables
 {
-    public class MarkdownTable
+    public record MarkdownTable(ITabularData Data)
     {
-        public readonly ITabularData Data;
-
-        public MarkdownTable(ITabularData data)
-        {
-            Data = data;
-        }
-
-        public MarkdownTable(StringWriter sw) : this(TabularData(sw.GetStringBuilder().ToString()))
-        {
-        }
+        public MarkdownTable(StringWriter sw) : this(TabularData(sw.GetStringBuilder().ToString())) { }
 
         private static TabularData TabularData(string str)
         {
@@ -30,7 +21,7 @@ namespace Wikitools.Lib.Tables
             // assert: lines[3] is HeaderDelimiterRow();
             // assert: line[-1] is an empty line;
             var rowLines = lines.Skip(4).SkipLast(1);
-            
+
             var tabularData = new TabularData(
                 Description: description,
                 HeaderRow: UnwrapFromMarkdown(headerRowLine),
@@ -48,17 +39,17 @@ namespace Wikitools.Lib.Tables
 
         public async Task WriteAsync(TextWriter textWriter)
         {
-            var description = await Data.GetDescription();
+            var description   = await Data.GetDescription();
             var dataHeaderRow = Data.HeaderRow;
-            var dataRows = await Data.GetRows();
+            var dataRows      = await Data.GetRows();
 
-            var headerRow = WrapInMarkdown(dataHeaderRow);
+            var headerRow          = WrapInMarkdown(dataHeaderRow);
             var headerDelimiterRow = HeaderDelimiterRow();
-            var rows = dataRows.Select(WrapInMarkdown);
+            var rows               = dataRows.Select(WrapInMarkdown);
 
             var rowsToWrite = new List<string>
             {
-                headerRow, 
+                headerRow,
                 headerDelimiterRow
             }.Union(rows);
 
@@ -67,8 +58,8 @@ namespace Wikitools.Lib.Tables
             rowsToWrite.ToList().ForEach(async row => await textWriter.WriteLineAsync(row));
         }
 
-        private string HeaderDelimiterRow() 
-            => string.Join("-", Enumerable.Repeat("|", Data.HeaderRow.Count + 1 ));
+        private string HeaderDelimiterRow()
+            => string.Join("-", Enumerable.Repeat("|", Data.HeaderRow.Count + 1));
 
         private static string WrapInMarkdown(List<object> row)
             => row.Aggregate("|", (@out, col) => @out + " " + col + " |");
