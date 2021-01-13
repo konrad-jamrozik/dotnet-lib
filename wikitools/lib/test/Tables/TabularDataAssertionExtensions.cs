@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using System.Threading.Tasks;
 using Wikitools.Lib.Json;
@@ -26,7 +27,7 @@ namespace Wikitools.Lib.Tests.Tables
         {
             var jsonDiff = new JsonDiff(expected, actual);
             Assert.True(jsonDiff.IsEmpty,
-                $"The expected baseline is different than actual target. Diff:\r\n{jsonDiff}");
+                $"The expected baseline is different than actual target. Diff:{Environment.NewLine}{jsonDiff}");
         }
     }
 }
