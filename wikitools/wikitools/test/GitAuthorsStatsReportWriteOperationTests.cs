@@ -24,7 +24,7 @@ namespace Wikitools.Tests
 
             // Arrange simulations
             var timeline = new SimulatedTimeline();
-            var os = new SimulatedOS(new GitLogSimulation(changesStats, logDays));
+            var os = new SimulatedOS(new SimulatedGitLog(changesStats, logDays));
 
             // Arrange SUT declaration
             var sut = new GitAuthorsStatsReportWriteOperation(

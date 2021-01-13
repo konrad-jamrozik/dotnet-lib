@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.TeamFoundation.Wiki.WebApi;
 using Wikitools.Lib.Primitives;
 using Wikitools.Lib.Tables;
 
@@ -20,20 +18,19 @@ namespace Wikitools.AzureDevOps
 
         public PageViewsStatsReport(ITimeline timeline, AdoWiki adoWiki, int days)
         {
-            _rows = new AsyncLazy<List<List<object>>>(Rows);
             _timeline = timeline;
             _days = days;
-            _pagesStats = new AsyncLazy<List<IWikiPageStats>>(
-                async () => await adoWiki.GetPagesStats());
+            _pagesStats = new AsyncLazy<List<IWikiPageStats>>(async () => await adoWiki.GetPagesStats());
+            _rows = new AsyncLazy<List<List<object>>>(Rows);
 
             async Task<List<List<object>>> Rows()
             {
                 List<IWikiPageStats> pagesStats = await _pagesStats.Value;
 
                 List<(string path, int views)> pathsStats = pagesStats
-                    .Select(pageStats => 
+                    .Select(pageStats =>
                         (
-                            path: pageStats.Path, 
+                            path: pageStats.Path,
                             views: pageStats.DayViewCounts.Sum()
                         )
                     )
@@ -42,7 +39,7 @@ namespace Wikitools.AzureDevOps
                     .ToList();
 
                 List<List<object>> rows = Enumerable.Range(0, pathsStats.Count)
-                    .Select(i => new List<object> {$"{i + 1}", pathsStats[i].path, pathsStats[i].views})
+                    .Select(i => new List<object> { $"{i + 1}", pathsStats[i].path, pathsStats[i].views })
                     .ToList();
 
                 return rows;
@@ -53,6 +50,7 @@ namespace Wikitools.AzureDevOps
             _days,
             _timeline.UtcNow,
             (await _pagesStats.Value).Count);
+
         public List<object> HeaderRow => HeaderRowLabels;
         public Task<List<List<object>>> GetRows() => _rows.Value;
     }
