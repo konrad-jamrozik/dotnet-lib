@@ -100,7 +100,7 @@ namespace Wikitools.Lib.Tests.Json
                                        $"Baseline     : {baseline}" + Environment.NewLine +
                                        $"Target       : {target}" + Environment.NewLine +
                                        $"Expected diff: {expectedDiff}." + Environment.NewLine +
-                                       $"Actual   diff: {actualDiff}";
+                                       $"Actual   diff: {actualDiffStr}";
                 exceptionMessage = exceptionMessage.Replace('"', '\'');
                 throw new XunitException(exceptionMessage);
             }

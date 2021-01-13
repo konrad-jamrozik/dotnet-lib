@@ -28,13 +28,20 @@ namespace Wikitools.Tests
 
         public static readonly List<WikiPageStats> PageStats = new()
         {
-            // kja increase the data size. Make sure to provide more entries than day count, and make the AdoApi simulation cut out the extra days
-            new WikiPageStats("/Home", new List<int> { 1, 20 })
+            new WikiPageStats("/Home", new List<int> { 1, 20, 0, 0 }),
+            new WikiPageStats("/Foo", new List<int> { 60, 0, 8, 0 }),
+            new WikiPageStats("/Foo/Bar", new List<int> { 6, 8, 0, 0 }),
+            new WikiPageStats("/Foo/Baz", new List<int> { 0, 0, 80, 100 }),
+            new WikiPageStats("/Qux/Quux/Quuz", new List<int> { 7, 7, 7, 7 })
         };
 
         private static readonly List<List<object>> PageViewsStatsReportRows = new()
         {
-            new() { 1, "/Home", 21 },
+            new() { 1, "/Foo/Baz", 180 },
+            new() { 2, "/Foo", 68 },
+            new() { 3, "/Qux/Quux/Quuz", 28 },
+            new() { 4, "/Home", 21 },
+            new() { 5, "/Foo/Bar", 14 }
         };
 
         private static readonly List<List<object>> EmptyRows = new();
