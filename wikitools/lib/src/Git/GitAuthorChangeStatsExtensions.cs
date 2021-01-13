@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace Wikitools.Lib.Git
 {
-    public static class GitChangeStatsExtensions
+    public static class GitAuthorChangeStatsExtensions
     {
         public static List<GitAuthorChangeStats> SumByAuthor(this List<GitAuthorChangeStats> changesStats)
         {
@@ -25,7 +25,7 @@ namespace Wikitools.Lib.Git
                 return new List<string> {authorLine, string.Empty, statsLine};
             }).ToList();
 
-        public static GitAuthorChangeStats ToGitChangeStats(this (string author, string stats) gitLogStdOutLinesEntry)
+        public static GitAuthorChangeStats ToGitAuthorChangeStats(this (string author, string stats) gitLogStdOutLinesEntry)
         {
             var statsStrings =
                 gitLogStdOutLinesEntry.stats

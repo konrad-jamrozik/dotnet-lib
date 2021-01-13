@@ -38,7 +38,7 @@ namespace Wikitools.Lib.Git
                 (
                     author: stdOutLines[index * 2],
                     stats: stdOutLines[index * 2 + 1]
-                ).ToGitChangeStats())
+                ).ToGitAuthorChangeStats())
                 .ToList();
 
             return changesStats;
