@@ -20,18 +20,17 @@ namespace Wikitools.AzureDevOps
             _pageViewsForDays = pageViewsForDays;
         }
 
-        internal async Task<List<WikiPageDetail>> GetPagesDetails()
+        internal async Task<List<IWikiPageStats>> GetPagesStats()
         {
             if (!(_pageViewsForDays > 0))
                 throw new ArgumentOutOfRangeException(nameof(_pageViewsForDays),
-                    $"Expected value > 0; got {_pageViewsForDays}");
+                    $"Expected value > 0; value = {_pageViewsForDays}");
             if (!(_pageViewsForDays <= 30))
                 throw new ArgumentOutOfRangeException(nameof(_pageViewsForDays),
-                    $"Expected value <= 30 as this is the ADO API limit; got {_pageViewsForDays}");
+                    $"Expected value <= 30 as this is the ADO API limit; value = {_pageViewsForDays}");
 
-
-            List<WikiPageDetail> wikiPagesDetails = await _adoApi.GetWikiPagesDetails(_adoWikiUri, _patEnvVar, _pageViewsForDays);
-            return wikiPagesDetails;
+            List<IWikiPageStats> pagesStats = await _adoApi.GetWikiPagesStats(_adoWikiUri, _patEnvVar, _pageViewsForDays);
+            return pagesStats;
         }
 
     }

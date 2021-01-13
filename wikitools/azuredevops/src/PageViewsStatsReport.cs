@@ -16,25 +16,25 @@ namespace Wikitools.AzureDevOps
         private readonly AsyncLazy<List<List<object>>> _rows;
         private readonly ITimeline _timeline;
         private readonly int _days;
-        private readonly AsyncLazy<List<WikiPageDetail>> _pagesDetails;
+        private readonly AsyncLazy<List<IWikiPageStats>> _pagesStats;
 
         public PageViewsStatsReport(ITimeline timeline, AdoWiki adoWiki, int days)
         {
             _rows = new AsyncLazy<List<List<object>>>(Rows);
             _timeline = timeline;
             _days = days;
-            _pagesDetails = new AsyncLazy<List<WikiPageDetail>>(
-                async () => await adoWiki.GetPagesDetails());
+            _pagesStats = new AsyncLazy<List<IWikiPageStats>>(
+                async () => await adoWiki.GetPagesStats());
 
             async Task<List<List<object>>> Rows()
             {
-                List<WikiPageDetail> pagesDetails = await _pagesDetails.Value;
+                List<IWikiPageStats> pagesStats = await _pagesStats.Value;
 
-                List<(string path, int views)> pathsStats = pagesDetails
-                    .Select(wikiPageDetail => 
+                List<(string path, int views)> pathsStats = pagesStats
+                    .Select(pageStats => 
                         (
-                            path: wikiPageDetail.Path, 
-                            views: wikiPageDetail.ViewStats?.Sum(stat => stat.Count) ?? 0
+                            path: pageStats.Path, 
+                            views: pageStats.DayViewCounts.Sum()
                         )
                     )
                     .Where(stat => stat.views > 0)
@@ -52,7 +52,7 @@ namespace Wikitools.AzureDevOps
         public async Task<string> GetDescription() => string.Format(DescriptionFormat,
             _days,
             _timeline.UtcNow,
-            (await _pagesDetails.Value).Count);
+            (await _pagesStats.Value).Count);
         public List<object> HeaderRow => HeaderRowLabels;
         public Task<List<List<object>>> GetRows() => _rows.Value;
     }

@@ -26,9 +26,9 @@ namespace Wikitools
             var pageViewsStatsReportWriteOperation = new PageViewsStatsReportWriteOperation(
                 timeline,
                 adoApi,
-                wikiUri: cfg.AdoWikiUri,
-                patEnvVar: cfg.AdoPatEnvVar,
-                pageViewsForDays: cfg.AdoWikiPageViewsForDays);
+                cfg.AdoWikiUri,
+                cfg.AdoPatEnvVar,
+                cfg.AdoWikiPageViewsForDays);
 
             await authorsStatsReportWriteOperation.ExecuteAsync(Console.Out);
             await pageViewsStatsReportWriteOperation.ExecuteAsync(Console.Out);

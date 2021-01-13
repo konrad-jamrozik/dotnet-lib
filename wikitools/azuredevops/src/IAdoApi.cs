@@ -6,6 +6,6 @@ namespace Wikitools.AzureDevOps
 {
     public interface IAdoApi
     {
-        Task<List<WikiPageDetail>> GetWikiPagesDetails(AdoWikiUri adoWikiUri, string patEnvVar, int pageViewsForDays);
+        Task<List<IWikiPageStats>> GetWikiPagesStats(AdoWikiUri adoWikiUri, string patEnvVar, int pageViewsForDays);
     }
 }

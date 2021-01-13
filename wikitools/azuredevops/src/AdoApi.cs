@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.TeamFoundation.Wiki.WebApi;
 using Microsoft.TeamFoundation.Wiki.WebApi.Contracts;
@@ -10,14 +11,17 @@ namespace Wikitools.AzureDevOps
 {
     public class AdoApi : IAdoApi
     {
-        public async Task<List<WikiPageDetail>> GetWikiPagesDetails(
+        public async Task<List<IWikiPageStats>> GetWikiPagesStats(
             AdoWikiUri adoWikiUri,
             string patEnvVar,
             int pageViewsForDays)
         {
             var wikiHttpClient   = WikiHttpClient(adoWikiUri, patEnvVar);
             var wikiPagesDetails = await GetAllWikiPagesDetails(adoWikiUri, pageViewsForDays, wikiHttpClient);
-            return wikiPagesDetails;
+            var wikiPagesStats = wikiPagesDetails
+                .Select(pageDetail => new WikiPageStats(pageDetail))
+                .Cast<IWikiPageStats>();
+            return wikiPagesStats.ToList();
         }
 
         private static WikiHttpClient WikiHttpClient(AdoWikiUri adoWikiUri, string patEnvVar)

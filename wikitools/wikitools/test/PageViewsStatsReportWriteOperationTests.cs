@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using Wikitools.AzureDevOps;
-using Wikitools.Lib.Git;
 using Wikitools.Lib.Json;
 using Wikitools.Lib.Primitives;
 using Wikitools.Lib.Tables;
