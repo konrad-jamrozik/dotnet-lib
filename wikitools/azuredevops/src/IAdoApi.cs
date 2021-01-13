@@ -1,11 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.TeamFoundation.Wiki.WebApi;
 
 namespace Wikitools.AzureDevOps
 {
     public interface IAdoApi
     {
-        Task<List<IWikiPageStats>> GetWikiPagesStats(AdoWikiUri adoWikiUri, string patEnvVar, int pageViewsForDays);
+        Task<List<WikiPageStats>> GetWikiPagesStats(AdoWikiUri adoWikiUri, string patEnvVar, int pageViewsForDays);
     }
 }

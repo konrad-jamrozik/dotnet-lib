@@ -25,6 +25,7 @@ namespace Wikitools.Tests
             new() { 3, "AuthorA", 600, 60 }
         };
 
+
         private static readonly List<List<object>> EmptyRows = new()
         {
         };

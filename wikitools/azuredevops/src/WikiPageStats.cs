@@ -4,7 +4,7 @@ using Microsoft.TeamFoundation.Wiki.WebApi;
 
 namespace Wikitools.AzureDevOps
 {
-    public class WikiPageStats : IWikiPageStats
+    public class WikiPageStats
     {
         public WikiPageStats(WikiPageDetail pageDetail)
         {

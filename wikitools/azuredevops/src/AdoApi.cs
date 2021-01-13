@@ -11,7 +11,7 @@ namespace Wikitools.AzureDevOps
 {
     public class AdoApi : IAdoApi
     {
-        public async Task<List<IWikiPageStats>> GetWikiPagesStats(
+        public async Task<List<WikiPageStats>> GetWikiPagesStats(
             AdoWikiUri adoWikiUri,
             string patEnvVar,
             int pageViewsForDays)
@@ -20,7 +20,7 @@ namespace Wikitools.AzureDevOps
             var wikiPagesDetails = await GetAllWikiPagesDetails(adoWikiUri, pageViewsForDays, wikiHttpClient);
             var wikiPagesStats = wikiPagesDetails
                 .Select(pageDetail => new WikiPageStats(pageDetail))
-                .Cast<IWikiPageStats>();
+                .Cast<WikiPageStats>();
             return wikiPagesStats.ToList();
         }
 
