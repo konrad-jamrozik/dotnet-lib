@@ -5,6 +5,7 @@ using Wikitools.Lib;
 using Wikitools.Lib.OS;
 using Wikitools.Lib.Primitives;
 using Wikitools.Lib.Tables;
+using static Wikitools.Declare;
 
 namespace Wikitools
 {
@@ -18,15 +19,15 @@ namespace Wikitools
             var os       = new WindowsOS();
             var adoApi   = new AdoApi();
 
-            var gitLog = Declare.GitLog(os, cfg.GitRepoClonePath, cfg.GitExecutablePath, cfg.GitLogDays);
-            var wiki   = Declare.Wiki(adoApi, cfg.AdoWikiUri, cfg.AdoPatEnvVar, cfg.AdoWikiPageViewsForDays);
+            var gitLog = GitLog(os, cfg.GitRepoClonePath, cfg.GitExecutablePath, cfg.GitLogDays);
+            var wiki   = Wiki(adoApi, cfg.AdoWikiUri, cfg.AdoPatEnvVar, cfg.AdoWikiPageViewsForDays);
 
             var gitAuthorsReport = new GitAuthorsStatsReport(timeline, gitLog, cfg.GitLogDays);
             var gitFilesReport   = new GitFilesStatsReport(timeline, gitLog, cfg.GitLogDays);
             var pageViewsReport  = new PageViewsStatsReport(timeline, wiki, cfg.AdoWikiPageViewsForDays);
 
             await new MarkdownTable(gitAuthorsReport).WriteAsync(Console.Out);
-            await new MarkdownTable(gitFilesReport).WriteAsync(Console.Out);
+            await new MarkdownTable(gitFilesReport).WriteAsync(Console.Out); // kja write tests for this
             await new MarkdownTable(pageViewsReport).WriteAsync(Console.Out);
         }
     }

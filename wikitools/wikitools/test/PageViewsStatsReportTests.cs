@@ -4,6 +4,7 @@ using Wikitools.AzureDevOps;
 using Wikitools.Lib.Primitives;
 using Wikitools.Lib.Tables;
 using Xunit;
+using static Wikitools.Declare;
 using static Wikitools.Lib.Tests.Tables.TabularDataAssertionExtensions;
 
 namespace Wikitools.Tests
@@ -24,7 +25,7 @@ namespace Wikitools.Tests
             var adoApi   = new SimulatedAdoApi(pageStats);
 
             // Arrange SUT declaration
-            var wiki = Declare.Wiki(adoApi, wikiUri, patEnvVar, pageViewsForDays);
+            var wiki = Wiki(adoApi, wikiUri, patEnvVar, pageViewsForDays);
             var sut  = new PageViewsStatsReport(timeline, wiki, pageViewsForDays);
 
             // Arrange expectations

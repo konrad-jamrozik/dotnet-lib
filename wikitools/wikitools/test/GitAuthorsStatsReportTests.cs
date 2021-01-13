@@ -6,6 +6,7 @@ using Wikitools.Lib.OS;
 using Wikitools.Lib.Primitives;
 using Wikitools.Lib.Tables;
 using Xunit;
+using static Wikitools.Declare;
 using static Wikitools.Lib.Tests.Tables.TabularDataAssertionExtensions;
 
 namespace Wikitools.Tests
@@ -26,7 +27,7 @@ namespace Wikitools.Tests
             var os       = new SimulatedOS(new SimulatedGitLog(changesStats, logDays));
 
             // Arrange SUT declaration
-            var gitLog = Declare.GitLog(os, gitRepoDirPath, gitExecutablePath, logDays);
+            var gitLog = GitLog(os, gitRepoDirPath, gitExecutablePath, logDays);
             var sut    = new GitAuthorsStatsReport(timeline, gitLog, logDays);
 
             // Arrange expectations
