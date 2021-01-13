@@ -30,15 +30,15 @@ namespace Wikitools.Lib.Git
             stdOutLines.RemoveAll(string.IsNullOrWhiteSpace);
             RemoveLogEntriesWithNoLineChanges(stdOutLines);
 
-            // Assert that for each commit log there are two lines: one with author, one with stats.
+            // Assert that for each commit log there are two lines (one with author, one with stats).
             Debug.Assert(stdOutLines.Count % 2 == 0);
 
             List<GitChangeStats> changesStats = Enumerable.Range(0, stdOutLines.Count / 2)
-                .Select(index => 
-                    (
-                        author: stdOutLines[index * 2],
-                        stats: stdOutLines[index * 2 + 1]
-                    ).ToGitChangeStats())
+                .Select(index =>
+                (
+                    author: stdOutLines[index * 2],
+                    stats: stdOutLines[index * 2 + 1]
+                ).ToGitChangeStats())
                 .ToList();
 
             return changesStats;
@@ -48,7 +48,7 @@ namespace Wikitools.Lib.Git
         {
             for (var i = 0; i < stdOutLines.Count; i++)
             {
-                if (i % 2 == 0) // Author line
+                if (i % 2 == 0) // assert: If true, stdOutLines[i] is an Author line
                     // Known limitation: ArgumentOutOfRangeException on empty log.
                     if (!(stdOutLines[i + 1].Contains("(+)") || stdOutLines[i + 1].Contains("(-)")))
                     {
