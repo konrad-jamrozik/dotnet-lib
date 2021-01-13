@@ -6,7 +6,7 @@ namespace Wikitools.Tests
 {
     public static class Data
     {
-        public static readonly List<GitChangeStats> ChangesStats = new()
+        public static readonly List<GitAuthorChangeStats> ChangesStats = new()
         {
             new("AuthorA", 1, 100, 10),
             new("AuthorC", 4, 2000, 22),

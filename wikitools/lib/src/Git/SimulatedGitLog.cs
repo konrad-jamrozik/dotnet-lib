@@ -5,10 +5,10 @@ namespace Wikitools.Lib.Git
 {
     public class SimulatedGitLog : IProcessSimulationSpec
     {
-        private readonly List<GitChangeStats> _changesStats;
+        private readonly List<GitAuthorChangeStats> _changesStats;
         private readonly int _sinceDays;
 
-        public SimulatedGitLog(List<GitChangeStats> changesStats, int sinceDays)
+        public SimulatedGitLog(List<GitAuthorChangeStats> changesStats, int sinceDays)
         {
             _changesStats = changesStats;
             _sinceDays = sinceDays;

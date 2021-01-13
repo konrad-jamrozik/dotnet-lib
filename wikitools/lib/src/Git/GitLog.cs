@@ -16,7 +16,7 @@ namespace Wikitools.Lib.Git
             _days = days;
         }
 
-        public async Task<List<GitChangeStats>> GetChangesStats()
+        public async Task<List<GitAuthorChangeStats>> GetChangesStats()
         {
             // Reference:
             // https://git-scm.com/docs/git-log#_commit_limiting
@@ -33,7 +33,7 @@ namespace Wikitools.Lib.Git
             // Assert that for each commit log there are two lines (one with author, one with stats).
             Debug.Assert(stdOutLines.Count % 2 == 0);
 
-            List<GitChangeStats> changesStats = Enumerable.Range(0, stdOutLines.Count / 2)
+            List<GitAuthorChangeStats> changesStats = Enumerable.Range(0, stdOutLines.Count / 2)
                 .Select(index =>
                 (
                     author: stdOutLines[index * 2],

@@ -1,6 +1,6 @@
 namespace Wikitools.Lib.Git
 {
-    public record GitChangeStats(
+    public record GitAuthorChangeStats(
         string Author,
         int FilesChanged,
         int Insertions,

@@ -5,10 +5,10 @@ namespace Wikitools.Lib.Git
 {
     public static class GitChangeStatsExtensions
     {
-        public static List<GitChangeStats> SumByAuthor(this List<GitChangeStats> changesStats)
+        public static List<GitAuthorChangeStats> SumByAuthor(this List<GitAuthorChangeStats> changesStats)
         {
             var statsByAuthor = changesStats.GroupBy(log => log.Author);
-            var statsSumByAuthor = statsByAuthor.Select(authorStats => new GitChangeStats(
+            var statsSumByAuthor = statsByAuthor.Select(authorStats => new GitAuthorChangeStats(
                 authorStats.Key,
                 authorStats.Sum(log => log.FilesChanged), 
                 authorStats.Sum(log => log.Insertions),
@@ -16,7 +16,7 @@ namespace Wikitools.Lib.Git
             return statsSumByAuthor.ToList();
         }
 
-        public static List<string> FromGitLogStdOutLines(this List<GitChangeStats> changesStats) =>
+        public static List<string> FromGitLogStdOutLines(this List<GitAuthorChangeStats> changesStats) =>
             changesStats.SelectMany(stats =>
             {
                 string authorLine = stats.Author;
@@ -25,7 +25,7 @@ namespace Wikitools.Lib.Git
                 return new List<string> {authorLine, string.Empty, statsLine};
             }).ToList();
 
-        public static GitChangeStats ToGitChangeStats(this (string author, string stats) gitLogStdOutLinesEntry)
+        public static GitAuthorChangeStats ToGitChangeStats(this (string author, string stats) gitLogStdOutLinesEntry)
         {
             var statsStrings =
                 gitLogStdOutLinesEntry.stats
@@ -33,7 +33,7 @@ namespace Wikitools.Lib.Git
                     .Select(stat => stat.Trim())
                     .ToArray();
 
-            return new GitChangeStats(
+            return new GitAuthorChangeStats(
                 gitLogStdOutLinesEntry.author, 
                 Stat(statsStrings, "file"),
                 Stat(statsStrings, "(+)"),

@@ -26,7 +26,7 @@ namespace Wikitools.Lib
             {
                 var changesStats = await gitLog.GetChangesStats();
 
-                List<GitChangeStats> authorsStatsOrdered = 
+                List<GitAuthorChangeStats> authorsStatsOrdered = 
                     changesStats.SumByAuthor()
                     .OrderByDescending(authorStats => authorStats.Insertions + authorStats.Deletions)
                     .ToList();
