@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -17,8 +18,11 @@ namespace Wikitools.Lib.Git
 
         public static GitFileChangeStats ToGitFileChangeStats(this string gitLogStdOutLine)
         {
-            // kja to implement
-            return new GitFileChangeStats("", 0, 0);
+            var split      = gitLogStdOutLine.Split('\t');
+            var insertions = int.Parse(split[0].Replace("-", "0"));
+            var deletions  = int.Parse(split[1].Replace("-", "0"));
+            var filePath   = split[2];
+            return new GitFileChangeStats(filePath, insertions, deletions);
         }
     }
 }

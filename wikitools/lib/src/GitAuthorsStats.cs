@@ -16,7 +16,7 @@ namespace Wikitools.Lib
         private readonly int _days;
         private readonly AsyncLazy<List<List<object>>> _rows;
 
-        public GitAuthorsStatsReport(ITimeline timeline, int days, GitLog gitLog)
+        public GitAuthorsStatsReport(ITimeline timeline, GitLog gitLog, int days)
         {
             _timeline = timeline;
             _days = days;

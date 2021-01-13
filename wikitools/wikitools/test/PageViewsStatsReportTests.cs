@@ -9,33 +9,29 @@ using Xunit;
 
 namespace Wikitools.Tests
 {
-    public class PageViewsStatsReportWriteOperationTests
+    public class PageViewsStatsReportTests
     {
         [Fact]
-        public async Task PageViewsStatsReportWriteOperationSucceeds()
+        public async Task Reports()
         {
             // Arrange inputs
-            var pageStats    = Data.PageStats;
-            var adoWikiUri   = "https://dev.azure.com/adoOrg/adoProject/_wiki/wikis/wikiName";
-            var adoPatEnvVar = string.Empty;
-            var days         = 30;
+            var pageStats        = Data.PageStats;
+            var wikiUri          = "https://dev.azure.com/adoOrg/adoProject/_wiki/wikis/wikiName";
+            var patEnvVar        = string.Empty;
+            var pageViewsForDays = 30;
 
             // Arrange simulations
             var timeline = new SimulatedTimeline();
             var adoApi   = new SimulatedAdoApi(pageStats);
 
             // Arrange SUT declaration
-            var sut = new PageViewsStatsReportWriteOperation(
-                timeline,
-                adoApi,
-                adoWikiUri,
-                adoPatEnvVar,
-                days);
+            var wiki = Declare.Wiki(adoApi, wikiUri, patEnvVar, pageViewsForDays);
+            var sut  = new PageViewsStatsReport(timeline, wiki, pageViewsForDays);
 
             // Arrange expectations
             var expected = new TabularData(
                 Description: string.Format(PageViewsStatsReport.DescriptionFormat,
-                    days,
+                    pageViewsForDays,
                     timeline.UtcNow,
                     pageStats.Count),
                 HeaderRow: PageViewsStatsReport.HeaderRowLabels,
@@ -45,16 +41,16 @@ namespace Wikitools.Tests
         }
 
         // kja deduplicate with the other op test; add interface for op
-        private static async Task Verify(PageViewsStatsReportWriteOperation sut, TabularData expected) =>
+        private static async Task Verify(ITabularData sut, TabularData expected) =>
             AssertNoDiffBetween(expected, await Act(sut));
 
-        private static async Task<TabularData> Act(PageViewsStatsReportWriteOperation sut)
+        private static async Task<TabularData> Act(ITabularData sut)
         {
             // Arrange output sink
             await using var sw = new StringWriter();
 
             // Act
-            await sut.ExecuteAsync(sw);
+            await new MarkdownTable(sut).WriteAsync(sw);
 
             return (TabularData) new MarkdownTable(sw).Data;
         }

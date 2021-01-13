@@ -11,28 +11,24 @@ using Xunit;
 
 namespace Wikitools.Tests
 {
-    public class GitAuthorsStatsReportWriteOperationTests
+    public class GitAuthorsStatsReportTests
     {
         [Fact]
-        public async Task GitAuthorsStatsReportWriteOperationSucceeds()
+        public async Task Reports()
         {
             // Arrange inputs
-            var changesStats = Data.ChangesStats;
-            var logDays = 15;
+            var changesStats      = Data.ChangesStats;
+            var logDays           = 15;
             var gitExecutablePath = @"C:\Program Files\Git\bin\sh.exe";
-            var gitRepoDirPath = @"C:\Users\fooUser\barRepo";
+            var gitRepoDirPath    = @"C:\Users\fooUser\barRepo";
 
             // Arrange simulations
             var timeline = new SimulatedTimeline();
-            var os = new SimulatedOS(new SimulatedGitLog(changesStats, logDays));
+            var os       = new SimulatedOS(new SimulatedGitLog(changesStats, logDays));
 
             // Arrange SUT declaration
-            var sut = new GitAuthorsStatsReportWriteOperation(
-                timeline,
-                os,
-                gitRepoDirPath,
-                gitExecutablePath,
-                logDays);
+            var gitLog = Declare.GitLog(os, gitRepoDirPath, gitExecutablePath, logDays);
+            var sut    = new GitAuthorsStatsReport(timeline, gitLog, logDays);
 
             // Arrange expectations
             var expected = new TabularData(
@@ -43,16 +39,16 @@ namespace Wikitools.Tests
             await Verify(sut, expected);
         }
 
-        private static async Task Verify(GitAuthorsStatsReportWriteOperation sut, TabularData expected) =>
+        private static async Task Verify(ITabularData sut, TabularData expected) =>
             AssertNoDiffBetween(expected, await Act(sut));
 
-        private static async Task<TabularData> Act(GitAuthorsStatsReportWriteOperation sut)
+        private static async Task<TabularData> Act(ITabularData sut)
         {
             // Arrange output sink
             await using var sw = new StringWriter();
 
             // Act
-            await sut.ExecuteAsync(sw);
+            await new MarkdownTable(sut).WriteAsync(sw);
 
             return (TabularData) new MarkdownTable(sw).Data;
         }
@@ -60,7 +56,8 @@ namespace Wikitools.Tests
         private static void AssertNoDiffBetween(TabularData expected, TabularData actual)
         {
             var jsonDiff = new JsonDiff(expected, actual);
-            Assert.True(jsonDiff.IsEmpty, $"The expected baseline is different than actual target. Diff:\r\n{jsonDiff}");
+            Assert.True(jsonDiff.IsEmpty,
+                $"The expected baseline is different than actual target. Diff:\r\n{jsonDiff}");
         }
     }
 }
