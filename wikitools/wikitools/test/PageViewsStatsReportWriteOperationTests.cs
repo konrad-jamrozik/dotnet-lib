@@ -15,10 +15,10 @@ namespace Wikitools.Tests
         public async Task PageViewsStatsReportWriteOperationSucceeds()
         {
             // Arrange inputs
-            var    pageStats    = Data.PageStats;
-            string adoWikiUri   = "https://dev.azure.com/adoOrg/adoProject/_wiki/wikis/wikiName";
-            string adoPatEnvVar = string.Empty;
-            int    days         = 30;
+            var pageStats    = Data.PageStats;
+            var adoWikiUri   = "https://dev.azure.com/adoOrg/adoProject/_wiki/wikis/wikiName";
+            var adoPatEnvVar = string.Empty;
+            var days         = 30;
 
             // Arrange simulations
             var timeline = new SimulatedTimeline();
@@ -62,7 +62,8 @@ namespace Wikitools.Tests
         private static void AssertNoDiffBetween(TabularData expected, TabularData actual)
         {
             var jsonDiff = new JsonDiff(expected, actual);
-            Assert.True(jsonDiff.IsEmpty, $"The expected baseline is different than actual target. Diff:\r\n{jsonDiff}");
+            Assert.True(jsonDiff.IsEmpty,
+                $"The expected baseline is different than actual target. Diff:\r\n{jsonDiff}");
         }
     }
 }
