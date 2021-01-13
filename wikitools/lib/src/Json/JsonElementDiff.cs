@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Linq;
+using System.Net.Sockets;
 using System.Text.Json;
 // For explanation of this alias, please see comment on Wikitools.Lib.Json.JsonElementDiff.Value.
 using DiffObject = System.Object;
@@ -29,16 +30,16 @@ namespace Wikitools.Lib.Json
             [ComparisonResult.MissingFromTarget] = "-"
         };
 
-        private readonly Lazy<DiffObject> _diff;
+        private readonly Lazy<DiffObject?> _diff;
 
         public JsonElementDiff(JsonDocument baseline, JsonDocument target)
         {
-            _diff = new Lazy<DiffObject>(() => Diff(baseline, target));
+            _diff = new Lazy<DiffObject?>(() => Diff(baseline, target));
 
-            DiffObject Diff(JsonDocument baseline, JsonDocument target)
+            DiffObject? Diff(JsonDocument baseline, JsonDocument target)
             {
                 var discardedPropName = string.Empty;
-                (string name, DiffObject value) diff = 
+                (string name, DiffObject? value) diff = 
                     ComputePropertyDiff(discardedPropName, baseline.RootElement, target.RootElement);
 
                 return diff.value;
@@ -62,11 +63,11 @@ namespace Wikitools.Lib.Json
         ///
         /// To actually obtain JsonElement from this Value, cf. Wikitools.Lib.Json.JsonDiff.JsonElement
         /// </remarks>
-        public DiffObject Value => _diff.Value;
+        public DiffObject? Value => _diff.Value;
 
-        private static (string name, DiffObject value) ComputePropertyDiff(string name, JsonElement baseline, JsonElement target)
+        private static (string name, DiffObject? value) ComputePropertyDiff(string name, JsonElement baseline, JsonElement target)
         {
-            (ComparisonResult res, string msg) = CompareElements(baseline, target);
+            (ComparisonResult res, string? msg) = CompareElements(baseline, target);
 
             return res switch
             {
@@ -77,7 +78,7 @@ namespace Wikitools.Lib.Json
             };
         }
 
-        private static (ComparisonResult res, string msg) CompareElements(JsonElement baseline, JsonElement target)
+        private static (ComparisonResult res, string? msg) CompareElements(JsonElement baseline, JsonElement target)
         {
             const ComparisonResult eql = ComparisonResult.Equal;
             const ComparisonResult neq = ComparisonResult.NotEqual;
@@ -111,7 +112,7 @@ namespace Wikitools.Lib.Json
             };
         }
 
-        private static IDictionary<string, DiffObject> ComputeElementsDiffRecursively(JsonElement baseline, JsonElement target)
+        private static IDictionary<string, DiffObject>? ComputeElementsDiffRecursively(JsonElement baseline, JsonElement target)
         {
             var baselineValueKind = baseline.ValueKind;
 
@@ -137,7 +138,10 @@ namespace Wikitools.Lib.Json
 
             var intersecting = propsShared
                 .Select(propName => ComputePropertyDiff(propName, baselineProps[propName].Value, targetProps[propName].Value))
-                .Where(diff => diff.value is not null);
+                .Where(diff => diff.value is not null)
+                // ReSharper disable once RedundantEnumerableCastCall
+                // - Actually needed to satisfy nullability analysis
+                .Cast<(string name, object value)>();
 
             var added = propsAddedInTarget
                 .Select(propName => Leaf(propName, ComparisonResult.AddedInTarget, msg: null));
@@ -156,7 +160,10 @@ namespace Wikitools.Lib.Json
 
             var intersecting = Enumerable.Range(0, Math.Min(baselineElems.Length, targetElems.Length))
                 .Select(i => ComputePropertyDiff(name: i.ToString(), baselineElems[i], targetElems[i]))
-                .Where(diff => diff.value is not null);
+                .Where(diff => diff.value is not null)
+                // ReSharper disable once RedundantEnumerableCastCall
+                // - Actually needed to satisfy nullability analysis
+                .Cast<(string name, object value)>();
 
             var added = Enumerable.Range(baselineElems.Length, Math.Max(targetElems.Length - baselineElems.Length, 0))
                 .Select(i => Leaf(name: i.ToString(), ComparisonResult.AddedInTarget, msg: null));
@@ -168,7 +175,7 @@ namespace Wikitools.Lib.Json
             return result;
         }
 
-        private static (string name, DiffObject value) Leaf(string name, ComparisonResult res, string msg) 
+        private static (string name, DiffObject value) Leaf(string name, ComparisonResult res, string? msg) 
             => (name, $"{ComparisonResultSymbols[res]} {msg}".Trim());
     }
 }

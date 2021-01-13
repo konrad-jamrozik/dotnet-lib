@@ -30,9 +30,9 @@ namespace Wikitools.Lib.Json
         {
             var diff = new Lazy<DiffObject>(() =>
             {
-                var        baselineJson = JsonDocument.Parse(JsonSerializer.SerializeToUtf8Bytes(baseline));
-                var        targetJson   = JsonDocument.Parse(JsonSerializer.SerializeToUtf8Bytes(target));
-                DiffObject elementDiff  = new JsonElementDiff(baselineJson, targetJson).Value;
+                JsonDocument baselineJson = JsonDocument.Parse(JsonSerializer.SerializeToUtf8Bytes(baseline));
+                JsonDocument targetJson   = JsonDocument.Parse(JsonSerializer.SerializeToUtf8Bytes(target));
+                DiffObject?  elementDiff  = new JsonElementDiff(baselineJson, targetJson).Value;
                 return elementDiff ?? EmptyDiff;
             });
 

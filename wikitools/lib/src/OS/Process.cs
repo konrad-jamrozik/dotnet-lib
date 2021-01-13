@@ -41,7 +41,8 @@ namespace Wikitools.Lib.OS
 
                     var output = new List<string>();
                     while (!p.StandardOutput.EndOfStream)
-                        output.Add(p.StandardOutput.ReadLine());
+                        // !: Coerce to nonnull due to previous check of EndOfStream
+                        output.Add(p.StandardOutput.ReadLine()!);
 
                     await p.WaitForExitAsync();
 

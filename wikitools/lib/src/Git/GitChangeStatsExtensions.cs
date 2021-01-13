@@ -47,7 +47,7 @@ namespace Wikitools.Lib.Git
                     : 0;
             }
 
-            string StatString(string[] statsStrings, string statDiscriminator) =>
+            string? StatString(string[] statsStrings, string statDiscriminator) =>
                 statsStrings.SingleOrDefault(stat => stat.Contains(statDiscriminator));
         }
     }
