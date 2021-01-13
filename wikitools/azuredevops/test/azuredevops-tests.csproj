@@ -6,6 +6,9 @@
     <IsPackable>false</IsPackable>
 
     <RootNamespace>Wikitools.AzureDevOps.Tests</RootNamespace>
+
+    <Nullable>enable</Nullable>
+    <WarningsAsErrors>nullable</WarningsAsErrors>
   </PropertyGroup>
 
   <ItemGroup>

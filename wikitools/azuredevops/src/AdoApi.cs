@@ -47,8 +47,8 @@ namespace Wikitools.AzureDevOps
         {
             // The Top value is max on which the API doesn't throw. Determined empirically.
             var wikiPagesBatchRequest = new WikiPagesBatchRequest { Top = 100, PageViewsForDays = pageViewsForDays };
-            List<WikiPageDetail> wikiPagesDetails = new List<WikiPageDetail>();
-            string continuationToken = null;
+            var wikiPagesDetails = new List<WikiPageDetail>();
+            string? continuationToken = null;
             do
             {
                 wikiPagesBatchRequest.ContinuationToken = continuationToken;
