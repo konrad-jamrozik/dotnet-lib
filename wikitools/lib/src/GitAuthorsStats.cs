@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Wikitools.Lib.Git;
@@ -39,6 +40,7 @@ namespace Wikitools.Lib
                         authorsStatsOrdered[i].Insertions,
                         authorsStatsOrdered[i].Deletions
                     }).ToList();
+
 
                 return rows;
             }

@@ -8,6 +8,6 @@ namespace Wikitools.Lib.Primitives
 
         public TextLines(string value) => _value = value;
 
-        public string[] Value => _value.Split(new[] {"\r\n", "\r", "\n"}, StringSplitOptions.None);
+        public string[] Value => _value.Split(Environment.NewLine);
     }
 }

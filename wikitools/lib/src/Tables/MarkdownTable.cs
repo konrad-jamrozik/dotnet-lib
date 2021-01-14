@@ -7,11 +7,11 @@ using Wikitools.Lib.Primitives;
 
 namespace Wikitools.Lib.Tables
 {
-    public record MarkdownTable(ITabularData Data)
+    public record MarkdownTable(ITabularData Data) : IWritableToText
     {
         public MarkdownTable(StringWriter sw) : this(TabularData(sw.GetStringBuilder().ToString())) { }
 
-        private static TabularData TabularData(string str)
+        public static TabularData TabularData(string str)
         {
             string[] lines = new TextLines(str).Value;
 

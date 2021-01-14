@@ -7,6 +7,7 @@ using Wikitools.Lib.Tables;
 
 namespace Wikitools.Lib
 {
+    // kja write tests for this
     public record GitFilesStatsReport : ITabularData
     {
         public const string DescriptionFormat = "Git file changes since last {0} days as of {1}";
