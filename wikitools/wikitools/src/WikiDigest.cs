@@ -1,15 +1,17 @@
 ﻿using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Wikitools.AzureDevOps;
 using Wikitools.Lib;
+using Wikitools.Lib.Primitives;
 using Wikitools.Lib.Tables;
 
 namespace Wikitools
 {
     public record WikiDigest(
-        GitAuthorsStatsReport GitAuthorsReport,
-        GitFilesStatsReport GitFilesReport,
-        PageViewsStatsReport PageViewsReport) : IWritableToText
+        GitAuthorsStatsReport Authors,
+        GitFilesStatsReport Files,
+        PageViewsStatsReport PageViews) : IWritableToText
     {
         // kja pass as input: DayOfWeek, authors top limit, paths in wiki to ignore (both for files report and page views)
         // kja make the digest check the day, and if it is time for a new one, do the following:
@@ -19,11 +21,11 @@ namespace Wikitools
         // - inform on stdout its time to manually review, commit and push the change
         public async Task WriteAsync(TextWriter textWriter)
         {
-            // kja try here to limit the rows output by deconstructing into tuple, doing .Take() on rows, and rapping in new MarkdownTable
-            // I can get deconstructor for free if I will ensure this is a positional record: https://docs.microsoft.com/en-us/dotnet/csharp/whats-new/csharp-9
-            await new MarkdownTable(GitAuthorsReport).WriteAsync(textWriter);
-            await new MarkdownTable(GitFilesReport).WriteAsync(textWriter);
-            await new MarkdownTable(PageViewsReport).WriteAsync(textWriter);
+            var topAuthors = Authors with { Rows = Authors.Rows.M(rows => rows.Take(5).ToList()) };
+            var topFiles = Files with { Rows = Files.Rows.M(rows => rows.Take(5).ToList()) };
+            await new MarkdownTable(topAuthors).WriteAsync(textWriter);
+            await new MarkdownTable(topFiles).WriteAsync(textWriter);
+            await new MarkdownTable(PageViews).WriteAsync(textWriter);
         }
     }
 }

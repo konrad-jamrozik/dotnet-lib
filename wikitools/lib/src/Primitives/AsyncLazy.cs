@@ -19,7 +19,7 @@ namespace Wikitools.Lib.Primitives
         {
         }
 
-        // ReSharper disable once UnusedMethodReturnValue.Global
+        // ReSharper disable once UnusedMember.Global
         public TaskAwaiter<T> GetAwaiter()
         {
             return Value.GetAwaiter();

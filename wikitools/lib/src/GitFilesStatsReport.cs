@@ -7,16 +7,15 @@ using Wikitools.Lib.Tables;
 
 namespace Wikitools.Lib
 {
-    // kja write tests for this
     public record GitFilesStatsReport(ITimeline Timeline, AsyncLazy<List<List<object>>> Rows, int Days) : ITabularData
     {
         public const string DescriptionFormat = "Git file changes since last {0} days as of {1}";
         public static readonly List<object> HeaderRowLabels = new() { "Place", "FilePath", "Insertions", "Deletions" };
 
-        public GitFilesStatsReport(ITimeline timeline, GitLog gitLog, int days) :
-            this(
+        public GitFilesStatsReport(ITimeline timeline, GitLog gitLog, int days)
+            : this(
                 timeline,
-                new AsyncLazy<List<List<object>>>(() => GetRows(gitLog)),
+                GetRows(gitLog).AsyncLazy(),
                 days) { }
 
         private static async Task<List<List<object>>> GetRows(GitLog gitLog)
@@ -44,6 +43,5 @@ namespace Wikitools.Lib
             Task.FromResult(string.Format(DescriptionFormat, Days, Timeline.UtcNow));
 
         public List<object> HeaderRow => HeaderRowLabels;
-        
     }
 }
