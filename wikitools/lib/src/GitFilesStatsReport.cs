@@ -8,45 +8,42 @@ using Wikitools.Lib.Tables;
 namespace Wikitools.Lib
 {
     // kja write tests for this
-    public record GitFilesStatsReport : ITabularData
+    public record GitFilesStatsReport(ITimeline Timeline, AsyncLazy<List<List<object>>> Rows, int Days) : ITabularData
     {
         public const string DescriptionFormat = "Git file changes since last {0} days as of {1}";
         public static readonly List<object> HeaderRowLabels = new() { "Place", "FilePath", "Insertions", "Deletions" };
 
-        private readonly ITimeline _timeline;
-        private readonly int _days;
-        private readonly AsyncLazy<List<List<object>>> _rows;
+        public GitFilesStatsReport(ITimeline timeline, GitLog gitLog, int days) :
+            this(
+                timeline,
+                new AsyncLazy<List<List<object>>>(() => GetRows(gitLog)),
+                days) { }
 
-        public GitFilesStatsReport(ITimeline timeline, GitLog gitLog, int days)
+        private static async Task<List<List<object>>> GetRows(GitLog gitLog)
         {
-            _timeline = timeline;
-            _days = days;
-            _rows = new AsyncLazy<List<List<object>>>(Rows);
+            var changesStats = await gitLog.GetFileChangesStats();
 
-            async Task<List<List<object>>> Rows()
-            {
-                var changesStats = await gitLog.GetFileChangesStats();
+            List<GitFileChangeStats> filesStatsOrdered = changesStats.SumByFilePath()
+                .OrderByDescending(fileStats => fileStats.Insertions + fileStats.Deletions)
+                .ToList();
 
-                List<GitFileChangeStats> filesStatsOrdered = 
-                    changesStats.SumByFilePath()
-                        .OrderByDescending(fileStats => fileStats.Insertions + fileStats.Deletions)
-                        .ToList();
+            List<List<object>> rows = Enumerable.Range(0, filesStatsOrdered.Count)
+                .Select(i => new List<object>
+                {
+                    i + 1, filesStatsOrdered[i].FilePath, filesStatsOrdered[i].Insertions,
+                    filesStatsOrdered[i].Deletions
+                })
+                .ToList();
 
-                List<List<object>> rows = Enumerable.Range(0, filesStatsOrdered.Count)
-                    .Select(i => new List<object>
-                    {
-                        i + 1,
-                        filesStatsOrdered[i].FilePath,
-                        filesStatsOrdered[i].Insertions,
-                        filesStatsOrdered[i].Deletions
-                    }).ToList();
-
-                return rows;
-            }
+            return rows;
         }
-        
-        public Task<string> GetDescription() => Task.FromResult(string.Format(DescriptionFormat, _days, _timeline.UtcNow));
+
+        public async Task<List<List<object>>> GetRows() => await Rows.Value;
+
+        public Task<string> GetDescription() =>
+            Task.FromResult(string.Format(DescriptionFormat, Days, Timeline.UtcNow));
+
         public List<object> HeaderRow => HeaderRowLabels;
-        public async Task<List<List<object>>> GetRows() => await _rows.Value;
+        
     }
 }

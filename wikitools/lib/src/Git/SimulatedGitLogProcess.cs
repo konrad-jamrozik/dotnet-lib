@@ -3,12 +3,12 @@ using System.Linq;
 
 namespace Wikitools.Lib.Git
 {
-    public class SimulatedGitLog : IProcessSimulationSpec
+    public class SimulatedGitLogProcess : IProcessSimulationSpec
     {
         private readonly List<GitAuthorChangeStats> _changesStats;
         private readonly int _sinceDays;
 
-        public SimulatedGitLog(List<GitAuthorChangeStats> changesStats, int sinceDays)
+        public SimulatedGitLogProcess(List<GitAuthorChangeStats> changesStats, int sinceDays)
         {
             _changesStats = changesStats;
             _sinceDays = sinceDays;

@@ -6,7 +6,7 @@ namespace Wikitools.Tests
 {
     public static class Data
     {
-        public static readonly List<GitAuthorChangeStats> ChangesStats = new()
+        public static readonly List<GitAuthorChangeStats> AuthorChangesStats = new()
         {
             new("AuthorA", 1, 100, 10),
             new("AuthorC", 4, 2000, 22),
@@ -48,7 +48,7 @@ namespace Wikitools.Tests
 
         public static readonly Dictionary<object, object> Expectation = new()
         {
-            [ChangesStats] = GitAuthorsStatsReportRows,
+            [AuthorChangesStats] = GitAuthorsStatsReportRows,
             [PageStats] = PageViewsStatsReportRows,
         };
     }

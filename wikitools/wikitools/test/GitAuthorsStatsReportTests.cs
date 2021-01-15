@@ -17,14 +17,14 @@ namespace Wikitools.Tests
         public async Task Reports()
         {
             // Arrange inputs
-            var changesStats      = Data.ChangesStats;
+            var changesStats      = Data.AuthorChangesStats;
             var logDays           = 15;
             var gitExecutablePath = @"C:\Program Files\Git\bin\sh.exe";
             var gitRepoDirPath    = @"C:\Users\fooUser\barRepo";
 
             // Arrange simulations
             var timeline = new SimulatedTimeline();
-            var os       = new SimulatedOS(new SimulatedGitLog(changesStats, logDays));
+            var os       = new SimulatedOS(new SimulatedGitLogProcess(changesStats, logDays));
 
             // Arrange SUT declaration
             var gitLog = GitLog(os, gitRepoDirPath, gitExecutablePath, logDays);
