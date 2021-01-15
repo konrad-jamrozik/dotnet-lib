@@ -6,7 +6,7 @@ using Wikitools.Lib.Tables;
 
 namespace Wikitools.AzureDevOps
 {
-    public record PageViewsStatsReport : ITabularData
+    public record PagesViewsStatsReport : ITabularData
     {
         public const string DescriptionFormat = "Page views since last {0} days as of {1}. Total wiki pages: {2}";
         public static readonly List<object> HeaderRowLabels = new() { "Place", "Path", "Views" };
@@ -16,7 +16,7 @@ namespace Wikitools.AzureDevOps
         private readonly int _days;
         private readonly AsyncLazy<List<WikiPageStats>> _pagesStats;
 
-        public PageViewsStatsReport(ITimeline timeline, AdoWiki adoWiki, int days)
+        public PagesViewsStatsReport(ITimeline timeline, AdoWiki adoWiki, int days)
         {
             _timeline = timeline;
             _days = days;

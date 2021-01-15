@@ -23,7 +23,7 @@ namespace Wikitools
 
             var gitAuthorsReport = new GitAuthorsStatsReport(timeline, gitLog, cfg.GitLogDays);
             var gitFilesReport   = new GitFilesStatsReport(timeline, gitLog, cfg.GitLogDays);
-            var pageViewsReport  = new PageViewsStatsReport(timeline, wiki, cfg.AdoWikiPageViewsForDays);
+            var pageViewsReport  = new PagesViewsStatsReport(timeline, wiki, cfg.AdoWikiPageViewsForDays);
             var wikiDigest       = new WikiDigest(gitAuthorsReport, gitFilesReport, pageViewsReport);
 
             await wikiDigest.WriteAsync(Console.Out);

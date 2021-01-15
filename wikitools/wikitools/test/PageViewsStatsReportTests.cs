@@ -12,7 +12,7 @@ namespace Wikitools.Tests
     public class PageViewsStatsReportTests
     {
         [Fact]
-        public async Task Reports()
+        public async Task ReportsPagesViewsStats()
         {
             // Arrange inputs
             var pageStats        = Data.PageStats;
@@ -26,15 +26,15 @@ namespace Wikitools.Tests
 
             // Arrange SUT declaration
             var wiki = Wiki(adoApi, wikiUri, patEnvVar, pageViewsForDays);
-            var sut  = new PageViewsStatsReport(timeline, wiki, pageViewsForDays);
+            var sut  = new PagesViewsStatsReport(timeline, wiki, pageViewsForDays);
 
             // Arrange expectations
             var expected = new TabularData(
-                Description: string.Format(PageViewsStatsReport.DescriptionFormat,
+                Description: string.Format(PagesViewsStatsReport.DescriptionFormat,
                     pageViewsForDays,
                     timeline.UtcNow,
                     pageStats.Count),
-                HeaderRow: PageViewsStatsReport.HeaderRowLabels,
+                HeaderRow: PagesViewsStatsReport.HeaderRowLabels,
                 Rows: (List<List<object>>) Data.Expectation[pageStats]);
 
             await Verify(expected, sut);

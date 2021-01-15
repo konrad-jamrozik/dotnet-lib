@@ -19,11 +19,29 @@ namespace Wikitools.Tests
             new("AuthorC", 6, 3000, 33)
         };
 
-        private static readonly List<List<object>> GitAuthorsStatsReportRows = new()
+        private static readonly List<List<object>> AuthorsStatsReportRows = new()
         {
             new() { 1, "AuthorB", 60000, 606 },
             new() { 2, "AuthorC", 6000, 66 },
             new() { 3, "AuthorA", 600, 60 }
+        };
+
+        public static readonly List<GitFileChangeStats> FileChangesStats = new()
+        {
+            new("insertsOnly.txt", 50, 0),
+            new("deletionsOnly.txt", 0, 40),
+            new("moreInserts.txt", 70, 48),
+            new("moreDeletions.txt", 13, 16),
+            new("maxStatsSum.txt", 68, 68),
+            new("minStatsSum.txt", 6, 6),
+            new("maxInserts.txt", 120, 3),
+            new("maxDeletions.txt", 2, 119)
+        };
+
+        private static readonly List<List<object>> FilesStatsReportRows = new()
+        {
+            // kja this will need to be expanded once the test can reach the Verify logic.
+            new() { 1, "maxStatsSum.txt", 68, 68 }
         };
 
         public static readonly List<WikiPageStats> PageStats = new()
@@ -48,7 +66,8 @@ namespace Wikitools.Tests
 
         public static readonly Dictionary<object, object> Expectation = new()
         {
-            [AuthorChangesStats] = GitAuthorsStatsReportRows,
+            [AuthorChangesStats] = AuthorsStatsReportRows,
+            [FileChangesStats] = FilesStatsReportRows,
             [PageStats] = PageViewsStatsReportRows,
         };
     }

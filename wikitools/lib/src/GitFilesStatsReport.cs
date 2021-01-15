@@ -29,7 +29,9 @@ namespace Wikitools.Lib
             List<List<object>> rows = Enumerable.Range(0, filesStatsOrdered.Count)
                 .Select(i => new List<object>
                 {
-                    i + 1, filesStatsOrdered[i].FilePath, filesStatsOrdered[i].Insertions,
+                    i + 1,
+                    filesStatsOrdered[i].FilePath,
+                    filesStatsOrdered[i].Insertions,
                     filesStatsOrdered[i].Deletions
                 })
                 .ToList();

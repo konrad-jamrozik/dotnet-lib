@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Wikitools.Lib.Git;
@@ -19,6 +18,8 @@ namespace Wikitools.Lib
                 GetRows(gitLog).AsAsyncLazy(),
                 days) { }
 
+        // kja what if we want to build a report from previously-persisted json, now loaded from file system?
+        // Should we use SimulatedGitLog with the data loaded from File System? Yes!
         private static async Task<List<List<object>>> GetRows(GitLog gitLog)
         {
             var changesStats = await gitLog.GetAuthorChangesStats();
@@ -40,10 +41,11 @@ namespace Wikitools.Lib
             return rows;
         }
 
+        public async Task<List<List<object>>> GetRows() => await Rows.Value;
+
         public Task<string> GetDescription() =>
             Task.FromResult(string.Format(DescriptionFormat, Days, Timeline.UtcNow));
 
         public List<object> HeaderRow => HeaderRowLabels;
-        public async Task<List<List<object>>> GetRows() => await Rows.Value;
     }
 }

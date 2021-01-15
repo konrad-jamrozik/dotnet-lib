@@ -14,7 +14,7 @@ namespace Wikitools.Tests
     public class GitAuthorsStatsReportTests
     {
         [Fact]
-        public async Task Reports()
+        public async Task ReportsGitAuthorsStats()
         {
             // Arrange inputs
             var changesStats      = Data.AuthorChangesStats;
@@ -24,7 +24,7 @@ namespace Wikitools.Tests
 
             // Arrange simulations
             var timeline = new SimulatedTimeline();
-            var os       = new SimulatedOS(new SimulatedGitLogProcess(changesStats, logDays));
+            var os       = new SimulatedOS(new SimulatedGitLogProcess(logDays, authorsChangesStats: changesStats));
 
             // Arrange SUT declaration
             var gitLog = GitLog(os, gitRepoDirPath, gitExecutablePath, logDays);

@@ -5,18 +5,26 @@ namespace Wikitools.Lib.Git
 {
     public class SimulatedGitLogProcess : IProcessSimulationSpec
     {
-        private readonly List<GitAuthorChangeStats> _changesStats;
+        private readonly List<GitAuthorChangeStats>? _authorsChangesStats;
+        private readonly List<GitFileChangeStats>? _filesChangesStats;
         private readonly int _sinceDays;
 
-        public SimulatedGitLogProcess(List<GitAuthorChangeStats> changesStats, int sinceDays)
+        public SimulatedGitLogProcess(
+            int sinceDays,
+            // kja abstract this away into an interface that provides StdOutLines
+            List<GitAuthorChangeStats>? authorsChangesStats = null,
+            List<GitFileChangeStats>? filesChangesStats = null)
         {
-            _changesStats = changesStats;
             _sinceDays = sinceDays;
+            _authorsChangesStats = authorsChangesStats;
+            _filesChangesStats = filesChangesStats;
         }
-
-        public bool Matches(string executableFilePath, string workingDirPath, string[] arguments) 
+        
+        // kja support the other command too. Don't duplicaty any of these 2 commands: string.Format.
+        public bool Matches(string executableFilePath, string workingDirPath, string[] arguments)
             => arguments.Any(arg => arg.Contains($"git log --since={_sinceDays}.days --pretty=\"%an\" --shortstat"));
 
-        public List<string> StdOutLines => _changesStats.FromGitLogStdOutLines();
+        // kja forced null coercion
+        public List<string> StdOutLines => _authorsChangesStats?.FromGitLogStdOutLines()!;
     }
 }
