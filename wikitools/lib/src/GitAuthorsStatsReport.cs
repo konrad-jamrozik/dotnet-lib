@@ -15,9 +15,9 @@ namespace Wikitools.Lib
 
         public GitAuthorsStatsReport(ITimeline timeline, GitLog gitLog, int days)
             : this(
-            timeline,
-            GetRows(gitLog).AsyncLazy(),
-            days) { }
+                timeline,
+                GetRows(gitLog).AsAsyncLazy(),
+                days) { }
 
         private static async Task<List<List<object>>> GetRows(GitLog gitLog)
         {
@@ -28,14 +28,21 @@ namespace Wikitools.Lib
                 .ToList();
 
             List<List<object>> rows = Enumerable.Range(0, authorsStatsOrdered.Count)
-                .Select(i => new List<object> { i + 1, authorsStatsOrdered[i].Author, authorsStatsOrdered[i].Insertions, authorsStatsOrdered[i].Deletions })
+                .Select(i => new List<object>
+                {
+                    i + 1,
+                    authorsStatsOrdered[i].Author,
+                    authorsStatsOrdered[i].Insertions,
+                    authorsStatsOrdered[i].Deletions
+                })
                 .ToList();
-
 
             return rows;
         }
 
-        public Task<string> GetDescription() => Task.FromResult(string.Format(DescriptionFormat, Days, Timeline.UtcNow));
+        public Task<string> GetDescription() =>
+            Task.FromResult(string.Format(DescriptionFormat, Days, Timeline.UtcNow));
+
         public List<object> HeaderRow => HeaderRowLabels;
         public async Task<List<List<object>>> GetRows() => await Rows.Value;
     }

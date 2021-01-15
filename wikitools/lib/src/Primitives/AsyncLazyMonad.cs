@@ -5,7 +5,7 @@ namespace Wikitools.Lib.Primitives
 {
     public static class AsyncLazyMonad
     {
-        public static AsyncLazy<T> AsyncLazy<T>(this Task<T> target) 
+        public static AsyncLazy<T> AsAsyncLazy<T>(this Task<T> target) 
             => new(() => target);
 
         /// <summary>

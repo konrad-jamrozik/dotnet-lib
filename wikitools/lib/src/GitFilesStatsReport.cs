@@ -15,7 +15,7 @@ namespace Wikitools.Lib
         public GitFilesStatsReport(ITimeline timeline, GitLog gitLog, int days)
             : this(
                 timeline,
-                GetRows(gitLog).AsyncLazy(),
+                GetRows(gitLog).AsAsyncLazy(),
                 days) { }
 
         private static async Task<List<List<object>>> GetRows(GitLog gitLog)
