@@ -14,35 +14,36 @@ var timeline = new Timeline();
 var os       = new WindowsOS();
 var adoApi   = new AdoApi();
 //
-var gitLog           = GitLog(os, cfg.GitRepoClonePath, cfg.GitExecutablePath, cfg.GitLogDays);
-var wiki             = Wiki(adoApi, cfg.AdoWikiUri, cfg.AdoPatEnvVar, cfg.AdoWikiPageViewsForDays);
+var gitLog = GitLog(os, cfg.GitRepoClonePath, cfg.GitExecutablePath, cfg.GitLogDays);
+var wiki   = Wiki(adoApi, cfg.AdoWikiUri, cfg.AdoPatEnvVar, cfg.AdoWikiPageViewsForDays);
 //
 var gitAuthorsReport = new GitAuthorsStatsReport(timeline, gitLog, cfg.GitLogDays);
 var gitFilesReport   = new GitFilesStatsReport(timeline, gitLog, cfg.GitLogDays);
 var pageViewsReport  = new PagesViewsStatsReport(timeline, wiki, cfg.AdoWikiPageViewsForDays);
 var wikiDigest       = new WikiDigest(gitAuthorsReport, gitFilesReport, pageViewsReport);
-
-var desc               = $"Git contributions since last {cfg.GitLogDays} days as of {timeline.UtcNow}";
-var headerRow          = new List<string> { "Place", "Author", "Insertions", "Deletions" };
-var authorChangesStats = GetAuthorsChangesStatsRows(gitLog.GetAuthorChangesStats());
-
+//
+//
 var outputData = new List<IFormattableAsMarkdown>
 {
-    new TextLines2(desc),
-    new TabularData2(headerRow, authorChangesStats)
+    new TextLines2($"Git contributions since last {cfg.GitLogDays} days as of {timeline.UtcNow}"),
+    new TabularData2(GetAuthorsChangesStatsRows(gitLog.GetAuthorChangesStats()))
 };
 
-async Task<List<List<object>>> GetAuthorsChangesStatsRows(Task<List<GitAuthorChangeStats>> authorChangesStats)
+async Task<(List<string> headerRow, List<List<object>> rows)> GetAuthorsChangesStatsRows(Task<List<GitAuthorChangeStats>> authorChangesStats)
 {
-
-    GitAuthorChangeStats[] authorsStatsOrdered = (await gitLog.GetAuthorChangesStats()).SumByAuthor()
+    GitAuthorChangeStats[] authorsStatsOrdered = (await authorChangesStats).SumByAuthor()
         .OrderByDescending(authorStats => authorStats.Insertions + authorStats.Deletions)
         .Where(stats => !stats.Author.Contains("Konrad J"))
         .ToArray()[..5];
 
-    return authorsStatsOrdered.Select((stats, i) =>
+    // kja row type should IFormattableAsMarkdown not object
+    var rows = authorsStatsOrdered.Select((stats, i) =>
             new List<object> { i, stats.Author, stats.FilesChanged, stats.Insertions, stats.Deletions })
         .ToList();
+    
+    return (
+        headerRow: new List<string> { "Place", "Author", "Insertions", "Deletions" }, 
+        rows);
 }
 
 /*
