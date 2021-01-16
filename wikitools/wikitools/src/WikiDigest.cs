@@ -35,17 +35,21 @@ namespace Wikitools
             {
                 Rows = Authors.Rows.M(rows => rows
                     .Where(row => !((string) row[1]).Contains("Konrad J"))
-                    .Take(5).ToList())
+                    .Take(5)
+                    .ToList()
+                )
             };
             var topFiles = Files with
             {
                 Rows = Files.Rows.M(rows => rows
                     .Where(row => !((string) row[1]).Contains("/Meta"))
-                    .Take(5).ToList())
+                    .Take(5)
+                    .ToList()
+                )
             };
             await new MarkdownTable(topAuthors).WriteAsync(textWriter);
-            await new MarkdownTable(topFiles).WriteAsync(textWriter);
-            await new MarkdownTable(PagesViews).WriteAsync(textWriter);
+            // await new MarkdownTable(topFiles).WriteAsync(textWriter);
+            // await new MarkdownTable(PagesViews).WriteAsync(textWriter);
         }
     }
 }

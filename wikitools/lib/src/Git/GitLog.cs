@@ -18,14 +18,17 @@ namespace Wikitools.Lib.Git
 
         public async Task<List<GitAuthorChangeStats>> GetAuthorChangesStats()
         {
+            // kja pass params like: --before=12/31/2020 --since=6/9/2020
+            // kja use --numstat instead of --shortstat
             // Reference:
             // https://git-scm.com/docs/git-log#_commit_limiting
             // https://git-scm.com/book/en/v2/Git-Basics-Viewing-the-Commit-History
             // https://git-scm.com/docs/git-log#Documentation/git-log.txt---statltwidthgtltname-widthgtltcountgt
             // SOQ: How can I calculate the number of lines changed between two commits in GIT?
             // A: https://stackoverflow.com/a/2528129/986533
+            var command = $"git log --since={_days}.days --pretty=\"%an\" --shortstat --ignore-all-space --ignore-blank-lines";
             List<string> stdOutLines =
-                await _repo.GetStdOutLines($"git log --since={_days}.days --pretty=\"%an\" --shortstat --ignore-all-space --ignore-blank-lines");
+                await _repo.GetStdOutLines(command);
 
             stdOutLines.RemoveAll(string.IsNullOrWhiteSpace);
             RemoveLogEntriesWithNoLineChanges(stdOutLines);
