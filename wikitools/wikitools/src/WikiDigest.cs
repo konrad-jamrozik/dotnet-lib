@@ -48,8 +48,8 @@ namespace Wikitools
                 )
             };
             await new MarkdownTable(topAuthors).WriteAsync(textWriter);
-            // await new MarkdownTable(topFiles).WriteAsync(textWriter);
-            // await new MarkdownTable(PagesViews).WriteAsync(textWriter);
+            await new MarkdownTable(topFiles).WriteAsync(textWriter);
+            await new MarkdownTable(PagesViews).WriteAsync(textWriter);
         }
     }
 }
