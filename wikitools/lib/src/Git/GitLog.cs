@@ -16,6 +16,7 @@ namespace Wikitools.Lib.Git
             _days = days;
         }
 
+        // kja pass days as param
         public async Task<List<GitAuthorChangeStats>> GetAuthorChangesStats()
         {
             // kja pass params like: --before=12/31/2020 --since=6/9/2020

@@ -9,6 +9,7 @@ namespace Wikitools.Lib.Primitives
     // https://github.com/StephenCleary/AsyncEx/blob/master/src/Nito.AsyncEx.Coordination/AsyncLazy.cs
     // http://blog.stephencleary.com/2012/08/asynchronous-lazy-initialization.html
     // Point 3 in https://stackoverflow.com/a/13735418/986533
+    // kja rename to LazyTask
     public class AsyncLazy<T> : Lazy<Task<T>>
     {
         public AsyncLazy(Func<T> valueFactory) : base(() => Task.Factory.StartNew(valueFactory))
