@@ -1,25 +1,30 @@
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using Wikitools.Lib.Git;
 using Wikitools.Lib.Primitives;
 
 namespace Wikitools
 {
-    public record GitAuthorsStatsReport2
-        (Timeline Timeline, int Days, List<GitAuthorChangeStats> Stats) : IMarkdownDocument
+    public class GitAuthorsStatsReport2 : MarkdownDocument
     {
-        public List<object> Content =>
+        private readonly Timeline _timeline;
+        private readonly int _days;
+        private readonly List<GitAuthorChangeStats> _stats;
+
+        public GitAuthorsStatsReport2(Timeline timeline, int days, List<GitAuthorChangeStats> stats)
+        {
+            _timeline = timeline;
+            _days = days;
+            _stats = stats;
+        }
+
+        protected override List<object> Content =>
             new()
             {
-                $"Git contributions since last {Days} days as of {Timeline.UtcNow}",
+                $"Git contributions since last {_days} days as of {_timeline.UtcNow}",
                 "",
-                new TabularData2(GetAuthorsChangesStatsRows(Stats))
+                new TabularData2(GetAuthorsChangesStatsRows(_stats))
             };
-
-        public async Task WriteAsync(TextWriter textWriter)
-            => await textWriter.WriteAsync(this.ToMarkdown());
 
         private static (string[] headerRow, object[][] rows) GetAuthorsChangesStatsRows(
             List<GitAuthorChangeStats> authorChangesStats)

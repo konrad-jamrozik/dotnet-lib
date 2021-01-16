@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using Wikitools;
 using Wikitools.AzureDevOps;
 using Wikitools.Lib;
 using Wikitools.Lib.Git;
