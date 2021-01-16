@@ -10,12 +10,11 @@ namespace Wikitools
 {
     public abstract class MarkdownDocument : IWritableToText
     {
-        public async Task WriteAsync(TextWriter textWriter)
-        {
-            await textWriter.WriteAsync(ToMarkdown(this));
-        }
+        public async Task WriteAsync(TextWriter textWriter) => await textWriter.WriteAsync(ToMarkdown(this));
 
-        protected abstract List<object> Content { get; }
+        public override string ToString() => ToMarkdown(this);
+
+        public abstract List<object> Content { get; }
 
         private static string ToMarkdown(MarkdownDocument doc) =>
             doc.Content

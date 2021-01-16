@@ -34,10 +34,10 @@ namespace Wikitools
             // Obtain inputs. Has out-of-process dependencies.
             List<GitAuthorChangeStats> changesStats = await gitLog.GetAuthorChangesStats();
 
-            var doc = new GitAuthorsStatsReport2(timeline, cfg.GitLogDays, changesStats);
+            var report = new GitAuthorsStatsReport2(timeline, cfg.GitLogDays, changesStats);
             
             // Write outputs. Side-effectful.
-            await doc.WriteAsync(Console.Out);
+            await report.WriteAsync(Console.Out);
             
         }
     }

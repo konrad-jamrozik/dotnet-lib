@@ -18,7 +18,7 @@ namespace Wikitools
             _stats = stats;
         }
 
-        protected override List<object> Content =>
+        public override List<object> Content =>
             new()
             {
                 $"Git contributions since last {_days} days as of {_timeline.UtcNow}",
