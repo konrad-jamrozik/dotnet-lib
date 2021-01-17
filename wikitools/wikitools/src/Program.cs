@@ -34,21 +34,21 @@ namespace Wikitools
             // kja use in all reports, dehardcode "/Meta". Same with "Konrad J" filter.
             Func<string, bool> filePathFilter = filePath => !filePath.Contains("/Meta");
             var authorsReport = new GitAuthorsStatsReport2(timeline, cfg.GitLogDays, recentCommits);
-            var filesReport = new GitFilesStatsReport2(timeline, cfg.GitLogDays, filesChangesStats);
+            var filesReport = new GitFilesStatsReport2(timeline, cfg.GitLogDays, recentCommits, filePathFilter);
             var pagesViewsReport = new PagesViewsStatsReport2(timeline, cfg.AdoWikiPageViewsForDays, pagesViewsStats);
             var monthlyReport = new MonthlyStatsReport(timeline, allCommits, filePathFilter);
 
             // Write outputs. Side-effectful.
             // kja temp off
             await authorsReport.WriteAsync(Console.Out);
-            // await filesReport.WriteAsync(Console.Out);
+            await filesReport.WriteAsync(Console.Out);
             // await pagesViewsReport.WriteAsync(Console.Out);
             // await monthlyReport.WriteAsync(Console.Out);
         }
 
         // kja this should be GitLog method
         private static Task<GitLogCommit[]> GetCommits(GitLog gitLog, int days) =>
-            gitLog.GetAuthorChangesStats2(sinceDays: days);
+            gitLog.GetAuthorChangesStats2(days);
 
         // kja this should be GitLog method
         private static Task<GitLogCommit[]> GetCommits(GitLog gitLog, DateTime startYear, DateTime endYear) =>
@@ -61,3 +61,9 @@ namespace Wikitools
             );
     }
 }
+
+// kja make the digest check the day, and if it is time for a new one, do the following:
+// - pull the new digest data from git and ado wiki api
+// - save the new digest data to a json file
+// - create a new md digest file in local repo clone
+// - inform on stdout its time to manually review, commit and push the change

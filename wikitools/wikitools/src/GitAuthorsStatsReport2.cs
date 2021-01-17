@@ -16,8 +16,7 @@ namespace Wikitools
                 new TabularData2(Rows(Commits))
             };
 
-        private static (string[] headerRow, object[][] rows) Rows(
-            GitLogCommit[] commits)
+        private static (string[] headerRow, object[][] rows) Rows(GitLogCommit[] commits)
         {
             var statsByAuthor = SumByAuthor(commits)
                 .OrderByDescending(s => s.insertions + s.deletions)

@@ -29,10 +29,10 @@ namespace Wikitools
 
             bool FilePathFilter(GitLogCommit.Numstat stat) => filePathFilter(stat.FilePath);
 
-            var insertionsByMonth = commitsByMonth.Select(month => (
-                    month: month.Key,
-                    insertions: month.Sum(c => c.Stats.Where(FilePathFilter).Sum(ns => ns.Insertions)),
-                    deletions: month.Sum(c => c.Stats.Where(FilePathFilter).Sum(ns => ns.Deletions))
+            var insertionsByMonth = commitsByMonth.Select(mcs => (
+                    month: mcs.Key,
+                    insertions: mcs.Sum(c => c.Stats.Where(FilePathFilter).Sum(ns => ns.Insertions)),
+                    deletions: mcs.Sum(c => c.Stats.Where(FilePathFilter).Sum(ns => ns.Deletions))
                 )
             );
 
