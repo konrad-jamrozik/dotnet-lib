@@ -34,17 +34,20 @@ namespace Wikitools.Lib.Git
             string sinceDaysStr = sinceDays != null ? " --since=" + sinceDays + ".days" : string.Empty;
             string beforeStr    = before != null ? " --before=" + before.Value.ToShortDateString() : string.Empty;
             string sinceStr     = since != null ? " --since=" + since.Value.ToShortDateString() : string.Empty;
-            var    delimiter    = ";";
+            // Only this delimiter works. Note, it is preprended with % in the command, so it is --pretty="%%
+            // I tried other delimiters, like --pretty="; or --pretty="|
+            // They work from terminal but here they return no results. I don't know why.
+            var    delimiter    = "%";
             var command =
                 $"git log{sinceDaysStr}{sinceStr}{beforeStr} " +
                 $"--ignore-all-space --ignore-blank-lines " +
-                $"--pretty=\"{delimiter}%n%an%n%as\" " +
+                $"--pretty=\"%{delimiter}%n%an%n%as\" " +
                 $"--numstat";
-
             return
                 (await _repo.GetStdOutLines(command))
                 .Where(line => !string.IsNullOrWhiteSpace(line))
                 .Split(delimiter)
+                .Where(commit => commit.Any())
                 .Select(commit => new GitLogCommit(commit.ToArray()))
                 .ToArray();
         }

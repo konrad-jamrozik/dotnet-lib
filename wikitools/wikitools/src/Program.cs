@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Wikitools.AzureDevOps;
 using Wikitools.Lib.Git;
@@ -26,13 +25,12 @@ namespace Wikitools
             List<GitAuthorChangeStats> authorsChangesStats = await gitLog.GetAuthorChangesStats(cfg.GitLogDays);
             List<GitFileChangeStats>   filesChangesStats   = await gitLog.GetFileChangesStats();
             List<WikiPageStats>        pagesViewsStats     = await wiki.GetPagesStats();
-            GitLogCommit[][]           commits             = await GetMonthlyAuthorsChangesStats(gitLog);
+            GitLogCommit[]             commits             = await GetCommitsFor2020(gitLog);
 
             var authorsReport    = new GitAuthorsStatsReport2(timeline, cfg.GitLogDays, authorsChangesStats);
             var filesReport      = new GitFilesStatsReport2(timeline, cfg.GitLogDays, filesChangesStats);
             var pagesViewsReport = new PagesViewsStatsReport2(timeline, cfg.AdoWikiPageViewsForDays, pagesViewsStats);
-            // kja curr work
-            //var monthlyReport    = new MonthlyStatsReport2(timeline, monthlyAuthorsChangesStats);
+            var monthlyReport    = new MonthlyStatsReport2(timeline, commits);
 
             // Write outputs. Side-effectful.
             await authorsReport.WriteAsync(Console.Out);
@@ -41,9 +39,18 @@ namespace Wikitools
             // await monthlyReport.WriteAsync(Console.Out);
         }
 
-        private static Task<GitLogCommit[][]> GetMonthlyAuthorsChangesStats(GitLog gitLog)
+        private static Task<GitLogCommit[]> GetCommitsFor2020(GitLog gitLog)
         {
-            // kja this is super slow, likely better to call it once and process all the data
+            var dateTime = new DateTime(2020, 1, 1);
+            return gitLog.GetAuthorChangesStats2(
+                since: dateTime.AddDays(-1),
+                before: new DateTime(2021, 1, 1).AddDays(-1));
+        }
+    }
+}
+
+/*
+            var st = Stopwatch.StartNew();
             Task<GitLogCommit[]>[] stats = Enumerable.Range(1, 12).Select(async i =>
             {
                 var firstMonthDay  = new DateTime(2020, i, 1);
@@ -51,16 +58,14 @@ namespace Wikitools
                 var nextMonthStart = firstMonthDay.AddMonths(1).AddDays(-1);
 
                 var x = await gitLog.GetAuthorChangesStats2(since: monthStart, before: nextMonthStart);
-                // kja temp test
-                await Console.Out.WriteLineAsync("Processing month " + i);
+                //var x = await gitLog.GetAuthorChangesStats2(since: new DateTime(2020, 1, 1).AddDays(-1), before: new DateTime(2021, 1, 1).AddDays(-1));
+                Console.Out.WriteLine("Done " + i);
                 return x;
             }).ToArray();
-            // kja test if this actually works
-            return Task.WhenAll(stats);
-        }
-    }
-}
-
+            Task.WaitAll(stats);
+            Console.Out.WriteLine(st.Elapsed);
+            st = Stopwatch.StartNew();
+ */
 /*
 reportData = 
 {
