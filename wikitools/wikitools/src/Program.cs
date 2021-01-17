@@ -30,18 +30,19 @@ namespace Wikitools
             var authorsReport    = new GitAuthorsStatsReport2(timeline, cfg.GitLogDays, authorsChangesStats);
             var filesReport      = new GitFilesStatsReport2(timeline, cfg.GitLogDays, filesChangesStats);
             var pagesViewsReport = new PagesViewsStatsReport2(timeline, cfg.AdoWikiPageViewsForDays, pagesViewsStats);
-            var monthlyReport    = new MonthlyStatsReport2(timeline, commits);
+            var monthlyReport    = new MonthlyStatsReport(timeline, commits);
 
             // Write outputs. Side-effectful.
-            await authorsReport.WriteAsync(Console.Out);
-            await filesReport.WriteAsync(Console.Out);
-            await pagesViewsReport.WriteAsync(Console.Out);
-            // await monthlyReport.WriteAsync(Console.Out);
+            // kja temp off
+            // await authorsReport.WriteAsync(Console.Out);
+            // await filesReport.WriteAsync(Console.Out);
+            // await pagesViewsReport.WriteAsync(Console.Out);
+            await monthlyReport.WriteAsync(Console.Out);
         }
 
         private static Task<GitLogCommit[]> GetCommitsFor2020(GitLog gitLog)
         {
-            var dateTime = new DateTime(2020, 1, 1);
+            var dateTime = new DateTime(2018, 1, 1);
             return gitLog.GetAuthorChangesStats2(
                 since: dateTime.AddDays(-1),
                 before: new DateTime(2021, 1, 1).AddDays(-1));

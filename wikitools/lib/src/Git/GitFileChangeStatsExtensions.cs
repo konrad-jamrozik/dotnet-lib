@@ -3,6 +3,7 @@ using System.Linq;
 
 namespace Wikitools.Lib.Git
 {
+    // kja get rid of all extension classes.
     public static class GitFileChangeStatsExtensions
     {
         public static List<GitFileChangeStats> SumByFilePath(this List<GitFileChangeStats> changesStats)
