@@ -110,5 +110,17 @@ namespace Wikitools.Lib.Git
                     }
             }
         }
+
+        public Task<GitLogCommit[]> Commits(int days) =>
+            GetAuthorChangesStats2(days);
+
+        public Task<GitLogCommit[]> Commits(DateTime startYear, DateTime endYear) =>
+            GetAuthorChangesStats2(
+                // .AddDays(-1) necessary as for "git log" the --since date day is exclusive
+                since: startYear.AddDays(-1),
+                // .AddYears(1).AddDays(-1), to include the last day of endYear.
+                // In "git log" --before date day is inclusive.
+                before: endYear.AddYears(1).AddDays(-1)
+            );
     }
 }

@@ -20,7 +20,7 @@ namespace Wikitools.AzureDevOps
         {
             _timeline = timeline;
             _days = days;
-            _pagesStats = new AsyncLazy<List<WikiPageStats>>(async () => await adoWiki.GetPagesStats());
+            _pagesStats = new AsyncLazy<List<WikiPageStats>>(async () => await adoWiki.PagesStats());
             _rows = new AsyncLazy<List<List<object>>>(Rows);
 
             async Task<List<List<object>>> Rows()
