@@ -32,18 +32,27 @@ namespace Wikitools
             // kja return table of monthly wiki contributions, sum of insertions per month, MoM % change
 
             // Obtain inputs. Has out-of-process dependencies.
-            List<GitAuthorChangeStats> authorsChangesStats = await gitLog.GetAuthorChangesStats();
-            List<GitFileChangeStats>   filesChangesStats   = await gitLog.GetFileChangesStats(); 
-            List<WikiPageStats>        pagesViewsStats     = await wiki.GetPagesStats();
+            List<GitAuthorChangeStats>       authorsChangesStats        = await gitLog.GetAuthorChangesStats();
+            List<GitFileChangeStats>         filesChangesStats          = await gitLog.GetFileChangesStats(); 
+            List<WikiPageStats>              pagesViewsStats            = await wiki.GetPagesStats();
+            List<List<GitAuthorChangeStats>> monthlyAuthorsChangesStats = GetMonthlyAuthorsChangesStats(gitLog);
 
             var authorsReport    = new GitAuthorsStatsReport2(timeline, cfg.GitLogDays, authorsChangesStats);
             var filesReport      = new GitFilesStatsReport2(timeline, cfg.GitLogDays, filesChangesStats);
             var pagesViewsReport = new PagesViewsStatsReport2(timeline, cfg.AdoWikiPageViewsForDays, pagesViewsStats);
+            var monthlyReport    = new MonthlyStatsReport2(timeline, monthlyAuthorsChangesStats);
 
             // Write outputs. Side-effectful.
             await authorsReport.WriteAsync(Console.Out);
             await filesReport.WriteAsync(Console.Out);
             await pagesViewsReport.WriteAsync(Console.Out);
+            await monthlyReport.WriteAsync(Console.Out);
+        }
+
+        private static List<List<GitAuthorChangeStats>> GetMonthlyAuthorsChangesStats(GitLog gitLog)
+        {
+            // kja to implement
+            return new();
         }
     }
 }
