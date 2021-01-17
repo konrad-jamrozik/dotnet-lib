@@ -11,7 +11,7 @@
   - Instead: ternary operator `?:`
 - No sequential execution that is not compile-time checked
   In other words: no temporal coupling, i.e. no statement sequence operator
-  (`;`) where the statements can be flipped causing a bug.
+  (`;`) where the statements can be flipped causing a bug that compiled.
   - Instead: flat code; declarative & functional programing
 - No broken abstractions, including names ending with:
   `Factory`, `Tools`, `Utilities`, `Context`, `Coordinator`, `Client`
