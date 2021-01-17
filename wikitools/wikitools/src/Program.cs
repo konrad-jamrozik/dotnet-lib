@@ -25,29 +25,39 @@ namespace Wikitools
             List<GitAuthorChangeStats> authorsChangesStats = await gitLog.GetAuthorChangesStats(cfg.GitLogDays);
             List<GitFileChangeStats>   filesChangesStats   = await gitLog.GetFileChangesStats();
             List<WikiPageStats>        pagesViewsStats     = await wiki.GetPagesStats();
-            GitLogCommit[]             commits             = await GetCommits(gitLog, 2019, 2020);
 
-            // kja use in all reports, dehardcode "/Meta"
+            GitLogCommit[] recentCommits = await GetCommits(gitLog, cfg.GitLogDays);
+
+            // kja dehardcode dates
+            GitLogCommit[] allCommits = await GetCommits(gitLog, new DateTime(2019, 1, 1), new DateTime(2020, 1, 1));
+
+            // kja use in all reports, dehardcode "/Meta". Same with "Konrad J" filter.
             Func<string, bool> filePathFilter = filePath => !filePath.Contains("/Meta");
-            var authorsReport    = new GitAuthorsStatsReport2(timeline, cfg.GitLogDays, authorsChangesStats);
-            var filesReport      = new GitFilesStatsReport2(timeline, cfg.GitLogDays, filesChangesStats);
+            var authorsReport = new GitAuthorsStatsReport2(timeline, cfg.GitLogDays, recentCommits);
+            var filesReport = new GitFilesStatsReport2(timeline, cfg.GitLogDays, filesChangesStats);
             var pagesViewsReport = new PagesViewsStatsReport2(timeline, cfg.AdoWikiPageViewsForDays, pagesViewsStats);
-            var monthlyReport    = new MonthlyStatsReport(timeline, commits, filePathFilter);
+            var monthlyReport = new MonthlyStatsReport(timeline, allCommits, filePathFilter);
 
             // Write outputs. Side-effectful.
             // kja temp off
-            // await authorsReport.WriteAsync(Console.Out);
+            await authorsReport.WriteAsync(Console.Out);
             // await filesReport.WriteAsync(Console.Out);
             // await pagesViewsReport.WriteAsync(Console.Out);
-            await monthlyReport.WriteAsync(Console.Out);
+            // await monthlyReport.WriteAsync(Console.Out);
         }
 
-        private static Task<GitLogCommit[]> GetCommits(GitLog gitLog, int startYear, int endYear) =>
+        // kja this should be GitLog method
+        private static Task<GitLogCommit[]> GetCommits(GitLog gitLog, int days) =>
+            gitLog.GetAuthorChangesStats2(sinceDays: days);
+
+        // kja this should be GitLog method
+        private static Task<GitLogCommit[]> GetCommits(GitLog gitLog, DateTime startYear, DateTime endYear) =>
             gitLog.GetAuthorChangesStats2(
-                // AddDays(-1) necessary as for "git log" the --since date day is exclusive
-                since: new DateTime(startYear, 1, 1).AddDays(-1), 
-                // endYear + 1 and then AddDays(-1), to include the last day of endYear.
+                // .AddDays(-1) necessary as for "git log" the --since date day is exclusive
+                since: startYear.AddDays(-1),
+                // .AddYears(1).AddDays(-1), to include the last day of endYear.
                 // In "git log" --before date day is inclusive.
-                before: new DateTime(endYear + 1, 1, 1).AddDays(-1));
+                before: endYear.AddYears(1).AddDays(-1)
+            );
     }
 }
