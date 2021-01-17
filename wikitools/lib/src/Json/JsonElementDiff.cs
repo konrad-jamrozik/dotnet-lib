@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Linq;
-using System.Net.Sockets;
 using System.Text.Json;
 // For explanation of this alias, please see comment on Wikitools.Lib.Json.JsonElementDiff.Value.
 using DiffObject = System.Object;
