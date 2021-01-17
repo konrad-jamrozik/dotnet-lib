@@ -1,27 +1,33 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Wikitools.Lib.Git;
 using Wikitools.Lib.Primitives;
 
 namespace Wikitools
 {
-    public record MonthlyStatsReport(ITimeline Timeline, GitLogCommit[] Commits) : MarkdownDocument
+    public record MonthlyStatsReport(
+        ITimeline Timeline,
+        GitLogCommit[] Commits,
+        Func<string, bool> FilePathFilter) : MarkdownDocument
     {
         public override List<object> Content =>
             new()
             {
                 $"Git file insertions and deletions month over month",
                 "",
-                new TabularData2(GetRows(Commits))
+                new TabularData2(GetRows(Commits, FilePathFilter))
             };
 
-        private static (object[] headerRow, object[][] rows) GetRows(GitLogCommit[] commits)
+        private static (object[] headerRow, object[][] rows) GetRows(
+            GitLogCommit[] commits,
+            Func<string, bool> filePathFilter)
         {
             var commitsByMonth = commits
                 .Where(commit => !commit.Author.Contains("Konrad J"))
                 .GroupBy(commit => $"{commit.Date.Year} {commit.Date.Month}");
 
-            static bool FilePathFilter(GitLogCommit.Numstat stat) => !stat.FilePath.Contains("/Meta");
+            bool FilePathFilter(GitLogCommit.Numstat stat) => filePathFilter(stat.FilePath);
 
             var insertionsByMonth = commitsByMonth.Select(month => (
                     month: month.Key,

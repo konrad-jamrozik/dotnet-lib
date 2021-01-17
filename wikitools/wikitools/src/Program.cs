@@ -27,10 +27,12 @@ namespace Wikitools
             List<WikiPageStats>        pagesViewsStats     = await wiki.GetPagesStats();
             GitLogCommit[]             commits             = await GetCommits(gitLog, 2019, 2020);
 
+            // kja use in all reports, dehardcode "/Meta"
+            Func<string, bool> filePathFilter = filePath => !filePath.Contains("/Meta");
             var authorsReport    = new GitAuthorsStatsReport2(timeline, cfg.GitLogDays, authorsChangesStats);
             var filesReport      = new GitFilesStatsReport2(timeline, cfg.GitLogDays, filesChangesStats);
             var pagesViewsReport = new PagesViewsStatsReport2(timeline, cfg.AdoWikiPageViewsForDays, pagesViewsStats);
-            var monthlyReport    = new MonthlyStatsReport(timeline, commits);
+            var monthlyReport    = new MonthlyStatsReport(timeline, commits, filePathFilter);
 
             // Write outputs. Side-effectful.
             // kja temp off
@@ -49,35 +51,3 @@ namespace Wikitools
                 before: new DateTime(endYear + 1, 1, 1).AddDays(-1));
     }
 }
-
-/*
-            var st = Stopwatch.StartNew();
-            Task<GitLogCommit[]>[] stats = Enumerable.Range(1, 12).Select(async i =>
-            {
-                var firstMonthDay  = new DateTime(2020, i, 1);
-                var monthStart     = firstMonthDay.AddDays(-1);
-                var nextMonthStart = firstMonthDay.AddMonths(1).AddDays(-1);
-
-                var x = await gitLog.GetAuthorChangesStats2(since: monthStart, before: nextMonthStart);
-                //var x = await gitLog.GetAuthorChangesStats2(since: new DateTime(2020, 1, 1).AddDays(-1), before: new DateTime(2021, 1, 1).AddDays(-1));
-                Console.Out.WriteLine("Done " + i);
-                return x;
-            }).ToArray();
-            Task.WaitAll(stats);
-            Console.Out.WriteLine(st.Elapsed);
-            st = Stopwatch.StartNew();
- */
-/*
-reportData = 
-{
-Description = "Wiki insertions by month, from MM-DD-YYYY to MM-DD-YYYY, both inclusive."
-TabularData = new TabularData(
-  HeaderRow = Month, Insertions, Monthly Change
-  Rows = 
-    List<List<GitFileChangeStats>> monthly change lists = foreach <month start and end dates>: GitLog.GetFilesChanges(start month, end month)
-    monthly insertions sums = foreach monthly change list: sum insertions
-    aggregate: monthly insertion sums: add MoM change. 
-    transpose aggregate: instead of two lists (List(sums), List(MoM)), make it List(Month(sum), Month(MoM)) (see https://morelinq.github.io/3.0/ref/api/html/M_MoreLinq_MoreEnumerable_Transpose__1.htm)
-)
-}
-*/
