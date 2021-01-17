@@ -22,8 +22,9 @@ namespace Wikitools.Tests
             var gitRepoDirPath    = @"C:\Users\fooUser\barRepo";
 
             // Arrange simulations
-            var timeline = new SimulatedTimeline();
-            var os       = new SimulatedOS(new SimulatedGitLogProcess(logDays, new GitLogCommit[1])); // kja to fix later
+            var timeline      = new SimulatedTimeline();
+            var gitLogCommits = new GitLogCommit[1]; // kja fix when ready
+            var os            = new SimulatedOS(new SimulatedGitLogProcess(logDays, gitLogCommits)); 
 
             // Arrange SUT declaration
             var gitLog = GitLog(os, gitRepoDirPath, gitExecutablePath, logDays);

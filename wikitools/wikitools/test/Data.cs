@@ -8,6 +8,7 @@ namespace Wikitools.Tests
     public static class Data
     {
         public static readonly GitLogCommit[] CommitsLogs = {
+            // kja restore this data
             new("AuthorA", new DateTime(2020, 1, 1), new GitLogCommit.Numstat[] { new(100, 10, "/Foo") })
             // new("AuthorC", 4, 2000, 22),
             // new("AuthorA", 1, 200, 20),
