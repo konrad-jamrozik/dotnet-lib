@@ -14,18 +14,18 @@ namespace Wikitools.AzureDevOps
         private readonly AsyncLazy<List<List<object>>> _rows;
         private readonly ITimeline _timeline;
         private readonly int _days;
-        private readonly AsyncLazy<List<WikiPageStats>> _pagesStats;
+        private readonly AsyncLazy<WikiPageStats[]> _pagesStats;
 
         public PagesViewsStatsReport(ITimeline timeline, AdoWiki adoWiki, int days)
         {
             _timeline = timeline;
             _days = days;
-            _pagesStats = new AsyncLazy<List<WikiPageStats>>(async () => await adoWiki.PagesStats());
+            _pagesStats = new AsyncLazy<WikiPageStats[]>(async () => await adoWiki.PagesStats());
             _rows = new AsyncLazy<List<List<object>>>(Rows);
 
             async Task<List<List<object>>> Rows()
             {
-                List<WikiPageStats> pagesStats = await _pagesStats.Value;
+                WikiPageStats[] pagesStats = await _pagesStats.Value;
 
                 List<(string path, int views)> pathsStats = pagesStats
                     .Select(pageStats =>
@@ -49,7 +49,7 @@ namespace Wikitools.AzureDevOps
         public async Task<string> GetDescription() => string.Format(DescriptionFormat,
             _days,
             _timeline.UtcNow,
-            (await _pagesStats.Value).Count);
+            (await _pagesStats.Value).Length);
 
         public List<object> HeaderRow => HeaderRowLabels;
         public Task<List<List<object>>> GetRows() => _rows.Value;

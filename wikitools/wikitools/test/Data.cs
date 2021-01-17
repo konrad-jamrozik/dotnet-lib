@@ -44,13 +44,12 @@ namespace Wikitools.Tests
             new() { 1, "maxStatsSum.txt", 68, 68 }
         };
 
-        public static readonly List<WikiPageStats> PageStats = new()
-        {
-            new WikiPageStats("/Home", new List<int> { 1, 20, 0, 0 }),
-            new WikiPageStats("/Foo", new List<int> { 60, 0, 8, 0 }),
-            new WikiPageStats("/Foo/Bar", new List<int> { 6, 8, 0, 0 }),
-            new WikiPageStats("/Foo/Baz", new List<int> { 0, 0, 80, 100 }),
-            new WikiPageStats("/Qux/Quux/Quuz", new List<int> { 7, 7, 7, 7 })
+        public static readonly WikiPageStats[] PageStats = {
+            new("/Home", new List<int> { 1, 20, 0, 0 }),
+            new("/Foo", new List<int> { 60, 0, 8, 0 }),
+            new("/Foo/Bar", new List<int> { 6, 8, 0, 0 }),
+            new("/Foo/Baz", new List<int> { 0, 0, 80, 100 }),
+            new("/Qux/Quux/Quuz", new List<int> { 7, 7, 7, 7 })
         };
 
         private static readonly List<List<object>> PageViewsStatsReportRows = new()

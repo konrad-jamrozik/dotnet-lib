@@ -11,7 +11,7 @@ namespace Wikitools.AzureDevOps
 {
     public class AdoApi : IAdoApi
     {
-        public async Task<List<WikiPageStats>> GetWikiPagesStats(
+        public async Task<WikiPageStats[]> GetWikiPagesStats(
             AdoWikiUri adoWikiUri,
             string patEnvVar,
             int pageViewsForDays)
@@ -19,7 +19,7 @@ namespace Wikitools.AzureDevOps
             var wikiHttpClient   = WikiHttpClient(adoWikiUri, patEnvVar);
             var wikiPagesDetails = await GetAllWikiPagesDetails(adoWikiUri, pageViewsForDays, wikiHttpClient);
             var wikiPagesStats   = wikiPagesDetails.Select(pageDetail => new WikiPageStats(pageDetail));
-            return wikiPagesStats.ToList();
+            return wikiPagesStats.ToArray();
         }
 
         private static WikiHttpClient WikiHttpClient(AdoWikiUri adoWikiUri, string patEnvVar)
@@ -29,7 +29,7 @@ namespace Wikitools.AzureDevOps
             // Construction of VssConnection with PAT based on
             // https://docs.microsoft.com/en-us/azure/devops/integrate/get-started/client-libraries/samples?view=azure-devops#personal-access-token-authentication-for-rest-services
             // Linked from https://docs.microsoft.com/en-us/azure/devops/integrate/concepts/dotnet-client-libraries?view=azure-devops#samples
-            VssConnection connection = new VssConnection(
+            VssConnection connection = new(
                 new Uri(adoWikiUri.CollectionUri),
                 new VssBasicCredential(string.Empty, password: pat));
 

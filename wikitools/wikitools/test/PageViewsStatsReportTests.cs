@@ -33,7 +33,7 @@ namespace Wikitools.Tests
                 Description: string.Format(PagesViewsStatsReport.DescriptionFormat,
                     pageViewsForDays,
                     timeline.UtcNow,
-                    pageStats.Count),
+                    pageStats.Length),
                 HeaderRow: PagesViewsStatsReport.HeaderRowLabels,
                 Rows: (List<List<object>>) Data.Expectation[pageStats]);
 

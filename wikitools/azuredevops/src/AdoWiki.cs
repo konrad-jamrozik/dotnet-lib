@@ -19,7 +19,7 @@ namespace Wikitools.AzureDevOps
             _pageViewsForDays = pageViewsForDays;
         }
 
-        public async Task<List<WikiPageStats>> PagesStats()
+        public async Task<WikiPageStats[]> PagesStats()
         {
             if (!(_pageViewsForDays > 0))
                 throw new ArgumentOutOfRangeException(nameof(_pageViewsForDays),
@@ -28,7 +28,7 @@ namespace Wikitools.AzureDevOps
                 throw new ArgumentOutOfRangeException(nameof(_pageViewsForDays),
                     $"Expected value <= 30 as this is the ADO API limit; value = {_pageViewsForDays}");
 
-            List<WikiPageStats> pagesStats = await _adoApi.GetWikiPagesStats(_adoWikiUri, _patEnvVar, _pageViewsForDays);
+            WikiPageStats[] pagesStats = await _adoApi.GetWikiPagesStats(_adoWikiUri, _patEnvVar, _pageViewsForDays);
             return pagesStats;
         }
 

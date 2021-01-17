@@ -5,17 +5,17 @@ using Wikitools.Lib.Primitives;
 
 namespace Wikitools
 {
-    public record PagesViewsStatsReport2(ITimeline Timeline, int Days, List<WikiPageStats> Stats) : MarkdownDocument
+    public record PagesViewsStatsReport2(ITimeline Timeline, int Days, WikiPageStats[] Stats) : MarkdownDocument
     {
         public override List<object> Content =>
             new()
             {
-                $"Page views since last {Days} days as of {Timeline.UtcNow}. Total wiki pages: {Stats.Count}",
+                $"Page views since last {Days} days as of {Timeline.UtcNow}. Total wiki pages: {Stats.Length}",
                 "",
                 new TabularData2(GetRows(Stats))
             };
 
-        private static (string[] headerRow, object[][] rows) GetRows(List<WikiPageStats> stats)
+        private static (string[] headerRow, object[][] rows) GetRows(WikiPageStats[] stats)
         {
             (string path, int views)[] pathsStats = stats
                 .Select(pageStats =>
