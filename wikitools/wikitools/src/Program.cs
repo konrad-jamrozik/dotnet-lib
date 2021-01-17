@@ -6,7 +6,6 @@ using Wikitools.Lib.Git;
 using Wikitools.Lib.OS;
 using Wikitools.Lib.Primitives;
 using static Wikitools.Declare;
-using GitLog = Wikitools.Lib.Git.GitLog;
 
 namespace Wikitools
 {
@@ -30,13 +29,13 @@ namespace Wikitools
 
             // Obtain inputs. Has out-of-process dependencies.
             GitLogCommit[]      recentCommits   = await gitLog.Commits(cfg.GitLogDays);
-            GitLogCommit[]      allCommits      = await gitLog.Commits(cfgStartYear, cfgEndYear);
+            GitLogCommit[]      pastCommits     = await gitLog.Commits(cfgStartYear, cfgEndYear);
             List<WikiPageStats> pagesViewsStats = await wiki.PagesStats();
 
             var authorsReport    = new GitAuthorsStatsReport2(timeline, cfg.GitLogDays, recentCommits);
             var filesReport      = new GitFilesStatsReport2(timeline, cfg.GitLogDays, recentCommits, filePathFilter);
             var pagesViewsReport = new PagesViewsStatsReport2(timeline, cfg.AdoWikiPageViewsForDays, pagesViewsStats);
-            var monthlyReport    = new MonthlyStatsReport(timeline, allCommits, filePathFilter);
+            var monthlyReport    = new MonthlyStatsReport(timeline, pastCommits, filePathFilter);
 
             // Write outputs. Side-effectful.
             await authorsReport.WriteAsync(Console.Out);
