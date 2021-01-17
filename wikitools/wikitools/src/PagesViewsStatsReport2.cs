@@ -5,25 +5,14 @@ using Wikitools.Lib.Primitives;
 
 namespace Wikitools
 {
-    public class PagesViewsStatsReport2 : MarkdownDocument
+    public record PagesViewsStatsReport2(ITimeline Timeline, int Days, List<WikiPageStats> Stats) : MarkdownDocument
     {
-        private readonly ITimeline _timeline;
-        private readonly int _days;
-        private readonly List<WikiPageStats> _stats;
-
-        public PagesViewsStatsReport2(ITimeline timeline, int days, List<WikiPageStats> stats)
-        {
-            _timeline = timeline;
-            _days = days;
-            _stats = stats;
-        }
-
         public override List<object> Content =>
             new()
             {
-                $"Page views since last {_days} days as of {_timeline.UtcNow}. Total wiki pages: {_stats.Count}",
+                $"Page views since last {Days} days as of {Timeline.UtcNow}. Total wiki pages: {Stats.Count}",
                 "",
-                new TabularData2(GetRows(_stats))
+                new TabularData2(GetRows(Stats))
             };
 
         private static (string[] headerRow, object[][] rows) GetRows(List<WikiPageStats> stats)
@@ -31,7 +20,7 @@ namespace Wikitools
             (string path, int views)[] pathsStats = stats
                 .Select(pageStats =>
                     (
-                        path:  pageStats.Path,
+                        path: pageStats.Path,
                         views: pageStats.DayViewCounts.Sum()
                     )
                 )

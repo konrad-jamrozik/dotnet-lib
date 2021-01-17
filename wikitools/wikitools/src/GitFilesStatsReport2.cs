@@ -5,25 +5,14 @@ using Wikitools.Lib.Primitives;
 
 namespace Wikitools
 {
-    public class GitFilesStatsReport2 : MarkdownDocument
+    public record GitFilesStatsReport2(ITimeline Timeline, int Days, List<GitFileChangeStats> Stats) : MarkdownDocument
     {
-        private readonly ITimeline _timeline;
-        private readonly int _days;
-        private readonly List<GitFileChangeStats> _stats;
-
-        public GitFilesStatsReport2(ITimeline timeline, int days, List<GitFileChangeStats> stats)
-        {
-            _timeline = timeline;
-            _days = days;
-            _stats = stats;
-        }
-
         public override List<object> Content =>
             new()
             {
-                $"Git file changes since last {_days} days as of {_timeline.UtcNow}",
+                $"Git file changes since last {Days} days as of {Timeline.UtcNow}",
                 "",
-                new TabularData2(GetRows(_stats))
+                new TabularData2(GetRows(Stats))
             };
 
         private static (string[] headerRow, object[][] rows) GetRows(

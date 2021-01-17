@@ -8,7 +8,7 @@ using Wikitools.Lib.Tables;
 
 namespace Wikitools
 {
-    public abstract class MarkdownDocument : IWritableToText
+    public abstract record MarkdownDocument : IWritableToText
     {
         public async Task WriteAsync(TextWriter textWriter) => await textWriter.WriteAsync(ToMarkdown(this));
 

@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using MoreLinq;
 
 namespace Wikitools.Lib.Git
 {
@@ -15,6 +17,36 @@ namespace Wikitools.Lib.Git
         {
             _repo = repo;
             _days = days;
+        }
+
+        public async Task<ImmutableArray<GitLogCommit>> GetAuthorChangesStats2(
+            int? sinceDays = null,
+            DateTime? since = null,
+            DateTime? before = null)
+        {
+            // kja use --numstat instead of --shortstat
+            // Reference:
+            // https://git-scm.com/docs/git-log#_commit_limiting
+            // https://git-scm.com/book/en/v2/Git-Basics-Viewing-the-Commit-History
+            // https://git-scm.com/docs/git-log#Documentation/git-log.txt---statltwidthgtltname-widthgtltcountgt
+            // SOQ: How can I calculate the number of lines changed between two commits in GIT?
+            // A: https://stackoverflow.com/a/2528129/986533
+            string sinceDaysStr = sinceDays != null ? " --since=" + sinceDays + ".days" : string.Empty;
+            string beforeStr    = before != null ? " --before=" + before.Value.ToShortDateString() : string.Empty;
+            string sinceStr     = since != null ? " --since=" + since.Value.ToShortDateString() : string.Empty;
+            var    delimiter    = ";";
+            var command =
+                $"git log{sinceDaysStr}{sinceStr}{beforeStr} " +
+                $"--ignore-all-space --ignore-blank-lines " +
+                $"--pretty=\"{delimiter}%n%an%n%as\" " +
+                $"--numstat";
+
+            return
+                (await _repo.GetStdOutLines(command))
+                .Where(line => !string.IsNullOrWhiteSpace(line))
+                .Split(delimiter)
+                .Select(commit => new GitLogCommit(commit.ToArray()))
+                .ToImmutableArray();
         }
 
         public async Task<List<GitAuthorChangeStats>> GetAuthorChangesStats(
@@ -34,8 +66,7 @@ namespace Wikitools.Lib.Git
             string sinceStr     = since != null ? " --since=" + since.Value.ToShortDateString() : string.Empty;
             var command =
                 $"git log{sinceDaysStr}{sinceStr}{beforeStr} --pretty=\"%an\" --shortstat --ignore-all-space --ignore-blank-lines";
-            List<string> stdOutLines =
-                await _repo.GetStdOutLines(command);
+            List<string> stdOutLines = await _repo.GetStdOutLines(command);
 
             stdOutLines.RemoveAll(string.IsNullOrWhiteSpace);
             RemoveLogEntriesWithNoLineChanges(stdOutLines);

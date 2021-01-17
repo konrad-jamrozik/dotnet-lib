@@ -16,9 +16,11 @@
   (`;`) where the statements can be flipped without compilation failure.
   - Instead: flat code; declarative & functional programing
 - No broken abstractions, including names ending with:
-  `Factory`, `Tools`, `Utilities`, `Context`, `Coordinator`
+  `Factory`, `Tools`, `Utilities`, `Context`, `Coordinator`, `Client`
   - "do-er" names, including:
-  `Helper`,`Validator`, `Parser`, `Mapper`, `Resolver`, `Manager`, `Provider`
+  `Helper`,`Validator`, `Parser`, `Mapper`, `Resolver`, `Manager`, `Provider`,
+  `Wrapper`
+- No dependency injection containers
 
 ## Hard rules with important exceptions
 
