@@ -25,7 +25,7 @@ namespace Wikitools
             List<GitAuthorChangeStats> authorsChangesStats = await gitLog.GetAuthorChangesStats(cfg.GitLogDays);
             List<GitFileChangeStats>   filesChangesStats   = await gitLog.GetFileChangesStats();
             List<WikiPageStats>        pagesViewsStats     = await wiki.GetPagesStats();
-            GitLogCommit[]             commits             = await GetCommitsFor2020(gitLog);
+            GitLogCommit[]             commits             = await GetCommits(gitLog, 2019, 2020);
 
             var authorsReport    = new GitAuthorsStatsReport2(timeline, cfg.GitLogDays, authorsChangesStats);
             var filesReport      = new GitFilesStatsReport2(timeline, cfg.GitLogDays, filesChangesStats);
@@ -40,13 +40,13 @@ namespace Wikitools
             await monthlyReport.WriteAsync(Console.Out);
         }
 
-        private static Task<GitLogCommit[]> GetCommitsFor2020(GitLog gitLog)
-        {
-            var dateTime = new DateTime(2018, 1, 1);
-            return gitLog.GetAuthorChangesStats2(
-                since: dateTime.AddDays(-1),
-                before: new DateTime(2021, 1, 1).AddDays(-1));
-        }
+        private static Task<GitLogCommit[]> GetCommits(GitLog gitLog, int startYear, int endYear) =>
+            gitLog.GetAuthorChangesStats2(
+                // AddDays(-1) necessary as for "git log" the --since date day is exclusive
+                since: new DateTime(startYear, 1, 1).AddDays(-1), 
+                // endYear + 1 and then AddDays(-1), to include the last day of endYear.
+                // In "git log" --before date day is inclusive.
+                before: new DateTime(endYear + 1, 1, 1).AddDays(-1));
     }
 }
 
