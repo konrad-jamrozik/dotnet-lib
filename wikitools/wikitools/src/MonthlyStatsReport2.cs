@@ -9,6 +9,7 @@ namespace Wikitools
     {
         public MonthlyStatsReport2(ITimeline timeline, List<List<GitAuthorChangeStats>> stats)
         {
+            // kja NEXT
             throw new NotImplementedException();
         }
 
