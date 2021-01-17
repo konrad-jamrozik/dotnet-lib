@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Wikitools.Lib.Git;
+using Wikitools.Lib.Markdown;
 using Wikitools.Lib.Primitives;
+using Wikitools.Lib.Tables;
 
 namespace Wikitools
 {

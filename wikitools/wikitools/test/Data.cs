@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Wikitools.AzureDevOps;
 using Wikitools.Lib.Git;
@@ -6,17 +7,21 @@ namespace Wikitools.Tests
 {
     public static class Data
     {
-        public static readonly List<GitAuthorChangeStats> AuthorChangesStats = new()
+        public static readonly GitLogCommit[] CommitsLogs = {
+            new("AuthorA", new DateTime(2020, 1, 1), new GitLogCommit.Numstat[] { new(100, 10, "/Foo") })
+            // new("AuthorC", 4, 2000, 22),
+            // new("AuthorA", 1, 200, 20),
+            // new("AuthorA", 1, 300, 30),
+            // new("AuthorB", 11, 10000, 101),
+            // new("AuthorB", 20, 20000, 202),
+            // new("AuthorB", 36, 30000, 303),
+            // new("AuthorC", 2, 1000, 11),
+            // new("AuthorC", 6, 3000, 33)
+        };
+
+        public static readonly object[][] CommitsLogsRows =
         {
-            new("AuthorA", 1, 100, 10),
-            new("AuthorC", 4, 2000, 22),
-            new("AuthorA", 1, 200, 20),
-            new("AuthorA", 1, 300, 30),
-            new("AuthorB", 11, 10000, 101),
-            new("AuthorB", 20, 20000, 202),
-            new("AuthorB", 36, 30000, 303),
-            new("AuthorC", 2, 1000, 11),
-            new("AuthorC", 6, 3000, 33)
+            new object[] { "AuthorA", 1, 100, 10 }
         };
 
         private static readonly List<List<object>> AuthorsStatsReportRows = new()
@@ -65,9 +70,13 @@ namespace Wikitools.Tests
 
         public static readonly Dictionary<object, object> Expectation = new()
         {
-            [AuthorChangesStats] = AuthorsStatsReportRows,
+            [CommitsLogs] = AuthorsStatsReportRows,
             [FileChangesStats] = FilesStatsReportRows,
             [PageStats] = PageViewsStatsReportRows,
         };
+        public static readonly Dictionary<object, object[][]> ExpectedRows = new()
+        {
+            [CommitsLogs] = CommitsLogsRows
+        };
     }
-}
+    }

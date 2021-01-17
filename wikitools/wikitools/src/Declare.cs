@@ -12,7 +12,7 @@ namespace Wikitools
                 new GitBashShell(os, gitExecutablePath),
                 gitRepoDirPath
             );
-            var gitLog = new GitLog(repo, logDays);
+            var gitLog = new GitLog(repo);
             return gitLog;
         }
 

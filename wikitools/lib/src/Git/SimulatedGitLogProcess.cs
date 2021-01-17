@@ -1,30 +1,46 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Microsoft.VisualBasic;
 
 namespace Wikitools.Lib.Git
 {
     public class SimulatedGitLogProcess : IProcessSimulationSpec
     {
-        private readonly List<GitAuthorChangeStats>? _authorsChangesStats;
-        private readonly List<GitFileChangeStats>? _filesChangesStats;
         private readonly int _sinceDays;
+        private readonly GitLogCommit[] _commits;
 
         public SimulatedGitLogProcess(
             int sinceDays,
             // kja abstract this away into an interface that provides StdOutLines
-            List<GitAuthorChangeStats>? authorsChangesStats = null,
-            List<GitFileChangeStats>? filesChangesStats = null)
+            GitLogCommit[] commits)
         {
             _sinceDays = sinceDays;
-            _authorsChangesStats = authorsChangesStats;
-            _filesChangesStats = filesChangesStats;
+            _commits = commits;
         }
         
-        // kja support the other command too. Don't duplicaty any of these 2 commands: string.Format.
         public bool Matches(string executableFilePath, string workingDirPath, string[] arguments)
-            => arguments.Any(arg => arg.Contains($"git log --since={_sinceDays}.days --pretty=\"%an\" --shortstat"));
+            => arguments.Any(arg => arg.Contains("git log") && arg.Contains($"--since={_sinceDays}.days"));
 
-        // kja forced null coercion
-        public List<string> StdOutLines => _authorsChangesStats?.FromGitLogStdOutLines()!;
+        public List<string> StdOutLines => _commits
+            .Select(GetStdOutLines)
+            .Aggregate((acc, commitLines) =>
+                acc
+                    .Union(MoreLinq.MoreEnumerable.Return(GitLog.Delimiter))
+                    .Union(commitLines).ToList()
+            );
+
+        private static List<string> GetStdOutLines(GitLogCommit commit)
+        {
+            return new List<string>
+            {
+                commit.Author,
+                commit.Date.ToShortDateString()
+            }.Union(
+                commit.Stats
+                    .Select(stat =>
+                        $"{stat.Insertions}\t{stat.Deletions}\t{stat.FilePath}")
+                )
+                .ToList();
+        }
     }
 }

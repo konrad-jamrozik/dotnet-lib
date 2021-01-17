@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Wikitools.Lib.Tables;
 
-namespace Wikitools
+namespace Wikitools.Lib.Markdown
 {
     public abstract record MarkdownDocument : IWritableToText
     {

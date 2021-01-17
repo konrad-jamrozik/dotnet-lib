@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Wikitools.Lib;
 using Wikitools.Lib.Git;
 using Wikitools.Lib.OS;
 using Wikitools.Lib.Primitives;
@@ -17,24 +16,24 @@ namespace Wikitools.Tests
         public async Task ReportsGitAuthorsStats()
         {
             // Arrange inputs
-            var changesStats      = Data.AuthorChangesStats;
+            var commitsData      = Data.CommitsLogs;
             var logDays           = 15;
             var gitExecutablePath = @"C:\Program Files\Git\bin\sh.exe";
             var gitRepoDirPath    = @"C:\Users\fooUser\barRepo";
 
             // Arrange simulations
             var timeline = new SimulatedTimeline();
-            var os       = new SimulatedOS(new SimulatedGitLogProcess(logDays, authorsChangesStats: changesStats));
+            var os       = new SimulatedOS(new SimulatedGitLogProcess(logDays, commitsData));
 
             // Arrange SUT declaration
-            var gitLog = GitLog(os, gitRepoDirPath, gitExecutablePath, logDays);
-            var sut    = new GitAuthorsStatsReport(timeline, gitLog, logDays);
+            var gitLog  = GitLog(os, gitRepoDirPath, gitExecutablePath, logDays);
+            // kja this is wrong: this wait shouldn't be necessary. Defer!
+            var commits = await gitLog.Commits(logDays);
+            var sut     = new GitAuthorsStatsReport2(timeline, logDays, commits);
 
             // Arrange expectations
-            var expected = new TabularData(
-                Description: string.Format(GitAuthorsStatsReport.DescriptionFormat, logDays, timeline.UtcNow),
-                HeaderRow: GitAuthorsStatsReport.HeaderRowLabels,
-                Rows: (List<List<object>>) Data.Expectation[changesStats]);
+            // kja also need to verify Description
+            var expected = new TabularData2((GitAuthorsStatsReport2.HeaderRow, Data.ExpectedRows[commitsData]));
 
             await Verify(expected, sut);
         }
