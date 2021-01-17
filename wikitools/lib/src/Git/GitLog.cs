@@ -19,7 +19,7 @@ namespace Wikitools.Lib.Git
             _days = days;
         }
 
-        public async Task<ImmutableArray<GitLogCommit>> GetAuthorChangesStats2(
+        public async Task<GitLogCommit[]> GetAuthorChangesStats2(
             int? sinceDays = null,
             DateTime? since = null,
             DateTime? before = null)
@@ -46,7 +46,7 @@ namespace Wikitools.Lib.Git
                 .Where(line => !string.IsNullOrWhiteSpace(line))
                 .Split(delimiter)
                 .Select(commit => new GitLogCommit(commit.ToArray()))
-                .ToImmutableArray();
+                .ToArray();
         }
 
         public async Task<List<GitAuthorChangeStats>> GetAuthorChangesStats(
