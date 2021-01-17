@@ -2,6 +2,7 @@
 
 namespace Wikitools.Lib.Primitives
 {
+    // kja to remove when TabularData is removed
     public class TextLines
     {
         private readonly string _value;

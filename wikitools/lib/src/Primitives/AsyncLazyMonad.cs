@@ -3,6 +3,8 @@ using System.Threading.Tasks;
 
 namespace Wikitools.Lib.Primitives
 {
+    // ReSharper disable once UnusedType.Global
+    // - reason: keeping for now.
     public static class AsyncLazyMonad
     {
         public static AsyncLazy<T> AsAsyncLazy<T>(this Task<T> target) 

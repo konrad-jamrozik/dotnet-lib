@@ -5,25 +5,15 @@ namespace Wikitools.Lib.Primitives
 {
     public class Dir
     {
-        private readonly LazyString _path;
-        public IFileSystem FileSystem { get; }
+        private IFileSystem FileSystem { get; }
 
-        private Dir(IFileSystem fs, LazyString path)
+        public Dir(IFileSystem fs, string path)
         {
             FileSystem = fs;
-            _path = path;
+            Value = path;
         }
 
-        public Dir(IFileSystem fs, string path) : this(fs, (LazyString) path) {}
-
-        public Dir(Dir parent, string child) : this
-        (
-            parent.FileSystem, 
-            new LazyString(() => parent.Value + Path.DirectorySeparatorChar + child)
-        ) 
-        {}
-
-        public string Value => _path.Value;
+        public string Value { get; }
 
         public bool Exists() => FileSystem.DirectoryExists(Value);
     }
