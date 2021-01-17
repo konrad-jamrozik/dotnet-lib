@@ -20,7 +20,7 @@ namespace Wikitools.AzureDevOps
             _pageViewsForDays = pageViewsForDays;
         }
 
-        internal async Task<List<WikiPageStats>> GetPagesStats()
+        public async Task<List<WikiPageStats>> GetPagesStats()
         {
             if (!(_pageViewsForDays > 0))
                 throw new ArgumentOutOfRangeException(nameof(_pageViewsForDays),

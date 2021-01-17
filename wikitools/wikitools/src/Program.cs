@@ -32,13 +32,18 @@ namespace Wikitools
             // kja return table of monthly wiki contributions, sum of insertions per month, MoM % change
 
             // Obtain inputs. Has out-of-process dependencies.
-            List<GitAuthorChangeStats> changesStats = await gitLog.GetAuthorChangesStats();
+            List<GitAuthorChangeStats> authorsChangesStats = await gitLog.GetAuthorChangesStats();
+            List<GitFileChangeStats>   filesChangesStats   = await gitLog.GetFileChangesStats(); 
+            List<WikiPageStats>        pagesViewsStats     = await wiki.GetPagesStats();
 
-            var report = new GitAuthorsStatsReport2(timeline, cfg.GitLogDays, changesStats);
-            
+            var authorsReport    = new GitAuthorsStatsReport2(timeline, cfg.GitLogDays, authorsChangesStats);
+            var filesReport      = new GitFilesStatsReport2(timeline, cfg.GitLogDays, filesChangesStats);
+            var pagesViewsReport = new PagesViewsStatsReport2(timeline, cfg.AdoWikiPageViewsForDays, pagesViewsStats);
+
             // Write outputs. Side-effectful.
-            await report.WriteAsync(Console.Out);
-            
+            await authorsReport.WriteAsync(Console.Out);
+            await filesReport.WriteAsync(Console.Out);
+            await pagesViewsReport.WriteAsync(Console.Out);
         }
     }
 }

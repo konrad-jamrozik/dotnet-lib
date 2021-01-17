@@ -7,11 +7,11 @@ namespace Wikitools
 {
     public class GitAuthorsStatsReport2 : MarkdownDocument
     {
-        private readonly Timeline _timeline;
+        private readonly ITimeline _timeline;
         private readonly int _days;
         private readonly List<GitAuthorChangeStats> _stats;
 
-        public GitAuthorsStatsReport2(Timeline timeline, int days, List<GitAuthorChangeStats> stats)
+        public GitAuthorsStatsReport2(ITimeline timeline, int days, List<GitAuthorChangeStats> stats)
         {
             _timeline = timeline;
             _days = days;
@@ -23,19 +23,20 @@ namespace Wikitools
             {
                 $"Git contributions since last {_days} days as of {_timeline.UtcNow}",
                 "",
-                new TabularData2(GetAuthorsChangesStatsRows(_stats))
+                new TabularData2(Rows(_stats))
             };
 
-        private static (string[] headerRow, object[][] rows) GetAuthorsChangesStatsRows(
-            List<GitAuthorChangeStats> authorChangesStats)
+        private static (string[] headerRow, object[][] rows) Rows(
+            List<GitAuthorChangeStats> authorsChangesStats)
         {
-            GitAuthorChangeStats[] authorsStatsOrdered = authorChangesStats.SumByAuthor()
+            GitAuthorChangeStats[] authorsStatsOrdered = authorsChangesStats.SumByAuthor()
                 .OrderByDescending(authorStats => authorStats.Insertions + authorStats.Deletions)
                 .Where(stats => !stats.Author.Contains("Konrad J"))
                 .ToArray()[..5];
 
             var rows = authorsStatsOrdered
-                .Select((s, i) => new object[] { i+1, s.Author, s.FilesChanged, s.Insertions, s.Deletions })
+                .Select((stats, i) => new object[]
+                    { i + 1, stats.Author, stats.FilesChanged, stats.Insertions, stats.Deletions })
                 .ToArray();
 
             return (headerRow: new[] { "Place", "Author", "Files changed", "Insertions", "Deletions" }, rows);
