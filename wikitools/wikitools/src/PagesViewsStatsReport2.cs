@@ -12,11 +12,11 @@ namespace Wikitools
         public PagesViewsStatsReport2(ITimeline timeline, int days, WikiPageStats[] stats) :
             base(GetContent(timeline, days, stats)) { }
 
-        private static List<object> GetContent(
+        private static object[] GetContent(
             ITimeline timeline,
             int days,
             WikiPageStats[] stats) =>
-            new()
+            new object[]
             {
                 $"Page views since last {days} days as of {timeline.UtcNow}. Total wiki pages: {stats.Length}",
                 "",

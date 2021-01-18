@@ -14,8 +14,8 @@ namespace Wikitools
             GitLogCommit[] commits,
             Func<string, bool> filePathFilter) : base(GetContent(commits, filePathFilter)) { }
 
-        private static List<object> GetContent(GitLogCommit[] commits, Func<string, bool> filePathFilter) =>
-            new()
+        private static object[] GetContent(GitLogCommit[] commits, Func<string, bool> filePathFilter) =>
+            new object[]
             {
                 $"Git file insertions and deletions month over month",
                 "",

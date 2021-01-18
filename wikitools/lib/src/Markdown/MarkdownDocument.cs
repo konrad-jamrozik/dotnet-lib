@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -8,7 +7,7 @@ using Wikitools.Lib.Tables;
 
 namespace Wikitools.Lib.Markdown
 {
-    public record MarkdownDocument(List<object> Content) : IWritableToText
+    public record MarkdownDocument(object[] Content) : IWritableToText
     {
         public async Task WriteAsync(TextWriter textWriter) => await textWriter.WriteAsync(ToMarkdown(this));
 

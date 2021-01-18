@@ -24,6 +24,8 @@ namespace Wikitools.Tests
             var timeline = new SimulatedTimeline();
             var adoApi   = new SimulatedAdoApi(pageStats);
 
+            // KJA NEXT test to fix
+
             // Arrange SUT declaration
             var wiki = Wiki(adoApi, wikiUri, patEnvVar, pageViewsForDays);
             var sut  = new PagesViewsStatsReport(timeline, wiki, pageViewsForDays);

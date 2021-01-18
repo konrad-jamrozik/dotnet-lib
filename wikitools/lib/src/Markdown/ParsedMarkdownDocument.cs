@@ -12,7 +12,7 @@ namespace Wikitools.Lib.Markdown
     {
         public ParsedMarkdownDocument(StringWriter sw) : base(GetContent(sw)) { }
 
-        private static List<object> GetContent(StringWriter sw)
+        private static object[] GetContent(StringWriter sw)
         {
             string[] markdownLines = new TextLines(sw.GetStringBuilder().ToString()).SplitTrimmingEnd;
 
@@ -22,7 +22,7 @@ namespace Wikitools.Lib.Markdown
             {
                 var table = Return(new MarkdownTable2(@group.ToArray()).Table).Cast<object>();
                 return @group.Key ? table : @group.ToArray();
-            }).ToList();
+            }).ToArray();
 
             return content;
         }

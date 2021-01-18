@@ -16,8 +16,8 @@ namespace Wikitools
         public GitAuthorsStatsReport2(ITimeline timeline, int days, GitLogCommit[] commits) : base(
             GetContent(timeline, days, commits)) { }
 
-        private static List<object> GetContent(ITimeline timeline, int days, GitLogCommit[] commits) =>
-            new()
+        private static object[] GetContent(ITimeline timeline, int days, GitLogCommit[] commits) =>
+            new object[]
             {
                 string.Format(DescriptionFormat, days, timeline.UtcNow),
                 "",

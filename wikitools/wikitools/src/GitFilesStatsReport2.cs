@@ -20,12 +20,12 @@ namespace Wikitools
             Func<string, bool>? filePathFilter = null) : base(
             GetContent(timeline, days, commits, filePathFilter ?? (_ => true))) { }
 
-        private static List<object> GetContent(
+        private static object[] GetContent(
             ITimeline timeline,
             int days,
             GitLogCommit[] commits,
             Func<string, bool> filePathFilter) =>
-            new()
+            new object[]
             {
                 string.Format(DescriptionFormat, days, timeline.UtcNow),
                 "",

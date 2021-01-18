@@ -35,7 +35,7 @@ namespace Wikitools.Tests
             var sut     = new GitFilesStatsReport2(timeline, logDays, commits);
 
             // Arrange expectations
-            var expected = new MarkdownDocument(new List<object>
+            var expected = new MarkdownDocument(new object[]
             {
                 string.Format(GitFilesStatsReport2.DescriptionFormat, logDays, timeline.UtcNow),
                 "",

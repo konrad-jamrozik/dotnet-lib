@@ -34,11 +34,12 @@ namespace Wikitools.Tests
             var sut     = new GitAuthorsStatsReport2(timeline, logDays, commits);
 
             // Arrange expectations
-            var expected = new MarkdownDocument(new List<object>
+            var expected = new MarkdownDocument(new object[]
             {
                 string.Format(GitAuthorsStatsReport2.DescriptionFormat, logDays, timeline.UtcNow),
                 "",
-                new TabularData2((GitAuthorsStatsReport2.HeaderRow, data.ExpectedRows[(nameof(GitAuthorsStatsReportTests), commitsData)]))
+                new TabularData2((GitAuthorsStatsReport2.HeaderRow,
+                    data.ExpectedRows[(nameof(GitAuthorsStatsReportTests), commitsData)]))
             });
 
             await Verify(expected, sut);
