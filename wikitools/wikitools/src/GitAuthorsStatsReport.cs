@@ -6,12 +6,12 @@ using Wikitools.Lib.Tables;
 
 namespace Wikitools
 {
-    public record GitAuthorsStatsReport2 : MarkdownDocument
+    public record GitAuthorsStatsReport : MarkdownDocument
     {
         public static readonly object[] HeaderRow = { "Place", "Author", "Files changed", "Insertions", "Deletions" };
         public const string DescriptionFormat = "Git contributions since last {0} days as of {1}";
 
-        public GitAuthorsStatsReport2(ITimeline timeline, int days, GitLogCommit[] commits) : base(
+        public GitAuthorsStatsReport(ITimeline timeline, int days, GitLogCommit[] commits) : base(
             GetContent(timeline, days, commits)) { }
 
         private static object[] GetContent(ITimeline timeline, int days, GitLogCommit[] commits) =>
@@ -19,7 +19,7 @@ namespace Wikitools
             {
                 string.Format(DescriptionFormat, days, timeline.UtcNow),
                 "",
-                new TabularData2(Rows(commits))
+                new TabularData(Rows(commits))
             };
 
         private static (object[] headerRow, object[][] rows) Rows(GitLogCommit[] commits)

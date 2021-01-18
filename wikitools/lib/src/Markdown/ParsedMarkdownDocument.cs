@@ -18,7 +18,7 @@ namespace Wikitools.Lib.Markdown
 
             var content = groups.SelectMany(group =>
             {
-                var table = Return(new MarkdownTable2(@group.ToArray()).Table).Cast<object>();
+                var table = Return(new MarkdownTable(@group.ToArray()).Table).Cast<object>();
                 return @group.Key ? table : @group.ToArray();
             }).ToArray();
 

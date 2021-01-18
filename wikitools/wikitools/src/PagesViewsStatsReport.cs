@@ -6,12 +6,12 @@ using Wikitools.Lib.Tables;
 
 namespace Wikitools
 {
-    public record PagesViewsStatsReport2 : MarkdownDocument
+    public record PagesViewsStatsReport : MarkdownDocument
     {
         public const string DescriptionFormat = "Page views since last {0} days as of {1}. Total wiki pages: {2}";
         public static readonly object[] HeaderRow = { "Place", "Path", "Views" };
 
-        public PagesViewsStatsReport2(ITimeline timeline, int pageViewsForDays, WikiPageStats[] stats) :
+        public PagesViewsStatsReport(ITimeline timeline, int pageViewsForDays, WikiPageStats[] stats) :
             base(GetContent(timeline, pageViewsForDays, stats)) { }
 
         private static object[] GetContent(
@@ -22,7 +22,7 @@ namespace Wikitools
             {
                 string.Format(DescriptionFormat, pageViewsForDays, timeline.UtcNow, stats.Length),
                 "",
-                new TabularData2(GetRows(stats))
+                new TabularData(GetRows(stats))
             };
 
         private static (object[] headerRow, object[][] rows) GetRows(WikiPageStats[] stats)

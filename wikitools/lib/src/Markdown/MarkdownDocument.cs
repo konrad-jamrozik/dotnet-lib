@@ -18,7 +18,7 @@ namespace Wikitools.Lib.Markdown
                 .Select(entry => entry switch
                 {
                     // @formatter:off
-                    TabularData2 td => new MarkdownTable2(td) + Environment.NewLine,
+                    TabularData td => new MarkdownTable(td) + Environment.NewLine,
                     _               => entry + Environment.NewLine
                     // @formatter:on
                 })

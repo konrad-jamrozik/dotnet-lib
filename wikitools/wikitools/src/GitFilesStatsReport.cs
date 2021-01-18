@@ -7,12 +7,12 @@ using Wikitools.Lib.Tables;
 
 namespace Wikitools
 {
-    public record GitFilesStatsReport2 : MarkdownDocument
+    public record GitFilesStatsReport : MarkdownDocument
     {
         public static readonly object[] HeaderRow = { "Place", "FilePath", "Insertions", "Deletions" };
         public const string DescriptionFormat = "Git file changes since last {0} days as of {1}";
 
-        public GitFilesStatsReport2(
+        public GitFilesStatsReport(
             ITimeline timeline,
             int days,
             GitLogCommit[] commits,
@@ -28,7 +28,7 @@ namespace Wikitools
             {
                 string.Format(DescriptionFormat, days, timeline.UtcNow),
                 "",
-                new TabularData2(GetRows(commits, filePathFilter))
+                new TabularData(GetRows(commits, filePathFilter))
             };
 
         private static (object[] headerRow, object[][] rows) GetRows(

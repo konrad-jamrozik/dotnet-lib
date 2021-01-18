@@ -5,9 +5,9 @@ using Wikitools.Lib.Tables;
 
 namespace Wikitools.Lib.Markdown
 {
-    internal record MarkdownTable2(TabularData2 Table)
+    internal record MarkdownTable(TabularData Table)
     {
-        public MarkdownTable2(string[] markdownLines) : this(UnwrapFromMarkdown(markdownLines)) { }
+        public MarkdownTable(string[] markdownLines) : this(UnwrapFromMarkdown(markdownLines)) { }
 
         public override string ToString()
         {
@@ -24,7 +24,7 @@ namespace Wikitools.Lib.Markdown
             return string.Join(Environment.NewLine, rowsToWrite);
         }
 
-        private static TabularData2 UnwrapFromMarkdown(string[] lines) =>
+        private static TabularData UnwrapFromMarkdown(string[] lines) =>
             new(
                 (
                     headerRow: UnwrapFromMarkdown(lines[0]),

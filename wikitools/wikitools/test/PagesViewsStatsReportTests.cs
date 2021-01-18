@@ -29,17 +29,17 @@ namespace Wikitools.Tests
             var wiki       = Wiki(adoApi, wikiUri, patEnvVar, pageViewsForDays);
             // kja this is wrong: this wait shouldn't be necessary. Defer!
             var pagesStats = await wiki.PagesStats();
-            var sut        = new PagesViewsStatsReport2(timeline, pageViewsForDays, pagesStats);
+            var sut        = new PagesViewsStatsReport(timeline, pageViewsForDays, pagesStats);
 
             var expected = new MarkdownDocument(new object[]
             {
-                string.Format(PagesViewsStatsReport2.DescriptionFormat,
+                string.Format(PagesViewsStatsReport.DescriptionFormat,
                     pageViewsForDays,
                     timeline.UtcNow,
                     pagesStats.Length),
                 "",
-                new TabularData2(
-                    HeaderRow: PagesViewsStatsReport2.HeaderRow,
+                new TabularData(
+                    HeaderRow: PagesViewsStatsReport.HeaderRow,
                     Rows: data.ExpectedRows[(nameof(PagesViewsStatsReportTests), pageStats)])
             });
 

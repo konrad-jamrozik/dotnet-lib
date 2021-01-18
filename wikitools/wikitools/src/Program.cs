@@ -31,9 +31,9 @@ namespace Wikitools
             GitLogCommit[]  pastCommits     = await gitLog.Commits(cfgStartYear, cfgEndYear);
             WikiPageStats[] pagesViewsStats = await wiki.PagesStats();
 
-            var authorsReport    = new GitAuthorsStatsReport2(timeline, cfg.GitLogDays, recentCommits);
-            var filesReport      = new GitFilesStatsReport2(timeline, cfg.GitLogDays, recentCommits, filePathFilter);
-            var pagesViewsReport = new PagesViewsStatsReport2(timeline, cfg.AdoWikiPageViewsForDays, pagesViewsStats);
+            var authorsReport    = new GitAuthorsStatsReport(timeline, cfg.GitLogDays, recentCommits);
+            var filesReport      = new GitFilesStatsReport(timeline, cfg.GitLogDays, recentCommits, filePathFilter);
+            var pagesViewsReport = new PagesViewsStatsReport(timeline, cfg.AdoWikiPageViewsForDays, pagesViewsStats);
             var monthlyReport    = new MonthlyStatsReport(pastCommits, filePathFilter);
 
             // Write outputs. Side-effectful.

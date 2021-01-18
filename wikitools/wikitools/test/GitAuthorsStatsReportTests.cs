@@ -30,14 +30,14 @@ namespace Wikitools.Tests
             var gitLog  = GitLog(os, gitRepoDirPath, gitExecutablePath, logDays);
             // kja this is wrong: this wait shouldn't be necessary. Defer!
             var commits = await gitLog.Commits(logDays);
-            var sut     = new GitAuthorsStatsReport2(timeline, logDays, commits);
+            var sut     = new GitAuthorsStatsReport(timeline, logDays, commits);
 
             // Arrange expectations
             var expected = new MarkdownDocument(new object[]
             {
-                string.Format(GitAuthorsStatsReport2.DescriptionFormat, logDays, timeline.UtcNow),
+                string.Format(GitAuthorsStatsReport.DescriptionFormat, logDays, timeline.UtcNow),
                 "",
-                new TabularData2((GitAuthorsStatsReport2.HeaderRow,
+                new TabularData((GitAuthorsStatsReport.HeaderRow,
                     data.ExpectedRows[(nameof(GitAuthorsStatsReportTests), commitsData)]))
             });
 

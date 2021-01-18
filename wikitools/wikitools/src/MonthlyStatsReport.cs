@@ -18,7 +18,7 @@ namespace Wikitools
             {
                 $"Git file insertions and deletions month over month",
                 "",
-                new TabularData2(GetRows(commits, filePathFilter))
+                new TabularData(GetRows(commits, filePathFilter))
             };
 
         private static (object[] headerRow, object[][] rows) GetRows(
