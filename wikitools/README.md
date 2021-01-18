@@ -15,7 +15,7 @@
 
 - No mutators: setters, Add() methods, Remove() methods, etc.
 - No control loops: `foreach`, `for`
-- No `if` operators
+- No `if` operators, expect when necessary, e.g. to throw in precondition checks
 - No extenion methods for types that are not collections
 - No methods that both do side effects and anything else (like computations or returning value)
 - No sequential execution that is not compile-time checked

@@ -22,13 +22,6 @@ namespace Wikitools.AzureDevOps
         // kja pass _pageViewsForDays as a param
         public async Task<WikiPageStats[]> PagesStats()
         {
-            if (!(_pageViewsForDays > 0))
-                throw new ArgumentOutOfRangeException(nameof(_pageViewsForDays),
-                    $"Expected value > 0; value = {_pageViewsForDays}");
-            if (!(_pageViewsForDays <= 30))
-                throw new ArgumentOutOfRangeException(nameof(_pageViewsForDays),
-                    $"Expected value <= 30 as this is the ADO API limit; value = {_pageViewsForDays}");
-
             WikiPageStats[] pagesStats = await _adoApi.GetWikiPagesStats(_adoWikiUri, _patEnvVar, _pageViewsForDays);
             return pagesStats;
         }

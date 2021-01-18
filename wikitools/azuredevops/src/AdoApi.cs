@@ -6,6 +6,7 @@ using Microsoft.TeamFoundation.Wiki.WebApi;
 using Microsoft.TeamFoundation.Wiki.WebApi.Contracts;
 using Microsoft.VisualStudio.Services.Common;
 using Microsoft.VisualStudio.Services.WebApi;
+using Wikitools.Lib.Contracts;
 
 namespace Wikitools.AzureDevOps
 {
@@ -16,6 +17,8 @@ namespace Wikitools.AzureDevOps
             string patEnvVar,
             int pageViewsForDays)
         {
+            new Contract(pageViewsForDays, nameof(pageViewsForDays), new Range(1, 30)).Assert();
+
             var wikiHttpClient   = WikiHttpClient(adoWikiUri, patEnvVar);
             var wikiPagesDetails = await GetAllWikiPagesDetails(adoWikiUri, pageViewsForDays, wikiHttpClient);
             var wikiPagesStats   = wikiPagesDetails.Select(pageDetail => new WikiPageStats(pageDetail));
