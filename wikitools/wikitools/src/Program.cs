@@ -38,7 +38,7 @@ namespace Wikitools
             // Output sink
             var textWriter = Console.Out;
             
-            var tasks = new MarkdownDocument[]
+            var docsToWrite = new MarkdownDocument[]
             {
                 authorsReport, 
                 filesReport, 
@@ -47,7 +47,7 @@ namespace Wikitools
             };
 
             // Write outputs. Side-effectful.
-            await WriteAll(tasks, textWriter);
+            await WriteAll(docsToWrite, textWriter);
         }
 
         private static async Task WriteAll(MarkdownDocument[] docs, TextWriter textWriter) =>
