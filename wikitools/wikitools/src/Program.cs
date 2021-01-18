@@ -25,9 +25,9 @@ namespace Wikitools
             var wiki   = Wiki(adoApi, cfg.AdoWikiUri, cfg.AdoPatEnvVar);
 
             // Obtain inputs. Has out-of-process dependencies.
-            GitLogCommit[]  recentCommits = await gitLog.Commits(cfg.GitLogDays);
-            GitLogCommit[]  pastCommits = await gitLog.Commits(cfg.MonthlyReportStartDate, cfg.MonthlyReportEndDate);
-            WikiPageStats[] pagesViewsStats = await wiki.PagesStats(cfg.AdoWikiPageViewsForDays);
+            Task<GitLogCommit[]>  recentCommits   = gitLog.Commits(cfg.GitLogDays);
+            Task<GitLogCommit[]>  pastCommits     = gitLog.Commits(cfg.MonthlyReportStartDate, cfg.MonthlyReportEndDate);
+            Task<WikiPageStats[]> pagesViewsStats = wiki.PagesStats(cfg.AdoWikiPageViewsForDays);
 
             var authorsReport = new GitAuthorsStatsReport(timeline, cfg.GitLogDays, recentCommits, cfg.Top, AuthorFilter);
             var filesReport = new GitFilesStatsReport(timeline, cfg.GitLogDays, recentCommits, cfg.Top, PathFilter);

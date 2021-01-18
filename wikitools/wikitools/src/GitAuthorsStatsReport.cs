@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Wikitools.Lib.Git;
 using Wikitools.Lib.Markdown;
 using Wikitools.Lib.Primitives;
@@ -15,22 +16,22 @@ namespace Wikitools
         public GitAuthorsStatsReport(
             ITimeline timeline,
             int days,
-            GitLogCommit[] commits,
+            Task<GitLogCommit[]> commits,
             int? top = null,
             Func<string, bool>? authorFilter = null) : base(
             GetContent(timeline, days, commits, authorFilter ?? (_ => true), top)) { }
 
-        private static object[] GetContent(
+        private static async Task<object[]> GetContent(
             ITimeline timeline,
             int days,
-            GitLogCommit[] commits,
+            Task<GitLogCommit[]> commits,
             Func<string, bool> authorFilter,
             int? top) =>
             new object[]
             {
                 string.Format(DescriptionFormat, days, timeline.UtcNow),
                 "",
-                new TabularData(Rows(commits, authorFilter, top))
+                new TabularData(Rows(await commits, authorFilter, top))
             };
 
         private static (object[] headerRow, object[][] rows) Rows(

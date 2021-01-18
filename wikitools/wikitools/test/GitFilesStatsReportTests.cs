@@ -28,18 +28,18 @@ namespace Wikitools.Tests
             var os       = new SimulatedOS(new SimulatedGitLogProcess(logDays, commitsData));
 
             // Arrange SUT declaration
-            var gitLog = GitLog(os, gitRepoDirPath, gitExecutablePath);
-            // kja this is wrong: this wait shouldn't be necessary. Defer!
-            var commits = await gitLog.Commits(logDays);
+            var gitLog  = GitLog(os, gitRepoDirPath, gitExecutablePath);
+            var commits = gitLog.Commits(logDays);
             var sut     = new GitFilesStatsReport(timeline, logDays, commits, top);
 
             // Arrange expectations
-            var expected = new MarkdownDocument(new object[]
+            var expected = new MarkdownDocument(Task.FromResult(new object[]
             {
                 string.Format(GitFilesStatsReport.DescriptionFormat, logDays, timeline.UtcNow),
                 "",
-                new TabularData((GitFilesStatsReport.HeaderRow, data.ExpectedRows[(nameof(GitFilesStatsReportTests), commitsData)]))
-            });
+                new TabularData((GitFilesStatsReport.HeaderRow,
+                    data.ExpectedRows[(nameof(GitFilesStatsReportTests), commitsData)]))
+            }));
 
             await Verify(expected, sut);
         }

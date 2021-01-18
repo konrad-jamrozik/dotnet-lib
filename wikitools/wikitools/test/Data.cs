@@ -13,7 +13,7 @@ namespace Wikitools.Tests
             {
                 [("GitAuthorsStatsReportTests", CommitsLogs)] = AuthorsReportRows,
                 [("GitFilesStatsReportTests", CommitsLogs)] = FilesReportRows,
-                [("PagesViewsStatsReportTests", PageStats)] = PageViewsStatsReportRows
+                [("PagesViewsStatsReportTests", PagesStats)] = PageViewsStatsReportRows
             };
         }
 
@@ -68,7 +68,7 @@ namespace Wikitools.Tests
             new() { 1, "maxStatsSum.txt", 68, 68 }
         };
 
-        public readonly WikiPageStats[] PageStats =
+        public readonly WikiPageStats[] PagesStats =
         {
             new("/Home", new[] { 1, 20, 0, 0 }),
             new("/Foo", new[] { 60, 0, 8, 0 }),

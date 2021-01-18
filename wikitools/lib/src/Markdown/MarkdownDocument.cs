@@ -7,14 +7,12 @@ using Wikitools.Lib.Tables;
 
 namespace Wikitools.Lib.Markdown
 {
-    public record MarkdownDocument(object[] Content) : IWritableToText
+    public record MarkdownDocument(Task<object[]> Content) : IWritableToText
     {
-        public async Task WriteAsync(TextWriter textWriter) => await textWriter.WriteAsync(ToMarkdown(this));
+        public async Task WriteAsync(TextWriter textWriter) => await textWriter.WriteAsync(await ToMarkdown(this));
 
-        public override string ToString() => ToMarkdown(this);
-
-        private static string ToMarkdown(MarkdownDocument doc) =>
-            doc.Content
+        private static async Task<string> ToMarkdown(MarkdownDocument doc) =>
+            (await doc.Content)
                 .Select(entry => entry switch
                 {
                     // @formatter:off

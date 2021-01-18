@@ -1,5 +1,6 @@
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using MoreLinq;
 using Wikitools.Lib.Primitives;
 using static MoreLinq.MoreEnumerable;
@@ -8,7 +9,7 @@ namespace Wikitools.Lib.Markdown
 {
     public record ParsedMarkdownDocument : MarkdownDocument
     {
-        public ParsedMarkdownDocument(StringWriter sw) : base(GetContent(sw)) { }
+        public ParsedMarkdownDocument(StringWriter sw) : base(Task.FromResult(GetContent(sw))) { }
 
         private static object[] GetContent(StringWriter sw)
         {

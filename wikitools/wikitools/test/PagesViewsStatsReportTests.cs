@@ -16,32 +16,31 @@ namespace Wikitools.Tests
         {
             // Arrange inputs
             var data             = new Data();
-            var pageStats        = data.PageStats;
+            var pagesStatsData   = data.PagesStats;
             var wikiUri          = "https://dev.azure.com/adoOrg/adoProject/_wiki/wikis/wikiName";
             var patEnvVar        = string.Empty;
             var pageViewsForDays = 30;
 
             // Arrange simulations
             var timeline = new SimulatedTimeline();
-            var adoApi   = new SimulatedAdoApi(pageStats);
+            var adoApi   = new SimulatedAdoApi(pagesStatsData);
 
             // Arrange SUT declaration
             var wiki       = Wiki(adoApi, wikiUri, patEnvVar);
-            // kja this is wrong: this wait shouldn't be necessary. Defer!
-            var pagesStats = await wiki.PagesStats(pageViewsForDays);
+            var pagesStats = wiki.PagesStats(pageViewsForDays);
             var sut        = new PagesViewsStatsReport(timeline, pageViewsForDays, pagesStats);
 
-            var expected = new MarkdownDocument(new object[]
+            var expected = new MarkdownDocument(Task.FromResult(new object[]
             {
                 string.Format(PagesViewsStatsReport.DescriptionFormat,
                     pageViewsForDays,
                     timeline.UtcNow,
-                    pagesStats.Length),
+                    pagesStatsData.Length),
                 "",
                 new TabularData(
                     HeaderRow: PagesViewsStatsReport.HeaderRow,
-                    Rows: data.ExpectedRows[(nameof(PagesViewsStatsReportTests), pageStats)])
-            });
+                    Rows: data.ExpectedRows[(nameof(PagesViewsStatsReportTests), pagesStatsData)])
+            }));
 
             await Verify(expected, sut);
         }

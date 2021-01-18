@@ -11,7 +11,7 @@ namespace Wikitools.Lib.Tests.Tables
     public static class TabularDataAssertionExtensions
     {
         public static async Task Verify(MarkdownDocument expected, MarkdownDocument sut) =>
-            AssertNoDiffBetween(expected, await Act(sut));
+            await AssertNoDiffBetween(expected, await Act(sut));
 
         private static async Task<MarkdownDocument> Act(MarkdownDocument sut)
         {
@@ -24,9 +24,9 @@ namespace Wikitools.Lib.Tests.Tables
             return new ParsedMarkdownDocument(sw);
         }
 
-        private static void AssertNoDiffBetween(MarkdownDocument expected, MarkdownDocument actual)
+        private static async Task AssertNoDiffBetween(MarkdownDocument expected, MarkdownDocument actual)
         {
-            var jsonDiff = new JsonDiff(expected, actual);
+            var jsonDiff = new JsonDiff(await expected.Content, await actual.Content);
             Assert.True(jsonDiff.IsEmpty,
                 $"The expected baseline is different than actual target. Diff:{Environment.NewLine}{jsonDiff}");
         }

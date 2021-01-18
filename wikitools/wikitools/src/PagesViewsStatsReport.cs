@@ -1,4 +1,5 @@
 using System.Linq;
+using System.Threading.Tasks;
 using Wikitools.AzureDevOps;
 using Wikitools.Lib.Markdown;
 using Wikitools.Lib.Primitives;
@@ -11,19 +12,22 @@ namespace Wikitools
         public const string DescriptionFormat = "Page views since last {0} days as of {1}. Total wiki pages: {2}";
         public static readonly object[] HeaderRow = { "Place", "Path", "Views" };
 
-        public PagesViewsStatsReport(ITimeline timeline, int pageViewsForDays, WikiPageStats[] stats) :
+        public PagesViewsStatsReport(ITimeline timeline, int pageViewsForDays, Task<WikiPageStats[]> stats) :
             base(GetContent(timeline, pageViewsForDays, stats)) { }
 
-        private static object[] GetContent(
+        private static async Task<object[]> GetContent(
             ITimeline timeline,
             int pageViewsForDays,
-            WikiPageStats[] stats) =>
-            new object[]
+            Task<WikiPageStats[]> stats)
+        {
+            var awaitedStats = await stats;
+            return new object[]
             {
-                string.Format(DescriptionFormat, pageViewsForDays, timeline.UtcNow, stats.Length),
+                string.Format(DescriptionFormat, pageViewsForDays, timeline.UtcNow, awaitedStats.Length),
                 "",
-                new TabularData(GetRows(stats))
+                new TabularData(GetRows(awaitedStats))
             };
+        }
 
         private static (object[] headerRow, object[][] rows) GetRows(WikiPageStats[] stats)
         {

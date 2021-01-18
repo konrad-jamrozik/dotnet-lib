@@ -29,18 +29,17 @@ namespace Wikitools.Tests
 
             // Arrange SUT declaration
             var gitLog  = GitLog(os, gitRepoDirPath, gitExecutablePath);
-            // kja this is wrong: this wait shouldn't be necessary. Defer!
-            var commits = await gitLog.Commits(logDays);
+            var commits = gitLog.Commits(logDays);
             var sut     = new GitAuthorsStatsReport(timeline, logDays, commits, top);
 
             // Arrange expectations
-            var expected = new MarkdownDocument(new object[]
+            var expected = new MarkdownDocument(Task.FromResult(new object[]
             {
                 string.Format(GitAuthorsStatsReport.DescriptionFormat, logDays, timeline.UtcNow),
                 "",
                 new TabularData((GitAuthorsStatsReport.HeaderRow,
                     data.ExpectedRows[(nameof(GitAuthorsStatsReportTests), commitsData)]))
-            });
+            }));
 
             await Verify(expected, sut);
         }
