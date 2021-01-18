@@ -25,7 +25,7 @@
   - Instead: flat code; declarative & functional programing
 - No broken abstractions, including vague names with:
   `Factory`, `Tools`, `Utilities`, `Context`, `Coordinator`, `Client`, `Constants`
-  `Details`, `Part`
+  `Details`, `Common`, `Engine`
   - "do-er" / "verb-er" names, including:
   `Helper`, `Validator`, `Parser`, `Mapper`, `Resolver`, `Manager`, `Provider`,
   `Wrapper`, `Controller`, `Adapter`, `Writer`, `Reader`, `Selector`,
