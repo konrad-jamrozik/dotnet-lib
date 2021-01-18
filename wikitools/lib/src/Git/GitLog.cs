@@ -17,9 +17,10 @@ namespace Wikitools.Lib.Git
             DateTime? after = null,
             DateTime? before = null)
         {
-            var command = GitLogCommand(afterDays, after, before);
+            var command     = GitLogCommand(afterDays, after, before);
+            var stdOutLines = await Repo.GetStdOutLines(command);
             return
-                (await Repo.GetStdOutLines(command))
+                stdOutLines
                 .Where(line => !string.IsNullOrWhiteSpace(line))
                 .Split(Delimiter)
                 .Where(commitLines => commitLines.Any())
