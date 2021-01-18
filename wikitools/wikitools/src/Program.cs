@@ -1,8 +1,11 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using MoreLinq;
 using Wikitools.AzureDevOps;
 using Wikitools.Lib.Git;
+using Wikitools.Lib.Markdown;
 using Wikitools.Lib.OS;
 using Wikitools.Lib.Primitives;
 using static Wikitools.Declare;
@@ -24,22 +27,33 @@ namespace Wikitools
             var gitLog = GitLog(os, cfg.GitRepoClonePath, cfg.GitExecutablePath);
             var wiki   = Wiki(adoApi, cfg.AdoWikiUri, cfg.AdoPatEnvVar);
 
-            // Obtain inputs. Has out-of-process dependencies.
-            Task<GitLogCommit[]>  recentCommits   = gitLog.Commits(cfg.GitLogDays);
-            Task<GitLogCommit[]>  pastCommits     = gitLog.Commits(cfg.MonthlyReportStartDate, cfg.MonthlyReportEndDate);
-            Task<WikiPageStats[]> pagesViewsStats = wiki.PagesStats(cfg.AdoWikiPageViewsForDays);
+            var recentCommits   = gitLog.Commits(cfg.GitLogDays);
+            var pastCommits     = gitLog.Commits(cfg.MonthlyReportStartDate, cfg.MonthlyReportEndDate);
+            var pagesViewsStats = wiki.PagesStats(cfg.AdoWikiPageViewsForDays);
 
-            var authorsReport = new GitAuthorsStatsReport(timeline, cfg.GitLogDays, recentCommits, cfg.Top, AuthorFilter);
+            var authorsReport =
+                new GitAuthorsStatsReport(timeline, cfg.GitLogDays, recentCommits, cfg.Top, AuthorFilter);
             var filesReport = new GitFilesStatsReport(timeline, cfg.GitLogDays, recentCommits, cfg.Top, PathFilter);
             var pagesViewsReport = new PagesViewsStatsReport(timeline, cfg.AdoWikiPageViewsForDays, pagesViewsStats);
             var monthlyReport = new MonthlyStatsReport(pastCommits, AuthorFilter, PathFilter);
 
+            // Output sink
+            var textWriter = Console.Out;
+            
+            var tasks = new MarkdownDocument[]
+            {
+                authorsReport, 
+                filesReport, 
+                pagesViewsReport, 
+                monthlyReport
+            };
+
             // Write outputs. Side-effectful.
-            await authorsReport.WriteAsync(Console.Out);
-            await filesReport.WriteAsync(Console.Out);
-            await pagesViewsReport.WriteAsync(Console.Out);
-            await monthlyReport.WriteAsync(Console.Out);
+            await WriteAll(tasks, textWriter);
         }
+
+        private static async Task WriteAll(MarkdownDocument[] markdownDocuments, TextWriter textWriter) =>
+            await Task.WhenAll(markdownDocuments.Select(report => report.WriteAsync(textWriter)).ToArray());
     }
 }
 
