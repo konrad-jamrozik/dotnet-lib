@@ -12,8 +12,8 @@ namespace Wikitools.Lib.Git
             .Select(GetStdOutLines)
             .Aggregate((acc, commitLines) =>
                 acc
-                    .Union(MoreLinq.MoreEnumerable.Return(GitLog.Delimiter))
-                    .Union(commitLines).ToList()
+                    .Concat(MoreLinq.MoreEnumerable.Return(GitLog.Delimiter))
+                    .Concat(commitLines).ToList()
             );
 
         private static List<string> GetStdOutLines(GitLogCommit commit) =>

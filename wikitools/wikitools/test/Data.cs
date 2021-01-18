@@ -1,46 +1,61 @@
 using System;
 using System.Collections.Generic;
+using Microsoft.TeamFoundation.SourceControl.WebApi;
 using Wikitools.AzureDevOps;
 using Wikitools.Lib.Git;
+using Wikitools.Lib.Primitives;
 
 namespace Wikitools.Tests
 {
-    public class Data
+    public record Data
     {
         public Data()
         {
+            var commitLogs = CommitsLogs(new SimulatedTimeline().UtcNow);
             ExpectedRows = new()
             {
-                [("GitAuthorsStatsReportTests", CommitsLogs)] = AuthorsReportRows,
-                [("GitFilesStatsReportTests", CommitsLogs)] = FilesReportRows,
+                [("GitAuthorsStatsReportTests", commitLogs)] = AuthorsReportRows,
+                [("GitFilesStatsReportTests", commitLogs)] = FilesReportRows,
                 [("PagesViewsStatsReportTests", PagesStats)] = PageViewsStatsReportRows
             };
         }
 
         public readonly Dictionary<(string className, object input), object[][]> ExpectedRows;
 
-        public readonly GitLogCommit[] CommitsLogs =
+
+        public GitLogCommit[] CommitsLogs(DateTime date) => new GitLogCommit[] 
         {
             // kja restore this data
-            new("AuthorA", new DateTime(2020, 1, 1), new GitLogCommit.Numstat[] { new(100, 10, "/Foo/bar.md") })
-            // new("AuthorC", 4, 2000, 22),
-            // new("AuthorA", 1, 200, 20),
-            // new("AuthorA", 1, 300, 30),
-            // new("AuthorB", 11, 10000, 101),
-            // new("AuthorB", 20, 20000, 202),
-            // new("AuthorB", 36, 30000, 303),
-            // new("AuthorC", 2, 1000, 11),
-            // new("AuthorC", 6, 3000, 33)
+            new("AuthorA", date, new GitLogCommit.Numstat[] { new(100, 10, "/Foo/bar100_10.md") }),
+            new("AuthorB", date, new GitLogCommit.Numstat[] 
+            {
+                new(77, 7, "/Qux/Corge377_89.md")
+            }),
+            new("AuthorC", date, new GitLogCommit.Numstat[]
+            {
+                new(200, 5, "/Foo/bar200_5.md"),
+                new(300, 12, "/Qux/Corge377_19.md"),
+                new(501, 7, "/Foo/bar501_7.md"),
+                new(400, 13, "/Foo/bar400_13.md")
+            })
         };
 
         private readonly object[][] AuthorsReportRows =
         {
-            new object[] { 1, "AuthorA", 1, 100, 10 }
+            new object[] { 1, "AuthorC", 4, 200+500+501+400, 5+12+7+13 },
+            new object[] { 2, "AuthorA", 1, 100, 10 },
+            new object[] { 3, "AuthorB", 1, 77, 7 },
+            
         };
 
         private readonly object[][] FilesReportRows =
         {
-            new object[] { 1, "/Foo/bar.md", 100, 10 }
+            new object[] { 1, "/Foo/bar500_12.md", 500, 12 },
+            new object[] { 2, "/Foo/bar501_7.md", 501, 7 },
+            new object[] { 3, "/Qux/Corge377_89.md", 577, 89 },
+            new object[] { 4, "/Foo/bar400_13.md", 400, 13 },
+            new object[] { 5, "/Foo/bar200_5.md", 200, 5 },
+            new object[] { 6, "/Foo/bar100_10.md", 100, 10 },
         };
 
         private readonly List<List<object>> AuthorsStatsReportRows = new()
