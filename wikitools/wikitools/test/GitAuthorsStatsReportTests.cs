@@ -1,5 +1,7 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Wikitools.Lib.Git;
+using Wikitools.Lib.Markdown;
 using Wikitools.Lib.OS;
 using Wikitools.Lib.Primitives;
 using Wikitools.Lib.Tables;
@@ -31,8 +33,12 @@ namespace Wikitools.Tests
             var sut     = new GitAuthorsStatsReport2(timeline, logDays, commits);
 
             // Arrange expectations
-            // kja also need to verify Description
-            var expected = new TabularData2((GitAuthorsStatsReport2.HeaderRow, Data.ExpectedRows[commitsData]));
+            var expected = new MarkdownDocument(new List<object>
+            {
+                string.Format(GitAuthorsStatsReport2.DescriptionFormat, logDays, timeline.UtcNow),
+                "",
+                new TabularData2((GitAuthorsStatsReport2.HeaderRow, Data.ExpectedRows[commitsData]))
+            });
 
             await Verify(expected, sut);
         }

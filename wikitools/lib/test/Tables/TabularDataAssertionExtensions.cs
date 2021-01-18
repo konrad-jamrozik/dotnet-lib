@@ -11,10 +11,10 @@ namespace Wikitools.Lib.Tests.Tables
     // kja get rid of all extension classes.
     public static class TabularDataAssertionExtensions
     {
-        public static async Task Verify(TabularData2 expected, MarkdownDocument sut) =>
+        public static async Task Verify(MarkdownDocument expected, MarkdownDocument sut) =>
             AssertNoDiffBetween(expected, await Act(sut));
 
-        private static async Task<TabularData> Act(MarkdownDocument sut)
+        private static async Task<MarkdownDocument> Act(MarkdownDocument sut)
         {
             // Arrange output sink
             await using var sw = new StringWriter();
@@ -22,14 +22,12 @@ namespace Wikitools.Lib.Tests.Tables
             // Act
             await sut.WriteAsync(sw);
 
-            var doc = new ParsedMarkdownDocument(sw);
-
-            // kja NEXT need to read markdown table here
-            return (TabularData) new MarkdownTable(sw).Data;
+            return new ParsedMarkdownDocument(sw);
         }
 
-        private static void AssertNoDiffBetween(TabularData2 expected, TabularData actual)
+        private static void AssertNoDiffBetween(MarkdownDocument expected, MarkdownDocument actual)
         {
+            // kja will this just work on MarkdownDocument? It should! It is a record after all.
             var jsonDiff = new JsonDiff(expected, actual);
             Assert.True(jsonDiff.IsEmpty,
                 $"The expected baseline is different than actual target. Diff:{Environment.NewLine}{jsonDiff}");

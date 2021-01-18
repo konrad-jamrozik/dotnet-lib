@@ -75,6 +75,7 @@ namespace Wikitools.Tests
             [FileChangesStats] = FilesStatsReportRows,
             [PageStats] = PageViewsStatsReportRows,
         };
+
         public static readonly Dictionary<object, object[][]> ExpectedRows = new()
         {
             [CommitsLogs] = CommitsLogsRows
