@@ -17,15 +17,18 @@
 - No control loops: `foreach`, `for`
 - No `if` operators
 - No extenion methods for types that are not collections
+- No methods that both do side effects and anything else (like computations or returning value)
 - No sequential execution that is not compile-time checked
   In other words: no temporal coupling, i.e. no statement sequence operator
   (`;`) where the statements can be flipped causing a bug that compiled.
   - Instead: flat code; declarative & functional programing
-- No broken abstractions, including names ending with:
-  `Factory`, `Tools`, `Utilities`, `Context`, `Coordinator`, `Client`
-  - "do-er" names, including:
-  `Helper`,`Validator`, `Parser`, `Mapper`, `Resolver`, `Manager`, `Provider`,
-  `Wrapper`
+- No broken abstractions, including vague names with:
+  `Factory`, `Tools`, `Utilities`, `Context`, `Coordinator`, `Client`, `Constants`
+  `Details`, `Part`
+  - "do-er" / "verb-er" names, including:
+  `Helper`, `Validator`, `Parser`, `Mapper`, `Resolver`, `Manager`, `Provider`,
+  `Wrapper`, `Controller`, `Adapter`, `Writer`, `Reader`, `Selector`,
+  `Descriptor`
 - No dependency injection containers
 
 ## Defaults, requiring good justification
