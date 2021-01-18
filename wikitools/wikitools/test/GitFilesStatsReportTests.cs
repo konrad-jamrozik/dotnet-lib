@@ -1,12 +1,12 @@
 using System.Threading.Tasks;
 using Wikitools.Lib.Git;
 using Wikitools.Lib.Markdown;
+using Wikitools.Lib.Markdown.Tests;
 using Wikitools.Lib.OS;
 using Wikitools.Lib.Primitives;
 using Wikitools.Lib.Tables;
 using Xunit;
 using static Wikitools.Declare;
-using static Wikitools.Lib.Tests.Tables.TabularDataAssertionExtensions;
 
 namespace Wikitools.Tests
 {
@@ -41,7 +41,7 @@ namespace Wikitools.Tests
                     data.ExpectedRows[(nameof(GitFilesStatsReportTests), commitsData)]))
             }));
 
-            await Verify(expected, sut);
+            await new MarkdownDocumentDiff(expected, sut).Verify();
         }
     }
 }

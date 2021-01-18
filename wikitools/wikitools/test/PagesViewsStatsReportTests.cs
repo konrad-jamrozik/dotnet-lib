@@ -1,11 +1,11 @@
 using System.Threading.Tasks;
 using Wikitools.AzureDevOps;
 using Wikitools.Lib.Markdown;
+using Wikitools.Lib.Markdown.Tests;
 using Wikitools.Lib.Primitives;
 using Wikitools.Lib.Tables;
 using Xunit;
 using static Wikitools.Declare;
-using static Wikitools.Lib.Tests.Tables.TabularDataAssertionExtensions;
 
 namespace Wikitools.Tests
 {
@@ -42,7 +42,7 @@ namespace Wikitools.Tests
                     Rows: data.ExpectedRows[(nameof(PagesViewsStatsReportTests), pagesStatsData)])
             }));
 
-            await Verify(expected, sut);
+            await new MarkdownDocumentDiff(expected, sut).Verify();
         }
     }
 }

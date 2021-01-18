@@ -5,13 +5,13 @@ using Wikitools.Lib.Json;
 using Wikitools.Lib.Markdown;
 using Xunit;
 
-namespace Wikitools.Lib.Tests.Tables
+// kja move
+namespace Wikitools.Lib.Markdown.Tests
 {
-    // kja get rid of all extension classes.
-    public static class TabularDataAssertionExtensions
+    public record MarkdownDocumentDiff(MarkdownDocument Expected, MarkdownDocument Sut)
     {
-        public static async Task Verify(MarkdownDocument expected, MarkdownDocument sut) =>
-            await AssertNoDiffBetween(expected, await Act(sut));
+        public async Task Verify() =>
+            await AssertNoDiffBetween(Expected, await Act(Sut));
 
         private static async Task<MarkdownDocument> Act(MarkdownDocument sut)
         {
