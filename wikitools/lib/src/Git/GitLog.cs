@@ -44,6 +44,7 @@ namespace Wikitools.Lib.Git
             string afterDateStr = afterDate != null
                 ? " --after=" + afterDate.Value.ToUniversalTime().ToString(roundtripFormat)
                 : string.Empty;
+
             // Reference:
             // https://git-scm.com/docs/git-log#_commit_limiting
             // https://git-scm.com/book/en/v2/Git-Basics-Viewing-the-Commit-History
