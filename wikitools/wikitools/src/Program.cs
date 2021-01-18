@@ -39,6 +39,11 @@ namespace Wikitools
             var pastCommits     = gitLog.Commits(cfg.MonthlyReportStartDate, cfg.MonthlyReportEndDate);
             var pagesViewsStats = wiki.PagesStats(cfg.AdoWikiPageViewsForDays);
 
+            // KJA next work
+            // var storage = new WikiPagesStatsStorage(os, cfg.StorageDir);
+            // var updatedStorage = storage.Update(wiki);
+            // var pagesViewsStats = updatedStorage.PagesStats(cfg.AdoWikiPageViewsForDays);
+
             bool AuthorFilter(string author) => !cfg.ExcludedAuthors.Any(author.Contains);
             bool PathFilter(string path) => !cfg.ExcludedPaths.Any(path.Contains);
 
