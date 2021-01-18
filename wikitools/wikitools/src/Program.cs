@@ -15,9 +15,11 @@ namespace Wikitools
         public static async Task Main(string[] args)
         {
             var cfg        = WikitoolsConfig.From("wikitools_config.json");
+
             var timeline   = new Timeline();
             var os         = new WindowsOS();
             var adoApi     = new AdoApi();
+
             var outputSink = Console.Out;
 
             await Main(cfg, timeline, os, adoApi, outputSink);
