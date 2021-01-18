@@ -22,6 +22,8 @@ namespace Wikitools.Lib.Tests.Tables
             // Act
             await sut.WriteAsync(sw);
 
+            var doc = new ParsedMarkdownDocument(sw);
+
             // kja NEXT need to read markdown table here
             return (TabularData) new MarkdownTable(sw).Data;
         }

@@ -8,13 +8,11 @@ using Wikitools.Lib.Tables;
 
 namespace Wikitools.Lib.Markdown
 {
-    public abstract record MarkdownDocument : IWritableToText
+    public record MarkdownDocument(List<object> Content) : IWritableToText
     {
         public async Task WriteAsync(TextWriter textWriter) => await textWriter.WriteAsync(ToMarkdown(this));
 
         public override string ToString() => ToMarkdown(this);
-
-        public abstract List<object> Content { get; }
 
         private static string ToMarkdown(MarkdownDocument doc) =>
             doc.Content

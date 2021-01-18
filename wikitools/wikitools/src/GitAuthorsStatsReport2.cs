@@ -8,18 +8,20 @@ using Wikitools.Lib.Tables;
 
 namespace Wikitools
 {
-    public record GitAuthorsStatsReport2
-        (ITimeline Timeline, int Days, GitLogCommit[] Commits) : MarkdownDocument
+    public record GitAuthorsStatsReport2 : MarkdownDocument
     {
         public static readonly object[] HeaderRow = { "Place", "Author", "Files changed", "Insertions", "Deletions" };
         public const string DescriptionFormat = "Git contributions since last {0} days as of {1}";
 
-        public override List<object> Content =>
+        public GitAuthorsStatsReport2(ITimeline timeline, int days, GitLogCommit[] commits) : base(
+            GetContent(timeline, days, commits)) { }
+
+        private static List<object> GetContent(ITimeline timeline, int days, GitLogCommit[] commits) =>
             new()
             {
-                string.Format(DescriptionFormat, Days, Timeline.UtcNow),
+                string.Format(DescriptionFormat, days, timeline.UtcNow),
                 "",
-                new TabularData2(Rows(Commits))
+                new TabularData2(Rows(commits))
             };
 
         private static (object[] headerRow, object[][] rows) Rows(GitLogCommit[] commits)
@@ -27,7 +29,8 @@ namespace Wikitools
             var statsByAuthor = SumByAuthor(commits)
                 .OrderByDescending(s => s.insertions + s.deletions)
                 .Where(s => !s.author.Contains("Konrad J"))
-                .ToArray()[..5];
+                .ToArray()
+                .Take(5);
 
             var rows = statsByAuthor
                 .Select((s, i) => new object[]

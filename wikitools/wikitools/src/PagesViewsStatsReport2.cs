@@ -7,14 +7,20 @@ using Wikitools.Lib.Tables;
 
 namespace Wikitools
 {
-    public record PagesViewsStatsReport2(ITimeline Timeline, int Days, WikiPageStats[] Stats) : MarkdownDocument
+    public record PagesViewsStatsReport2 : MarkdownDocument
     {
-        public override List<object> Content =>
+        public PagesViewsStatsReport2(ITimeline timeline, int days, WikiPageStats[] stats) :
+            base(GetContent(timeline, days, stats)) { }
+
+        private static List<object> GetContent(
+            ITimeline timeline,
+            int days,
+            WikiPageStats[] stats) =>
             new()
             {
-                $"Page views since last {Days} days as of {Timeline.UtcNow}. Total wiki pages: {Stats.Length}",
+                $"Page views since last {days} days as of {timeline.UtcNow}. Total wiki pages: {stats.Length}",
                 "",
-                new TabularData2(GetRows(Stats))
+                new TabularData2(GetRows(stats))
             };
 
         private static (string[] headerRow, object[][] rows) GetRows(WikiPageStats[] stats)

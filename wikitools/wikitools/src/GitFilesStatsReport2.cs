@@ -8,18 +8,25 @@ using Wikitools.Lib.Tables;
 
 namespace Wikitools
 {
-    public record GitFilesStatsReport2(
-        ITimeline Timeline,
-        int Days,
-        GitLogCommit[] Commits,
-        Func<string, bool> FilePathFilter) : MarkdownDocument
+    public record GitFilesStatsReport2 : MarkdownDocument
     {
-        public override List<object> Content =>
+        public GitFilesStatsReport2(
+            ITimeline timeline,
+            int days,
+            GitLogCommit[] commits,
+            Func<string, bool> filePathFilter) : base(
+            GetContent(timeline, days, commits, filePathFilter)) { }
+
+        private static List<object> GetContent(
+            ITimeline timeline,
+            int days,
+            GitLogCommit[] commits,
+            Func<string, bool> filePathFilter) =>
             new()
             {
-                $"Git file changes since last {Days} days as of {Timeline.UtcNow}",
+                $"Git file changes since last {days} days as of {timeline.UtcNow}",
                 "",
-                new TabularData2(GetRows(Commits, FilePathFilter))
+                new TabularData2(GetRows(commits, filePathFilter))
             };
 
         private static (string[] headerRow, object[][] rows) GetRows(
@@ -29,7 +36,8 @@ namespace Wikitools
             var statsSumByFilePath = SumByFilePath(commits)
                 .OrderByDescending(stats => stats.insertions + stats.deletions)
                 .Where(stat => filePathFilter(stat.filePath))
-                .ToArray()[..5];
+                .ToArray()
+                .Take(5);
 
             var rows = statsSumByFilePath
                 .Select((stats, i) => new object[] { i + 1, stats.filePath, stats.insertions, stats.deletions })

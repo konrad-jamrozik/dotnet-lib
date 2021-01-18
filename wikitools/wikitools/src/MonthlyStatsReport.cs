@@ -3,22 +3,23 @@ using System.Collections.Generic;
 using System.Linq;
 using Wikitools.Lib.Git;
 using Wikitools.Lib.Markdown;
-using Wikitools.Lib.Primitives;
 using Wikitools.Lib.Tables;
 
 namespace Wikitools
 {
-    public record MonthlyStatsReport(
-        ITimeline Timeline,
-        GitLogCommit[] Commits,
-        Func<string, bool> FilePathFilter) : MarkdownDocument
+    public record MonthlyStatsReport : MarkdownDocument
     {
-        public override List<object> Content =>
+
+        public MonthlyStatsReport(
+            GitLogCommit[] commits,
+            Func<string, bool> filePathFilter) : base(GetContent(commits, filePathFilter)) { }
+
+        private static List<object> GetContent(GitLogCommit[] commits, Func<string, bool> filePathFilter) =>
             new()
             {
                 $"Git file insertions and deletions month over month",
                 "",
-                new TabularData2(GetRows(Commits, FilePathFilter))
+                new TabularData2(GetRows(commits, filePathFilter))
             };
 
         private static (object[] headerRow, object[][] rows) GetRows(

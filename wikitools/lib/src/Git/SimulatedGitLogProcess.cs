@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Microsoft.VisualBasic;
 
 namespace Wikitools.Lib.Git
 {
@@ -29,18 +28,16 @@ namespace Wikitools.Lib.Git
                     .Union(commitLines).ToList()
             );
 
-        private static List<string> GetStdOutLines(GitLogCommit commit)
-        {
-            return new List<string>
-            {
-                commit.Author,
-                commit.Date.ToShortDateString()
-            }.Union(
-                commit.Stats
-                    .Select(stat =>
-                        $"{stat.Insertions}\t{stat.Deletions}\t{stat.FilePath}")
+        private static List<string> GetStdOutLines(GitLogCommit commit) =>
+            new List<string>
+                {
+                    commit.Author,
+                    commit.Date.ToShortDateString()
+                }.Union(
+                    commit.Stats
+                        .Select(stat =>
+                            $"{stat.Insertions}\t{stat.Deletions}\t{stat.FilePath}")
                 )
                 .ToList();
-        }
     }
 }

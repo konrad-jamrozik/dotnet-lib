@@ -1,14 +1,22 @@
 # Wikitools
 
+## What is encouraged
+
+- Primary constructors
+- Records
+- 'with'
+- LINQ
+- Pure functions and functional composition
+- Extension methods for collection types
+- Ternary operator `?:`
+- Tuples
+
 ## Hard rules (NO exceptions)
 
-- No state mutations
-  - No mutators: setters, Add() methods, Remove() methods, etc.
-  - Instead: constructors, `with`
+- No mutators: setters, Add() methods, Remove() methods, etc.
 - No control loops: `foreach`, `for`
-  - Instead: LINQ
 - No `if` operators
-  - Instead: ternary operator `?:`
+- No extenion methods for types that are not collections
 - No sequential execution that is not compile-time checked
   In other words: no temporal coupling, i.e. no statement sequence operator
   (`;`) where the statements can be flipped causing a bug that compiled.
@@ -24,6 +32,8 @@
 
 - Avoid classes, be it plain, `static`, `partial`, `abstract` or what not.
   - Instead: records
+- Avoid methods with no return value
+  - Allowed only when inside side-effectful block
 - Avoid side-effects
   - Allowed in well-known locations of:
     - System boundaries, interacting with external systems

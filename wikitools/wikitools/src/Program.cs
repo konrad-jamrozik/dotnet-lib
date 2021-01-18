@@ -35,7 +35,7 @@ namespace Wikitools
             var authorsReport    = new GitAuthorsStatsReport2(timeline, cfg.GitLogDays, recentCommits);
             var filesReport      = new GitFilesStatsReport2(timeline, cfg.GitLogDays, recentCommits, filePathFilter);
             var pagesViewsReport = new PagesViewsStatsReport2(timeline, cfg.AdoWikiPageViewsForDays, pagesViewsStats);
-            var monthlyReport    = new MonthlyStatsReport(timeline, pastCommits, filePathFilter);
+            var monthlyReport    = new MonthlyStatsReport(pastCommits, filePathFilter);
 
             // Write outputs. Side-effectful.
             await authorsReport.WriteAsync(Console.Out);

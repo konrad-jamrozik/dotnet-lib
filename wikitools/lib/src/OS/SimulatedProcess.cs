@@ -10,9 +10,6 @@ namespace Wikitools.Lib.OS
         public SimulatedProcess(List<string> stdOutLines) 
             => _stdOutLines = stdOutLines;
 
-        public Task<List<string>> GetStdOutLines()
-        {
-            return Task.FromResult(_stdOutLines);
-        }
+        public Task<List<string>> GetStdOutLines() => Task.FromResult(_stdOutLines);
     }
 }
