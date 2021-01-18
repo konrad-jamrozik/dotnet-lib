@@ -1,10 +1,10 @@
 using System.Threading.Tasks;
 using Wikitools.Lib.Git;
 using Wikitools.Lib.Markdown;
-using Wikitools.Lib.Markdown.Tests;
 using Wikitools.Lib.OS;
 using Wikitools.Lib.Primitives;
 using Wikitools.Lib.Tables;
+using Wikitools.Lib.Tests.Markdown;
 using Xunit;
 using static Wikitools.Declare;
 

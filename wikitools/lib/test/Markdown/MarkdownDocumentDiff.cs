@@ -6,7 +6,7 @@ using Wikitools.Lib.Markdown;
 using Xunit;
 
 // kja move
-namespace Wikitools.Lib.Markdown.Tests
+namespace Wikitools.Lib.Tests.Markdown
 {
     public record MarkdownDocumentDiff(MarkdownDocument Expected, MarkdownDocument Sut)
     {
