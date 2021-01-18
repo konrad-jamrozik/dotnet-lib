@@ -16,30 +16,36 @@ namespace Wikitools
             ITimeline timeline,
             int days,
             GitLogCommit[] commits,
+            int? top = null,
             Func<string, bool>? filePathFilter = null) : base(
-            GetContent(timeline, days, commits, filePathFilter ?? (_ => true))) { }
+            GetContent(timeline, days, commits, top, filePathFilter ?? (_ => true))) { }
 
         private static object[] GetContent(
             ITimeline timeline,
             int days,
             GitLogCommit[] commits,
+            int? top,
             Func<string, bool> filePathFilter) =>
             new object[]
             {
                 string.Format(DescriptionFormat, days, timeline.UtcNow),
                 "",
-                new TabularData(GetRows(commits, filePathFilter))
+                new TabularData(GetRows(commits, filePathFilter, top))
             };
 
         private static (object[] headerRow, object[][] rows) GetRows(
             GitLogCommit[] commits,
-            Func<string, bool> filePathFilter)
+            Func<string, bool> filePathFilter,
+            int? top)
         {
             var statsSumByFilePath = SumByFilePath(commits)
                 .OrderByDescending(stats => stats.insertions + stats.deletions)
                 .Where(stat => filePathFilter(stat.filePath))
-                .ToArray()
-                .Take(5); // kja parameterize
+                .ToArray();
+
+            statsSumByFilePath = top is not null 
+                ? statsSumByFilePath.Take((int) top).ToArray() 
+                : statsSumByFilePath;
 
             var rows = statsSumByFilePath
                 .Select((stats, i) => new object[] { i + 1, stats.filePath, stats.insertions, stats.deletions })

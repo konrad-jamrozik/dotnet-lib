@@ -16,32 +16,38 @@ namespace Wikitools
             ITimeline timeline,
             int days,
             GitLogCommit[] commits,
+            int? top = null,
             Func<string, bool>? authorFilter = null) : base(
-            GetContent(timeline, days, commits, authorFilter ?? (_ => true))) { }
+            GetContent(timeline, days, commits, authorFilter ?? (_ => true), top)) { }
 
         private static object[] GetContent(
             ITimeline timeline,
             int days,
             GitLogCommit[] commits,
-            Func<string, bool> authorFilter) =>
+            Func<string, bool> authorFilter,
+            int? top) =>
             new object[]
             {
                 string.Format(DescriptionFormat, days, timeline.UtcNow),
                 "",
-                new TabularData(Rows(commits, authorFilter))
+                new TabularData(Rows(commits, authorFilter, top))
             };
 
         private static (object[] headerRow, object[][] rows) Rows(
             GitLogCommit[] commits,
-            Func<string, bool> authorFilter)
+            Func<string, bool> authorFilter,
+            int? top)
         {
-            var statsByAuthor = SumByAuthor(commits)
+            var statsSumByAuthor = SumByAuthor(commits)
                 .OrderByDescending(s => s.insertions + s.deletions)
                 .Where(s => authorFilter(s.author))
-                .ToArray()
-                .Take(5);
+                .ToArray();
 
-            var rows = statsByAuthor
+            statsSumByAuthor = top is not null 
+                ? statsSumByAuthor.Take((int) top).ToArray() 
+                : statsSumByAuthor;
+
+            var rows = statsSumByAuthor
                 .Select((s, i) => new object[]
                     { i + 1, s.author, s.filesChanged, s.insertions, s.deletions })
                 .ToArray();

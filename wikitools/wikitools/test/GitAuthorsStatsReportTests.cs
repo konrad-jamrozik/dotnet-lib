@@ -21,6 +21,7 @@ namespace Wikitools.Tests
             var logDays           = 15;
             var gitExecutablePath = @"C:\Program Files\Git\bin\sh.exe";
             var gitRepoDirPath    = @"C:\Users\fooUser\barRepo";
+            var top               = 5;
 
             // Arrange simulations
             var timeline = new SimulatedTimeline();
@@ -30,7 +31,7 @@ namespace Wikitools.Tests
             var gitLog  = GitLog(os, gitRepoDirPath, gitExecutablePath);
             // kja this is wrong: this wait shouldn't be necessary. Defer!
             var commits = await gitLog.Commits(logDays);
-            var sut     = new GitAuthorsStatsReport(timeline, logDays, commits);
+            var sut     = new GitAuthorsStatsReport(timeline, logDays, commits, top);
 
             // Arrange expectations
             var expected = new MarkdownDocument(new object[]

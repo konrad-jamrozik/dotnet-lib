@@ -9,11 +9,6 @@ namespace Wikitools.Tests
     {
         public Data()
         {
-            // Expectation = new()
-            // {
-            //     [CommitsLogs] = AuthorsStatsReportRows,
-            //     [FileChangesStats] = FilesStatsReportRows,
-            // };
             ExpectedRows = new()
             {
                 [("GitAuthorsStatsReportTests", CommitsLogs)] = AuthorsReportRows,
@@ -75,11 +70,11 @@ namespace Wikitools.Tests
 
         public readonly WikiPageStats[] PageStats =
         {
-            new("/Home", new List<int> { 1, 20, 0, 0 }),
-            new("/Foo", new List<int> { 60, 0, 8, 0 }),
-            new("/Foo/Bar", new List<int> { 6, 8, 0, 0 }),
-            new("/Foo/Baz", new List<int> { 0, 0, 80, 100 }),
-            new("/Qux/Quux/Quuz", new List<int> { 7, 7, 7, 7 })
+            new("/Home", new[] { 1, 20, 0, 0 }),
+            new("/Foo", new[] { 60, 0, 8, 0 }),
+            new("/Foo/Bar", new[] { 6, 8, 0, 0 }),
+            new("/Foo/Baz", new[] { 0, 0, 80, 100 }),
+            new("/Qux/Quux/Quuz", new[] { 7, 7, 7, 7 })
         };
 
         private readonly object[][] PageViewsStatsReportRows = 
@@ -90,9 +85,5 @@ namespace Wikitools.Tests
             new object[] { 4, "/Home", 21 },
             new object[] { 5, "/Foo/Bar", 14 }
         };
-
-        private readonly List<List<object>> EmptyRows = new();
-
-
     }
 }

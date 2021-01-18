@@ -3,24 +3,12 @@ using System.Linq;
 
 namespace Wikitools.Lib.Git
 {
-    public class SimulatedGitLogProcess : IProcessSimulationSpec
+    public record SimulatedGitLogProcess(int AfterDays, GitLogCommit[] Commits) : IProcessSimulationSpec
     {
-        private readonly int _sinceDays;
-        private readonly GitLogCommit[] _commits;
-
-        public SimulatedGitLogProcess(
-            int sinceDays,
-            // kja abstract this away into an interface that provides StdOutLines
-            GitLogCommit[] commits)
-        {
-            _sinceDays = sinceDays;
-            _commits = commits;
-        }
-        
         public bool Matches(string executableFilePath, string workingDirPath, string[] arguments)
-            => arguments.Any(arg => arg.Contains("git log") && arg.Contains($"--since={_sinceDays}.days"));
+            => arguments.Any(arg => arg.Contains("git log") && arg.Contains($"--after={AfterDays}.days"));
 
-        public List<string> StdOutLines => _commits
+        public List<string> StdOutLines => Commits
             .Select(GetStdOutLines)
             .Aggregate((acc, commitLines) =>
                 acc

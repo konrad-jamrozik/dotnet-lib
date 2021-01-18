@@ -25,14 +25,14 @@ namespace Wikitools
             var wiki   = Wiki(adoApi, cfg.AdoWikiUri, cfg.AdoPatEnvVar);
 
             // Obtain inputs. Has out-of-process dependencies.
-            GitLogCommit[]  recentCommits   = await gitLog.Commits(cfg.GitLogDays);
-            GitLogCommit[]  pastCommits     = await gitLog.Commits(cfg.MonthlyReportStartDate, cfg.MonthlyReportEndDate);
+            GitLogCommit[]  recentCommits = await gitLog.Commits(cfg.GitLogDays);
+            GitLogCommit[]  pastCommits = await gitLog.Commits(cfg.MonthlyReportStartDate, cfg.MonthlyReportEndDate);
             WikiPageStats[] pagesViewsStats = await wiki.PagesStats(cfg.AdoWikiPageViewsForDays);
 
-            var authorsReport    = new GitAuthorsStatsReport(timeline, cfg.GitLogDays, recentCommits, AuthorFilter);
-            var filesReport      = new GitFilesStatsReport(timeline, cfg.GitLogDays, recentCommits, PathFilter);
+            var authorsReport = new GitAuthorsStatsReport(timeline, cfg.GitLogDays, recentCommits, cfg.Top, AuthorFilter);
+            var filesReport = new GitFilesStatsReport(timeline, cfg.GitLogDays, recentCommits, cfg.Top, PathFilter);
             var pagesViewsReport = new PagesViewsStatsReport(timeline, cfg.AdoWikiPageViewsForDays, pagesViewsStats);
-            var monthlyReport    = new MonthlyStatsReport(pastCommits, AuthorFilter, PathFilter);
+            var monthlyReport = new MonthlyStatsReport(pastCommits, AuthorFilter, PathFilter);
 
             // Write outputs. Side-effectful.
             await authorsReport.WriteAsync(Console.Out);
