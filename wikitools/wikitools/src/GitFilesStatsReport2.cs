@@ -10,12 +10,14 @@ namespace Wikitools
 {
     public record GitFilesStatsReport2 : MarkdownDocument
     {
+        public const string DescriptionFormat = "Git file changes since last {0} days as of {1}";
+
         public GitFilesStatsReport2(
             ITimeline timeline,
             int days,
             GitLogCommit[] commits,
-            Func<string, bool> filePathFilter) : base(
-            GetContent(timeline, days, commits, filePathFilter)) { }
+            Func<string, bool>? filePathFilter = null) : base(
+            GetContent(timeline, days, commits, filePathFilter ?? (_ => true))) { }
 
         private static List<object> GetContent(
             ITimeline timeline,
@@ -24,7 +26,7 @@ namespace Wikitools
             Func<string, bool> filePathFilter) =>
             new()
             {
-                $"Git file changes since last {days} days as of {timeline.UtcNow}",
+                string.Format(DescriptionFormat, days, timeline.UtcNow),
                 "",
                 new TabularData2(GetRows(commits, filePathFilter))
             };

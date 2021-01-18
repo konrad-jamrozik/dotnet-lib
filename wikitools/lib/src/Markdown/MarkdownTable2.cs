@@ -11,9 +11,9 @@ namespace Wikitools.Lib.Markdown
 
         public override string ToString()
         {
-            var headerRow          = WrapInMarkdown(Table.Data.headerRow);
-            var headerDelimiterRow = HeaderDelimiterRow(Table.Data.headerRow);
-            var rows               = Table.Data.rows.Select(WrapInMarkdown);
+            var headerRow          = WrapInMarkdown(Table.HeaderRow);
+            var headerDelimiterRow = HeaderDelimiterRow(Table.HeaderRow);
+            var rows               = Table.Rows.Select(WrapInMarkdown);
 
             var rowsToWrite = new List<string>
             {

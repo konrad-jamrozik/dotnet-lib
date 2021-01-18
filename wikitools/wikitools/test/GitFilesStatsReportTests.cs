@@ -1,12 +1,13 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Wikitools.Lib;
 using Wikitools.Lib.Git;
+using Wikitools.Lib.Markdown;
 using Wikitools.Lib.OS;
 using Wikitools.Lib.Primitives;
 using Wikitools.Lib.Tables;
 using Xunit;
 using static Wikitools.Declare;
+using static Wikitools.Lib.Tests.Tables.TabularDataAssertionExtensions;
 
 namespace Wikitools.Tests
 {
@@ -16,29 +17,30 @@ namespace Wikitools.Tests
         public async Task ReportsFilesChangesStats()
         {
             // Arrange inputs
-            var changesStats      = Data.FileChangesStats;
+            var commitsData       = Data.CommitsLogs;
             var logDays           = 15;
             var gitExecutablePath = @"C:\Program Files\Git\bin\sh.exe";
             var gitRepoDirPath    = @"C:\Users\fooUser\barRepo";
 
             // Arrange simulations
-            var timeline      = new SimulatedTimeline();
-            var gitLogCommits = new GitLogCommit[1]; // kja fix when ready
-            var os            = new SimulatedOS(new SimulatedGitLogProcess(logDays, gitLogCommits)); 
+            var timeline = new SimulatedTimeline();
+            var os       = new SimulatedOS(new SimulatedGitLogProcess(logDays, commitsData));
 
             // Arrange SUT declaration
             var gitLog = GitLog(os, gitRepoDirPath, gitExecutablePath, logDays);
-            // kja to replace with Report2
-            // var sut    = new GitFilesStatsReport(timeline, gitLog, logDays);
+            // kja this is wrong: this wait shouldn't be necessary. Defer!
+            var commits = await gitLog.Commits(logDays);
+            var sut     = new GitFilesStatsReport2(timeline, logDays, commits);
 
             // Arrange expectations
-            // var expected = new TabularData(
-            //     Description: string.Format(GitFilesStatsReport.DescriptionFormat, logDays, timeline.UtcNow),
-            //     HeaderRow: GitFilesStatsReport.HeaderRowLabels,
-            //     Rows: (List<List<object>>) Data.Expectation[changesStats]);
+            var expected = new MarkdownDocument(new List<object>
+            {
+                string.Format(GitFilesStatsReport2.DescriptionFormat, logDays, timeline.UtcNow),
+                "",
+                new TabularData2((GitAuthorsStatsReport2.HeaderRow, Data.ExpectedRows[commitsData]))
+            });
 
-            // kja temp turned off
-            // await Verify(expected, sut);
+            await Verify(expected, sut);
         }
     }
 }
