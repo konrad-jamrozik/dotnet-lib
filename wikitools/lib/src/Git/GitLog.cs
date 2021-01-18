@@ -17,7 +17,7 @@ namespace Wikitools.Lib.Git
             DateTime? after = null,
             DateTime? before = null)
         {
-            var command     = GitLogCommand(afterDays, after, before);
+            var command     = GitLogCommand(afterDays, after, before, Delimiter);
             var stdOutLines = await Repo.GetStdOutLines(command);
             return
                 stdOutLines
@@ -33,7 +33,7 @@ namespace Wikitools.Lib.Git
         public Task<GitLogCommit[]> Commits(DateTime after, DateTime before) =>
             GetCommits(after: after, before: before);
 
-        private static string GitLogCommand(int? afterDays, DateTime? afterDate, DateTime? beforeDate)
+        private static string GitLogCommand(int? afterDays, DateTime? afterDate, DateTime? beforeDate, string delimiter)
         {
             // https://docs.microsoft.com/en-us/dotnet/standard/base-types/standard-date-and-time-format-strings#Roundtrip
             var roundtripFormat = "o";
@@ -55,7 +55,7 @@ namespace Wikitools.Lib.Git
             var command =
                 $"git log{afterDaysStr}{afterDateStr}{beforeDateStr} " +
                 $"--ignore-all-space --ignore-blank-lines " +
-                $"--pretty=\"%{Delimiter}%n%an%n%as\" " +
+                $"--pretty=\"%{delimiter}%n%an%n%as\" " +
                 $"--numstat --date=iso";
             return command;
         }
