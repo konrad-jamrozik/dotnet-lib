@@ -33,7 +33,7 @@ namespace Wikitools.Lib.Primitives
             this AsyncLazy<T> asyncLazyTarget,
             Func<T, T> f) => new(async () =>
         {
-            T target = await asyncLazyTarget.Value;
+            T target = await asyncLazyTarget;
             return f(target);
         });
     }
