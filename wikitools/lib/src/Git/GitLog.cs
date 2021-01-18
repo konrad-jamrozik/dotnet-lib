@@ -12,7 +12,7 @@ namespace Wikitools.Lib.Git
         // They work from terminal but here they return no results. I don't know why.
         public const string Delimiter = "%";
 
-        public async Task<GitLogCommit[]> GetCommits(
+        private async Task<GitLogCommit[]> GetCommits(
             int? afterDays = null,
             DateTime? after = null,
             DateTime? before = null)
@@ -22,8 +22,8 @@ namespace Wikitools.Lib.Git
                 (await Repo.GetStdOutLines(command))
                 .Where(line => !string.IsNullOrWhiteSpace(line))
                 .Split(Delimiter)
-                .Where(commit => commit.Any())
-                .Select(commit => new GitLogCommit(commit.ToArray()))
+                .Where(commitLines => commitLines.Any())
+                .Select(commitLines => new GitLogCommit(commitLines.ToArray()))
                 .ToArray();
         }
 
