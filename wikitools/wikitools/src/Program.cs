@@ -35,9 +35,6 @@ namespace Wikitools
             var pagesViewsReport = new PagesViewsStatsReport(timeline, cfg.AdoWikiPageViewsForDays, pagesViewsStats);
             var monthlyReport = new MonthlyStatsReport(pastCommits, AuthorFilter, PathFilter);
 
-            // Output sink
-            var textWriter = Console.Out;
-            
             var docsToWrite = new MarkdownDocument[]
             {
                 authorsReport, 
@@ -45,9 +42,9 @@ namespace Wikitools
                 pagesViewsReport, 
                 monthlyReport
             };
+            var outputSink = Console.Out;
 
-            // Write outputs. Side-effectful.
-            await WriteAll(docsToWrite, textWriter);
+            await WriteAll(docsToWrite, outputSink);
         }
 
         private static async Task WriteAll(MarkdownDocument[] docs, TextWriter textWriter) =>
