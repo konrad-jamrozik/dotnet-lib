@@ -13,14 +13,12 @@ namespace Wikitools.Lib.Markdown
 
         private static async Task<string> ToMarkdown(MarkdownDocument doc) =>
             (await doc.Content)
-                .Select(entry => entry switch
-                {
-                    // @formatter:off
-                    TabularData td => new MarkdownTable(td) + Environment.NewLine,
-                    _               => entry + Environment.NewLine
-                    // @formatter:on
-                })
-                .Aggregate(new StringBuilder(), (sb, str) => sb.Append(str))
-                .ToString();
+            .Select(entry => entry switch
+            {
+                TabularData td => new MarkdownTable(td) + Environment.NewLine,
+                _ => entry + Environment.NewLine
+            })
+            .Aggregate(new StringBuilder(), (sb, str) => sb.Append(str))
+            .ToString();
     }
 }

@@ -5,15 +5,15 @@ using Wikitools.Lib.Tables;
 
 namespace Wikitools.Lib.Markdown
 {
-    internal record MarkdownTable(TabularData Table)
+    internal record MarkdownTable(TabularData Data)
     {
         public MarkdownTable(string[] markdownLines) : this(UnwrapFromMarkdown(markdownLines)) { }
 
         public override string ToString()
         {
-            var headerRow          = WrapInMarkdown(Table.HeaderRow);
-            var headerDelimiterRow = HeaderDelimiterRow(Table.HeaderRow);
-            var rows               = Table.Rows.Select(WrapInMarkdown);
+            var headerRow          = WrapInMarkdown(Data.HeaderRow);
+            var headerDelimiterRow = HeaderDelimiterRow(Data.HeaderRow);
+            var rows               = Data.Rows.Select(WrapInMarkdown);
 
             var rowsToWrite = new List<string>
             {
