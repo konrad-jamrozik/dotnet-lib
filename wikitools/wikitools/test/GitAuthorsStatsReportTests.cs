@@ -27,7 +27,7 @@ namespace Wikitools.Tests
             var os       = new SimulatedOS(new SimulatedGitLogProcess(logDays, commitsData));
 
             // Arrange SUT declaration
-            var gitLog  = GitLog(os, gitRepoDirPath, gitExecutablePath, logDays);
+            var gitLog  = GitLog(os, gitRepoDirPath, gitExecutablePath);
             // kja this is wrong: this wait shouldn't be necessary. Defer!
             var commits = await gitLog.Commits(logDays);
             var sut     = new GitAuthorsStatsReport(timeline, logDays, commits);

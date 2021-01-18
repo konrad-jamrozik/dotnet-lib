@@ -23,13 +23,13 @@ namespace Wikitools
             // kja use in all reports, dehardcode "/Meta". Same with "Konrad J" filter.
             Func<string, bool> filePathFilter = filePath => !filePath.Contains("/Meta");
 
-            var gitLog = GitLog(os, cfg.GitRepoClonePath, cfg.GitExecutablePath, cfg.GitLogDays);
-            var wiki   = Wiki(adoApi, cfg.AdoWikiUri, cfg.AdoPatEnvVar, cfg.AdoWikiPageViewsForDays);
+            var gitLog = GitLog(os, cfg.GitRepoClonePath, cfg.GitExecutablePath);
+            var wiki   = Wiki(adoApi, cfg.AdoWikiUri, cfg.AdoPatEnvVar);
 
             // Obtain inputs. Has out-of-process dependencies.
             GitLogCommit[]  recentCommits   = await gitLog.Commits(cfg.GitLogDays);
             GitLogCommit[]  pastCommits     = await gitLog.Commits(cfgStartYear, cfgEndYear);
-            WikiPageStats[] pagesViewsStats = await wiki.PagesStats();
+            WikiPageStats[] pagesViewsStats = await wiki.PagesStats(cfg.AdoWikiPageViewsForDays);
 
             var authorsReport    = new GitAuthorsStatsReport(timeline, cfg.GitLogDays, recentCommits);
             var filesReport      = new GitFilesStatsReport(timeline, cfg.GitLogDays, recentCommits, filePathFilter);

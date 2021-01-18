@@ -26,9 +26,9 @@ namespace Wikitools.Tests
             var adoApi   = new SimulatedAdoApi(pageStats);
 
             // Arrange SUT declaration
-            var wiki       = Wiki(adoApi, wikiUri, patEnvVar, pageViewsForDays);
+            var wiki       = Wiki(adoApi, wikiUri, patEnvVar);
             // kja this is wrong: this wait shouldn't be necessary. Defer!
-            var pagesStats = await wiki.PagesStats();
+            var pagesStats = await wiki.PagesStats(pageViewsForDays);
             var sut        = new PagesViewsStatsReport(timeline, pageViewsForDays, pagesStats);
 
             var expected = new MarkdownDocument(new object[]
