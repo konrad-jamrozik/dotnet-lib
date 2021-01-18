@@ -1,5 +1,4 @@
-﻿using System.IO;
-using Wikitools.Lib.OS;
+﻿using Wikitools.Lib.OS;
 
 namespace Wikitools.Lib.Primitives
 {
