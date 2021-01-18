@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Microsoft.TeamFoundation.SourceControl.WebApi;
 using Wikitools.AzureDevOps;
 using Wikitools.Lib.Git;
 using Wikitools.Lib.Primitives;
@@ -11,21 +10,22 @@ namespace Wikitools.Tests
     {
         public Data()
         {
-            var commitLogs = CommitsLogs(new SimulatedTimeline().UtcNow);
+            CommitsLogs = GetCommitsLogs(new SimulatedTimeline().UtcNow);
             ExpectedRows = new()
             {
-                [("GitAuthorsStatsReportTests", commitLogs)] = AuthorsReportRows,
-                [("GitFilesStatsReportTests", commitLogs)] = FilesReportRows,
+                [("GitAuthorsStatsReportTests", CommitsLogs)] = AuthorsReportRows,
+                [("GitFilesStatsReportTests", CommitsLogs)] = FilesReportRows,
                 [("PagesViewsStatsReportTests", PagesStats)] = PageViewsStatsReportRows
             };
         }
 
+        public GitLogCommit[] CommitsLogs { get; }
+
         public readonly Dictionary<(string className, object input), object[][]> ExpectedRows;
 
 
-        public GitLogCommit[] CommitsLogs(DateTime date) => new GitLogCommit[] 
+        public GitLogCommit[] GetCommitsLogs(DateTime date) => new GitLogCommit[] 
         {
-            // kja restore this data
             new("AuthorA", date, new GitLogCommit.Numstat[] { new(100, 10, "/Foo/bar100_10.md") }),
             new("AuthorB", date, new GitLogCommit.Numstat[] 
             {
@@ -34,53 +34,27 @@ namespace Wikitools.Tests
             new("AuthorC", date, new GitLogCommit.Numstat[]
             {
                 new(200, 5, "/Foo/bar200_5.md"),
-                new(300, 12, "/Qux/Corge377_19.md"),
-                new(501, 7, "/Foo/bar501_7.md"),
+                new(300, 82, "/Qux/Corge377_89.md"),
+                new(601, 7, "/Foo/bar601_7.md"),
                 new(400, 13, "/Foo/bar400_13.md")
             })
         };
 
-        private readonly object[][] AuthorsReportRows =
+        public readonly object[][] AuthorsReportRows =
         {
-            new object[] { 1, "AuthorC", 4, 200+500+501+400, 5+12+7+13 },
+            new object[] { 1, "AuthorC", 4, 200+300+601+400, 5+82+7+13 },
             new object[] { 2, "AuthorA", 1, 100, 10 },
             new object[] { 3, "AuthorB", 1, 77, 7 },
             
         };
 
-        private readonly object[][] FilesReportRows =
+        public readonly object[][] FilesReportRows =
         {
-            new object[] { 1, "/Foo/bar500_12.md", 500, 12 },
-            new object[] { 2, "/Foo/bar501_7.md", 501, 7 },
-            new object[] { 3, "/Qux/Corge377_89.md", 577, 89 },
-            new object[] { 4, "/Foo/bar400_13.md", 400, 13 },
-            new object[] { 5, "/Foo/bar200_5.md", 200, 5 },
-            new object[] { 6, "/Foo/bar100_10.md", 100, 10 },
-        };
-
-        private readonly List<List<object>> AuthorsStatsReportRows = new()
-        {
-            new() { 1, "AuthorB", 60000, 606 },
-            new() { 2, "AuthorC", 6000, 66 },
-            new() { 3, "AuthorA", 600, 60 }
-        };
-
-        public readonly List<GitFileChangeStats> FileChangesStats = new()
-        {
-            new("insertsOnly.txt", 50, 0),
-            new("deletionsOnly.txt", 0, 40),
-            new("moreInserts.txt", 70, 48),
-            new("moreDeletions.txt", 13, 16),
-            new("maxStatsSum.txt", 68, 68),
-            new("minStatsSum.txt", 6, 6),
-            new("maxInserts.txt", 120, 3),
-            new("maxDeletions.txt", 2, 119)
-        };
-
-        private readonly List<List<object>> FilesStatsReportRows = new()
-        {
-            // kja this will need to be expanded once the test can reach the Verify logic.
-            new() { 1, "maxStatsSum.txt", 68, 68 }
+            new object[] { 1, "/Foo/bar601_7.md", 601, 7 },
+            new object[] { 2, "/Qux/Corge377_89.md", 377, 89 },
+            new object[] { 3, "/Foo/bar400_13.md", 400, 13 },
+            new object[] { 4, "/Foo/bar200_5.md", 200, 5 },
+            new object[] { 5, "/Foo/bar100_10.md", 100, 10 },
         };
 
         public readonly WikiPageStats[] PagesStats =
@@ -92,7 +66,7 @@ namespace Wikitools.Tests
             new("/Qux/Quux/Quuz", new[] { 7, 7, 7, 7 })
         };
 
-        private readonly object[][] PageViewsStatsReportRows = 
+        public readonly object[][] PageViewsStatsReportRows = 
         {
             new object[] { 1, "/Foo/Baz", 180 },
             new object[] { 2, "/Foo", 68 },
