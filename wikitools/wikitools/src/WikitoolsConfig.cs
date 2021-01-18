@@ -6,7 +6,7 @@ namespace Wikitools
 {
     // ReSharper disable once ClassNeverInstantiated.Global
     // - Reason: instantiated by JsonSerializer.Deserialize in Wikitools.WikitoolsConfig.From
-    internal record WikitoolsConfig(
+    public record WikitoolsConfig(
         string GitExecutablePath,
         string GitRepoClonePath,
         int GitLogDays,
