@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Wikitools.Lib.Git
+namespace Wikitools.Lib.OS
 {
     public interface IProcessSimulationSpec
     {

@@ -1,6 +1,4 @@
-﻿using Wikitools.Lib.OS;
-
-namespace Wikitools.Lib.Primitives
+﻿namespace Wikitools.Lib.OS
 {
     public class Dir
     {
