@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.TeamFoundation.Build.WebApi;
 using Wikitools.Lib.Git;
 using Wikitools.Lib.Markdown;
 using Wikitools.Lib.OS;
@@ -17,7 +18,8 @@ namespace Wikitools.Tests
         public async Task ReportsFilesChangesStats()
         {
             // Arrange inputs
-            var commitsData       = Data.CommitsLogs;
+            var data              = new Data();
+            var commitsData       = data.CommitsLogs;
             var logDays           = 15;
             var gitExecutablePath = @"C:\Program Files\Git\bin\sh.exe";
             var gitRepoDirPath    = @"C:\Users\fooUser\barRepo";
@@ -37,7 +39,7 @@ namespace Wikitools.Tests
             {
                 string.Format(GitFilesStatsReport2.DescriptionFormat, logDays, timeline.UtcNow),
                 "",
-                new TabularData2((GitAuthorsStatsReport2.HeaderRow, Data.ExpectedRows[commitsData]))
+                new TabularData2((GitFilesStatsReport2.HeaderRow, data.ExpectedRows[(nameof(GitFilesStatsReportTests), commitsData)]))
             });
 
             await Verify(expected, sut);

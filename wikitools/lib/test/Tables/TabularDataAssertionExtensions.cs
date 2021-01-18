@@ -26,7 +26,6 @@ namespace Wikitools.Lib.Tests.Tables
 
         private static void AssertNoDiffBetween(MarkdownDocument expected, MarkdownDocument actual)
         {
-            // kja BROKEN! Fails to reognize header differences!
             var jsonDiff = new JsonDiff(expected, actual);
             Assert.True(jsonDiff.IsEmpty,
                 $"The expected baseline is different than actual target. Diff:{Environment.NewLine}{jsonDiff}");

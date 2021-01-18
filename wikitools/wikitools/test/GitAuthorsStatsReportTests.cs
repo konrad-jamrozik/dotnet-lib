@@ -17,7 +17,8 @@ namespace Wikitools.Tests
         public async Task ReportsGitAuthorsStats()
         {
             // Arrange inputs
-            var commitsData      = Data.CommitsLogs;
+            var data              = new Data();
+            var commitsData       = data.CommitsLogs;
             var logDays           = 15;
             var gitExecutablePath = @"C:\Program Files\Git\bin\sh.exe";
             var gitRepoDirPath    = @"C:\Users\fooUser\barRepo";
@@ -37,7 +38,7 @@ namespace Wikitools.Tests
             {
                 string.Format(GitAuthorsStatsReport2.DescriptionFormat, logDays, timeline.UtcNow),
                 "",
-                new TabularData2((GitAuthorsStatsReport2.HeaderRow, Data.ExpectedRows[commitsData]))
+                new TabularData2((GitAuthorsStatsReport2.HeaderRow, data.ExpectedRows[(nameof(GitAuthorsStatsReportTests), commitsData)]))
             });
 
             await Verify(expected, sut);

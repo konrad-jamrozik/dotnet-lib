@@ -10,6 +10,7 @@ namespace Wikitools
 {
     public record GitFilesStatsReport2 : MarkdownDocument
     {
+        public static readonly object[] HeaderRow = { "Place", "FilePath", "Insertions", "Deletions" };
         public const string DescriptionFormat = "Git file changes since last {0} days as of {1}";
 
         public GitFilesStatsReport2(
@@ -31,7 +32,7 @@ namespace Wikitools
                 new TabularData2(GetRows(commits, filePathFilter))
             };
 
-        private static (string[] headerRow, object[][] rows) GetRows(
+        private static (object[] headerRow, object[][] rows) GetRows(
             GitLogCommit[] commits,
             Func<string, bool> filePathFilter)
         {
@@ -45,7 +46,7 @@ namespace Wikitools
                 .Select((stats, i) => new object[] { i + 1, stats.filePath, stats.insertions, stats.deletions })
                 .ToArray();
 
-            return (headerRow: new[] { "Place", "FilePath", "Insertions", "Deletions" }, rows);
+            return (HeaderRow, rows);
         }
 
         private static (string filePath, int insertions, int deletions)[] SumByFilePath(GitLogCommit[] commits)

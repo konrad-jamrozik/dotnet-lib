@@ -14,7 +14,8 @@ namespace Wikitools.Tests
         public async Task ReportsPagesViewsStats()
         {
             // Arrange inputs
-            var pageStats        = Data.PageStats;
+            var data             = new Data();
+            var pageStats        = data.PageStats;
             var wikiUri          = "https://dev.azure.com/adoOrg/adoProject/_wiki/wikis/wikiName";
             var patEnvVar        = string.Empty;
             var pageViewsForDays = 30;
@@ -34,7 +35,7 @@ namespace Wikitools.Tests
                     timeline.UtcNow,
                     pageStats.Length),
                 HeaderRow: PagesViewsStatsReport.HeaderRowLabels,
-                Rows: (List<List<object>>) Data.Expectation[pageStats]);
+                Rows: (List<List<object>>) data.Expectation[pageStats]);
 
             // kja temp off
             // await Verify(expected, sut);
