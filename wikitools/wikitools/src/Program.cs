@@ -14,11 +14,11 @@ namespace Wikitools
     {
         public static async Task Main(string[] args)
         {
-            var cfg        = WikitoolsConfig.From("wikitools_config.json");
+            var cfg = WikitoolsConfig.From("wikitools_config.json");
 
-            var timeline   = new Timeline();
-            var os         = new WindowsOS();
-            var adoApi     = new AdoApi();
+            var timeline = new Timeline();
+            var os       = new WindowsOS();
+            var adoApi   = new AdoApi();
 
             var outputSink = Console.Out;
 
@@ -44,9 +44,9 @@ namespace Wikitools
 
             var authorsReport =
                 new GitAuthorsStatsReport(timeline, recentCommits, cfg.GitLogDays, cfg.Top, AuthorFilter);
-            var filesReport      = new GitFilesStatsReport(timeline, recentCommits, cfg.GitLogDays, cfg.Top, PathFilter);
+            var filesReport = new GitFilesStatsReport(timeline, recentCommits, cfg.GitLogDays, cfg.Top, PathFilter);
             var pagesViewsReport = new PagesViewsStatsReport(timeline, pagesViewsStats, cfg.AdoWikiPageViewsForDays);
-            var monthlyReport    = new MonthlyStatsReport(pastCommits, AuthorFilter, PathFilter);
+            var monthlyReport = new MonthlyStatsReport(pastCommits, AuthorFilter, PathFilter);
 
             var docsToWrite = new MarkdownDocument[]
             {
