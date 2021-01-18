@@ -3,18 +3,9 @@ using System.Threading.Tasks;
 
 namespace Wikitools.Lib.Git
 {
-    public class GitRepository
+    public record GitRepository(GitBashShell GitBashShell, string WorkingDirPath)
     {
-        private readonly GitBashShell _gitBashShell;
-        private readonly string _workingDirPath;
-
-        public GitRepository(GitBashShell gitBashShell, string workingDirPath)
-        {
-            _gitBashShell = gitBashShell;
-            _workingDirPath = workingDirPath;
-        }
-
         public Task<List<string>> GetStdOutLines(string gitCmdLine) 
-            => _gitBashShell.GetStdOutLines(_workingDirPath, new[] {gitCmdLine});
+            => GitBashShell.GetStdOutLines(WorkingDirPath, new[] {gitCmdLine});
     }
 }

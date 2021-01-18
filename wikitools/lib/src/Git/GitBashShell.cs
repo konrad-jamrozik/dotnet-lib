@@ -5,20 +5,11 @@ using Wikitools.Lib.OS;
 
 namespace Wikitools.Lib.Git
 {
-    public class GitBashShell : IShell
+    public record GitBashShell(IOperatingSystem OS, string GitExecutablePath) : IShell
     {
-        private readonly IOperatingSystem _os;
-        private readonly string _gitExecutablePath;
-
-        public GitBashShell(IOperatingSystem os, string gitExecutablePath)
-        {
-            _os = os;
-            _gitExecutablePath = gitExecutablePath;
-        }
-
         public Task<List<string>> GetStdOutLines(string workingDirPath, string[] arguments)
         {
-            var executableFilePath = _gitExecutablePath.Replace(@"\", @"\\");
+            var executableFilePath = GitExecutablePath.Replace(@"\", @"\\");
 
             // Reference:
             // https://stackoverflow.com/questions/17302977/how-to-launch-git-bash-from-dos-command-line
@@ -30,7 +21,7 @@ namespace Wikitools.Lib.Git
                 new QuotedString(string.Join(" ", arguments)).Value
             };
             
-            IProcess process = _os.Process(executableFilePath, workingDirPath, processArguments);
+            IProcess process = OS.Process(executableFilePath, workingDirPath, processArguments);
 
             return process.GetStdOutLines();
         }
