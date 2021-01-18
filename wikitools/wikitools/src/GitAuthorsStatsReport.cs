@@ -15,8 +15,8 @@ namespace Wikitools
 
         public GitAuthorsStatsReport(
             ITimeline timeline,
-            int days,
             Task<GitLogCommit[]> commits,
+            int days,
             int? top = null,
             Func<string, bool>? authorFilter = null) : base(
             GetContent(timeline, days, commits, authorFilter ?? (_ => true), top)) { }

@@ -28,7 +28,7 @@ namespace Wikitools.Tests
             // Arrange SUT declaration
             var wiki       = Wiki(adoApi, wikiUri, patEnvVar);
             var pagesStats = wiki.PagesStats(pageViewsForDays);
-            var sut        = new PagesViewsStatsReport(timeline, pageViewsForDays, pagesStats);
+            var sut        = new PagesViewsStatsReport(timeline, pagesStats, pageViewsForDays);
 
             var expected = new MarkdownDocument(Task.FromResult(new object[]
             {

@@ -30,7 +30,7 @@ namespace Wikitools.Tests
             // Arrange SUT declaration
             var gitLog  = GitLog(os, gitRepoDirPath, gitExecutablePath);
             var commits = gitLog.Commits(logDays);
-            var sut     = new GitFilesStatsReport(timeline, logDays, commits, top);
+            var sut     = new GitFilesStatsReport(timeline, commits, logDays, top);
 
             // Arrange expectations
             var expected = new MarkdownDocument(Task.FromResult(new object[]

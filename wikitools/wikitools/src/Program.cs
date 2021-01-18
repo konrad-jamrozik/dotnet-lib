@@ -30,10 +30,10 @@ namespace Wikitools
             bool PathFilter(string path) => !cfg.ExcludedPaths.Any(path.Contains);
 
             var authorsReport =
-                new GitAuthorsStatsReport(timeline, cfg.GitLogDays, recentCommits, cfg.Top, AuthorFilter);
-            var filesReport = new GitFilesStatsReport(timeline, cfg.GitLogDays, recentCommits, cfg.Top, PathFilter);
-            var pagesViewsReport = new PagesViewsStatsReport(timeline, cfg.AdoWikiPageViewsForDays, pagesViewsStats);
-            var monthlyReport = new MonthlyStatsReport(pastCommits, AuthorFilter, PathFilter);
+                new GitAuthorsStatsReport(timeline, recentCommits, cfg.GitLogDays, cfg.Top, AuthorFilter);
+            var filesReport      = new GitFilesStatsReport(timeline, recentCommits, cfg.GitLogDays, cfg.Top, PathFilter);
+            var pagesViewsReport = new PagesViewsStatsReport(timeline, pagesViewsStats, cfg.AdoWikiPageViewsForDays);
+            var monthlyReport    = new MonthlyStatsReport(pastCommits, AuthorFilter, PathFilter);
 
             var docsToWrite = new MarkdownDocument[]
             {

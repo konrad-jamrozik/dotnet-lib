@@ -15,8 +15,8 @@ namespace Wikitools
 
         public GitFilesStatsReport(
             ITimeline timeline,
-            int days,
             Task<GitLogCommit[]> commits,
+            int days,
             int? top = null,
             Func<string, bool>? filePathFilter = null) : base(
             GetContent(timeline, days, commits, top, filePathFilter ?? (_ => true))) { }
