@@ -25,8 +25,4 @@
     <ProjectReference Include="..\src\lib.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Tables\" />
-  </ItemGroup>
-
 </Project>
