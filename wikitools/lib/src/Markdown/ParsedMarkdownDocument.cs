@@ -14,7 +14,7 @@ namespace Wikitools.Lib.Markdown
 
         private static List<object> GetContent(StringWriter sw)
         {
-            string[] markdownLines = new TextLines(sw.GetStringBuilder().ToString()).Value;
+            string[] markdownLines = new TextLines(sw.GetStringBuilder().ToString()).SplitTrimmingEnd;
 
             var groups = markdownLines.GroupAdjacent(line => line.FirstOrDefault() == '|');
 

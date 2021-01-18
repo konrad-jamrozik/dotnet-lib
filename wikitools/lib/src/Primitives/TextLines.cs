@@ -1,14 +1,17 @@
 ﻿using System;
+using System.Linq;
 
 namespace Wikitools.Lib.Primitives
 {
-    // kja to remove when TabularData is removed
     public class TextLines
     {
         private readonly string _value;
 
         public TextLines(string value) => _value = value;
 
-        public string[] Value => _value.Split(Environment.NewLine);
+        public string[] Split => _value.Split(Environment.NewLine);
+
+        public string[] SplitTrimmingEnd =>
+            Split.Reverse().SkipWhile(string.IsNullOrWhiteSpace).Reverse().ToArray();
     }
 }
