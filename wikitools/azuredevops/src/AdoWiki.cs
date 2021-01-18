@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 
 namespace Wikitools.AzureDevOps
 {
+    // kja convert to record with primary ctor
     public class AdoWiki
     {
         private readonly IAdoApi _adoApi;
@@ -18,6 +19,7 @@ namespace Wikitools.AzureDevOps
             _pageViewsForDays = pageViewsForDays;
         }
 
+        // kja pass _pageViewsForDays as a param
         public async Task<WikiPageStats[]> PagesStats()
         {
             if (!(_pageViewsForDays > 0))

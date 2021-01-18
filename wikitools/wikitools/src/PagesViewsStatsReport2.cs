@@ -8,21 +8,24 @@ namespace Wikitools
 {
     public record PagesViewsStatsReport2 : MarkdownDocument
     {
-        public PagesViewsStatsReport2(ITimeline timeline, int days, WikiPageStats[] stats) :
-            base(GetContent(timeline, days, stats)) { }
+        public const string DescriptionFormat = "Page views since last {0} days as of {1}. Total wiki pages: {2}";
+        public static readonly object[] HeaderRow = { "Place", "Path", "Views" };
+
+        public PagesViewsStatsReport2(ITimeline timeline, int pageViewsForDays, WikiPageStats[] stats) :
+            base(GetContent(timeline, pageViewsForDays, stats)) { }
 
         private static object[] GetContent(
             ITimeline timeline,
-            int days,
+            int pageViewsForDays,
             WikiPageStats[] stats) =>
             new object[]
             {
-                $"Page views since last {days} days as of {timeline.UtcNow}. Total wiki pages: {stats.Length}",
+                string.Format(DescriptionFormat, pageViewsForDays, timeline.UtcNow, stats.Length),
                 "",
                 new TabularData2(GetRows(stats))
             };
 
-        private static (string[] headerRow, object[][] rows) GetRows(WikiPageStats[] stats)
+        private static (object[] headerRow, object[][] rows) GetRows(WikiPageStats[] stats)
         {
             (string path, int views)[] pathsStats = stats
                 .Select(pageStats =>
@@ -39,7 +42,7 @@ namespace Wikitools
                 .Select((stats, i) => new object[] { $"{i + 1}", stats.path, stats.views })
                 .ToArray();
 
-            return (headerRow: new[] { "Place", "Path", "Views" }, rows);
+            return (headerRow: HeaderRow, rows);
         }
     }
 }

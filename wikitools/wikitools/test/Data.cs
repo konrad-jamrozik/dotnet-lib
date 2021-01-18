@@ -9,20 +9,18 @@ namespace Wikitools.Tests
     {
         public Data()
         {
-            Expectation = new()
-            {
-                [CommitsLogs] = AuthorsStatsReportRows,
-                [FileChangesStats] = FilesStatsReportRows,
-                [PageStats] = PageViewsStatsReportRows,
-            };
+            // Expectation = new()
+            // {
+            //     [CommitsLogs] = AuthorsStatsReportRows,
+            //     [FileChangesStats] = FilesStatsReportRows,
+            // };
             ExpectedRows = new()
             {
                 [("GitAuthorsStatsReportTests", CommitsLogs)] = AuthorsReportRows,
-                [("GitFilesStatsReportTests", CommitsLogs)] = FilesReportRows
+                [("GitFilesStatsReportTests", CommitsLogs)] = FilesReportRows,
+                [("PagesViewsStatsReportTests", PageStats)] = PageViewsStatsReportRows
             };
         }
-
-        public readonly Dictionary<object, object> Expectation;
 
         public readonly Dictionary<(string className, object input), object[][]> ExpectedRows;
 
@@ -84,13 +82,13 @@ namespace Wikitools.Tests
             new("/Qux/Quux/Quuz", new List<int> { 7, 7, 7, 7 })
         };
 
-        private readonly List<List<object>> PageViewsStatsReportRows = new()
+        private readonly object[][] PageViewsStatsReportRows = 
         {
-            new() { 1, "/Foo/Baz", 180 },
-            new() { 2, "/Foo", 68 },
-            new() { 3, "/Qux/Quux/Quuz", 28 },
-            new() { 4, "/Home", 21 },
-            new() { 5, "/Foo/Bar", 14 }
+            new object[] { 1, "/Foo/Baz", 180 },
+            new object[] { 2, "/Foo", 68 },
+            new object[] { 3, "/Qux/Quux/Quuz", 28 },
+            new object[] { 4, "/Home", 21 },
+            new object[] { 5, "/Foo/Bar", 14 }
         };
 
         private readonly List<List<object>> EmptyRows = new();
