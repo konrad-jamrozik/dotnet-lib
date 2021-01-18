@@ -12,7 +12,11 @@ namespace Wikitools
         int GitLogDays,
         string AdoWikiUri,
         string AdoPatEnvVar,
-        int AdoWikiPageViewsForDays)
+        int AdoWikiPageViewsForDays,
+        string[] ExcludedAuthors,
+        string[] ExcludedPaths,
+        DateTime MonthlyReportStartDate,
+        DateTime MonthlyReportEndDate)
     {
         public static WikitoolsConfig From(string cfgFileName)
         {

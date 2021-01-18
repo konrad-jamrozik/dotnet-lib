@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Wikitools.AzureDevOps;
 using Wikitools.Lib.Git;
@@ -17,24 +18,21 @@ namespace Wikitools
             var os       = new WindowsOS();
             var adoApi   = new AdoApi();
 
-            // kja dehardcode the variables below
-            var cfgStartYear = new DateTime(2019, 1, 1);
-            var cfgEndYear   = new DateTime(2020, 1, 1);
-            // kja use in all reports, dehardcode "/Meta". Same with "Konrad J" filter.
-            Func<string, bool> filePathFilter = filePath => !filePath.Contains("/Meta");
+            bool AuthorFilter(string author) => !cfg.ExcludedAuthors.Any(author.Contains);
+            bool PathFilter(string path) => !cfg.ExcludedPaths.Any(path.Contains);
 
             var gitLog = GitLog(os, cfg.GitRepoClonePath, cfg.GitExecutablePath);
             var wiki   = Wiki(adoApi, cfg.AdoWikiUri, cfg.AdoPatEnvVar);
 
             // Obtain inputs. Has out-of-process dependencies.
             GitLogCommit[]  recentCommits   = await gitLog.Commits(cfg.GitLogDays);
-            GitLogCommit[]  pastCommits     = await gitLog.Commits(cfgStartYear, cfgEndYear);
+            GitLogCommit[]  pastCommits     = await gitLog.Commits(cfg.MonthlyReportStartDate, cfg.MonthlyReportEndDate);
             WikiPageStats[] pagesViewsStats = await wiki.PagesStats(cfg.AdoWikiPageViewsForDays);
 
-            var authorsReport    = new GitAuthorsStatsReport(timeline, cfg.GitLogDays, recentCommits);
-            var filesReport      = new GitFilesStatsReport(timeline, cfg.GitLogDays, recentCommits, filePathFilter);
+            var authorsReport    = new GitAuthorsStatsReport(timeline, cfg.GitLogDays, recentCommits, AuthorFilter);
+            var filesReport      = new GitFilesStatsReport(timeline, cfg.GitLogDays, recentCommits, PathFilter);
             var pagesViewsReport = new PagesViewsStatsReport(timeline, cfg.AdoWikiPageViewsForDays, pagesViewsStats);
-            var monthlyReport    = new MonthlyStatsReport(pastCommits, filePathFilter);
+            var monthlyReport    = new MonthlyStatsReport(pastCommits, AuthorFilter, PathFilter);
 
             // Write outputs. Side-effectful.
             await authorsReport.WriteAsync(Console.Out);

@@ -13,11 +13,11 @@ namespace Wikitools.Lib.Git
         public const string Delimiter = "%";
 
         public async Task<GitLogCommit[]> GetCommits(
-            int? sinceDays = null,
-            DateTime? since = null,
+            int? afterDays = null,
+            DateTime? after = null,
             DateTime? before = null)
         {
-            var command = GitLogCommand(sinceDays, since, before);
+            var command = GitLogCommand(afterDays, after, before);
             return
                 (await Repo.GetStdOutLines(command))
                 .Where(line => !string.IsNullOrWhiteSpace(line))
@@ -29,20 +29,21 @@ namespace Wikitools.Lib.Git
 
         public Task<GitLogCommit[]> Commits(int days) => GetCommits(days);
 
-        public Task<GitLogCommit[]> Commits(DateTime startYear, DateTime endYear) =>
-            GetCommits(
-                // .AddDays(-1) necessary as for "git log" the --since date day is exclusive
-                since: startYear.AddDays(-1),
-                // .AddYears(1).AddDays(-1), to include the last day of endYear.
-                // In "git log" --before date day is inclusive.
-                before: endYear.AddYears(1).AddDays(-1)
-            );
+        public Task<GitLogCommit[]> Commits(DateTime after, DateTime before) =>
+            GetCommits(after: after, before: before);
 
-        private static string GitLogCommand(int? sinceDays, DateTime? since, DateTime? before)
+        private static string GitLogCommand(int? afterDays, DateTime? afterDate, DateTime? beforeDate)
         {
-            string sinceDaysStr = sinceDays != null ? " --since=" + sinceDays + ".days" : string.Empty;
-            string beforeStr    = before != null ? " --before=" + before.Value.ToShortDateString() : string.Empty;
-            string sinceStr     = since != null ? " --since=" + since.Value.ToShortDateString() : string.Empty;
+            // https://docs.microsoft.com/en-us/dotnet/standard/base-types/standard-date-and-time-format-strings#Roundtrip
+            var roundtripFormat = "o";
+
+            string afterDaysStr = afterDays != null ? $" --after={afterDays}.days" : string.Empty;
+            string beforeDateStr = beforeDate != null
+                ? " --before=" + beforeDate.Value.ToUniversalTime().ToString(roundtripFormat)
+                : string.Empty;
+            string afterDateStr = afterDate != null
+                ? " --after=" + afterDate.Value.ToUniversalTime().ToString(roundtripFormat)
+                : string.Empty;
             // Reference:
             // https://git-scm.com/docs/git-log#_commit_limiting
             // https://git-scm.com/book/en/v2/Git-Basics-Viewing-the-Commit-History
@@ -50,10 +51,10 @@ namespace Wikitools.Lib.Git
             // SOQ: How can I calculate the number of lines changed between two commits in GIT?
             // A: https://stackoverflow.com/a/2528129/986533
             var command =
-                $"git log{sinceDaysStr}{sinceStr}{beforeStr} " +
+                $"git log{afterDaysStr}{afterDateStr}{beforeDateStr} " +
                 $"--ignore-all-space --ignore-blank-lines " +
                 $"--pretty=\"%{Delimiter}%n%an%n%as\" " +
-                $"--numstat";
+                $"--numstat --date=iso";
             return command;
         }
     }

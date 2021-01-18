@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using Wikitools.Lib.Git;
 using Wikitools.Lib.Markdown;
@@ -11,22 +12,32 @@ namespace Wikitools
         public static readonly object[] HeaderRow = { "Place", "Author", "Files changed", "Insertions", "Deletions" };
         public const string DescriptionFormat = "Git contributions since last {0} days as of {1}";
 
-        public GitAuthorsStatsReport(ITimeline timeline, int days, GitLogCommit[] commits) : base(
-            GetContent(timeline, days, commits)) { }
+        public GitAuthorsStatsReport(
+            ITimeline timeline,
+            int days,
+            GitLogCommit[] commits,
+            Func<string, bool>? authorFilter = null) : base(
+            GetContent(timeline, days, commits, authorFilter ?? (_ => true))) { }
 
-        private static object[] GetContent(ITimeline timeline, int days, GitLogCommit[] commits) =>
+        private static object[] GetContent(
+            ITimeline timeline,
+            int days,
+            GitLogCommit[] commits,
+            Func<string, bool> authorFilter) =>
             new object[]
             {
                 string.Format(DescriptionFormat, days, timeline.UtcNow),
                 "",
-                new TabularData(Rows(commits))
+                new TabularData(Rows(commits, authorFilter))
             };
 
-        private static (object[] headerRow, object[][] rows) Rows(GitLogCommit[] commits)
+        private static (object[] headerRow, object[][] rows) Rows(
+            GitLogCommit[] commits,
+            Func<string, bool> authorFilter)
         {
             var statsByAuthor = SumByAuthor(commits)
                 .OrderByDescending(s => s.insertions + s.deletions)
-                .Where(s => !s.author.Contains("Konrad J"))
+                .Where(s => authorFilter(s.author))
                 .ToArray()
                 .Take(5);
 
