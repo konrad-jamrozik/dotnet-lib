@@ -27,9 +27,9 @@ namespace Wikitools
 
         public static async Task Main(
             WikitoolsConfig cfg,
-            Timeline timeline,
-            WindowsOS os,
-            AdoApi adoApi,
+            ITimeline timeline,
+            IOperatingSystem os,
+            IAdoApi adoApi,
             TextWriter outputSink)
         {
             var gitLog = GitLog(os, cfg.GitRepoClonePath, cfg.GitExecutablePath);
