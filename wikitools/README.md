@@ -13,6 +13,7 @@
 
 ## Hard rules (NO exceptions)
 
+- No static classes, no singletons
 - No mutators: setters, Add() methods, Remove() methods, etc.
 - No control loops: `foreach`, `for`
 - No `if` operators, expect when necessary, e.g. to throw in precondition checks
@@ -33,7 +34,7 @@
 
 ## Defaults, requiring good justification
 
-- Avoid classes, be it plain, `static`, `partial`, `abstract` or what not.
+- Avoid classes in prod code, be it plain, `static`, `partial`, `abstract` or what not.
   - Instead: records
 - Avoid methods with no return value
   - Allowed only when inside side-effectful block
