@@ -39,7 +39,7 @@ namespace Wikitools
                 .OrderByDescending(stats => stats.insertions + stats.deletions)
                 .Where(stat => filePathFilter(stat.filePath))
                 .ToArray()
-                .Take(5);
+                .Take(5); // kja parameterize
 
             var rows = statsSumByFilePath
                 .Select((stats, i) => new object[] { i + 1, stats.filePath, stats.insertions, stats.deletions })
