@@ -5,17 +5,15 @@ using Wikitools.Lib.Json;
 using Wikitools.Lib.Markdown;
 using Xunit;
 
-// kja move
 namespace Wikitools.Lib.Tests.Markdown
 {
     public record MarkdownDocumentDiff(MarkdownDocument Expected, MarkdownDocument Sut)
     {
-        public async Task Verify() =>
-            await AssertNoDiffBetween(Expected, await Act(Sut));
+        public Task Verify() => 
+            AssertNoDiffBetween(Expected, Act(Sut));
 
-        private static async Task<MarkdownDocument> Act(MarkdownDocument sut)
+        private static async Task<ParsedMarkdownDocument> Act(MarkdownDocument sut)
         {
-            // Arrange output sink
             await using var sw = new StringWriter();
 
             // Act
@@ -24,9 +22,9 @@ namespace Wikitools.Lib.Tests.Markdown
             return new ParsedMarkdownDocument(sw);
         }
 
-        private static async Task AssertNoDiffBetween(MarkdownDocument expected, MarkdownDocument actual)
+        private static async Task AssertNoDiffBetween(MarkdownDocument expected, Task<ParsedMarkdownDocument> actual)
         {
-            var jsonDiff = new JsonDiff(await expected.Content, await actual.Content);
+            var jsonDiff = new JsonDiff(await expected.Content, await (await actual).Content);
             Assert.True(jsonDiff.IsEmpty,
                 $"The expected baseline is different than actual target. Diff:{Environment.NewLine}{jsonDiff}");
         }
