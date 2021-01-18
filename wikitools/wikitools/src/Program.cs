@@ -22,10 +22,10 @@ namespace Wikitools
 
             var outputSink = Console.Out;
 
-            await Main(cfg, timeline, os, adoApi, outputSink);
+            await Execute(cfg, timeline, os, adoApi, outputSink);
         }
 
-        public static Task Main(
+        public static Task Execute(
             WikitoolsConfig cfg,
             ITimeline timeline,
             IOperatingSystem os,

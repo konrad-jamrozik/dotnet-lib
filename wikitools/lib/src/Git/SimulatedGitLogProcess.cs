@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Wikitools.Lib.OS;
 
 namespace Wikitools.Lib.Git
 {
