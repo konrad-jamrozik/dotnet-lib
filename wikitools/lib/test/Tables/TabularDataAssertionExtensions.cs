@@ -3,7 +3,6 @@ using System.IO;
 using System.Threading.Tasks;
 using Wikitools.Lib.Json;
 using Wikitools.Lib.Markdown;
-using Wikitools.Lib.Tables;
 using Xunit;
 
 namespace Wikitools.Lib.Tests.Tables

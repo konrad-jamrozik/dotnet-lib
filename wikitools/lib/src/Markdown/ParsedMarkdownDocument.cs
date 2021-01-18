@@ -1,6 +1,10 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using MoreLinq;
 using Wikitools.Lib.Primitives;
+using static MoreLinq.MoreEnumerable;
 
 namespace Wikitools.Lib.Markdown
 {
@@ -8,11 +12,19 @@ namespace Wikitools.Lib.Markdown
     {
         public ParsedMarkdownDocument(StringWriter sw) : base(GetContent(sw)) { }
 
-        private static MarkdownDocument GetContent(StringWriter sw)
+        private static List<object> GetContent(StringWriter sw)
         {
-            string[] lines = new TextLines(sw.GetStringBuilder().ToString()).Value;
-            // kja to implement
-            throw new NotImplementedException();
+            string[] markdownLines = new TextLines(sw.GetStringBuilder().ToString()).Value;
+
+            var groups = markdownLines.GroupAdjacent(line => line.FirstOrDefault() == '|');
+
+            var content = groups.SelectMany(group =>
+            {
+                var table = Return(new MarkdownTable2(@group.ToArray()).Table).Cast<object>();
+                return @group.Key ? table : @group.ToArray();
+            }).ToList();
+
+            return content;
         }
     }
 }
