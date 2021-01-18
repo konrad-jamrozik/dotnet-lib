@@ -25,7 +25,7 @@ namespace Wikitools
             await Main(cfg, timeline, os, adoApi, outputSink);
         }
 
-        public static async Task Main(
+        public static Task Main(
             WikitoolsConfig cfg,
             ITimeline timeline,
             IOperatingSystem os,
@@ -56,11 +56,11 @@ namespace Wikitools
                 monthlyReport
             };
 
-            await WriteAll(docsToWrite, outputSink);
+            return WriteAll(docsToWrite, outputSink);
         }
 
-        private static async Task WriteAll(MarkdownDocument[] docs, TextWriter textWriter) =>
-            await Task.WhenAll(docs.Select(doc => doc.WriteAsync(textWriter)).ToArray());
+        private static Task WriteAll(MarkdownDocument[] docs, TextWriter textWriter) =>
+            Task.WhenAll(docs.Select(doc => doc.WriteAsync(textWriter)).ToArray());
     }
 }
 
