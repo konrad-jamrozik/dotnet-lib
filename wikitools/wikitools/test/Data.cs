@@ -89,7 +89,7 @@ namespace Wikitools.Tests
                 new(0, date.AddDays(-1)), 
                 new(0, date)
             }),
-            new("/Qux/Quux/Quuz", 4, new WikiPageStats.Stat[]
+            new("/Qux/Quux/Quuz", 5, new WikiPageStats.Stat[]
             {
                 new(7, date.AddDays(-3)), 
                 new(7, date.AddDays(-2)), 
