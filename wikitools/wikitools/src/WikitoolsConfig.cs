@@ -17,7 +17,8 @@ namespace Wikitools
         string[] ExcludedPaths,
         DateTime MonthlyReportStartDate,
         DateTime MonthlyReportEndDate,
-        int Top)
+        int Top,
+        string StorageDirPath)
     {
         public static WikitoolsConfig From(string cfgFileName)
         {
