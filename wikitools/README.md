@@ -58,3 +58,5 @@
 - [Solving Problems the Clojure Way - Rafal Dittwald](https://www.youtube.com/watch?v=vK1DazRK_a0)
 - [The Value of Values - Rich Hickey](https://github.com/matthiasn/talk-transcripts/blob/master/Hickey_Rich/ValueOfValues.md)
 - [Seven Virtues of a Good Object - Yegor Bugayenko](https://www.yegor256.com/2014/11/20/seven-virtues-of-good-object.html)
+- [Don't Create Objects That End With -ER - Yegor Bugayenko](https://www.yegor256.com/2015/03/09/objects-end-with-er.html)
+- [OP Alternative to Utility Classes](https://www.yegor256.com/2014/05/05/oop-alternative-to-utility-classes.html)
