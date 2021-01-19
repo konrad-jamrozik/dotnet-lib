@@ -1,17 +1,7 @@
 ﻿namespace Wikitools.Lib.OS
 {
-    public class Dir
+    public record Dir(IFileSystem FileSystem, string Path)
     {
-        private IFileSystem FileSystem { get; }
-
-        public Dir(IFileSystem fs, string path)
-        {
-            FileSystem = fs;
-            Value = path;
-        }
-
-        public string Value { get; }
-
-        public bool Exists() => FileSystem.DirectoryExists(Value);
+        public bool Exists() => FileSystem.DirectoryExists(Path);
     }
 }

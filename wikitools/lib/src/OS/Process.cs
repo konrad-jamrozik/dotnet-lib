@@ -17,7 +17,7 @@ namespace Wikitools.Lib.OS
                     if (!workingDir.Exists())
                     {
                         throw new InvalidOperationException(
-                            $"Working directory doesn't exist. Path: {workingDir.Value}");
+                            $"Working directory doesn't exist. Path: {workingDir.Path}");
                     }
 
                     // Reference:
@@ -33,7 +33,7 @@ namespace Wikitools.Lib.OS
                             RedirectStandardOutput = true,
                             FileName = executableFilePath,
                             Arguments = string.Join(" ", arguments),
-                            WorkingDirectory = workingDir.Value
+                            WorkingDirectory = workingDir.Path
                         }
                     };
 

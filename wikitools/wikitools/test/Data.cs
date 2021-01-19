@@ -10,7 +10,9 @@ namespace Wikitools.Tests
     {
         public Data()
         {
-            CommitsLogs = GetCommitsLogs(new SimulatedTimeline().UtcNow);
+            var now = new SimulatedTimeline().UtcNow;
+            CommitsLogs = GetCommitsLogs(now);
+            PagesStats = GetPagesStats(now);
             ExpectedRows = new()
             {
                 [("GitAuthorsStatsReportTests", CommitsLogs)] = new[] {
@@ -37,18 +39,11 @@ namespace Wikitools.Tests
 
         public readonly GitLogCommit[] CommitsLogs;
 
-        public readonly WikiPageStats[] PagesStats =
-        {
-            new("/Home", new[] { 1, 20, 0, 0 }),
-            new("/Foo", new[] { 60, 0, 8, 0 }),
-            new("/Foo/Bar", new[] { 6, 8, 0, 0 }),
-            new("/Foo/Baz", new[] { 0, 0, 80, 100 }),
-            new("/Qux/Quux/Quuz", new[] { 7, 7, 7, 7 })
-        };
+        public readonly WikiPageStats[] PagesStats;
 
         public readonly Dictionary<(string className, object input), object[][]> ExpectedRows;
 
-        private GitLogCommit[] GetCommitsLogs(DateTime date) => new GitLogCommit[] 
+        private static GitLogCommit[] GetCommitsLogs(DateTime date) => new GitLogCommit[] 
         {
             new("AuthorA", date, new GitLogCommit.Numstat[] { new(100, 10, "/Foo/bar100_10.md") }),
             new("AuthorB", date, new GitLogCommit.Numstat[] 
@@ -61,6 +56,45 @@ namespace Wikitools.Tests
                 new(300, 82, "/Qux/Corge377_89.md"),
                 new(601, 7, "/Foo/bar601_7.md"),
                 new(400, 13, "/Foo/bar400_13.md")
+            })
+        };
+
+        private static WikiPageStats[] GetPagesStats(DateTime date) => new WikiPageStats[]
+        {
+            new("/Home", 1, new WikiPageStats.Stat[]
+            {
+                new(0, date.AddDays(-3)), 
+                new(0, date.AddDays(-2)), 
+                new(20, date.AddDays(-1)), 
+                new(1, date)
+            }),
+            new("/Foo", 2, new WikiPageStats.Stat[]
+            {
+                new(0, date.AddDays(-3)), 
+                new(8, date.AddDays(-2)), 
+                new(0, date.AddDays(-1)), 
+                new(60, date)
+            }),
+            new("/Foo/Bar", 3, new WikiPageStats.Stat[]
+            {
+                new(0, date.AddDays(-3)), 
+                new(0, date.AddDays(-2)), 
+                new(8, date.AddDays(-1)), 
+                new(6, date)
+            }),
+            new("/Foo/Baz", 4, new WikiPageStats.Stat[]
+            {
+                new(100, date.AddDays(-3)), 
+                new(80, date.AddDays(-2)), 
+                new(0, date.AddDays(-1)), 
+                new(0, date)
+            }),
+            new("/Qux/Quux/Quuz", 4, new WikiPageStats.Stat[]
+            {
+                new(7, date.AddDays(-3)), 
+                new(7, date.AddDays(-2)), 
+                new(7, date.AddDays(-1)), 
+                new(7, date)
             })
         };
     }

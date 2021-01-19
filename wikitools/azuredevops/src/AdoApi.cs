@@ -12,7 +12,7 @@ namespace Wikitools.AzureDevOps
 {
     public class AdoApi : IAdoApi
     {
-        public async Task<WikiPageStats[]> GetWikiPagesStats(
+        public async Task<WikiPageStats[]> WikiPagesStats(
             AdoWikiUri adoWikiUri,
             string patEnvVar,
             int pageViewsForDays)
