@@ -28,7 +28,7 @@
   `Details`, `Common`, `Engine`, `Descriptor`, `Helper`, `Wrapper`, `Adapter`
   - "do-er" / "verb-er" names, including:
    `Validator`, `Parser`, `Mapper`, `Resolver`, `Manager`, `Provider`,
-  `Controller`,  `Writer`, `Reader`, `Selector`, `Logger`
+  `Controller`,  `Writer`, `Reader`, `Selector`, `Logger`, `Converter`
 - No dependency injection containers
 
 ## Defaults, requiring good justification
