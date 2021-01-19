@@ -11,7 +11,7 @@
 - Ternary operator `?:`
 - Tuples
 
-## Hard rules (NO exceptions)
+## Hard rules (almost no exceptions)
 
 - No static classes, no singletons
 - No mutators: setters, Add() methods, Remove() methods, etc.
@@ -25,11 +25,10 @@
   - Instead: flat code; declarative & functional programing
 - No broken abstractions, including vague names with:
   `Factory`, `Tools`, `Utilities`, `Context`, `Coordinator`, `Client`, `Constants`
-  `Details`, `Common`, `Engine`
+  `Details`, `Common`, `Engine`, `Descriptor`, `Helper`, `Wrapper`, `Adapter`
   - "do-er" / "verb-er" names, including:
-  `Helper`, `Validator`, `Parser`, `Mapper`, `Resolver`, `Manager`, `Provider`,
-  `Wrapper`, `Controller`, `Adapter`, `Writer`, `Reader`, `Selector`,
-  `Descriptor`
+   `Validator`, `Parser`, `Mapper`, `Resolver`, `Manager`, `Provider`,
+  `Controller`,  `Writer`, `Reader`, `Selector`, `Logger`
 - No dependency injection containers
 
 ## Defaults, requiring good justification
@@ -55,3 +54,7 @@
   (that could be serialized to JSON)
 - By default the code is functional composition of pure functions,
   with any deviations cleanly, decoupled and marked.
+
+- [Solving Problems the Clojure Way - Rafal Dittwald](https://www.youtube.com/watch?v=vK1DazRK_a0)
+- [The Value of Values - Rich Hickey](https://github.com/matthiasn/talk-transcripts/blob/master/Hickey_Rich/ValueOfValues.md)
+- [Seven Virtues of a Good Object - Yegor Bugayenko](https://www.yegor256.com/2014/11/20/seven-virtues-of-good-object.html)
