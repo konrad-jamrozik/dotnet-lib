@@ -11,56 +11,18 @@ namespace Wikitools
 {
     public record WikiPagesStatsStorage(IOperatingSystem OS, string StorageDirPath)
     {
-        public async Task<WikiPagesStatsStorage> Update(AdoWiki wiki)
+        public async Task<WikiPagesStatsStorage> Update(AdoWiki wiki, int pageViewsForDays)
         {
-            // kja dehardcode constant
-            var pageStats = await wiki.PagesStats(5);
+            var pageStats = await wiki.PagesStats(pageViewsForDays);
+            (WikiPageStats[] lastMonth, WikiPageStats[] thisMonth) = SplitByMonth(pageStats);
+            
+            string lastMonthJson = GetPagesStatsJson(lastMonth);
+            string thisMonthJson = GetPagesStatsJson(thisMonth);
 
-            // kja deduplicate serialization logic with JsonDiff
-            string pageStatsJson = GetPageStatsJson(pageStats);
-
-            await Write(pageStatsJson);
+            await Write(lastMonthJson, DateTime.UtcNow.AddMonths(-1));
+            await Write(thisMonthJson, DateTime.UtcNow);
 
             return this;
-
-            // kja NEXT curr work.
-            // Proven to be able to write to file system. 
-            // Next tasks:
-            // - replace File.WriteAllTextAsync. Introduce File abstraction or similar,
-            // that depends on OS.FileSystem. Make it create Dirs as needed when writing out.
-            // possibly pass it as Options param, like CreateMissingDirs.
-            // - implement logic as follows, in pseudocode:
-            //
-            //   var persistedStats = new PersistedWikiStats(storageDir);
-            //   var lastDate = await persistedStats.LastPersistedDate; // need to await sa it reads from FileSystem
-            //   var pageStats = await wiki.PagesStats(DateTime.now - lastDate)
-            //   var (lastMonthStats, thisMonthStats) = pageStats.SplitByMonth()
-            //   await new MergedStats(lastMonthStats, persistedStats.LastMonth).Persist();
-            //   await new MergedStats(thisMonthStats, persistedStats.ThisMonth).Persist();
-            //   // internally, the two above will deserialize the persisted JSON into WikiPageStats,
-            //   // then merge with ___monthStats WikiPageStats, and then serialize back to the file system.
-            //
-            // Later: think about decoupling the logic from FileSystem; maybe arbitrary storage via streams/writers
-            // would make more sense. At least the merging and splitting algorithm should be decoupled from file system.
-        }
-
-        private async Task Write(string pageStatsJson)
-        {
-            var storageDir = new Dir(OS.FileSystem, StorageDirPath);
-            if (!storageDir.Exists())
-                Directory.CreateDirectory(storageDir.Path);
-            var filePath = Path.Join(StorageDirPath, $"date_{DateTime.UtcNow:yyy_MM_dd}.json");
-            await File.WriteAllTextAsync(filePath, pageStatsJson);
-        }
-
-        private static string GetPageStatsJson(WikiPageStats[] pageStats)
-        {
-            return JsonSerializer.Serialize(pageStats,
-                new JsonSerializerOptions
-                {
-                    Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
-                    WriteIndented = true
-                });
         }
 
         // kja to implement, as follows, in pseudocode:
@@ -74,12 +36,40 @@ namespace Wikitools
         {
             var maxDate = FindMaxDate();
             var stats   = ReadStatsFromJson(maxDate);
+            // kja to add: find second-last date (if necessary), read json
             return Task.FromResult(stats);
         }
 
+
+        private (WikiPageStats[] lastMonth, WikiPageStats[] thisMonth) SplitByMonth(WikiPageStats[] pageStats)
+        {
+            // kja NEXT
+            return (new WikiPageStats[] { }, pageStats);
+        }
+
+        private async Task Write(string pageStatsJson, DateTime dateTime)
+        {
+            var storageDir = new Dir(OS.FileSystem, StorageDirPath);
+            if (!storageDir.Exists())
+                Directory.CreateDirectory(storageDir.Path);
+            var filePath = Path.Join(StorageDirPath, $"date_{dateTime:yyy_MM}.json");
+            await File.WriteAllTextAsync(filePath, pageStatsJson);
+        }
+
+        private static string GetPagesStatsJson(WikiPageStats[] pageStats)
+        {
+            return JsonSerializer.Serialize(pageStats,
+                new JsonSerializerOptions
+                {
+                    Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+                    WriteIndented = true
+                });
+        }
+
+
         private WikiPageStats[] ReadStatsFromJson(DateTime? maxDate)
         {
-            var fileToReadName = $"date_{maxDate:yyy_MM_dd}.json";
+            var fileToReadName = $"date_{maxDate:yyy_MM}.json";
             var fileToReadPath = Path.Join(StorageDirPath, fileToReadName);
             var readJsonStr    = File.ReadAllText(fileToReadPath);
             return JsonSerializer.Deserialize<WikiPageStats[]>(readJsonStr)!;
@@ -95,7 +85,7 @@ namespace Wikitools
                 Console.Out.WriteLine("file: " + file);
                 var dateMatch  = Regex.Match(file, "date_(.*)\\.json");
                 var dateString = dateMatch.Groups[1].Value;
-                var date       = DateTime.ParseExact(dateString, "yyyy_MM_dd", CultureInfo.InvariantCulture);
+                var date       = DateTime.ParseExact(dateString, "yyyy_MM", CultureInfo.InvariantCulture);
                 if (date > maxDate)
                 {
                     maxDate = date;
@@ -106,3 +96,23 @@ namespace Wikitools
         }
     }
 }
+
+// kja  curr work.
+// Next tasks in Wikitools.WikiPagesStatsStorage.Update
+// - deduplicate serialization logic with JsonDiff
+// - replace File.WriteAllTextAsync. Introduce File abstraction or similar,
+// that depends on OS.FileSystem. Make it create Dirs as needed when writing out.
+// possibly pass it as Options param, like CreateMissingDirs.
+// - implement logic as follows, in pseudocode:
+//
+//   var persistedStats = new PersistedWikiStats(storageDir);
+//   var lastDate = await persistedStats.LastPersistedDate; // need to await as it reads from FileSystem
+//   var pageStats = await wiki.PagesStats(DateTime.now - lastDate)
+//   var (lastMonthStats, thisMonthStats) = pageStats.SplitByMonth()
+//   await new MergedStats(lastMonthStats, persistedStats.LastMonth).Persist();
+//   await new MergedStats(thisMonthStats, persistedStats.ThisMonth).Persist();
+//   // internally, the two above will deserialize the persisted JSON into WikiPageStats,
+//   // then merge with ___monthStats WikiPageStats, and then serialize back to the file system.
+//
+// Later: think about decoupling the logic from FileSystem; maybe arbitrary storage via streams/writers
+// would make more sense. At least the merging and splitting algorithm should be decoupled from file system.
