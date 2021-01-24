@@ -40,8 +40,8 @@ namespace Wikitools
             
             // Previous code, before storage was added. To remove when migration is done.
             //var pagesViewsStats = wiki.PagesStats(cfg.AdoWikiPageViewsForDays);
-            var storage = new WikiPagesStatsStorage(os, cfg.StorageDirPath);
-            var updatedStorage = storage.Update(wiki, cfg.AdoWikiPageViewsForDays);
+            var storage         = new WikiPagesStatsStorage(os, cfg.StorageDirPath);
+            var updatedStorage  = storage.Update(wiki, cfg.AdoWikiPageViewsForDays);
             var pagesViewsStats = updatedStorage.Select(s => s.PagesStats(cfg.AdoWikiPageViewsForDays));
 
             bool AuthorFilter(string author) => !cfg.ExcludedAuthors.Any(author.Contains);
@@ -49,16 +49,16 @@ namespace Wikitools
 
             var authorsReport =
                 new GitAuthorsStatsReport(timeline, recentCommits, cfg.GitLogDays, cfg.Top, AuthorFilter);
-            var filesReport = new GitFilesStatsReport(timeline, recentCommits, cfg.GitLogDays, cfg.Top, PathFilter);
+            var filesReport      = new GitFilesStatsReport(timeline, recentCommits, cfg.GitLogDays, cfg.Top, PathFilter);
             var pagesViewsReport = new PagesViewsStatsReport(timeline, pagesViewsStats, cfg.AdoWikiPageViewsForDays);
-            var monthlyReport = new MonthlyStatsReport(pastCommits, AuthorFilter, PathFilter);
+            var monthlyReport    = new MonthlyStatsReport(pastCommits, AuthorFilter, PathFilter);
 
             var docsToWrite = new MarkdownDocument[]
             {
-                // authorsReport,
-                // filesReport,
+                authorsReport,
+                filesReport,
                 pagesViewsReport,
-                // monthlyReport
+                monthlyReport
             };
 
             return WriteAll(docsToWrite, outputSink);
