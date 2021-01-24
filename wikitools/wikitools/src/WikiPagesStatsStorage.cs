@@ -15,12 +15,11 @@ namespace Wikitools
             var pageStats = await wiki.PagesStats(5);
 
             // kja deduplicate serialization logic with JsonDiff
-            string serialized = JsonSerializer.Serialize(pageStats,
-                new JsonSerializerOptions
-                {
-                    Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
-                    WriteIndented = true
-                });
+            string pageStatsJson = GetPageStatsJson(pageStats);
+
+            await Write(pageStatsJson);
+
+            return this;
 
             // kja NEXT curr work.
             // Proven to be able to write to file system. 
@@ -40,14 +39,26 @@ namespace Wikitools
             //   // then merge with ___monthStats WikiPageStats, and then serialize back to the file system.
             //
             // Later: think about decoupling the logic from FileSystem; maybe arbitrary storage via streams/writers
-            // would make more sense. At least the merging and spliting algorithm should be decoupled from file system.
+            // would make more sense. At least the merging and splitting algorithm should be decoupled from file system.
+        }
+
+        private async Task Write(string pageStatsJson)
+        {
             var storageDir = new Dir(OS.FileSystem, StorageDirPath);
             if (!storageDir.Exists())
                 Directory.CreateDirectory(storageDir.Path);
             var filePath = Path.Join(StorageDirPath, $"date_{DateTime.UtcNow:yyy_MM_dd}.json");
-            await File.WriteAllTextAsync(filePath, serialized);
+            await File.WriteAllTextAsync(filePath, pageStatsJson);
+        }
 
-            return this;
+        private static string GetPageStatsJson(WikiPageStats[] pageStats)
+        {
+            return JsonSerializer.Serialize(pageStats,
+                new JsonSerializerOptions
+                {
+                    Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+                    WriteIndented = true
+                });
         }
 
         // kja to implement, as follows, in pseudocode:

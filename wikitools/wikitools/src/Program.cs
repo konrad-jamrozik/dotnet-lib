@@ -38,6 +38,7 @@ namespace Wikitools
             var recentCommits   = gitLog.Commits(cfg.GitLogDays);
             var pastCommits     = gitLog.Commits(cfg.MonthlyReportStartDate, cfg.MonthlyReportEndDate);
             
+            // Previous code, before storage was added. To remove when migration is done.
             //var pagesViewsStats = wiki.PagesStats(cfg.AdoWikiPageViewsForDays);
             var storage = new WikiPagesStatsStorage(os, cfg.StorageDirPath, wiki); // kja wiki passed here temporarily
             var updatedStorage = storage.Update(wiki);
