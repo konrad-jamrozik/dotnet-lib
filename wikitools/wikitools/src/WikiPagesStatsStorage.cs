@@ -36,10 +36,9 @@ namespace Wikitools
         {
             var maxDate = FindMaxDate();
             var stats   = ReadStatsFromJson(maxDate);
-            // kja to add: find second-last date (if necessary), read json
+            // kja to add: find second-last date (if necessary), read json, merge
             return Task.FromResult(stats);
         }
-
 
         private (WikiPageStats[] lastMonth, WikiPageStats[] thisMonth) SplitByMonth(WikiPageStats[] pageStats)
         {
@@ -65,7 +64,6 @@ namespace Wikitools
                     WriteIndented = true
                 });
         }
-
 
         private WikiPageStats[] ReadStatsFromJson(DateTime? maxDate)
         {
