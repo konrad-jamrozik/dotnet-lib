@@ -21,7 +21,7 @@ namespace Wikitools.AzureDevOps
 
             var wikiHttpClient   = WikiHttpClient(adoWikiUri, patEnvVar);
             var wikiPagesDetails = await GetAllWikiPagesDetails(adoWikiUri, pageViewsForDays, wikiHttpClient);
-            var wikiPagesStats   = wikiPagesDetails.Select(pageDetail => new WikiPageStats(pageDetail));
+            var wikiPagesStats   = wikiPagesDetails.Select(WikiPageStats.From);
             return wikiPagesStats.ToArray();
         }
 

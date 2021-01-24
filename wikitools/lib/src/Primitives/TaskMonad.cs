@@ -18,7 +18,7 @@ namespace Wikitools.Lib.Primitives
         /// 
         /// [1] https://www.haskell.org/tutorial/monads.html
         /// </summary>
-        public static Task<U> M<T, U>(
+        public static Task<U> Select<T, U>(
             this Task<T> targetTask,
             Func<T, Task<U>> f) => Apply(targetTask, f);
 

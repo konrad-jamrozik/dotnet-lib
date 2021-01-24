@@ -40,9 +40,9 @@ namespace Wikitools
             
             // Previous code, before storage was added. To remove when migration is done.
             //var pagesViewsStats = wiki.PagesStats(cfg.AdoWikiPageViewsForDays);
-            var storage = new WikiPagesStatsStorage(os, cfg.StorageDirPath, wiki); // kja wiki passed here temporarily
+            var storage = new WikiPagesStatsStorage(os, cfg.StorageDirPath);
             var updatedStorage = storage.Update(wiki);
-            var pagesViewsStats = updatedStorage.M(s => s.PagesStats(cfg.AdoWikiPageViewsForDays));
+            var pagesViewsStats = updatedStorage.Select(s => s.PagesStats(cfg.AdoWikiPageViewsForDays));
 
             bool AuthorFilter(string author) => !cfg.ExcludedAuthors.Any(author.Contains);
             bool PathFilter(string path) => !cfg.ExcludedPaths.Any(path.Contains);

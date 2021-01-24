@@ -1,13 +1,15 @@
 ﻿using System;
+using System.Globalization;
 using System.IO;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Wikitools.AzureDevOps;
 using Wikitools.Lib.OS;
 
 namespace Wikitools
 {
-    public record WikiPagesStatsStorage(IOperatingSystem OS, string StorageDirPath, AdoWiki Wiki)
+    public record WikiPagesStatsStorage(IOperatingSystem OS, string StorageDirPath)
     {
         public async Task<WikiPagesStatsStorage> Update(AdoWiki wiki)
         {
@@ -68,7 +70,39 @@ namespace Wikitools
         //     persistedStats.LastMonth.FilterTo(lastMonthDays)
         //     .Union
         //       persistedStats.ThisMonth.FilterTo(thisMonthDays)
-        public Task<WikiPageStats[]> PagesStats(int pageViewsForDays) 
-            => Wiki.PagesStats(pageViewsForDays);
+        public Task<WikiPageStats[]> PagesStats(int pageViewsForDays)
+        {
+            var maxDate = FindMaxDate();
+            var stats   = ReadStatsFromJson(maxDate);
+            return Task.FromResult(stats);
+        }
+
+        private WikiPageStats[] ReadStatsFromJson(DateTime? maxDate)
+        {
+            var fileToReadName = $"date_{maxDate:yyy_MM_dd}.json";
+            var fileToReadPath = Path.Join(StorageDirPath, fileToReadName);
+            var readJsonStr    = File.ReadAllText(fileToReadPath);
+            return JsonSerializer.Deserialize<WikiPageStats[]>(readJsonStr)!;
+        }
+
+        private DateTime? FindMaxDate()
+        {
+            var       dir     = new Dir(OS.FileSystem, StorageDirPath);
+            var       files   = Directory.EnumerateFiles(dir.Path);
+            DateTime? maxDate = DateTime.MinValue;
+            foreach (var file in files)
+            {
+                Console.Out.WriteLine("file: " + file);
+                var dateMatch  = Regex.Match(file, "date_(.*)\\.json");
+                var dateString = dateMatch.Groups[1].Value;
+                var date       = DateTime.ParseExact(dateString, "yyyy_MM_dd", CultureInfo.InvariantCulture);
+                if (date > maxDate)
+                {
+                    maxDate = date;
+                }
+            }
+
+            return maxDate;
+        }
     }
 }
