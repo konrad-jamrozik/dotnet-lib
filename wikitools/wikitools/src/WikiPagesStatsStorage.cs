@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -15,9 +18,9 @@ namespace Wikitools
         {
             var pageStats = await wiki.PagesStats(pageViewsForDays);
             (WikiPageStats[] lastMonth, WikiPageStats[] thisMonth) = SplitByMonth(pageStats);
-            
-            string lastMonthJson = GetPagesStatsJson(lastMonth);
-            string thisMonthJson = GetPagesStatsJson(thisMonth);
+
+            string lastMonthJson = ToJson(lastMonth);
+            string thisMonthJson = ToJson(thisMonth);
 
             await Write(lastMonthJson, DateTime.UtcNow.AddMonths(-1));
             await Write(thisMonthJson, DateTime.UtcNow);
@@ -40,10 +43,44 @@ namespace Wikitools
             return Task.FromResult(stats);
         }
 
-        private (WikiPageStats[] lastMonth, WikiPageStats[] thisMonth) SplitByMonth(WikiPageStats[] pageStats)
+        // kja test this
+        private (WikiPageStats[] lastMonth, WikiPageStats[] thisMonth) SplitByMonth(WikiPageStats[] pagesStats)
         {
-            // kja NEXT
-            return (new WikiPageStats[] { }, pageStats);
+            Debug.Assert(pagesStats.Any());
+
+            IEnumerable<(WikiPageStats ps, ILookup<int, WikiPageStats.Stat> statsByMonth)> pagesWithStatsByMonth
+                = pagesStats.Select(ps => (ps, ps.Stats.ToLookup(s => s.Day.Month)));
+
+            (WikiPageStats lastMonthPageStats, WikiPageStats thisMonthPageStats)[] pagesStatsByMonth =
+                pagesWithStatsByMonth.Select(ToPagesStatsByMonth).ToArray();
+
+            WikiPageStats[] lastMonth = pagesStatsByMonth.Select(t => t.lastMonthPageStats).ToArray();
+            WikiPageStats[] thisMonth = pagesStatsByMonth.Select(t => t.thisMonthPageStats).ToArray();
+            return (lastMonth, thisMonth);
+        }
+
+        private static (WikiPageStats lastMonthPageStats, WikiPageStats thisMonthPageStats) ToPagesStatsByMonth(
+            (WikiPageStats ps, ILookup<int, WikiPageStats.Stat> statsByMonth) pagesWithStatsByMonth)
+        {
+            (int month, WikiPageStats.Stat[])[] statsByMonth =
+                pagesWithStatsByMonth.statsByMonth.Select(stats => (stats.Key, stats.ToArray()))
+                    .OrderBy(stats => stats.Key)
+                    .ToArray();
+            Debug.Assert(statsByMonth.Length <= 2,
+                "The wiki stats are expected to come from no more than 2 months");
+            Debug.Assert(statsByMonth.Length <= 1 || (statsByMonth[0].month + 1 == statsByMonth[1].month),
+                "The wiki stats are expected to come from consecutive months");
+
+            return
+            (
+                pagesWithStatsByMonth.ps with
+                {
+                    Stats = statsByMonth.Length == 2
+                        ? statsByMonth.First().Item2
+                        : new WikiPageStats.Stat[0]
+                },
+                pagesWithStatsByMonth.ps with { Stats = statsByMonth.Last().Item2 }
+            );
         }
 
         private async Task Write(string pageStatsJson, DateTime dateTime)
@@ -55,7 +92,7 @@ namespace Wikitools
             await File.WriteAllTextAsync(filePath, pageStatsJson);
         }
 
-        private static string GetPagesStatsJson(WikiPageStats[] pageStats)
+        private static string ToJson(WikiPageStats[] pageStats)
         {
             return JsonSerializer.Serialize(pageStats,
                 new JsonSerializerOptions
