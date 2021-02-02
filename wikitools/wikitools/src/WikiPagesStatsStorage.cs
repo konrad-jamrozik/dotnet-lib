@@ -44,7 +44,7 @@ namespace Wikitools
         }
 
         // kja test this
-        private (WikiPageStats[] lastMonth, WikiPageStats[] thisMonth) SplitByMonth(WikiPageStats[] pagesStats)
+        public static (WikiPageStats[] lastMonth, WikiPageStats[] thisMonth) SplitByMonth(WikiPageStats[] pagesStats)
         {
             Debug.Assert(pagesStats.Any());
 
