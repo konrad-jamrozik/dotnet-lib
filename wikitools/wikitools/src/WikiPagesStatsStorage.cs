@@ -21,7 +21,7 @@ namespace Wikitools
 
         public async Task<WikiPagesStatsStorage> Update(AdoWiki wiki, int pageViewsForDays)
         {
-            var storedStatsMonths = new MonthlyJsonFilesStore(OS, StorageDirPath);
+            var storedStatsMonths = new MonthlyJsonFilesStorage(OS, StorageDirPath);
 
             var pageStats = await wiki.PagesStats(pageViewsForDays);
             (WikiPageStats[] previousMonthStats, WikiPageStats[] currentMonthStats) = SplitByMonth(pageStats);
@@ -44,7 +44,7 @@ namespace Wikitools
         }
 
         // kja to implement, as follows, in pseudocode:
-        // var storedStatsMonths = new MonthlyJsonFilesStore(StorageDirPath)
+        // var storedStatsMonths = new MonthlyJsonFilesStorage(StorageDirPath)
         // var previousMonthDays = ...; var currentMonthDays = ...
         // return
         //   storedStatsMonth.previousMonth.FilterTo(previousMonthDays)
@@ -53,7 +53,7 @@ namespace Wikitools
 
         public WikiPageStats[] PagesStats(int pageViewsForDays)
         {
-            var storedStatsMonths = new MonthlyJsonFilesStore(OS, StorageDirPath);
+            var storedStatsMonths = new MonthlyJsonFilesStorage(OS, StorageDirPath);
 
             var currentMonthDate = Timeline.UtcNow;
             var previousDate     = currentMonthDate.AddDays(-pageViewsForDays + 1);

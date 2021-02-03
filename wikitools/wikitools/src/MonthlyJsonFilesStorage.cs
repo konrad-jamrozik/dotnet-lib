@@ -8,7 +8,7 @@ using Wikitools.Lib.OS;
 
 namespace Wikitools
 {
-    public record MonthlyJsonFilesStore(IOperatingSystem OS, string StorageDirPath)
+    public record MonthlyJsonFilesStorage(IOperatingSystem OS, string StorageDirPath)
     {
         public T Read<T>(DateTime date)
         {
