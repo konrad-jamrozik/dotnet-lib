@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Text.Json;
 using System.Threading.Tasks;
 using Wikitools.AzureDevOps;
 using Wikitools.Lib.OS;
+using Wikitools.Lib.Primitives;
 
 namespace Wikitools
 {
-    public record WikiPagesStatsStorage(IOperatingSystem OS, string StorageDirPath)
+    public record WikiPagesStatsStorage(ITimeline Timeline, IOperatingSystem OS, string StorageDirPath)
     {
 //   var persistedStats = new PersistedWikiStats(storageDir);
 //   var lastDate = await persistedStats.LastPersistedDate; // need to await as it reads from FileSystem
@@ -52,22 +51,54 @@ namespace Wikitools
         //   .Concatenate
         //     storedStatsMonth.CurrentMonth.FilterTo(currentMonthDays)
 
-        public Task<WikiPageStats[]> PagesStats(int pageViewsForDays)
+        public WikiPageStats[] PagesStats(int pageViewsForDays)
         {
             var storedStatsMonths = new MonthlyJsonFilesStore(OS, StorageDirPath);
 
-            var maxDate = storedStatsMonths.FindMaxDate();
-            var stats   = storedStatsMonths.Read<WikiPageStats[]>(maxDate);
-            // kja to add: find second-last date (if necessary), read json, merge
-            return Task.FromResult(stats);
+            var currentMonthDate = Timeline.UtcNow;
+            var previousDate     = currentMonthDate.AddDays(-pageViewsForDays + 1);
+            var monthsDiffer     = previousDate.Month != currentMonthDate.Month;
+
+            var currentMonthStats = storedStatsMonths.Read<WikiPageStats[]>(currentMonthDate);
+            var previousMonthStats = monthsDiffer
+                ? storedStatsMonths.Read<WikiPageStats[]>(previousDate)
+                : new WikiPageStats[0];
+
+            // kja add filtering here to the pageViewsForDays, i.e. don't use all days of previous month.
+            // If necessary, apply this filtering for current month instead of previous month.
+            return Merge(previousMonthStats, currentMonthStats);
         }
 
-        public static (WikiPageStats[] lastMonthStats, WikiPageStats[] thisMonthStats) SplitByMonth(
+        // kja test this
+        private WikiPageStats[] Merge(WikiPageStats[] previousMonthStats, WikiPageStats[] currentMonthStats)
+        {
+            var previousStatsByPageId = previousMonthStats.ToDictionary(ps => ps.Id);
+            var currentStatsByPageId  = currentMonthStats.ToDictionary(ps => ps.Id);
+
+            var wikiPageStats = previousStatsByPageId.Select(kvp =>
+                    currentStatsByPageId.TryGetValue(kvp.Key, out WikiPageStats? currentStats)
+                        ? Merge(kvp.Value, currentStats)
+                        : kvp.Value)
+                .ToArray();
+
+            return wikiPageStats;
+        }
+
+        private WikiPageStats Merge(WikiPageStats previousMonthStats, WikiPageStats currentMonthStats)
+        {
+            Debug.Assert(previousMonthStats.Path == currentMonthStats.Path);
+            Debug.Assert(previousMonthStats.Id == currentMonthStats.Id);
+            var path = previousMonthStats.Path;
+            var id   = previousMonthStats.Id;
+            return new WikiPageStats(path, id, previousMonthStats.Stats.Concat(currentMonthStats.Stats).ToArray());
+        }
+
+        public static (WikiPageStats[] lastMonthStats, WikiPageStats[] currentMonthStats) SplitByMonth(
             WikiPageStats[] pagesStats)
         {
             Debug.Assert(pagesStats.Any());
 
-            // For each WikiPageStats, group the stats by month number.
+            // For each WikiPageStats, group (key) the stats by month number.
             (WikiPageStats ps, ILookup<int, WikiPageStats.Stat>)[] pagesWithStatsGroupedByMonth
                 = pagesStats.Select(ps => (ps, ps.Stats.ToLookup(s => s.Day.Month))).ToArray();
 
@@ -76,8 +107,8 @@ namespace Wikitools
                 pagesWithStatsGroupedByMonth.Select(ToPageStatsSplitByMonth).ToArray();
 
             WikiPageStats[] lastMonthStats = pagesStatsSplitByMonth.Select(t => t.lastMonthPageStats).ToArray();
-            WikiPageStats[] thisMonthStats = pagesStatsSplitByMonth.Select(t => t.thisMonthPageStats).ToArray();
-            return (lastMonthStats, thisMonthStats);
+            WikiPageStats[] currentMonthStats = pagesStatsSplitByMonth.Select(t => t.thisMonthPageStats).ToArray();
+            return (lastMonthStats, currentMonthStats);
         }
 
         private static (WikiPageStats lastMonthPageStats, WikiPageStats thisMonthPageStats) ToPageStatsSplitByMonth(
@@ -85,6 +116,7 @@ namespace Wikitools
         {
             (int month, WikiPageStats.Stat[])[] statsByMonth =
                 pageWithStatsGroupedByMonth.statsByMonth.Select(stats => (stats.Key, stats.ToArray()))
+                    // kja this orderBy will likely break on Dec/Jan (12->1)
                     .OrderBy(stats => stats.Key)
                     .ToArray();
 
