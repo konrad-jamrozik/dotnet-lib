@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Wikitools.AzureDevOps;
 using Wikitools.Lib.OS;
@@ -13,7 +11,6 @@ namespace Wikitools
 {
     public record WikiPagesStatsStorage(IOperatingSystem OS, string StorageDirPath)
     {
-
 //   var persistedStats = new PersistedWikiStats(storageDir);
 //   var lastDate = await persistedStats.LastPersistedDate; // need to await as it reads from FileSystem
 //   var pageStats = await wiki.PagesStats(DateTime.now - lastDate)
@@ -25,12 +22,22 @@ namespace Wikitools
 
         public async Task<WikiPagesStatsStorage> Update(AdoWiki wiki, int pageViewsForDays)
         {
+            // Previous code
+
             var pageStats = await wiki.PagesStats(pageViewsForDays);
             (WikiPageStats[] lastMonthStats, WikiPageStats[] thisMonthStats) = SplitByMonth(pageStats);
 
-            // var storedStatsMonths = new MonthlyJsonFilesStore(StorageDirPath)
-            // var storedThisMonth = storedStatsMonths.ReadAs<WikiPageStats[]>(timeline.Now)
-            // var storedLastMonth = storedStatsMonths.ReadAs<WikiPageStats[]>(timeline.Now.AddMonths(-1))
+            string lastMonthJson = ToJson(lastMonthStats);
+            string thisMonthJson = ToJson(thisMonthStats);
+            
+            await Write(lastMonthJson, DateTime.UtcNow.AddMonths(-1));
+            await Write(thisMonthJson, DateTime.UtcNow);
+
+            // Next code
+
+            var storedStatsMonths = new MonthlyJsonFilesStore(OS, StorageDirPath);
+            // var storedThisMonth = storedStatsMonths.Read<WikiPageStats[]>(timeline.Now)
+            // var storedLastMonth = storedStatsMonths.Read<WikiPageStats[]>(timeline.Now.AddMonths(-1))
 
             // var mergedThisMonth = Merge(storedThisMonth, thisMonth);
             // var mergedLastMonth = Merge(storedLastMonth, lastMonth);
@@ -44,11 +51,6 @@ namespace Wikitools
             //   LastMonth = Merged(lastMonthStats, storedStatsMonths.Last)
             // }
             //
-            string lastMonthJson = ToJson(lastMonthStats);
-            string thisMonthJson = ToJson(thisMonthStats);
-
-            await Write(lastMonthJson, DateTime.UtcNow.AddMonths(-1));
-            await Write(thisMonthJson, DateTime.UtcNow);
 
             return this;
         }
@@ -63,8 +65,10 @@ namespace Wikitools
 
         public Task<WikiPageStats[]> PagesStats(int pageViewsForDays)
         {
-            var maxDate = FindMaxDate();
-            var stats   = ReadStatsFromJson(maxDate);
+            var storedStatsMonths = new MonthlyJsonFilesStore(OS, StorageDirPath);
+
+            var maxDate = storedStatsMonths.FindMaxDate();
+            var stats   = storedStatsMonths.Read<WikiPageStats[]>(maxDate);
             // kja to add: find second-last date (if necessary), read json, merge
             return Task.FromResult(stats);
         }
@@ -109,7 +113,13 @@ namespace Wikitools
                         ? statsByMonth.First().Item2
                         : new WikiPageStats.Stat[0]
                 },
-                pageWithStatsGroupedByMonth.pageStats with { Stats = statsByMonth.Last().Item2 }
+                // kja add test for statsByMonth.Length == 0, which is when input stats[] length is 0.
+                pageWithStatsGroupedByMonth.pageStats with
+                {
+                    Stats = statsByMonth.Length >= 1
+                        ? statsByMonth.Last().Item2
+                        : new WikiPageStats.Stat[0]
+                }
             );
         }
 
@@ -132,33 +142,7 @@ namespace Wikitools
                 });
         }
 
-        private WikiPageStats[] ReadStatsFromJson(DateTime? maxDate)
-        {
-            var fileToReadName = $"date_{maxDate:yyy_MM}.json";
-            var fileToReadPath = Path.Join(StorageDirPath, fileToReadName);
-            var readJsonStr    = File.ReadAllText(fileToReadPath);
-            return JsonSerializer.Deserialize<WikiPageStats[]>(readJsonStr)!;
-        }
 
-        private DateTime? FindMaxDate()
-        {
-            var       dir     = new Dir(OS.FileSystem, StorageDirPath);
-            var       files   = Directory.EnumerateFiles(dir.Path);
-            DateTime? maxDate = DateTime.MinValue;
-            foreach (var file in files)
-            {
-                Console.Out.WriteLine("file: " + file);
-                var dateMatch  = Regex.Match(file, "date_(.*)\\.json");
-                var dateString = dateMatch.Groups[1].Value;
-                var date       = DateTime.ParseExact(dateString, "yyyy_MM", CultureInfo.InvariantCulture);
-                if (date > maxDate)
-                {
-                    maxDate = date;
-                }
-            }
-
-            return maxDate;
-        }
     }
 }
 

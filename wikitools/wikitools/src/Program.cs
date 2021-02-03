@@ -39,7 +39,7 @@ namespace Wikitools
             var pastCommits     = gitLog.Commits(cfg.MonthlyReportStartDate, cfg.MonthlyReportEndDate);
             
             // Previous code, before storage was added. To remove when migration is done.
-            //var pagesViewsStats = wiki.PagesStats(cfg.AdoWikiPageViewsForDays);
+            // var pagesViewsStats = wiki.PagesStats(cfg.AdoWikiPageViewsForDays);
             var storage         = new WikiPagesStatsStorage(os, cfg.StorageDirPath);
             var updatedStorage  = storage.Update(wiki, cfg.AdoWikiPageViewsForDays);
             var pagesViewsStats = updatedStorage.Select(s => s.PagesStats(cfg.AdoWikiPageViewsForDays));
@@ -55,10 +55,10 @@ namespace Wikitools
 
             var docsToWrite = new MarkdownDocument[]
             {
-                authorsReport,
-                filesReport,
+                //authorsReport,
+                //filesReport,
                 pagesViewsReport,
-                monthlyReport
+                //monthlyReport
             };
 
             return WriteAll(docsToWrite, outputSink);
