@@ -3,6 +3,7 @@ using System.Globalization;
 using System.IO;
 using System.Text.Json;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using Wikitools.Lib.OS;
 
 namespace Wikitools
@@ -36,5 +37,24 @@ namespace Wikitools
 
             return maxDate;
         }
+
+        public Task Write(object data, DateTime date) => WriteToFile(ToJson(data), date);
+
+        private async Task WriteToFile(string dataJson, DateTime dateTime)
+        {
+            var storageDir = new Dir(OS.FileSystem, StorageDirPath);
+            if (!storageDir.Exists())
+                Directory.CreateDirectory(storageDir.Path);
+            var filePath = Path.Join(StorageDirPath, $"date_{dateTime:yyy_MM}.json");
+            await File.WriteAllTextAsync(filePath, dataJson);
+        }
+
+        private string ToJson(object data) =>
+            JsonSerializer.Serialize(data,
+                new JsonSerializerOptions
+                {
+                    Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+                    WriteIndented = true
+                });
     }
 }

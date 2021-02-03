@@ -22,28 +22,17 @@ namespace Wikitools
 
         public async Task<WikiPagesStatsStorage> Update(AdoWiki wiki, int pageViewsForDays)
         {
-            // Previous code
+            var storedStatsMonths = new MonthlyJsonFilesStore(OS, StorageDirPath);
 
             var pageStats = await wiki.PagesStats(pageViewsForDays);
             (WikiPageStats[] lastMonthStats, WikiPageStats[] thisMonthStats) = SplitByMonth(pageStats);
-
-            string lastMonthJson = ToJson(lastMonthStats);
-            string thisMonthJson = ToJson(thisMonthStats);
-            
-            await Write(lastMonthJson, DateTime.UtcNow.AddMonths(-1));
-            await Write(thisMonthJson, DateTime.UtcNow);
-
-            // Next code
-
-            var storedStatsMonths = new MonthlyJsonFilesStore(OS, StorageDirPath);
+            // kja to add
             // var storedThisMonth = storedStatsMonths.Read<WikiPageStats[]>(timeline.Now)
             // var storedLastMonth = storedStatsMonths.Read<WikiPageStats[]>(timeline.Now.AddMonths(-1))
-
             // var mergedThisMonth = Merge(storedThisMonth, thisMonth);
             // var mergedLastMonth = Merge(storedLastMonth, lastMonth);
-
-            // storedStatsMonths.Write(mergedThisMonth, timeline.Now);
-            // storedStatsMonths.Write(mergedThisMonth, timeline.Now.AddMonths(-1));
+            await storedStatsMonths.Write(lastMonthStats, DateTime.UtcNow.AddMonths(-1));
+            await storedStatsMonths.Write(thisMonthStats, DateTime.UtcNow);
 
             // phase 2:
             // storedStatsMonths with {
@@ -122,27 +111,6 @@ namespace Wikitools
                 }
             );
         }
-
-        private async Task Write(string pageStatsJson, DateTime dateTime)
-        {
-            var storageDir = new Dir(OS.FileSystem, StorageDirPath);
-            if (!storageDir.Exists())
-                Directory.CreateDirectory(storageDir.Path);
-            var filePath = Path.Join(StorageDirPath, $"date_{dateTime:yyy_MM}.json");
-            await File.WriteAllTextAsync(filePath, pageStatsJson);
-        }
-
-        private static string ToJson(WikiPageStats[] pageStats)
-        {
-            return JsonSerializer.Serialize(pageStats,
-                new JsonSerializerOptions
-                {
-                    Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
-                    WriteIndented = true
-                });
-        }
-
-
     }
 }
 
