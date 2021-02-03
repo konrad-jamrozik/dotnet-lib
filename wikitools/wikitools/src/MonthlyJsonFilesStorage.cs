@@ -14,6 +14,7 @@ namespace Wikitools
         {
             var fileToReadName = $"date_{date:yyy_MM}.json";
             var fileToReadPath = Path.Join(StorageDirPath, fileToReadName);
+            // BUG got here: couldn't find file. Need to create it.
             var readJsonStr    = File.ReadAllText(fileToReadPath);
             return JsonSerializer.Deserialize<T>(readJsonStr)!;
         }
