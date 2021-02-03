@@ -13,9 +13,9 @@ namespace Wikitools
 //   var persistedStats = new PersistedWikiStats(storageDir);
 //   var lastDate = await persistedStats.LastPersistedDate; // need to await as it reads from FileSystem
 //   var pageStats = await wiki.PagesStats(DateTime.now - lastDate)
-//   var (lastMonthStats, thisMonthStats) = pageStats.SplitByMonth()
-//   await new MergedStats(lastMonthStats, persistedStats.LastMonth).Persist();
-//   await new MergedStats(thisMonthStats, persistedStats.ThisMonth).Persist();
+//   var (previousMonthStats, currentMonthStats) = pageStats.SplitByMonth()
+//   await new MergedStats(previousMonthStats, persistedStats.previousMonth).Persist();
+//   await new MergedStats(currentMonthStats, persistedStats.currentMonth).Persist();
 //   // internally, the two above will deserialize the persisted JSON into WikiPageStats,
 //   // then merge with ___monthStats WikiPageStats, and then serialize back to the file system.
 
@@ -24,19 +24,19 @@ namespace Wikitools
             var storedStatsMonths = new MonthlyJsonFilesStore(OS, StorageDirPath);
 
             var pageStats = await wiki.PagesStats(pageViewsForDays);
-            (WikiPageStats[] lastMonthStats, WikiPageStats[] thisMonthStats) = SplitByMonth(pageStats);
+            (WikiPageStats[] previousMonthStats, WikiPageStats[] currentMonthStats) = SplitByMonth(pageStats);
             // kja to add
-            // var storedThisMonth = storedStatsMonths.Read<WikiPageStats[]>(timeline.Now)
-            // var storedLastMonth = storedStatsMonths.Read<WikiPageStats[]>(timeline.Now.AddMonths(-1))
-            // var mergedThisMonth = Merge(storedThisMonth, thisMonth);
-            // var mergedLastMonth = Merge(storedLastMonth, lastMonth);
-            await storedStatsMonths.Write(lastMonthStats, DateTime.UtcNow.AddMonths(-1));
-            await storedStatsMonths.Write(thisMonthStats, DateTime.UtcNow);
+            // var storedcurrentMonth = storedStatsMonths.Read<WikiPageStats[]>(timeline.Now)
+            // var storedpreviousMonth = storedStatsMonths.Read<WikiPageStats[]>(timeline.Now.AddMonths(-1))
+            // var mergedcurrentMonth = Merge(storedcurrentMonth, currentMonth);
+            // var mergedpreviousMonth = Merge(storedpreviousMonth, previousMonth);
+            await storedStatsMonths.Write(previousMonthStats, DateTime.UtcNow.AddMonths(-1));
+            await storedStatsMonths.Write(currentMonthStats, DateTime.UtcNow);
 
             // phase 2:
             // storedStatsMonths with {
-            //   CurrentMonth = Merged(thisMonthStats, storedStatsMonths.Current),
-            //   LastMonth = Merged(lastMonthStats, storedStatsMonths.Last)
+            //   CurrentMonth = Merged(currentMonthStats, storedStatsMonths.Current),
+            //   previousMonth = Merged(previousMonthStats, storedStatsMonths.Last)
             // }
             //
 
@@ -45,9 +45,9 @@ namespace Wikitools
 
         // kja to implement, as follows, in pseudocode:
         // var storedStatsMonths = new MonthlyJsonFilesStore(StorageDirPath)
-        // var lastMonthDays = ...; var thisMonthDays = ...
+        // var previousMonthDays = ...; var currentMonthDays = ...
         // return
-        //   storedStatsMonth.LastMonth.FilterTo(lastMonthDays)
+        //   storedStatsMonth.previousMonth.FilterTo(previousMonthDays)
         //   .Concatenate
         //     storedStatsMonth.CurrentMonth.FilterTo(currentMonthDays)
 
@@ -93,7 +93,7 @@ namespace Wikitools
             return new WikiPageStats(path, id, previousMonthStats.Stats.Concat(currentMonthStats.Stats).ToArray());
         }
 
-        public static (WikiPageStats[] lastMonthStats, WikiPageStats[] currentMonthStats) SplitByMonth(
+        public static (WikiPageStats[] previousMonthStats, WikiPageStats[] currentMonthStats) SplitByMonth(
             WikiPageStats[] pagesStats)
         {
             Debug.Assert(pagesStats.Any());
@@ -103,15 +103,15 @@ namespace Wikitools
                 = pagesStats.Select(ps => (ps, ps.Stats.ToLookup(s => s.Day.Month))).ToArray();
 
             // For each page stats, return a tuple of that page stats for last and current month.
-            (WikiPageStats lastMonthPageStats, WikiPageStats thisMonthPageStats)[] pagesStatsSplitByMonth =
+            (WikiPageStats previousMonthPageStats, WikiPageStats currentMonthPageStats)[] pagesStatsSplitByMonth =
                 pagesWithStatsGroupedByMonth.Select(ToPageStatsSplitByMonth).ToArray();
 
-            WikiPageStats[] lastMonthStats = pagesStatsSplitByMonth.Select(t => t.lastMonthPageStats).ToArray();
-            WikiPageStats[] currentMonthStats = pagesStatsSplitByMonth.Select(t => t.thisMonthPageStats).ToArray();
-            return (lastMonthStats, currentMonthStats);
+            WikiPageStats[] previousMonthStats = pagesStatsSplitByMonth.Select(t => t.previousMonthPageStats).ToArray();
+            WikiPageStats[] currentMonthStats = pagesStatsSplitByMonth.Select(t => t.currentMonthPageStats).ToArray();
+            return (previousMonthStats, currentMonthStats);
         }
 
-        private static (WikiPageStats lastMonthPageStats, WikiPageStats thisMonthPageStats) ToPageStatsSplitByMonth(
+        private static (WikiPageStats previousMonthPageStats, WikiPageStats currentMonthPageStats) ToPageStatsSplitByMonth(
             (WikiPageStats pageStats, ILookup<int, WikiPageStats.Stat> statsByMonth) pageWithStatsGroupedByMonth)
         {
             (int month, WikiPageStats.Stat[])[] statsByMonth =
@@ -157,13 +157,13 @@ namespace Wikitools
 //   var persistedStats = new PersistedWikiStats(storageDir);
 //   var lastDate = await persistedStats.LastPersistedDate; // need to await as it reads from FileSystem
 //   var pageStats = await wiki.PagesStats(DateTime.now - lastDate)
-//   var (lastMonthStats, thisMonthStats) = pageStats.SplitByMonth()
-//   await new MergedStats(lastMonthStats, persistedStats.LastMonth).Persist();
-//   await new MergedStats(thisMonthStats, persistedStats.ThisMonth).Persist();
+//   var (previousMonthStats, currentMonthStats) = pageStats.SplitByMonth()
+//   await new MergedStats(previousMonthStats, persistedStats.previousMonth).Persist();
+//   await new MergedStats(currentMonthStats, persistedStats.currentMonth).Persist();
 //   // internally, the two above will deserialize the persisted JSON into WikiPageStats,
 //   // then merge with ___monthStats WikiPageStats, and then serialize back to the file system.
 // 
-//  - rename everywhere "thisMonth" to "currentMonth".
+//  - rename everywhere "currentMonth" to "currentMonth".
 //
 // Later: think about decoupling the logic from FileSystem; maybe arbitrary storage via streams/writers
 // would make more sense. At least the merging and splitting algorithm should be decoupled from file system.
