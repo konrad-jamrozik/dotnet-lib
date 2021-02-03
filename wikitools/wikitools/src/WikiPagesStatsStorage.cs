@@ -58,6 +58,9 @@ namespace Wikitools
         // kja test this
         public static WikiPageStats[] Merge(WikiPageStats[] previousStats, WikiPageStats[] currentStats)
         {
+            // kja abstract away this algorithm. Namely, into something like:
+            // arr1.IntersectUsing(keySelector: ps => ps.Id, func: (ps1, ps2) => merge(ps1, ps2))
+
             var previousStatsByPageId = previousStats.ToDictionary(ps => ps.Id);
             var currentStatsByPageId  = currentStats.ToDictionary(ps => ps.Id);
 
@@ -116,7 +119,7 @@ namespace Wikitools
         {
             (int month, WikiPageStats.Stat[])[] statsByMonth =
                 pageWithStatsGroupedByMonth.statsByMonth.Select(stats => (stats.Key, stats.ToArray()))
-                    // BUG this orderBy will likely break on Dec/Jan (12->1)
+                    // BUG this orderBy will  break on Dec/Jan (12->1)
                     .OrderBy(stats => stats.Key)
                     .ToArray();
 

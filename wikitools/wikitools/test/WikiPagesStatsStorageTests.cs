@@ -31,7 +31,7 @@ namespace Wikitools.Tests
         // is fixed.
         // Confirm the bug is fixed by observing first the Program returns correct stats for article ID 13338
         // for January. Now it it thinks January are "current month" instead of "previous month".
-        [Fact]
+        [Fact(Skip = "Tool to be used manually")]
         public async Task ToolMerge()
         {
             var cfg = WikitoolsConfig.From("wikitools_config.json");
@@ -42,7 +42,7 @@ namespace Wikitools.Tests
             var backedUpStatsPath = cfg.StorageDirPath + "/wiki_stats_2021_01_19.json";
             var backedUpStats     = JsonSerializer.Deserialize<WikiPageStats[]>(File.ReadAllText(backedUpStatsPath))!;
             var mergedStats       = WikiPagesStatsStorage.Merge(januaryStats, backedUpStats);
-            await storage.Write(mergedStats, janDate);
+            // await storage.Write(mergedStats, janDate);
         }
 
 
