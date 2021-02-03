@@ -4,27 +4,28 @@ using System.Linq;
 using System.Threading.Tasks;
 using Wikitools.AzureDevOps;
 using Wikitools.Lib.OS;
-using Wikitools.Lib.Primitives;
 
 namespace Wikitools
 {
-    public record WikiPagesStatsStorage(ITimeline Timeline, IOperatingSystem OS, string StorageDirPath)
+    public record WikiPagesStatsStorage(DateTime CurrentDate, IOperatingSystem OS, string StorageDirPath)
     {
         public async Task<WikiPagesStatsStorage> Update(AdoWiki wiki, int pageViewsForDays)
         {
-            var storedStatsMonths = new MonthlyJsonFilesStorage(OS, StorageDirPath);
+            var storedStats = new MonthlyJsonFilesStorage(OS, StorageDirPath);
 
             var pageStats = await wiki.PagesStats(pageViewsForDays);
-            (WikiPageStats[] previousMonthStats, WikiPageStats[] currentMonthStats) = SplitByMonth(pageStats);
+            // BUG this is not returning any stats for 13338, previous month
+            (WikiPageStats[] previousMonthStats, WikiPageStats[] currentMonthStats) =
+                SplitByMonth(pageStats, CurrentDate);
 
-            var storedCurrentMonthStats  = storedStatsMonths.Read<WikiPageStats[]>(Timeline.UtcNow);
-            var storedPreviousMonthStats = storedStatsMonths.Read<WikiPageStats[]>(Timeline.UtcNow.AddMonths(-1));
-            
-            var mergedCurrentMonthStats  = Merge(storedCurrentMonthStats,  currentMonthStats);
+            var storedPreviousMonthStats = storedStats.Read<WikiPageStats[]>(CurrentDate.AddMonths(-1));
+            var storedCurrentMonthStats  = storedStats.Read<WikiPageStats[]>(CurrentDate);
+
             var mergedPreviousMonthStats = Merge(storedPreviousMonthStats, previousMonthStats);
-            
-            await storedStatsMonths.Write(mergedCurrentMonthStats,  DateTime.UtcNow);
-            await storedStatsMonths.Write(mergedPreviousMonthStats, DateTime.UtcNow.AddMonths(-1));
+            var mergedCurrentMonthStats  = Merge(storedCurrentMonthStats,  currentMonthStats);
+
+            await storedStats.Write(mergedPreviousMonthStats, DateTime.UtcNow.AddMonths(-1));
+            await storedStats.Write(mergedCurrentMonthStats,  DateTime.UtcNow);
 
             // kja impl phase 2:
             // storedStatsMonths with {
@@ -40,7 +41,7 @@ namespace Wikitools
         {
             var storedStatsMonths = new MonthlyJsonFilesStorage(OS, StorageDirPath);
 
-            var currentMonthDate = Timeline.UtcNow;
+            var currentMonthDate = CurrentDate;
             var previousDate     = currentMonthDate.AddDays(-pageViewsForDays + 1);
             var monthsDiffer     = previousDate.Month != currentMonthDate.Month;
 
@@ -55,35 +56,44 @@ namespace Wikitools
         }
 
         // kja test this
-        private static WikiPageStats[] Merge(WikiPageStats[] previousMonthStats, WikiPageStats[] currentMonthStats)
+        public static WikiPageStats[] Merge(WikiPageStats[] previousStats, WikiPageStats[] currentStats)
         {
-            var currentStatsByPageId  = currentMonthStats.ToDictionary(ps => ps.Id);
-            var previousStatsByPageId = previousMonthStats.ToDictionary(ps => ps.Id);
+            var previousStatsByPageId = previousStats.ToDictionary(ps => ps.Id);
+            var currentStatsByPageId  = currentStats.ToDictionary(ps => ps.Id);
 
-            var currentMonthIds  = currentMonthStats.Select(ps => ps.Id).ToHashSet();
-            var previousMonthIds = previousMonthStats.Select(ps => ps.Id).ToHashSet();
-            var intersectingIds  = previousMonthIds.Intersect(currentMonthIds).ToHashSet();
+            var previousIds     = previousStats.Select(ps => ps.Id).ToHashSet();
+            var currentIds      = currentStats.Select(ps => ps.Id).ToHashSet();
+            var intersectingIds = previousIds.Intersect(currentIds).ToHashSet();
 
-            var currentMonthOnlyStats  = currentMonthIds.Except(intersectingIds).Select(id => currentStatsByPageId[id]);
-            var previousMonthOnlyStats = previousMonthIds.Except(intersectingIds).Select(id => previousStatsByPageId[id]);
+            var currentOnlyStats  = currentIds.Except(intersectingIds).Select(id => currentStatsByPageId[id]);
+            var previousOnlyStats = previousIds.Except(intersectingIds).Select(id => previousStatsByPageId[id]);
             var intersectingStats =
                 intersectingIds.Select(id => Merge(previousStatsByPageId[id], currentStatsByPageId[id]));
 
-            var merged = previousMonthOnlyStats.Union(intersectingStats).Union(currentMonthOnlyStats).ToArray();
+            var merged = previousOnlyStats.Union(intersectingStats).Union(currentOnlyStats).ToArray();
             return merged;
         }
 
-        private static WikiPageStats Merge(WikiPageStats previousMonthStats, WikiPageStats currentMonthStats)
+        private static WikiPageStats Merge(WikiPageStats previousPageStats, WikiPageStats currentPageStats)
         {
-            Debug.Assert(previousMonthStats.Path == currentMonthStats.Path);
-            Debug.Assert(previousMonthStats.Id == currentMonthStats.Id);
-            var path = previousMonthStats.Path;
-            var id   = previousMonthStats.Id;
-            return new WikiPageStats(path, id, previousMonthStats.Stats.Concat(currentMonthStats.Stats).ToArray());
+            Debug.Assert(previousPageStats.Id == currentPageStats.Id);
+            var id = previousPageStats.Id;
+
+            var previousMaxDate = previousPageStats.Stats.Any()
+                ? previousPageStats.Stats.Max(stat => stat.Day)
+                : new DateTime(0);
+            var currentMaxDate = currentPageStats.Stats.Any()
+                ? currentPageStats.Stats.Max(stat => stat.Day)
+                : new DateTime(0);
+            // Note: This assumes that the 'current' stats path takes precedence over 'previous' page stats.
+            var path = previousMaxDate > currentMaxDate ? previousPageStats.Path : currentPageStats.Path;
+
+            return new WikiPageStats(path, id, previousPageStats.Stats.Concat(currentPageStats.Stats).ToArray());
         }
 
         public static (WikiPageStats[] previousMonthStats, WikiPageStats[] currentMonthStats) SplitByMonth(
-            WikiPageStats[] pagesStats)
+            WikiPageStats[] pagesStats,
+            DateTime currentDate)
         {
             Debug.Assert(pagesStats.Any());
 
@@ -124,7 +134,9 @@ namespace Wikitools
                         ? statsByMonth.First().Item2
                         : new WikiPageStats.Stat[0]
                 },
-                // kja add test for statsByMonth.Length == 0, which is when input stats[] length is 0.
+                // BUG add test for statsByMonth.Length == 0, which is when input stats[] length is 0.
+                // BUG this will return bad results if the newest results are only for the previous month. This will assume this is for the previous month.
+                // Fix it by leveraging currentDate passed to Wikitools.WikiPagesStatsStorage.SplitByMonth
                 pageWithStatsGroupedByMonth.pageStats with
                 {
                     Stats = statsByMonth.Length >= 1
@@ -144,3 +156,4 @@ namespace Wikitools
 //
 // Later: think about decoupling the logic from FileSystem; maybe arbitrary storage via streams/writers
 // would make more sense. At least the merging and splitting algorithm should be decoupled from file system.
+// kja merge in the backed up stats for January
