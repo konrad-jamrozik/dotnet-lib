@@ -62,14 +62,15 @@ namespace Wikitools
 
             var currentMonthIds  = currentMonthStats.Select(ps => ps.Id).ToHashSet();
             var previousMonthIds = previousMonthStats.Select(ps => ps.Id).ToHashSet();
-            var intersectingIds  = previousMonthIds.Intersect(currentMonthIds);
+            var intersectingIds  = previousMonthIds.Intersect(currentMonthIds).ToHashSet();
 
-            var currentMonthOnlyStats  = currentMonthIds.Select(id => currentStatsByPageId[id]);
-            var previousMonthOnlyStats = previousMonthIds.Select(id => previousStatsByPageId[id]);
+            var currentMonthOnlyStats  = currentMonthIds.Except(intersectingIds).Select(id => currentStatsByPageId[id]);
+            var previousMonthOnlyStats = previousMonthIds.Except(intersectingIds).Select(id => previousStatsByPageId[id]);
             var intersectingStats =
                 intersectingIds.Select(id => Merge(previousStatsByPageId[id], currentStatsByPageId[id]));
 
-            return previousMonthOnlyStats.Union(intersectingStats).Union(currentMonthOnlyStats).ToArray();
+            var merged = previousMonthOnlyStats.Union(intersectingStats).Union(currentMonthOnlyStats).ToArray();
+            return merged;
         }
 
         private static WikiPageStats Merge(WikiPageStats previousMonthStats, WikiPageStats currentMonthStats)
