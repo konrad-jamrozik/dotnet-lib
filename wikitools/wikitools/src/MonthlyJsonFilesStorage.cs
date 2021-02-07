@@ -39,14 +39,16 @@ namespace Wikitools
             return maxDate;
         }
 
-        public Task Write(object data, DateTime date) => WriteToFile(ToJson(data), date);
+        public Task Write(object data, DateTime date, string? fileNameOverride = default) =>
+            WriteToFile(ToJson(data), date, fileNameOverride);
 
-        private async Task WriteToFile(string dataJson, DateTime dateTime)
+        private async Task WriteToFile(string dataJson, DateTime date, string? fileNameOverride)
         {
+            fileNameOverride ??= $"date_{date:yyy_MM}.json";
             var storageDir = new Dir(OS.FileSystem, StorageDirPath);
             if (!storageDir.Exists())
                 Directory.CreateDirectory(storageDir.Path);
-            var filePath = Path.Join(StorageDirPath, $"date_{dateTime:yyy_MM}.json");
+            var filePath = Path.Join(StorageDirPath, fileNameOverride);
             await File.WriteAllTextAsync(filePath, dataJson);
         }
 

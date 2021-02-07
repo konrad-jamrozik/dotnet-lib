@@ -57,6 +57,7 @@ namespace Wikitools
         }
 
         // kja test this
+        // kja add assertions that the merged stats can come from max 2 months, then test for this.
         public static WikiPageStats[] Merge(WikiPageStats[] previousStats, WikiPageStats[] currentStats)
         {
             // kja abstract away this algorithm. Namely, into something like:
@@ -78,7 +79,6 @@ namespace Wikitools
             return merged;
         }
 
-        // bug duplicates days. See page 133346, January
         private static WikiPageStats Merge(WikiPageStats previousPageStats, WikiPageStats currentPageStats)
         {
             Debug.Assert(previousPageStats.Id == currentPageStats.Id);
@@ -90,7 +90,7 @@ namespace Wikitools
             var currentMaxDate = currentPageStats.Stats.Any()
                 ? currentPageStats.Stats.Max(stat => stat.Day)
                 : new DateTime(0);
-            // Note: This assumes that the 'current' stats path takes precedence over 'previous' page stats.
+            // Here we ensure that the 'current' stats path takes precedence over 'previous' page stats.
             var path = previousMaxDate > currentMaxDate ? previousPageStats.Path : currentPageStats.Path;
 
             return new WikiPageStats(path, id, Merge(previousPageStats.Stats, currentPageStats.Stats));
@@ -100,7 +100,8 @@ namespace Wikitools
             WikiPageStats.Stat[] pagePreviousStats,
             WikiPageStats.Stat[] pageCurrentStats)
         {
-            var mergedStats = pagePreviousStats.Concat(pageCurrentStats).GroupBy(stat => stat.Day).Select(dayStats =>
+            var groupedByDay = pagePreviousStats.Concat(pageCurrentStats).GroupBy(stat => stat.Day);
+            var mergedStats = groupedByDay.Select(dayStats =>
             {
                 Debug.Assert(dayStats.DistinctBy(s => s.Count).Count() == 1);
                 return dayStats.First();
