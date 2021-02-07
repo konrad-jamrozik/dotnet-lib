@@ -40,7 +40,7 @@ namespace Wikitools
             
             // Previous code, before storage was added. To remove when migration is done.
             // var pagesViewsStats = wiki.PagesStats(cfg.AdoWikiPageViewsForDays);
-            var storage         = new WikiPagesStatsStorage(timeline.UtcNow, os, cfg.StorageDirPath);
+            var storage         = new WikiPagesStatsStorage(new MonthlyJsonFilesStorage(os, cfg.StorageDirPath), timeline.UtcNow);
             var updatedStorage  = storage.Update(wiki, cfg.AdoWikiPageViewsForDays);
             var pagesViewsStats = updatedStorage.Select(s => s.PagesStats(cfg.AdoWikiPageViewsForDays));
 

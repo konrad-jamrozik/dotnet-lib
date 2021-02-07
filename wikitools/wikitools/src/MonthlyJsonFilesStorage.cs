@@ -14,11 +14,12 @@ namespace Wikitools
         {
             var fileToReadName = $"date_{date:yyy_MM}.json";
             var fileToReadPath = Path.Join(StorageDirPath, fileToReadName);
-            return !File.Exists(fileToReadPath) 
-                ? JsonSerializer.Deserialize<T>("[]")! 
+            return !File.Exists(fileToReadPath)
+                ? JsonSerializer.Deserialize<T>("[]")!
                 : JsonSerializer.Deserialize<T>(File.ReadAllText(fileToReadPath))!;
         }
 
+        // kja to remove
         public DateTime FindMaxDate()
         {
             var      dir     = new Dir(OS.FileSystem, StorageDirPath);
@@ -37,6 +38,16 @@ namespace Wikitools
             }
 
             return maxDate;
+        }
+
+        // ReSharper disable once UnusedMethodReturnValue.Global
+        // -> Fluent interface
+        public async Task<MonthlyJsonFilesStorage> With<T>(DateTime date, Func<T, T> mergeFunc) where T : class
+        {
+            T storedData = Read<T>(date);
+            T mergedData = mergeFunc(storedData);
+            await Write(mergedData, date);
+            return this;
         }
 
         public Task Write(object data, DateTime date, string? fileNameOverride = default) =>

@@ -38,14 +38,15 @@ namespace Wikitools.Tests
             var cfg = WikitoolsConfig.From("wikitools_config.json");
 
             var storage      = new MonthlyJsonFilesStorage(os, cfg.StorageDirPath);
-            var januaryDate  = new DateTime(2021, 1, 1);
+            var januaryDate  = new DateTime(2021, 1, 1).ToUniversalTime();
             var backup1Path  = cfg.StorageDirPath + "/wiki_stats_2021_01_19_30days.json";
             var backup2Path  = cfg.StorageDirPath + "/wiki_stats_2021_02_06_30days.json";
             var backup1Stats = JsonSerializer.Deserialize<WikiPageStats[]>(File.ReadAllText(backup1Path))!;
             var backup2Stats = JsonSerializer.Deserialize<WikiPageStats[]>(File.ReadAllText(backup2Path))!;
 
             var mergedStats = WikiPagesStatsStorage.Merge(backup1Stats, backup2Stats);
-            var trimmedStats = WikiPagesStatsStorage.Trim(mergedStats, januaryDate);
+            var trimmedStats =
+                WikiPagesStatsStorage.Trim(mergedStats, januaryDate, januaryDate.AddMonths(1).AddDays(-1));
             // kja need to trim here to specific month, then finally I will have the stats.
             // Then I can reuse the trim to fix the defect in Wikitools.WikiPagesStatsStorage.PagesStats
 

@@ -1,10 +1,6 @@
 using System;
-using System.IO;
 using System.Linq;
-using System.Text.Json;
-using System.Threading.Tasks;
 using Wikitools.AzureDevOps;
-using Wikitools.Lib.OS;
 using Wikitools.Lib.Tests.Json;
 using Xunit;
 
