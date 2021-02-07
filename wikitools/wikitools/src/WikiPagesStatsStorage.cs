@@ -15,7 +15,6 @@ namespace Wikitools
             var storedStats = new MonthlyJsonFilesStorage(OS, StorageDirPath);
 
             var pageStats = await wiki.PagesStats(pageViewsForDays);
-            // BUG this is not returning any stats for 13338, previous month
             (WikiPageStats[] previousMonthStats, WikiPageStats[] currentMonthStats) =
                 SplitByMonth(pageStats, CurrentDate);
 
@@ -52,11 +51,13 @@ namespace Wikitools
                 : new WikiPageStats[0];
 
             // BUG add filtering here to the pageViewsForDays, i.e. don't use all days of previous month.
-            // Note that the following case has to be handled: the *current* (not previous) month needs to be filtered down.
+            // Note that also the following case has to be handled:
+            //   the *current* (not previous) month needs to be filtered down.
+            // test for this.
             return Merge(previousMonthStats, currentMonthStats);
         }
 
-        // kja test this
+        // kja test the Merge method
         // kja add assertions that the merged stats can come from max 2 months, then test for this.
         public static WikiPageStats[] Merge(WikiPageStats[] previousStats, WikiPageStats[] currentStats)
         {

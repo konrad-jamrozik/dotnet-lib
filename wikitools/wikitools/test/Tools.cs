@@ -46,6 +46,7 @@ namespace Wikitools.Tests
 
             var mergedStats = WikiPagesStatsStorage.Merge(backup1Stats, backup2Stats);
             // kja need to trim here to specific month, then finally I will have the stats.
+            // Then I can reuse the trim to fix the defect in Wikitools.WikiPagesStatsStorage.PagesStats
 
             await storage.Write(mergedStats, januaryDate, "merged_stats_2021_01_19_2021_02_06.json");
         }
