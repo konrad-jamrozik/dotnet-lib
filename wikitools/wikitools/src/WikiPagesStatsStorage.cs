@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using MoreLinq;
 using Wikitools.AzureDevOps;
 using Wikitools.Lib.OS;
 
@@ -64,9 +65,9 @@ namespace Wikitools
             var previousStatsByPageId = previousStats.ToDictionary(ps => ps.Id);
             var currentStatsByPageId  = currentStats.ToDictionary(ps => ps.Id);
 
-            var previousIds     = previousStats.Select(ps => ps.Id).ToHashSet();
-            var currentIds      = currentStats.Select(ps => ps.Id).ToHashSet();
-            var intersectingIds = previousIds.Intersect(currentIds).ToHashSet();
+            var previousIds     = Enumerable.ToHashSet(previousStats.Select(ps => ps.Id));
+            var currentIds      = Enumerable.ToHashSet(currentStats.Select(ps => ps.Id));
+            var intersectingIds = Enumerable.ToHashSet(previousIds.Intersect(currentIds));
 
             var currentOnlyStats  = currentIds.Except(intersectingIds).Select(id => currentStatsByPageId[id]);
             var previousOnlyStats = previousIds.Except(intersectingIds).Select(id => previousStatsByPageId[id]);
@@ -77,6 +78,7 @@ namespace Wikitools
             return merged;
         }
 
+        // bug duplicates days. See page 133346, January
         private static WikiPageStats Merge(WikiPageStats previousPageStats, WikiPageStats currentPageStats)
         {
             Debug.Assert(previousPageStats.Id == currentPageStats.Id);
@@ -91,7 +93,19 @@ namespace Wikitools
             // Note: This assumes that the 'current' stats path takes precedence over 'previous' page stats.
             var path = previousMaxDate > currentMaxDate ? previousPageStats.Path : currentPageStats.Path;
 
-            return new WikiPageStats(path, id, previousPageStats.Stats.Concat(currentPageStats.Stats).ToArray());
+            return new WikiPageStats(path, id, Merge(previousPageStats.Stats, currentPageStats.Stats));
+        }
+
+        private static WikiPageStats.Stat[] Merge(
+            WikiPageStats.Stat[] pagePreviousStats,
+            WikiPageStats.Stat[] pageCurrentStats)
+        {
+            var mergedStats = pagePreviousStats.Concat(pageCurrentStats).GroupBy(stat => stat.Day).Select(dayStats =>
+            {
+                Debug.Assert(dayStats.DistinctBy(s => s.Count).Count() == 1);
+                return dayStats.First();
+            }).ToArray();
+            return mergedStats;
         }
 
         public static (WikiPageStats[] previousMonthStats, WikiPageStats[] currentMonthStats) SplitByMonth(
@@ -106,7 +120,7 @@ namespace Wikitools
 
             // For each page stats, return a tuple of that page stats for last and current month.
             (WikiPageStats previousMonthPageStats, WikiPageStats currentMonthPageStats)[] pagesStatsSplitByMonth =
-                pagesWithStatsGroupedByMonth.Select(ToPageStatsSplitByMonth).ToArray();
+                pagesWithStatsGroupedByMonth.Select(pt => ToPageStatsSplitByMonth(pt, currentDate)).ToArray();
 
             WikiPageStats[] previousMonthStats = pagesStatsSplitByMonth.Select(t => t.previousMonthPageStats).ToArray();
             WikiPageStats[] currentMonthStats  = pagesStatsSplitByMonth.Select(t => t.currentMonthPageStats).ToArray();
@@ -115,11 +129,12 @@ namespace Wikitools
 
         private static (WikiPageStats previousMonthPageStats, WikiPageStats currentMonthPageStats)
             ToPageStatsSplitByMonth(
-                (WikiPageStats pageStats, ILookup<int, WikiPageStats.Stat> statsByMonth) pageWithStatsGroupedByMonth)
+                (WikiPageStats pageStats, ILookup<int, WikiPageStats.Stat> statsByMonth) pageWithStatsGroupedByMonth,
+                DateTime currentDate)
         {
             (int month, WikiPageStats.Stat[])[] statsByMonth =
                 pageWithStatsGroupedByMonth.statsByMonth.Select(stats => (stats.Key, stats.ToArray()))
-                    // BUG this orderBy will  break on Dec/Jan (12->1)
+                    // BUG this orderBy will break on Dec/Jan (12->1)
                     .OrderBy(stats => stats.Key)
                     .ToArray();
 
@@ -129,24 +144,15 @@ namespace Wikitools
             Debug.Assert(statsByMonth.Length <= 1 || (statsByMonth[0].month + 1 == statsByMonth[1].month),
                 "The wiki stats are expected to come from consecutive months");
 
-            return
-            (
-                pageWithStatsGroupedByMonth.pageStats with
-                {
-                    Stats = statsByMonth.Length == 2
-                        ? statsByMonth.First().Item2
-                        : new WikiPageStats.Stat[0]
-                },
-                // BUG add test for statsByMonth.Length == 0, which is when input stats[] length is 0.
-                // BUG this will return bad results if the newest results are only for the previous month. This will assume this is for the previous month.
-                // Fix it by leveraging currentDate passed to Wikitools.WikiPagesStatsStorage.SplitByMonth
-                pageWithStatsGroupedByMonth.pageStats with
-                {
-                    Stats = statsByMonth.Length >= 1
-                        ? statsByMonth.Last().Item2
-                        : new WikiPageStats.Stat[0]
-                }
-            );
+            var previousMonthPageStats = pageWithStatsGroupedByMonth.pageStats with { Stats = MonthStats(statsByMonth, currentDate.AddMonths(-1)) };
+            // BUG (maybe already fixed?? not sure) add test for statsByMonth.Length == 0, which is when input stats[] length is 0.
+            var currentMonthPageStats = pageWithStatsGroupedByMonth.pageStats with { Stats = MonthStats(statsByMonth, currentDate) };
+            return (previousMonthPageStats, currentMonthPageStats);
+
+            WikiPageStats.Stat[] MonthStats((int month, WikiPageStats.Stat[])[] statsByMonth, DateTime date) =>
+                statsByMonth.Any(sbm => sbm.month == date.Month)
+                    ? statsByMonth.Single(sbm => sbm.month == date.Month).Item2
+                    : new WikiPageStats.Stat[0];
         }
     }
 }

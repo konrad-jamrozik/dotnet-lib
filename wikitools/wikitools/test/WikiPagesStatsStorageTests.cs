@@ -15,7 +15,7 @@ namespace Wikitools.Tests
         private static readonly DateTime CurrentDate = new DateTime(year: 2021, month: 2, day: 15).ToUniversalTime();
 
         [Fact]
-        public void SplitsByMonth()
+        public void SplitByMonthTest()
         {
             var (pageStats, expectedPreviousMonth, expectedCurrentMonth) = PageStatsData;
 
@@ -26,10 +26,22 @@ namespace Wikitools.Tests
             new JsonDiffAssertion(expectedCurrentMonth,  currentMonth).Assert();
         }
 
-        // KJA NEXT: run this after the bug in
+        [Fact]
+        public void SplitByMonthTestOnlyPreviousMonth()
+        {
+            var (pageStats, expectedPreviousMonth, expectedCurrentMonth) = PageStatsDataPreviousMonthOnly;
+
+            // Act
+            var (previousMonth, currentMonth) = WikiPagesStatsStorage.SplitByMonth(pageStats, CurrentDate);
+
+            new JsonDiffAssertion(expectedPreviousMonth, previousMonth).Assert();
+            new JsonDiffAssertion(expectedCurrentMonth,  currentMonth).Assert();
+        }
+
+        // KJA NEXT: run this after the defect in
         // Wikitools.WikiPagesStatsStorage.ToPageStatsSplitByMonth
         // is fixed.
-        // Confirm the bug is fixed by observing first the Program returns correct stats for article ID 13338
+        // Confirm the defect is fixed by observing first the Program returns correct stats for article ID 13338
         // for January. Now it it thinks January are "current month" instead of "previous month".
         [Fact(Skip = "Tool to be used manually")]
         public async Task ToolMerge()
@@ -44,7 +56,6 @@ namespace Wikitools.Tests
             var mergedStats       = WikiPagesStatsStorage.Merge(januaryStats, backedUpStats);
             // await storage.Write(mergedStats, janDate);
         }
-
 
         private static (WikiPageStats[] pageStats, WikiPageStats[] expectedPreviousMonth, WikiPageStats[]
             expectedCurrentMonth)
@@ -107,5 +118,45 @@ namespace Wikitools.Tests
                 return (pageStats, expectedPreviousMonth, expectedCurrentMonth);
             }
         }
+
+        private static (WikiPageStats[] pageStats, WikiPageStats[] expectedPreviousMonth, WikiPageStats[]
+            expectedCurrentMonth)
+            PageStatsDataPreviousMonthOnly
+        {
+            get
+            {
+                var fooDaysPreviousMonth = new WikiPageStats.Stat[] { };
+
+                var fooDaysCurrentMonth = new WikiPageStats.Stat[] { };
+
+                var barDaysPreviousMonth = new WikiPageStats.Stat[]
+                {
+                    new(115, CurrentDate.AddMonths(-1))
+                };
+
+                var barDaysCurrentMonth = new WikiPageStats.Stat[] { };
+
+                var pageStats = new WikiPageStats[]
+                {
+                    new("/Foo", 1, fooDaysPreviousMonth.Concat(fooDaysCurrentMonth).ToArray()),
+                    new("/Bar", 2, barDaysPreviousMonth.Concat(barDaysCurrentMonth).ToArray())
+                };
+
+                var expectedPreviousMonth = new WikiPageStats[]
+                {
+                    new("/Foo", 1, fooDaysPreviousMonth),
+                    new("/Bar", 2, barDaysPreviousMonth)
+                };
+
+                var expectedCurrentMonth = new WikiPageStats[]
+                {
+                    new("/Foo", 1, fooDaysCurrentMonth),
+                    new("/Bar", 2, barDaysCurrentMonth)
+                };
+
+                return (pageStats, expectedPreviousMonth, expectedCurrentMonth);
+            }
+        }
+
     }
 }
