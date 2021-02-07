@@ -28,7 +28,7 @@ namespace Wikitools
             await storedStats.Write(mergedCurrentMonthStats,  DateTime.UtcNow);
 
             // kja impl phase 2:
-            // storedStatsMonths with {
+            // storedStats with {
             //   CurrentMonth = Merged(currentMonthStats, storedStatsMonths.Current),
             //   previousMonth = Merged(previousMonthStats, storedStatsMonths.Last)
             // }
@@ -58,7 +58,6 @@ namespace Wikitools
         }
 
         // kja test the Merge method
-        // kja add assertions that the merged stats can come from max 2 months, then test for this.
         public static WikiPageStats[] Merge(WikiPageStats[] previousStats, WikiPageStats[] currentStats)
         {
             // kja abstract away this algorithm. Namely, into something like:
@@ -77,6 +76,12 @@ namespace Wikitools
                 intersectingIds.Select(id => Merge(previousStatsByPageId[id], currentStatsByPageId[id]));
 
             var merged = previousOnlyStats.Union(intersectingStats).Union(currentOnlyStats).ToArray();
+
+            Debug.Assert(merged.DistinctBy(m => m.Id).Count() == merged.Length, "Any given page appears only once");
+            merged.ForEach(ps => Debug.Assert(
+                    ps.Stats.DistinctBy(s => s.Day).Count() == ps.Stats.Length,
+                    "There is only one stat per page per day"));
+
             return merged;
         }
 
@@ -104,7 +109,7 @@ namespace Wikitools
             var groupedByDay = pagePreviousStats.Concat(pageCurrentStats).GroupBy(stat => stat.Day);
             var mergedStats = groupedByDay.Select(dayStats =>
             {
-                Debug.Assert(dayStats.DistinctBy(s => s.Count).Count() == 1);
+                Debug.Assert(dayStats.DistinctBy(s => s.Count).Count() == 1, "Stats merged for the same day have the same visit count");
                 return dayStats.First();
             }).ToArray();
             return mergedStats;
@@ -155,6 +160,15 @@ namespace Wikitools
                 statsByMonth.Any(sbm => sbm.month == date.Month)
                     ? statsByMonth.Single(sbm => sbm.month == date.Month).Item2
                     : new WikiPageStats.Stat[0];
+        }
+
+        public static WikiPageStats[] Trim(WikiPageStats[] stats, DateTime date)
+        {
+            // KJA CURR WORK FOR THE TOOL
+            return stats;
+            // stats.Select(ps =>
+            //     ps = Trim(ps))
+            // throw new NotImplementedException();
         }
     }
 }

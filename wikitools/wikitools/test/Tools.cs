@@ -45,10 +45,11 @@ namespace Wikitools.Tests
             var backup2Stats = JsonSerializer.Deserialize<WikiPageStats[]>(File.ReadAllText(backup2Path))!;
 
             var mergedStats = WikiPagesStatsStorage.Merge(backup1Stats, backup2Stats);
+            var trimmedStats = WikiPagesStatsStorage.Trim(mergedStats, januaryDate);
             // kja need to trim here to specific month, then finally I will have the stats.
             // Then I can reuse the trim to fix the defect in Wikitools.WikiPagesStatsStorage.PagesStats
 
-            await storage.Write(mergedStats, januaryDate, "merged_stats_2021_01_19_2021_02_06.json");
+            await storage.Write(trimmedStats, januaryDate, "merged_stats_2021_01_19_2021_02_06.json");
         }
     }
 }
