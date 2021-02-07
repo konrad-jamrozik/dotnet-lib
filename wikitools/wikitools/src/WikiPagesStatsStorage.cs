@@ -135,16 +135,16 @@ namespace Wikitools
 
             var previousMonthPageStats = pageWithStatsGroupedByMonth.pageStats with
             {
-                Stats = MonthStats(statsByMonth, currentDate.AddMonths(-1))
+                Stats = SingleMonthStats(statsByMonth, currentDate.AddMonths(-1))
             };
             // BUG (maybe already fixed?? not sure) add test for statsByMonth.Length == 0, which is when input stats[] length is 0.
             var currentMonthPageStats = pageWithStatsGroupedByMonth.pageStats with
             {
-                Stats = MonthStats(statsByMonth, currentDate)
+                Stats = SingleMonthStats(statsByMonth, currentDate)
             };
             return (previousMonthPageStats, currentMonthPageStats);
 
-            WikiPageStats.Stat[] MonthStats((int month, WikiPageStats.Stat[])[] statsByMonth, DateTime date) =>
+            WikiPageStats.Stat[] SingleMonthStats((int month, WikiPageStats.Stat[])[] statsByMonth, DateTime date) =>
                 statsByMonth.Any(sbm => sbm.month == date.Month)
                     ? statsByMonth.Single(sbm => sbm.month == date.Month).Item2
                     : new WikiPageStats.Stat[0];
