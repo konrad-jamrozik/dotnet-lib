@@ -38,24 +38,6 @@ namespace Wikitools.Tests
             new JsonDiffAssertion(expectedCurrentMonth,  currentMonth).Assert();
         }
 
-        // KJA NEXT: run this after the defect in
-        // Wikitools.WikiPagesStatsStorage.ToPageStatsSplitByMonth
-        // is fixed.
-        // Confirm the defect is fixed by observing first the Program returns correct stats for article ID 13338
-        // for January. Now it it thinks January are "current month" instead of "previous month".
-        [Fact(Skip = "Tool to be used manually")]
-        public async Task ToolMerge()
-        {
-            var cfg = WikitoolsConfig.From("wikitools_config.json");
-
-            var storage           = new MonthlyJsonFilesStorage(new WindowsOS(), cfg.StorageDirPath);
-            var janDate           = new DateTime(2021, 1, 1);
-            var januaryStats      = storage.Read<WikiPageStats[]>(janDate);
-            var backedUpStatsPath = cfg.StorageDirPath + "/wiki_stats_2021_01_19.json";
-            var backedUpStats     = JsonSerializer.Deserialize<WikiPageStats[]>(File.ReadAllText(backedUpStatsPath))!;
-            var mergedStats       = WikiPagesStatsStorage.Merge(januaryStats, backedUpStats);
-            // await storage.Write(mergedStats, janDate);
-        }
 
         private static (WikiPageStats[] pageStats, WikiPageStats[] expectedPreviousMonth, WikiPageStats[]
             expectedCurrentMonth)
