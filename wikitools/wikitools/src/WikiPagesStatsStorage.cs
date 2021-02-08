@@ -2,7 +2,6 @@
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using MoreLinq;
 using Wikitools.AzureDevOps;
 using Wikitools.Lib.Primitives;
 
@@ -42,15 +41,12 @@ namespace Wikitools
         // kja test the Merge method
         public static WikiPageStats[] Merge(WikiPageStats[] previousStats, WikiPageStats[] currentStats)
         {
-            // kja abstract away this algorithm. Namely, into something like:
-            // arr1.IntersectUsing(keySelector: ps => ps.Id, func: (ps1, ps2) => merge(ps1, ps2))
-
             var previousStatsByPageId = previousStats.ToDictionary(ps => ps.Id);
             var currentStatsByPageId  = currentStats.ToDictionary(ps => ps.Id);
 
-            var previousIds     = Enumerable.ToHashSet(previousStats.Select(ps => ps.Id));
-            var currentIds      = Enumerable.ToHashSet(currentStats.Select(ps => ps.Id));
-            var intersectingIds = Enumerable.ToHashSet(previousIds.Intersect(currentIds));
+            var previousIds     = previousStats.Select(ps => ps.Id).ToHashSet();
+            var currentIds      = currentStats.Select(ps => ps.Id).ToHashSet();
+            var intersectingIds = previousIds.Intersect(currentIds).ToHashSet();
 
             var currentOnlyStats  = currentIds.Except(intersectingIds).Select(id => currentStatsByPageId[id]);
             var previousOnlyStats = previousIds.Except(intersectingIds).Select(id => previousStatsByPageId[id]);
@@ -58,6 +54,8 @@ namespace Wikitools
                 intersectingIds.Select(id => Merge(previousStatsByPageId[id], currentStatsByPageId[id]));
 
             var merged = previousOnlyStats.Union(intersectingStats).Union(currentOnlyStats).ToArray();
+            // kja once tested, replace with:
+            var merged2 = previousStats.UnionUsing(currentStats, ps => ps.Id, Merge);
 
             Debug.Assert(merged.DistinctBy(m => m.Id).Count() == merged.Length, "Any given page appears only once");
             merged.ForEach(ps => Debug.Assert(
