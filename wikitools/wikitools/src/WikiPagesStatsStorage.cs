@@ -38,7 +38,6 @@ namespace Wikitools
             return Trim(Merge(previousMonthStats, currentMonthStats), previousDate, CurrentDate);
         }
 
-        // kja test the Merge method
         public static WikiPageStats[] Merge(WikiPageStats[] previousStats, WikiPageStats[] currentStats)
         {
             var previousStatsByPageId = previousStats.ToDictionary(ps => ps.Id);

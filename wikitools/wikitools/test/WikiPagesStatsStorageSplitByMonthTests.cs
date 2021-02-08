@@ -6,6 +6,18 @@ using Xunit;
 
 namespace Wikitools.Tests
 {
+    // kja NEXT: add Merge tests. Probably change TestPayload properties to expectation-agnostic
+    // like: all previous month data, all current month data, all foo page data, all bar page data.
+    // whatever is needed that can be used to test both split and merge.
+    // Some tests:
+    // Split(x,x) = x, where x is only for one month
+    // Merge(Split(x,y)) == (x,y)
+    // Split(Merge(x,y)) == (x,y)
+    // Merge(x,x) == x
+    // Merge(page1, page2) == stats for both page1 and page2
+    // Merge(page1month1, page1month2) == stats for both months for page1
+    // Merge(page1day1, page1day2) == stats for both days for page1
+    // Some test checking which page rename takes precedence, both in correct ((prev,curr)) and flipped ((curr,prev)) ordering.
     public class WikiPagesStatsStorageTests
     {
         private static readonly DateTime JanuaryDate = new DateTime(year: 2021,  month: 1,  day: 3).ToUniversalTime();
