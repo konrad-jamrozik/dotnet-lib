@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using MoreLinq;
 using Wikitools.AzureDevOps;
+using Wikitools.Lib.Primitives;
 
 namespace Wikitools
 {
@@ -104,12 +105,12 @@ namespace Wikitools
             Debug.Assert(pagesStats.Any());
 
             // For each WikiPageStats, group (key) the stats by month number.
-            (WikiPageStats ps, ILookup<int, WikiPageStats.Stat>)[] pagesWithStatsGroupedByMonth
-                = pagesStats.Select(ps => (ps, ps.Stats.ToLookup(s => s.Day.Month))).ToArray();
+            (WikiPageStats ps, ILookup<DateTime, WikiPageStats.Stat>)[] pagesWithStatsGroupedByDate
+                = pagesStats.Select(ps => (ps, ps.Stats.ToLookup(s => s.Day.Trim(DateTimePrecision.Month)))).ToArray();
 
             // For each page stats, return a tuple of that page stats for last and current month.
             (WikiPageStats previousMonthPageStats, WikiPageStats currentMonthPageStats)[] pagesStatsSplitByMonth =
-                pagesWithStatsGroupedByMonth.Select(pt => ToPageStatsSplitByMonth(pt, currentDate)).ToArray();
+                pagesWithStatsGroupedByDate.Select(ps => ToPageStatsSplitByMonth(ps, currentDate)).ToArray();
 
             WikiPageStats[] previousMonthStats = pagesStatsSplitByMonth.Select(t => t.previousMonthPageStats).ToArray();
             WikiPageStats[] currentMonthStats  = pagesStatsSplitByMonth.Select(t => t.currentMonthPageStats).ToArray();
@@ -118,35 +119,32 @@ namespace Wikitools
 
         private static (WikiPageStats previousMonthPageStats, WikiPageStats currentMonthPageStats)
             ToPageStatsSplitByMonth(
-                (WikiPageStats pageStats, ILookup<int, WikiPageStats.Stat> statsByMonth) pageWithStatsGroupedByMonth,
+                (WikiPageStats pageStats, ILookup<DateTime, WikiPageStats.Stat> statsByDate) pageWithStatsGroupedByMonth,
                 DateTime currentDate)
         {
-            (int month, WikiPageStats.Stat[])[] statsByMonth =
-                pageWithStatsGroupedByMonth.statsByMonth.Select(stats => (stats.Key, stats.ToArray()))
-                    // BUG this orderBy will break on Dec/Jan (12->1)
+            (DateTime date, WikiPageStats.Stat[])[] statsByDate =
+                pageWithStatsGroupedByMonth.statsByDate.Select(stats => (stats.Key, stats.ToArray()))
                     .OrderBy(stats => stats.Key)
                     .ToArray();
 
-            Debug.Assert(statsByMonth.Length <= 2,
+            Debug.Assert(statsByDate.Length <= 2,
                 "The wiki stats are expected to come from no more than 2 months");
-            // BUG This will break in case of December / January. Test for this.
-            Debug.Assert(statsByMonth.Length <= 1 || (statsByMonth[0].month + 1 == statsByMonth[1].month),
+            Debug.Assert(statsByDate.Length <= 1 || (statsByDate[0].date.AddMonths(1)  == statsByDate[1].date),
                 "The wiki stats are expected to come from consecutive months");
 
             var previousMonthPageStats = pageWithStatsGroupedByMonth.pageStats with
             {
-                Stats = SingleMonthStats(statsByMonth, currentDate.AddMonths(-1))
+                Stats = SingleMonthStats(statsByDate, currentDate.AddMonths(-1))
             };
-            // BUG (maybe already fixed?? not sure) add test for statsByMonth.Length == 0, which is when input stats[] length is 0.
             var currentMonthPageStats = pageWithStatsGroupedByMonth.pageStats with
             {
-                Stats = SingleMonthStats(statsByMonth, currentDate)
+                Stats = SingleMonthStats(statsByDate, currentDate)
             };
             return (previousMonthPageStats, currentMonthPageStats);
 
-            WikiPageStats.Stat[] SingleMonthStats((int month, WikiPageStats.Stat[])[] statsByMonth, DateTime date) =>
-                statsByMonth.Any(sbm => sbm.month == date.Month)
-                    ? statsByMonth.Single(sbm => sbm.month == date.Month).Item2
+            WikiPageStats.Stat[] SingleMonthStats((DateTime date, WikiPageStats.Stat[])[] statsByDate, DateTime date) =>
+                statsByDate.Any(sbd => sbd.date.Month == date.Month)
+                    ? statsByDate.Single(sbd => sbd.date.Month == date.Month).Item2
                     : new WikiPageStats.Stat[0];
         }
 

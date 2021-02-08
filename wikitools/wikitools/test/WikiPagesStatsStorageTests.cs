@@ -8,16 +8,24 @@ namespace Wikitools.Tests
 {
     public class WikiPagesStatsStorageTests
     {
+        private static readonly DateTime JanuaryDate = new DateTime(year: 2021,  month: 1, day: 3).ToUniversalTime();
         private static readonly DateTime FebruaryDate = new DateTime(year: 2021, month: 2, day: 15).ToUniversalTime();
+        private static readonly DateTime DecemberDate = new DateTime(year: 2021,  month: 12, day: 22).ToUniversalTime();
 
         [Fact]
         public void SplitByMonthTest() => Verify(PageStatsData);
 
         [Fact]
+        public void SplitByMonthTestNoStats() => Verify(BuildTestPayload(FebruaryDate));
+
+        [Fact]
         public void SplitByMonthTestOnlyPreviousMonth() => Verify(PageStatsDataPreviousMonthOnly);
 
         [Fact]
-        public void SplitByMonthTestOnlyYearWrap() => Verify(PageStatsDataYearWrap);
+        public void SplitByMonthTestYearWrap() => Verify(PageStatsDataYearWrap);
+
+        [Fact]
+        public void SplitByMonthTestJustBeforeYearWrap() => Verify(PageStatsDataJustBeforeYearWrap);
 
         private static void Verify(TestPayload data)
         {
@@ -76,17 +84,33 @@ namespace Wikitools.Tests
         }
 
         private static TestPayload PageStatsDataPreviousMonthOnly =>
-            BuildTestPayload(FebruaryDate, barDaysPreviousMonth: new WikiPageStats.Stat[]
-            {
-                new(115, FebruaryDate.AddMonths(-1))
-            });
+            BuildTestPayload(FebruaryDate,
+                barDaysPreviousMonth: new WikiPageStats.Stat[]
+                {
+                    new(115, FebruaryDate.AddMonths(-1))
+                });
 
         private static TestPayload PageStatsDataYearWrap =>
-            BuildTestPayload(FebruaryDate, barDaysPreviousMonth: new WikiPageStats.Stat[]
-            {
-                // kja curr work
-                new(115, FebruaryDate.AddMonths(-1))
-            });
+            BuildTestPayload(JanuaryDate,
+                barDaysPreviousMonth: new WikiPageStats.Stat[]
+                {
+                    new(1203, JanuaryDate.AddMonths(-1))
+                },
+                barDaysCurrentMonth: new WikiPageStats.Stat[]
+                {
+                    new(103, JanuaryDate)
+                });
+
+        private static TestPayload PageStatsDataJustBeforeYearWrap =>
+            BuildTestPayload(DecemberDate,
+                barDaysPreviousMonth: new WikiPageStats.Stat[]
+                {
+                    new(1122, DecemberDate.AddMonths(-1))
+                },
+                barDaysCurrentMonth: new WikiPageStats.Stat[]
+                {
+                    new(1222, DecemberDate)
+                });
 
         private static TestPayload
             BuildTestPayload(
@@ -103,20 +127,20 @@ namespace Wikitools.Tests
 
             var pageStats = new WikiPageStats[]
             {
-                new("/Foo", 1, fooDaysPreviousMonth.Concat(fooDaysCurrentMonth).ToArray()),
-                new("/Bar", 2, barDaysPreviousMonth.Concat(barDaysCurrentMonth).ToArray())
+                new("/Foo", 100, fooDaysPreviousMonth.Concat(fooDaysCurrentMonth).ToArray()),
+                new("/Bar", 200, barDaysPreviousMonth.Concat(barDaysCurrentMonth).ToArray())
             };
 
             var expectedPreviousMonth = new WikiPageStats[]
             {
-                new("/Foo", 1, fooDaysPreviousMonth),
-                new("/Bar", 2, barDaysPreviousMonth)
+                new("/Foo", 100, fooDaysPreviousMonth),
+                new("/Bar", 200, barDaysPreviousMonth)
             };
 
             var expectedCurrentMonth = new WikiPageStats[]
             {
-                new("/Foo", 1, fooDaysCurrentMonth),
-                new("/Bar", 2, barDaysCurrentMonth)
+                new("/Foo", 100, fooDaysCurrentMonth),
+                new("/Bar", 200, barDaysCurrentMonth)
             };
 
             return new TestPayload(date, pageStats, expectedPreviousMonth, expectedCurrentMonth);
