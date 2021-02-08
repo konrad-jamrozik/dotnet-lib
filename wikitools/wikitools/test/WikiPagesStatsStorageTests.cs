@@ -8,133 +8,124 @@ namespace Wikitools.Tests
 {
     public class WikiPagesStatsStorageTests
     {
-        private static readonly DateTime CurrentDate = new DateTime(year: 2021, month: 2, day: 15).ToUniversalTime();
+        private static readonly DateTime FebruaryDate = new DateTime(year: 2021, month: 2, day: 15).ToUniversalTime();
 
         [Fact]
-        public void SplitByMonthTest()
-        {
-            var (pageStats, expectedPreviousMonth, expectedCurrentMonth) = PageStatsData;
-
-            // Act
-            var (previousMonth, currentMonth) = WikiPagesStatsStorage.SplitByMonth(pageStats, CurrentDate);
-
-            new JsonDiffAssertion(expectedPreviousMonth, previousMonth).Assert();
-            new JsonDiffAssertion(expectedCurrentMonth,  currentMonth).Assert();
-        }
+        public void SplitByMonthTest() => Verify(PageStatsData);
 
         [Fact]
-        public void SplitByMonthTestOnlyPreviousMonth()
+        public void SplitByMonthTestOnlyPreviousMonth() => Verify(PageStatsDataPreviousMonthOnly);
+
+        [Fact]
+        public void SplitByMonthTestOnlyYearWrap() => Verify(PageStatsDataYearWrap);
+
+        private static void Verify(TestPayload data)
         {
-            var (pageStats, expectedPreviousMonth, expectedCurrentMonth) = PageStatsDataPreviousMonthOnly;
-
             // Act
-            var (previousMonth, currentMonth) = WikiPagesStatsStorage.SplitByMonth(pageStats, CurrentDate);
+            var (previousMonth, currentMonth) = WikiPagesStatsStorage.SplitByMonth(data.PageStats, data.Date);
 
-            new JsonDiffAssertion(expectedPreviousMonth, previousMonth).Assert();
-            new JsonDiffAssertion(expectedCurrentMonth,  currentMonth).Assert();
+            new JsonDiffAssertion(data.ExpectedPreviousMonth, previousMonth).Assert();
+            new JsonDiffAssertion(data.ExpectedCurrentMonth,   currentMonth).Assert();
         }
 
-
-        private static (WikiPageStats[] pageStats, WikiPageStats[] expectedPreviousMonth, WikiPageStats[]
-            expectedCurrentMonth)
-            PageStatsData
+        private static TestPayload PageStatsData
         {
             get
             {
                 var fooDaysPreviousMonth = new WikiPageStats.Stat[]
                 {
-                    new(113, CurrentDate.AddMonths(-1).AddDays(-2)),
-                    new(114, CurrentDate.AddMonths(-1).AddDays(-1)),
-                    new(115, CurrentDate.AddMonths(-1)),
-                    new(131, CurrentDate.AddDays(-15))
+                    new(113, FebruaryDate.AddMonths(-1).AddDays(-2)),
+                    new(114, FebruaryDate.AddMonths(-1).AddDays(-1)),
+                    new(115, FebruaryDate.AddMonths(-1)),
+                    new(131, FebruaryDate.AddDays(-15))
                 };
 
                 var fooDaysCurrentMonth = new WikiPageStats.Stat[]
                 {
-                    new(201, CurrentDate.AddDays(-14)),
-                    new(212, CurrentDate.AddDays(-3)),
-                    new(213, CurrentDate.AddDays(-2)),
-                    new(214, CurrentDate.AddDays(-1)),
-                    new(215, CurrentDate)
+                    new(201, FebruaryDate.AddDays(-14)),
+                    new(212, FebruaryDate.AddDays(-3)),
+                    new(213, FebruaryDate.AddDays(-2)),
+                    new(214, FebruaryDate.AddDays(-1)),
+                    new(215, FebruaryDate)
                 };
 
                 var barDaysPreviousMonth = new WikiPageStats.Stat[]
                 {
-                    new(101, CurrentDate.AddMonths(-1).AddDays(-14)),
-                    new(102, CurrentDate.AddMonths(-1).AddDays(-13)),
-                    new(115, CurrentDate.AddMonths(-1)),
-                    new(131, CurrentDate.AddDays(-15))
+                    new(101, FebruaryDate.AddMonths(-1).AddDays(-14)),
+                    new(102, FebruaryDate.AddMonths(-1).AddDays(-13)),
+                    new(115, FebruaryDate.AddMonths(-1)),
+                    new(131, FebruaryDate.AddDays(-15))
                 };
 
                 var barDaysCurrentMonth = new WikiPageStats.Stat[]
                 {
-                    new(201, CurrentDate.AddDays(-14)),
-                    new(215, CurrentDate),
-                    new(216, CurrentDate.AddDays(1)),
-                    new(217, CurrentDate.AddDays(2)),
-                    new(228, CurrentDate.AddDays(13))
+                    new(201, FebruaryDate.AddDays(-14)),
+                    new(215, FebruaryDate),
+                    new(216, FebruaryDate.AddDays(1)),
+                    new(217, FebruaryDate.AddDays(2)),
+                    new(228, FebruaryDate.AddDays(13))
                 };
 
-                var pageStats = new WikiPageStats[]
-                {
-                    new("/Foo", 1, fooDaysPreviousMonth.Concat(fooDaysCurrentMonth).ToArray()),
-                    new("/Bar", 2, barDaysPreviousMonth.Concat(barDaysCurrentMonth).ToArray())
-                };
-
-                var expectedPreviousMonth = new WikiPageStats[]
-                {
-                    new("/Foo", 1, fooDaysPreviousMonth),
-                    new("/Bar", 2, barDaysPreviousMonth)
-                };
-
-                var expectedCurrentMonth = new WikiPageStats[]
-                {
-                    new("/Foo", 1, fooDaysCurrentMonth),
-                    new("/Bar", 2, barDaysCurrentMonth)
-                };
-
-                return (pageStats, expectedPreviousMonth, expectedCurrentMonth);
+                return BuildTestPayload(
+                    FebruaryDate,
+                    fooDaysPreviousMonth,
+                    fooDaysCurrentMonth,
+                    barDaysPreviousMonth,
+                    barDaysCurrentMonth);
             }
         }
 
-        private static (WikiPageStats[] pageStats, WikiPageStats[] expectedPreviousMonth, WikiPageStats[]
-            expectedCurrentMonth)
-            PageStatsDataPreviousMonthOnly
-        {
-            get
+        private static TestPayload PageStatsDataPreviousMonthOnly =>
+            BuildTestPayload(FebruaryDate, barDaysPreviousMonth: new WikiPageStats.Stat[]
             {
-                var fooDaysPreviousMonth = new WikiPageStats.Stat[] { };
+                new(115, FebruaryDate.AddMonths(-1))
+            });
 
-                var fooDaysCurrentMonth = new WikiPageStats.Stat[] { };
+        private static TestPayload PageStatsDataYearWrap =>
+            BuildTestPayload(FebruaryDate, barDaysPreviousMonth: new WikiPageStats.Stat[]
+            {
+                // kja curr work
+                new(115, FebruaryDate.AddMonths(-1))
+            });
 
-                var barDaysPreviousMonth = new WikiPageStats.Stat[]
-                {
-                    new(115, CurrentDate.AddMonths(-1))
-                };
+        private static TestPayload
+            BuildTestPayload(
+                DateTime date,
+                WikiPageStats.Stat[]? fooDaysPreviousMonth = null,
+                WikiPageStats.Stat[]? fooDaysCurrentMonth = null,
+                WikiPageStats.Stat[]? barDaysPreviousMonth = null,
+                WikiPageStats.Stat[]? barDaysCurrentMonth = null)
+        {
+            fooDaysPreviousMonth ??= Array.Empty<WikiPageStats.Stat>();
+            fooDaysCurrentMonth ??= Array.Empty<WikiPageStats.Stat>();
+            barDaysPreviousMonth ??= Array.Empty<WikiPageStats.Stat>();
+            barDaysCurrentMonth ??= Array.Empty<WikiPageStats.Stat>();
 
-                var barDaysCurrentMonth = new WikiPageStats.Stat[] { };
+            var pageStats = new WikiPageStats[]
+            {
+                new("/Foo", 1, fooDaysPreviousMonth.Concat(fooDaysCurrentMonth).ToArray()),
+                new("/Bar", 2, barDaysPreviousMonth.Concat(barDaysCurrentMonth).ToArray())
+            };
 
-                var pageStats = new WikiPageStats[]
-                {
-                    new("/Foo", 1, fooDaysPreviousMonth.Concat(fooDaysCurrentMonth).ToArray()),
-                    new("/Bar", 2, barDaysPreviousMonth.Concat(barDaysCurrentMonth).ToArray())
-                };
+            var expectedPreviousMonth = new WikiPageStats[]
+            {
+                new("/Foo", 1, fooDaysPreviousMonth),
+                new("/Bar", 2, barDaysPreviousMonth)
+            };
 
-                var expectedPreviousMonth = new WikiPageStats[]
-                {
-                    new("/Foo", 1, fooDaysPreviousMonth),
-                    new("/Bar", 2, barDaysPreviousMonth)
-                };
+            var expectedCurrentMonth = new WikiPageStats[]
+            {
+                new("/Foo", 1, fooDaysCurrentMonth),
+                new("/Bar", 2, barDaysCurrentMonth)
+            };
 
-                var expectedCurrentMonth = new WikiPageStats[]
-                {
-                    new("/Foo", 1, fooDaysCurrentMonth),
-                    new("/Bar", 2, barDaysCurrentMonth)
-                };
-
-                return (pageStats, expectedPreviousMonth, expectedCurrentMonth);
-            }
+            return new TestPayload(date, pageStats, expectedPreviousMonth, expectedCurrentMonth);
         }
 
+        private record TestPayload(
+            DateTime Date,
+            WikiPageStats[] PageStats,
+            WikiPageStats[] ExpectedPreviousMonth,
+            WikiPageStats[] ExpectedCurrentMonth);
     }
 }
