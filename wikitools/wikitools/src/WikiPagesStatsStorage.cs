@@ -129,7 +129,7 @@ namespace Wikitools
 
             Debug.Assert(statsByDate.Length <= 2,
                 "The wiki stats are expected to come from no more than 2 months");
-            Debug.Assert(statsByDate.Length <= 1 || (statsByDate[0].date.AddMonths(1)  == statsByDate[1].date),
+            Debug.Assert(statsByDate.Length <= 1 || (statsByDate[0].date.AddMonths(1) == statsByDate[1].date),
                 "The wiki stats are expected to come from consecutive months");
 
             var previousMonthPageStats = pageWithStatsGroupedByMonth.pageStats with

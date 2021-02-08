@@ -94,7 +94,7 @@ namespace Wikitools.Tests
             BuildTestPayload(JanuaryDate,
                 barDaysPreviousMonth: new WikiPageStats.Stat[]
                 {
-                    new(1203, JanuaryDate.AddMonths(-1))
+                    new(1201, JanuaryDate.AddMonths(-1).AddDays(-2))
                 },
                 barDaysCurrentMonth: new WikiPageStats.Stat[]
                 {
@@ -109,7 +109,7 @@ namespace Wikitools.Tests
                 },
                 barDaysCurrentMonth: new WikiPageStats.Stat[]
                 {
-                    new(1222, DecemberDate)
+                    new(1223, DecemberDate.AddDays(1))
                 });
 
         private static TestPayload
