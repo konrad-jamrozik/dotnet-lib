@@ -109,8 +109,7 @@ namespace Wikitools
                 .Select(ps => (ps, ps.Stats.GroupAndOrderBy(s => s.Day.Trim(DateTimePrecision.Month)))).ToArray();
 
             // For each page, return a tuple of that page stats for previous and current month
-            var pagesStatsSplitByMonth = pagesWithOrderedDayStats
-                .Select(ps => ToPageStatsSplitByMonth(ps, currentDate)).ToArray();
+            var pagesStatsSplitByMonth = pagesWithOrderedDayStats.Select(ps => SplitByMonth(ps, currentDate)).ToArray();
 
             WikiPageStats[] previousMonthStats = pagesStatsSplitByMonth.Select(t => t.previousMonthPageStats).ToArray();
             WikiPageStats[] currentMonthStats  = pagesStatsSplitByMonth.Select(t => t.currentMonthPageStats).ToArray();
@@ -118,7 +117,7 @@ namespace Wikitools
         }
 
         private static (WikiPageStats previousMonthPageStats, WikiPageStats currentMonthPageStats)
-            ToPageStatsSplitByMonth(
+            SplitByMonth(
                 (WikiPageStats stats, (DateTime date, WikiPageStats.DayStat[])[] dayStatsByDate) page,
                 DateTime currentDate)
         {
