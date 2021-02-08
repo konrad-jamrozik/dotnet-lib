@@ -4,15 +4,15 @@ using Microsoft.TeamFoundation.Wiki.WebApi;
 
 namespace Wikitools.AzureDevOps
 {
-    public record WikiPageStats(string Path, int Id, WikiPageStats.Stat[] Stats)
+    public record WikiPageStats(string Path, int Id, WikiPageStats.DayStat[] Stats)
     {
-        public static WikiPageStats From(WikiPageDetail pageDetail) => 
+        public static WikiPageStats From(WikiPageDetail pageDetail) =>
             new(pageDetail.Path, pageDetail.Id, GetStats(pageDetail));
 
-        private static Stat[] GetStats(WikiPageDetail pageDetail) =>
-            pageDetail.ViewStats?.Select(dayStat => new Stat(dayStat.Count, dayStat.Day.ToUniversalTime())).ToArray()
-            ?? Array.Empty<Stat>();
+        private static DayStat[] GetStats(WikiPageDetail pageDetail) =>
+            pageDetail.ViewStats?.Select(dayStat => new DayStat(dayStat.Count, dayStat.Day.ToUniversalTime())).ToArray()
+            ?? Array.Empty<DayStat>();
 
-        public record Stat(int Count, DateTime Day) { }
+        public record DayStat(int Count, DateTime Day) { }
     }
 }

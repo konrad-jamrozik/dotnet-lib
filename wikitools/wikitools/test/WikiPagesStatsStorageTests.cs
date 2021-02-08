@@ -8,9 +8,9 @@ namespace Wikitools.Tests
 {
     public class WikiPagesStatsStorageTests
     {
-        private static readonly DateTime JanuaryDate = new DateTime(year: 2021,  month: 1, day: 3).ToUniversalTime();
-        private static readonly DateTime FebruaryDate = new DateTime(year: 2021, month: 2, day: 15).ToUniversalTime();
-        private static readonly DateTime DecemberDate = new DateTime(year: 2021,  month: 12, day: 22).ToUniversalTime();
+        private static readonly DateTime JanuaryDate = new DateTime(year: 2021,  month: 1,  day: 3).ToUniversalTime();
+        private static readonly DateTime FebruaryDate = new DateTime(year: 2021, month: 2,  day: 15).ToUniversalTime();
+        private static readonly DateTime DecemberDate = new DateTime(year: 2021, month: 12, day: 22).ToUniversalTime();
 
         [Fact]
         public void SplitByMonthTest() => Verify(PageStatsData);
@@ -33,14 +33,14 @@ namespace Wikitools.Tests
             var (previousMonth, currentMonth) = WikiPagesStatsStorage.SplitByMonth(data.PageStats, data.Date);
 
             new JsonDiffAssertion(data.ExpectedPreviousMonth, previousMonth).Assert();
-            new JsonDiffAssertion(data.ExpectedCurrentMonth,   currentMonth).Assert();
+            new JsonDiffAssertion(data.ExpectedCurrentMonth,  currentMonth).Assert();
         }
 
         private static TestPayload PageStatsData
         {
             get
             {
-                var fooDaysPreviousMonth = new WikiPageStats.Stat[]
+                var fooDaysPreviousMonth = new WikiPageStats.DayStat[]
                 {
                     new(113, FebruaryDate.AddMonths(-1).AddDays(-2)),
                     new(114, FebruaryDate.AddMonths(-1).AddDays(-1)),
@@ -48,7 +48,7 @@ namespace Wikitools.Tests
                     new(131, FebruaryDate.AddDays(-15))
                 };
 
-                var fooDaysCurrentMonth = new WikiPageStats.Stat[]
+                var fooDaysCurrentMonth = new WikiPageStats.DayStat[]
                 {
                     new(201, FebruaryDate.AddDays(-14)),
                     new(212, FebruaryDate.AddDays(-3)),
@@ -57,7 +57,7 @@ namespace Wikitools.Tests
                     new(215, FebruaryDate)
                 };
 
-                var barDaysPreviousMonth = new WikiPageStats.Stat[]
+                var barDaysPreviousMonth = new WikiPageStats.DayStat[]
                 {
                     new(101, FebruaryDate.AddMonths(-1).AddDays(-14)),
                     new(102, FebruaryDate.AddMonths(-1).AddDays(-13)),
@@ -65,7 +65,7 @@ namespace Wikitools.Tests
                     new(131, FebruaryDate.AddDays(-15))
                 };
 
-                var barDaysCurrentMonth = new WikiPageStats.Stat[]
+                var barDaysCurrentMonth = new WikiPageStats.DayStat[]
                 {
                     new(201, FebruaryDate.AddDays(-14)),
                     new(215, FebruaryDate),
@@ -85,29 +85,29 @@ namespace Wikitools.Tests
 
         private static TestPayload PageStatsDataPreviousMonthOnly =>
             BuildTestPayload(FebruaryDate,
-                barDaysPreviousMonth: new WikiPageStats.Stat[]
+                barDaysPreviousMonth: new WikiPageStats.DayStat[]
                 {
                     new(115, FebruaryDate.AddMonths(-1))
                 });
 
         private static TestPayload PageStatsDataYearWrap =>
             BuildTestPayload(JanuaryDate,
-                barDaysPreviousMonth: new WikiPageStats.Stat[]
+                barDaysPreviousMonth: new WikiPageStats.DayStat[]
                 {
                     new(1201, JanuaryDate.AddMonths(-1).AddDays(-2))
                 },
-                barDaysCurrentMonth: new WikiPageStats.Stat[]
+                barDaysCurrentMonth: new WikiPageStats.DayStat[]
                 {
                     new(103, JanuaryDate)
                 });
 
         private static TestPayload PageStatsDataJustBeforeYearWrap =>
             BuildTestPayload(DecemberDate,
-                barDaysPreviousMonth: new WikiPageStats.Stat[]
+                barDaysPreviousMonth: new WikiPageStats.DayStat[]
                 {
                     new(1122, DecemberDate.AddMonths(-1))
                 },
-                barDaysCurrentMonth: new WikiPageStats.Stat[]
+                barDaysCurrentMonth: new WikiPageStats.DayStat[]
                 {
                     new(1223, DecemberDate.AddDays(1))
                 });
@@ -115,15 +115,15 @@ namespace Wikitools.Tests
         private static TestPayload
             BuildTestPayload(
                 DateTime date,
-                WikiPageStats.Stat[]? fooDaysPreviousMonth = null,
-                WikiPageStats.Stat[]? fooDaysCurrentMonth = null,
-                WikiPageStats.Stat[]? barDaysPreviousMonth = null,
-                WikiPageStats.Stat[]? barDaysCurrentMonth = null)
+                WikiPageStats.DayStat[]? fooDaysPreviousMonth = null,
+                WikiPageStats.DayStat[]? fooDaysCurrentMonth = null,
+                WikiPageStats.DayStat[]? barDaysPreviousMonth = null,
+                WikiPageStats.DayStat[]? barDaysCurrentMonth = null)
         {
-            fooDaysPreviousMonth ??= Array.Empty<WikiPageStats.Stat>();
-            fooDaysCurrentMonth ??= Array.Empty<WikiPageStats.Stat>();
-            barDaysPreviousMonth ??= Array.Empty<WikiPageStats.Stat>();
-            barDaysCurrentMonth ??= Array.Empty<WikiPageStats.Stat>();
+            fooDaysPreviousMonth ??= Array.Empty<WikiPageStats.DayStat>();
+            fooDaysCurrentMonth ??= Array.Empty<WikiPageStats.DayStat>();
+            barDaysPreviousMonth ??= Array.Empty<WikiPageStats.DayStat>();
+            barDaysCurrentMonth ??= Array.Empty<WikiPageStats.DayStat>();
 
             var pageStats = new WikiPageStats[]
             {

@@ -13,7 +13,7 @@ namespace Wikitools
         public async Task<WikiPagesStatsStorage> Update(AdoWiki wiki, int pageViewsForDays)
         {
             var pageStats = await wiki.PagesStats(pageViewsForDays);
-            
+
             var (previousMonthStats, currentMonthStats) = SplitByMonth(pageStats, CurrentDate);
 
             await Storage.With(CurrentDate,               (WikiPageStats[] stats) => Merge(stats, currentMonthStats));
@@ -84,9 +84,9 @@ namespace Wikitools
             return new WikiPageStats(path, id, Merge(previousPageStats.Stats, currentPageStats.Stats));
         }
 
-        private static WikiPageStats.Stat[] Merge(
-            WikiPageStats.Stat[] pagePreviousStats,
-            WikiPageStats.Stat[] pageCurrentStats)
+        private static WikiPageStats.DayStat[] Merge(
+            WikiPageStats.DayStat[] pagePreviousStats,
+            WikiPageStats.DayStat[] pageCurrentStats)
         {
             var groupedByDay = pagePreviousStats.Concat(pageCurrentStats).GroupBy(stat => stat.Day);
             var mergedStats = groupedByDay.Select(dayStats =>
@@ -105,7 +105,7 @@ namespace Wikitools
             Debug.Assert(pagesStats.Any());
 
             // For each page, group and order its day stats by month
-            (WikiPageStats stats, (DateTime date, WikiPageStats.Stat[])[] dayStats)[] pagesWithOrderedDayStats =
+            (WikiPageStats stats, (DateTime date, WikiPageStats.DayStat[])[] dayStats)[] pagesWithOrderedDayStats =
                 pagesStats.Select(ps =>
                 (
                     ps,
@@ -127,11 +127,13 @@ namespace Wikitools
 
         private static (WikiPageStats previousMonthPageStats, WikiPageStats currentMonthPageStats)
             ToPageStatsSplitByMonth(
-                (WikiPageStats stats, (DateTime date, WikiPageStats.Stat[])[] dayStatsByDate) page, DateTime currentDate)
+                (WikiPageStats stats, (DateTime date, WikiPageStats.DayStat[])[] dayStatsByDate) page,
+                DateTime currentDate)
         {
             Debug.Assert(page.dayStatsByDate.Length <= 2,
                 "The wiki stats are expected to come from no more than 2 months");
-            Debug.Assert(page.dayStatsByDate.Length <= 1 || (page.dayStatsByDate[0].date.AddMonths(1) == page.dayStatsByDate[1].date),
+            Debug.Assert(page.dayStatsByDate.Length <= 1 ||
+                         (page.dayStatsByDate[0].date.AddMonths(1) == page.dayStatsByDate[1].date),
                 "The wiki stats are expected to come from consecutive months");
 
             var previousMonthPageStats = page.stats with
@@ -144,12 +146,12 @@ namespace Wikitools
             };
             return (previousMonthPageStats, currentMonthPageStats);
 
-            WikiPageStats.Stat[] SingleMonthStats(
-                (DateTime date, WikiPageStats.Stat[] dayStatsByDate)[] dayStatsByDateByDate,
+            WikiPageStats.DayStat[] SingleMonthStats(
+                (DateTime date, WikiPageStats.DayStat[] dayStatsByDate)[] dayStatsByDateByDate,
                 DateTime date) =>
                 dayStatsByDateByDate.Any(statsTuple => statsTuple.date.Month == date.Month)
                     ? dayStatsByDateByDate.Single(statsTuple => statsTuple.date.Month == date.Month).dayStatsByDate
-                    : new WikiPageStats.Stat[0];
+                    : new WikiPageStats.DayStat[0];
         }
 
         public static WikiPageStats[] Trim(WikiPageStats[] stats, DateTime startDate, DateTime endDate) =>
