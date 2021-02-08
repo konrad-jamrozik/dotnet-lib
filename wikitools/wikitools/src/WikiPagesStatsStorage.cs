@@ -138,10 +138,10 @@ namespace Wikitools
             return (previousMonthPageStats, currentMonthPageStats);
 
             WikiPageStats.DayStat[] SingleMonthStats(
-                (DateTime date, WikiPageStats.DayStat[] dayStatsByDate)[] dayStatsByDateByDate,
+                (DateTime date, WikiPageStats.DayStat[] dayStatsByDate)[] dayStatsByDate,
                 DateTime date) =>
-                dayStatsByDateByDate.Any(stats => stats.date.Month == date.Month)
-                    ? dayStatsByDateByDate.Single(stats => stats.date.Month == date.Month).dayStatsByDate
+                dayStatsByDate.Any(stats => stats.date.Month == date.Month)
+                    ? dayStatsByDate.Single(stats => stats.date.Month == date.Month).dayStatsByDate
                     : Array.Empty<WikiPageStats.DayStat>();
         }
 
