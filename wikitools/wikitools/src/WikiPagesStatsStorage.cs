@@ -105,20 +105,12 @@ namespace Wikitools
             Debug.Assert(pagesStats.Any());
 
             // For each page, group and order its day stats by month
-            (WikiPageStats stats, (DateTime date, WikiPageStats.DayStat[])[] dayStats)[] pagesWithOrderedDayStats =
-                pagesStats.Select(ps =>
-                (
-                    ps,
-                    ps.Stats
-                        .ToLookup(s => s.Day.Trim(DateTimePrecision.Month))
-                        .Select(dayStats => (dayStats.Key, dayStats.ToArray()))
-                        .OrderBy(dayStats => dayStats.Key)
-                        .ToArray()
-                )).ToArray();
+            var pagesWithOrderedDayStats = pagesStats
+                .Select(ps => (ps, ps.Stats.GroupAndOrderBy(s => s.Day.Trim(DateTimePrecision.Month)))).ToArray();
 
-            // For each page, return a tuple of that page stats for last and current month.
-            (WikiPageStats previousMonthPageStats, WikiPageStats currentMonthPageStats)[] pagesStatsSplitByMonth =
-                pagesWithOrderedDayStats.Select(ps => ToPageStatsSplitByMonth(ps, currentDate)).ToArray();
+            // For each page, return a tuple of that page stats for previous and current month
+            var pagesStatsSplitByMonth = pagesWithOrderedDayStats
+                .Select(ps => ToPageStatsSplitByMonth(ps, currentDate)).ToArray();
 
             WikiPageStats[] previousMonthStats = pagesStatsSplitByMonth.Select(t => t.previousMonthPageStats).ToArray();
             WikiPageStats[] currentMonthStats  = pagesStatsSplitByMonth.Select(t => t.currentMonthPageStats).ToArray();
