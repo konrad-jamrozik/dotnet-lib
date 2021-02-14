@@ -21,20 +21,8 @@ namespace Wikitools.Tests
     //   Do this test by passing the same data but flipped current/previous.
     public class WikiPagesStatsStorageTests
     {
+        // kja convert to theory with data class
         [Fact] public void ParameterizedTest() => Verify();
-
-        // @formatter:off
-        [Fact] public void SplitByMonthTestSameDay()            => VerifySplitByMonthThrows(PageStatsSameDay);
-        [Fact] public void SplitByMonthTestSamePreviousDay()    => VerifySplitByMonthThrows(PageStatsSamePreviousDay);
-        // @formatter:on
-
-        // @formatter:off
-        [Fact] public void MergeTestSameDay()           => VerifyMerge(PageStatsSameDay);
-        // @formatter:on
-
-        // @formatter:off
-        [Fact] public void MergeTestSameDayDifferentCounts() => VerifyMergeThrows(PageStatsSameDayDifferentCounts);
-        // @formatter:on
 
         // @formatter:off
         private static readonly DateTime  JanuaryDate = new DateTime(year: 2021, month:  1, day:  3).ToUniversalTime();
@@ -83,23 +71,27 @@ namespace Wikitools.Tests
                 },
                 SplitByMonthThrows: true);
 
-        private static TestPayload PageStatsSameDayDifferentCounts =>
-            new(FebruaryDate,
-                new WikiPageStats.DayStat[] { },
-                new WikiPageStats.DayStat[] { },
-                new WikiPageStats.DayStat[] { new(215, FebruaryDate) },
-                new WikiPageStats.DayStat[] { new(217, FebruaryDate) },
-                MergeThrows: true);
-
         private static TestPayload PageStatsSamePreviousDay =>
             new(FebruaryDate,
                 new WikiPageStats.DayStat[] { },
                 new WikiPageStats.DayStat[] { },
                 new WikiPageStats.DayStat[] { new(103, JanuaryDate) },
                 new WikiPageStats.DayStat[] { new(103, JanuaryDate) },
+                MergedDayStats: new[]
+                { 
+                    new WikiPageStats.DayStat[] {}, 
+                    new WikiPageStats.DayStat[] { new(103, JanuaryDate)}
+                },
                 SplitByMonthThrows: true);
 
-        
+        private static TestPayload PageStatsSameDayDifferentCounts =>
+            new(FebruaryDate,
+                new WikiPageStats.DayStat[] { },
+                new WikiPageStats.DayStat[] { },
+                new WikiPageStats.DayStat[] { new(215, FebruaryDate) },
+                new WikiPageStats.DayStat[] { new(217, FebruaryDate) },
+                SplitByMonthThrows: true,
+                MergeThrows: true);
 
         private static TestPayload PageStats
         {
@@ -147,8 +139,6 @@ namespace Wikitools.Tests
             }
         }
 
-
-        // kja pass as input: expected splitByMonth and MergeBehaviors: green/throw.
         private record TestPayload(
             DateTime Date,
             WikiPageStats.DayStat[] FooPagePreviousDays,
@@ -205,8 +195,8 @@ namespace Wikitools.Tests
                 PageStats,
                 PageStatsSameDay,
                 // kja curr work
-                //PageStatsSamePreviousDay,
-                //PageStatsSameDayDifferentCounts
+                PageStatsSamePreviousDay,
+                PageStatsSameDayDifferentCounts
             };
             payloads.ForEach(Verify);
         }
