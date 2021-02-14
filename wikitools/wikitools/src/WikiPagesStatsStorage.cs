@@ -132,19 +132,20 @@ namespace Wikitools
 
             var previousMonthPageStats = page.stats with
             {
-                Stats = SingleMonthStats(page.dayStatsByMonth, currentDate.AddMonths(-1))
+                Stats = SingleMonthOrderedDayStats(page.dayStatsByMonth, currentDate.AddMonths(-1))
             };
             var currentMonthPageStats = page.stats with
             {
-                Stats = SingleMonthStats(page.dayStatsByMonth, currentDate)
+                Stats = SingleMonthOrderedDayStats(page.dayStatsByMonth, currentDate)
             };
             return (previousMonthPageStats, currentMonthPageStats);
 
-            WikiPageStats.DayStat[] SingleMonthStats(
+            WikiPageStats.DayStat[] SingleMonthOrderedDayStats(
                 (DateTime month, WikiPageStats.DayStat[] dayStatsByMonth)[] dayStatsByDate,
                 DateTime date) =>
                 dayStatsByDate.Any(stats => stats.month.Month == date.Month)
                     ? dayStatsByDate.Single(stats => stats.month.Month == date.Month).dayStatsByMonth
+                        .OrderBy(ds => ds.Day).ToArray()
                     : Array.Empty<WikiPageStats.DayStat>();
         }
 

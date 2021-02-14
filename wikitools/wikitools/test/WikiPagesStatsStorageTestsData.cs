@@ -10,15 +10,15 @@ namespace Wikitools.Tests
     {
         private readonly WikiPagesStatsTestPayload[] _data =
         {
-            // PageStatsEmpty,
-            // PageStatsPreviousMonthOnly,
-            // PageStatsYearWrap,
-            // PageStatsBeforeYearWrap,
-            // PageStats,
-            // PageStatsSameDay,
-            // PageStatsSamePreviousDay,
-            // PageStatsSameDayDifferentCounts,
-            // PageStatsSameMonth,
+            PageStatsEmpty,
+            PageStatsPreviousMonthOnly,
+            PageStatsYearWrap,
+            PageStatsBeforeYearWrap,
+            PageStats,
+            PageStatsSameDay,
+            PageStatsSamePreviousDay,
+            PageStatsSameDayDifferentCounts,
+            PageStatsSameMonth,
             PageStatsUnorderedDayStats
         };
 
@@ -95,7 +95,6 @@ namespace Wikitools.Tests
                 SplitByMonthThrows: true,
                 MergeThrows: true);
 
-        // kja fails because split is not sorting
         private static WikiPagesStatsTestPayload PageStatsUnorderedDayStats =>
             new(FebruaryDate,
                 FooPagePreviousDays: new WikiPageStats.DayStat[]
@@ -123,8 +122,20 @@ namespace Wikitools.Tests
                     new(215, FebruaryDate),
                     new(217, FebruaryDate.AddDays(2)),
                     new(219, FebruaryDate.AddDays(4)), 
-                }
-                );
+                },
+                MergedDayStats: new[]
+                { 
+                    new WikiPageStats.DayStat[]
+                    {
+                        new(103, JanuaryDate),
+                        new(105, JanuaryDate.AddDays(2)), 
+                        new(107, JanuaryDate.AddDays(4)), 
+                        new(215, FebruaryDate),
+                        new(217, FebruaryDate.AddDays(2)),
+                        new(219, FebruaryDate.AddDays(4))
+                    }, 
+                    new WikiPageStats.DayStat[] { }
+                });
 
         private static WikiPagesStatsTestPayload PageStats
         {

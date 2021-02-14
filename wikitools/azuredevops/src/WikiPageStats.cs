@@ -10,7 +10,7 @@ namespace Wikitools.AzureDevOps
             new(pageDetail.Path, pageDetail.Id, GetStats(pageDetail));
 
         private static DayStat[] GetStats(WikiPageDetail pageDetail) =>
-            pageDetail.ViewStats?.Select(dayStat => new DayStat(dayStat.Count, dayStat.Day.ToUniversalTime())).ToArray()
+            pageDetail.ViewStats?.Select(dayStat => new DayStat(dayStat.Count, dayStat.Day.ToUniversalTime())).OrderBy(ds => ds.Day).ToArray()
             ?? Array.Empty<DayStat>();
 
         public record DayStat(int Count, DateTime Day) { }

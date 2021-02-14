@@ -48,6 +48,15 @@ namespace Wikitools.Tests
             new JsonDiffAssertion(data.MergedPagesStats, mergedSplit).Assert();
         }
 
+        private static (WikiPageStats[] previousMonth, WikiPageStats[] currentMonth)? VerifySplitByMonth(
+            WikiPagesStatsTestPayload data, Type? excType) =>
+            Verification.VerifyStruct(VerifySplitByMonth, data, excType);
+
+        private static WikiPageStats[]? VerifyMerge(WikiPagesStatsTestPayload data, Type? excType) =>
+            Verification.Verify<WikiPagesStatsTestPayload, WikiPageStats[]?>(VerifyMerge,
+                data,
+                excType);
+
         private static (WikiPageStats[] previousMonth, WikiPageStats[] currentMonth) VerifySplitByMonth(
             WikiPagesStatsTestPayload data)
         {
@@ -65,14 +74,5 @@ namespace Wikitools.Tests
             new JsonDiffAssertion(data.MergedPagesStats, merged).Assert();
             return merged;
         }
-
-        private static (WikiPageStats[] previousMonth, WikiPageStats[] currentMonth)? VerifySplitByMonth(
-            WikiPagesStatsTestPayload data, Type? excType) =>
-            Verification.VerifyStruct(VerifySplitByMonth, data, excType);
-
-        private static WikiPageStats[]? VerifyMerge(WikiPagesStatsTestPayload data, Type? excType) =>
-            Verification.Verify<WikiPagesStatsTestPayload, WikiPageStats[]?>(VerifyMerge,
-                data,
-                excType);
     }
 }
