@@ -4,7 +4,7 @@ using Microsoft.TeamFoundation.Wiki.WebApi;
 
 namespace Wikitools.AzureDevOps
 {
-    public record WikiPageStats(string Path, int Id, WikiPageStats.DayStat[] Stats) // kja Stats -> DayStats
+    public record WikiPageStats(string Path, int Id, WikiPageStats.DayStat[] DayStats)
     {
         public static WikiPageStats From(WikiPageDetail pageDetail) =>
             new(pageDetail.Path, pageDetail.Id, GetStats(pageDetail));

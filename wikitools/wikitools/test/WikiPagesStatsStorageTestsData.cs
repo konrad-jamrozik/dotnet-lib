@@ -97,13 +97,13 @@ namespace Wikitools.Tests
 
         private static WikiPagesStatsTestPayload PageStatsUnorderedDayStats =>
             new(FebruaryDate,
-                FooPagePreviousDays: new WikiPageStats.DayStat[]
+                FooPagePreviousDayStats: new WikiPageStats.DayStat[]
                 {
                     new(107, JanuaryDate.AddDays(4)), 
                     new(217, FebruaryDate.AddDays(2)), 
                     new(103, JanuaryDate)
                 },
-                FooPageCurrentDays: new WikiPageStats.DayStat[]
+                FooPageCurrentDayStats: new WikiPageStats.DayStat[]
                 {
                     new(219, FebruaryDate.AddDays(4)), 
                     new(105, JanuaryDate.AddDays(2)), 
@@ -185,24 +185,24 @@ namespace Wikitools.Tests
 
         private static WikiPagesStatsTestPayload PageStatsSameMonth =>
             new(FebruaryDate,
-                FooPagePreviousDays: new WikiPageStats.DayStat[]
+                FooPagePreviousDayStats: new WikiPageStats.DayStat[]
                 {
                     new(108, JanuaryDate.AddDays(5)),
                     new(218, FebruaryDate.AddDays(3))
                 },
-                FooPageCurrentDays: new WikiPageStats.DayStat[]
+                FooPageCurrentDayStats: new WikiPageStats.DayStat[]
                 {
                     new(104, JanuaryDate.AddDays(1)),
                     new(108, JanuaryDate.AddDays(5)),
                     new(110, JanuaryDate.AddDays(7))
                 },
-                BarPagePreviousDays: new WikiPageStats.DayStat[]
+                BarPagePreviousDayStats: new WikiPageStats.DayStat[]
                 {
                     new(215, FebruaryDate), 
                     new(216, FebruaryDate.AddDays(1)),
                     new(103, JanuaryDate)
                 },
-                BarPageCurrentDays: new WikiPageStats.DayStat[]
+                BarPageCurrentDayStats: new WikiPageStats.DayStat[]
                 {
                     new(216, FebruaryDate.AddDays(1)), 
                     new(217, FebruaryDate.AddDays(2))

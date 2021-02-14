@@ -7,10 +7,10 @@ namespace Wikitools.Tests
     // kja Days -> DayStats
     public record WikiPagesStatsTestPayload(
         DateTime Date,
-        WikiPageStats.DayStat[] FooPagePreviousDays,
-        WikiPageStats.DayStat[] FooPageCurrentDays,
-        WikiPageStats.DayStat[] BarPagePreviousDays,
-        WikiPageStats.DayStat[] BarPageCurrentDays,
+        WikiPageStats.DayStat[] FooPagePreviousDayStats,
+        WikiPageStats.DayStat[] FooPageCurrentDayStats,
+        WikiPageStats.DayStat[] BarPagePreviousDayStats,
+        WikiPageStats.DayStat[] BarPageCurrentDayStats,
         WikiPageStats.DayStat[][]? MergedDayStats = null,
         WikiPageStats.DayStat[]? FooPagePreviousMonthDayStats = null,
         WikiPageStats.DayStat[]? FooPageCurrentMonthDayStats = null,
@@ -25,22 +25,22 @@ namespace Wikitools.Tests
     {
         private WikiPageStats FooPage => new(FooPagePath,
             FooPageId,
-            FooPagePreviousDays.Concat(FooPageCurrentDays).ToArray());
+            FooPagePreviousDayStats.Concat(FooPageCurrentDayStats).ToArray());
 
         private WikiPageStats BarPage => new(BarPagePath,
             BarPageId,
-            BarPagePreviousDays.Concat(BarPageCurrentDays).ToArray());
+            BarPagePreviousDayStats.Concat(BarPageCurrentDayStats).ToArray());
 
         public WikiPageStats[] PreviousMonth => new[]
         {
-            FooPage with { Stats = FooPagePreviousMonthDayStats ?? FooPagePreviousDays },
-            BarPage with { Stats = BarPagePreviousMonthDayStats ?? BarPagePreviousDays }
+            FooPage with { DayStats = FooPagePreviousMonthDayStats ?? FooPagePreviousDayStats },
+            BarPage with { DayStats = BarPagePreviousMonthDayStats ?? BarPagePreviousDayStats }
         };
 
         public WikiPageStats[] CurrentMonth => new[]
         {
-            FooPage with { Stats = FooPageCurrentMonthDayStats ?? FooPageCurrentDays },
-            BarPage with { Stats = BarPageCurrentMonthDayStats ?? BarPageCurrentDays }
+            FooPage with { DayStats = FooPageCurrentMonthDayStats ?? FooPageCurrentDayStats },
+            BarPage with { DayStats = BarPageCurrentMonthDayStats ?? BarPageCurrentDayStats }
         };
 
         public WikiPageStats[] AllPagesStats => new[] { FooPage, BarPage };
@@ -48,8 +48,8 @@ namespace Wikitools.Tests
         public WikiPageStats[] MergedPagesStats => MergedDayStats != null
             ? new[]
             {
-                FooPage with { Stats = MergedDayStats[0] },
-                BarPage with { Stats = MergedDayStats[1] }
+                FooPage with { DayStats = MergedDayStats[0] },
+                BarPage with { DayStats = MergedDayStats[1] }
             }
             : AllPagesStats;
     }

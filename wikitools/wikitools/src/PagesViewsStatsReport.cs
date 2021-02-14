@@ -35,7 +35,7 @@ namespace Wikitools
                 .Select(pageStats =>
                     (
                         path: pageStats.Path,
-                        views: pageStats.Stats.Sum(s => s.Count)
+                        views: pageStats.DayStats.Sum(s => s.Count)
                     )
                 )
                 .Where(stat => stat.views > 0)

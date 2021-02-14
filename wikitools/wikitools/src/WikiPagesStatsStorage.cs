@@ -56,11 +56,11 @@ namespace Wikitools
             // kja once Merge is tested, replace with:
             var merged2 = previousStats.UnionUsing(currentStats, ps => ps.Id, Merge);
 
-            merged = merged.Select(ps => ps with { Stats = ps.Stats.OrderBy(ds => ds.Day).ToArray() }).ToArray();
+            merged = merged.Select(ps => ps with { DayStats = ps.DayStats.OrderBy(ds => ds.Day).ToArray() }).ToArray();
 
             Debug.Assert(merged.DistinctBy(m => m.Id).Count() == merged.Length, "Any given page appears only once");
             merged.ForEach(ps => Debug.Assert(
-                ps.Stats.DistinctBy(s => s.Day).Count() == ps.Stats.Length,
+                ps.DayStats.DistinctBy(s => s.Day).Count() == ps.DayStats.Length,
                 "There is only one stat per page per day"));
 
             return merged;
@@ -71,16 +71,16 @@ namespace Wikitools
             Debug.Assert(previousPageStats.Id == currentPageStats.Id);
             var id = previousPageStats.Id;
 
-            var previousMaxDate = previousPageStats.Stats.Any()
-                ? previousPageStats.Stats.Max(stat => stat.Day)
+            var previousMaxDate = previousPageStats.DayStats.Any()
+                ? previousPageStats.DayStats.Max(stat => stat.Day)
                 : new DateTime(0);
-            var currentMaxDate = currentPageStats.Stats.Any()
-                ? currentPageStats.Stats.Max(stat => stat.Day)
+            var currentMaxDate = currentPageStats.DayStats.Any()
+                ? currentPageStats.DayStats.Max(stat => stat.Day)
                 : new DateTime(0);
             // Here we ensure that the 'current' stats path takes precedence over 'previous' page stats.
             var path = previousMaxDate > currentMaxDate ? previousPageStats.Path : currentPageStats.Path;
 
-            return new WikiPageStats(path, id, Merge(previousPageStats.Stats, currentPageStats.Stats));
+            return new WikiPageStats(path, id, Merge(previousPageStats.DayStats, currentPageStats.DayStats));
         }
 
         private static WikiPageStats.DayStat[] Merge(
@@ -90,7 +90,7 @@ namespace Wikitools
             var groupedByDay = pagePreviousStats.Concat(pageCurrentStats).GroupBy(stat => stat.Day);
             var mergedStats = groupedByDay.Select(dayStats =>
             {
-                dayStats.AssertSingleBy(s => s.Count, "Stats merged for the same day have the same visit count");
+                dayStats.AssertSingleBy(s => s.Count, "DayStats merged for the same day have the same visit count");
                 return dayStats.First();
             }).ToArray();
             return mergedStats;
@@ -104,7 +104,7 @@ namespace Wikitools
 
             // For each page, group and order its day stats by month
             var pagesWithOrderedDayStats = pagesStats
-                .Select(ps => (ps, dayStatsByMonth: ps.Stats.GroupAndOrderBy(s => s.Day.Trim(DateTimePrecision.Month))))
+                .Select(ps => (ps, dayStatsByMonth: ps.DayStats.GroupAndOrderBy(s => s.Day.Trim(DateTimePrecision.Month))))
                 .ToArray();
 
             // Assert there are no duplicate day stats for given (page, month) tuple.
@@ -132,11 +132,11 @@ namespace Wikitools
 
             var previousMonthPageStats = page.stats with
             {
-                Stats = SingleMonthOrderedDayStats(page.dayStatsByMonth, currentDate.AddMonths(-1))
+                DayStats = SingleMonthOrderedDayStats(page.dayStatsByMonth, currentDate.AddMonths(-1))
             };
             var currentMonthPageStats = page.stats with
             {
-                Stats = SingleMonthOrderedDayStats(page.dayStatsByMonth, currentDate)
+                DayStats = SingleMonthOrderedDayStats(page.dayStatsByMonth, currentDate)
             };
             return (previousMonthPageStats, currentMonthPageStats);
 
@@ -151,7 +151,7 @@ namespace Wikitools
 
         public static WikiPageStats[] Trim(WikiPageStats[] stats, DateTime startDate, DateTime endDate) =>
             stats.Select(ps =>
-                ps with { Stats = ps.Stats.Where(s => s.Day >= startDate && s.Day <= endDate).ToArray() }).ToArray();
+                ps with { DayStats = ps.DayStats.Where(s => s.Day >= startDate && s.Day <= endDate).ToArray() }).ToArray();
     }
 }
 
