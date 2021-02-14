@@ -24,26 +24,13 @@ namespace Wikitools.Tests
         [Fact] public void ParameterizedTest() => Verify();
 
         // @formatter:off
-        [Fact] public void SplitByMonthTestNoStats()            => VerifySplitByMonth(PageStatsEmpty);
-        [Fact] public void SplitByMonthTestOnlyPreviousMonth()  => VerifySplitByMonth(PageStatsPreviousMonthOnly);
-        [Fact] public void SplitByMonthTestYearWrap()           => VerifySplitByMonth(PageStatsYearWrap);
-        [Fact] public void SplitByMonthTestBeforeYearWrap()     => VerifySplitByMonth(PageStatsBeforeYearWrap);
-        [Fact] public void SplitByMonthTest()                   => VerifySplitByMonth(PageStats);
         [Fact] public void SplitByMonthTestSameDay()            => VerifySplitByMonthThrows(PageStatsSameDay);
         [Fact] public void SplitByMonthTestSamePreviousDay()    => VerifySplitByMonthThrows(PageStatsSamePreviousDay);
         // @formatter:on
 
         // @formatter:off
-        [Fact] public void MergeTestNoStats()           => VerifyMerge(PageStatsEmpty);
-        [Fact] public void MergeTestPreviousMonthOnly() => VerifyMerge(PageStatsPreviousMonthOnly);
-        [Fact] public void MergeTestYearWrap()          => VerifyMerge(PageStatsYearWrap);
-        [Fact] public void MergeTestBeforeYearWrap()    => VerifyMerge(PageStatsBeforeYearWrap);
         [Fact] public void MergeTestSameDay()           => VerifyMerge(PageStatsSameDay);
-        [Fact] public void MergeTest()                  => VerifyMerge(PageStats);
         // @formatter:on
-
-        [Fact] public void MergeSplitTest() => VerifyMergeSplit(PageStats);
-        [Fact] public void SplitMergeTest() => VerifySplitMerge(PageStats);
 
         // @formatter:off
         [Fact] public void MergeTestSameDayDifferentCounts() => VerifyMergeThrows(PageStatsSameDayDifferentCounts);
@@ -93,21 +80,24 @@ namespace Wikitools.Tests
                 { 
                     new WikiPageStats.DayStat[] {}, 
                     new WikiPageStats.DayStat[] { new(215, FebruaryDate)}
-                });
+                },
+                SplitByMonthThrows: true);
 
         private static TestPayload PageStatsSameDayDifferentCounts =>
             new(FebruaryDate,
                 new WikiPageStats.DayStat[] { },
                 new WikiPageStats.DayStat[] { },
                 new WikiPageStats.DayStat[] { new(215, FebruaryDate) },
-                new WikiPageStats.DayStat[] { new(217, FebruaryDate) });
+                new WikiPageStats.DayStat[] { new(217, FebruaryDate) },
+                MergeThrows: true);
 
         private static TestPayload PageStatsSamePreviousDay =>
             new(FebruaryDate,
                 new WikiPageStats.DayStat[] { },
                 new WikiPageStats.DayStat[] { },
                 new WikiPageStats.DayStat[] { new(103, JanuaryDate) },
-                new WikiPageStats.DayStat[] { new(103, JanuaryDate) });
+                new WikiPageStats.DayStat[] { new(103, JanuaryDate) },
+                SplitByMonthThrows: true);
 
         
 
@@ -166,6 +156,8 @@ namespace Wikitools.Tests
             WikiPageStats.DayStat[] BarPagePreviousDays,
             WikiPageStats.DayStat[] BarPageCurrentDays,
             WikiPageStats.DayStat[][]? MergedDayStats = null,
+            bool SplitByMonthThrows = false,
+            bool MergeThrows = false,
             string FooPagePath = "/Foo",
             string BarPagePath = "/Bar",
             int FooPageId = 100,
@@ -207,11 +199,14 @@ namespace Wikitools.Tests
             TestPayload[] payloads =
             {
                 PageStatsEmpty,
-                PageStats,
                 PageStatsPreviousMonthOnly,
                 PageStatsYearWrap,
                 PageStatsBeforeYearWrap,
-                PageStatsSameDay
+                PageStats,
+                PageStatsSameDay,
+                // kja curr work
+                //PageStatsSamePreviousDay,
+                //PageStatsSameDayDifferentCounts
             };
             payloads.ForEach(Verify);
         }
@@ -219,61 +214,49 @@ namespace Wikitools.Tests
         private static void Verify(TestPayload data)
         {
             // Act - Split({foo, bar})
-            var (previousMonth, currentMonth) = WikiPagesStatsStorage.SplitByMonth(data.AllPagesStats, data.Date);
-            new JsonDiffAssertion(data.PreviousMonth, previousMonth).Assert();
-            new JsonDiffAssertion(data.CurrentMonth,  currentMonth).Assert();
+            (WikiPageStats[] previousMonth, WikiPageStats[] currentMonth)? split = !data.SplitByMonthThrows 
+                ? VerifySplitByMonth(data) : VerifySplitByMonthThrows(data);
 
             // Act - Merge(foo, bar)
-            var merged = WikiPagesStatsStorage.Merge(data.PreviousMonth, data.CurrentMonth);
-            new JsonDiffAssertion(data.MergedPagesStats, merged).Assert();
+            WikiPageStats[]? merged = !data.MergeThrows ? VerifyMerge(data) : VerifyMergeThrows(data);
+
+            if (data.MergeThrows || data.SplitByMonthThrows) 
+                return;
 
             // Act - Split(Merge(foo, bar)) == (foo, bar)
-            var (previousMonthUnmerged, currentMonthUnmerged) = WikiPagesStatsStorage.SplitByMonth(merged, data.Date);
+            var (previousMonthUnmerged, currentMonthUnmerged) =
+                WikiPagesStatsStorage.SplitByMonth(merged!, data.Date);
             new JsonDiffAssertion(data.PreviousMonth, previousMonthUnmerged).Assert();
             new JsonDiffAssertion(data.CurrentMonth,  currentMonthUnmerged).Assert();
 
-            // Act - Merge(Split({foo, bar}) == Merge(foo, bar)
-            var mergedSplit = WikiPagesStatsStorage.Merge(previousMonth, currentMonth);
+            // Act - Merge(Split({foo, bar})) == Merge(foo, bar)
+            var mergedSplit = WikiPagesStatsStorage.Merge(split!.Value.previousMonth, split!.Value.currentMonth);
             new JsonDiffAssertion(data.MergedPagesStats, mergedSplit).Assert();
         }
 
-        private static void VerifySplitByMonth(TestPayload data)
+        private static (WikiPageStats[] previousMonth, WikiPageStats[] currentMonth) VerifySplitByMonth(
+            TestPayload data)
         {
             // Act
             var (previousMonth, currentMonth) = WikiPagesStatsStorage.SplitByMonth(data.AllPagesStats, data.Date);
 
             new JsonDiffAssertion(data.PreviousMonth, previousMonth).Assert();
             new JsonDiffAssertion(data.CurrentMonth,  currentMonth).Assert();
+
+            return (previousMonth, currentMonth);
         }
 
-        private static void VerifyMerge(TestPayload data)
+        private static WikiPageStats[] VerifyMerge(TestPayload data)
         {
             // Act
             var merged = WikiPagesStatsStorage.Merge(data.PreviousMonth, data.CurrentMonth);
 
             new JsonDiffAssertion(data.MergedPagesStats, merged).Assert();
+
+            return merged;
         }
 
-        private static void VerifyMergeSplit(TestPayload data)
-        {
-            // Act
-            var merged = WikiPagesStatsStorage.Merge(data.PreviousMonth, data.CurrentMonth);
-            var (previousMonthStats, currentMonthStats) = WikiPagesStatsStorage.SplitByMonth(merged, data.Date);
-
-            new JsonDiffAssertion(data.PreviousMonth, previousMonthStats).Assert();
-            new JsonDiffAssertion(data.CurrentMonth, currentMonthStats).Assert();
-        }
-
-        private static void VerifySplitMerge(TestPayload data)
-        {
-            // Act
-            var (previousMonthStats, currentMonthStats) = WikiPagesStatsStorage.SplitByMonth(data.MergedPagesStats, data.Date);
-            var merged = WikiPagesStatsStorage.Merge(previousMonthStats, currentMonthStats);
-            
-            new JsonDiffAssertion(data.MergedPagesStats, merged).Assert();
-        }
-
-        private static void VerifySplitByMonthThrows(TestPayload data)
+        private static (WikiPageStats[] previousMonth, WikiPageStats[] currentMonth)? VerifySplitByMonthThrows(TestPayload data)
         {
             try
             {
@@ -282,13 +265,14 @@ namespace Wikitools.Tests
             catch (ArgumentException)
             {
                 // Pass
-                return;
+                return null;
             }
 
             Assert.False(true);
+            return null;
         }
 
-        private static void VerifyMergeThrows(TestPayload data)
+        private static WikiPageStats[]? VerifyMergeThrows(TestPayload data)
         {
             try
             {
@@ -297,10 +281,11 @@ namespace Wikitools.Tests
             catch (ArgumentException)
             {
                 // Pass
-                return;
+                return null;
             }
 
             Assert.False(true);
+            return null;
         }
     }
 }
