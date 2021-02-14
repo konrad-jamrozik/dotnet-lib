@@ -127,13 +127,13 @@ namespace Wikitools.Tests
                 BarPage with { Stats = BarPageCurrentDays }
             };
 
-            public WikiPageStats[] PageStats => new[] { FooPage, BarPage };
+            public WikiPageStats[] AllStats => new[] { FooPage, BarPage };
         }
 
         private static void VerifySplitByMonth(TestPayload data)
         {
             // Act
-            var (previousMonth, currentMonth) = WikiPagesStatsStorage.SplitByMonth(data.PageStats, data.Date);
+            var (previousMonth, currentMonth) = WikiPagesStatsStorage.SplitByMonth(data.AllStats, data.Date);
 
             new JsonDiffAssertion(data.PreviousMonth, previousMonth).Assert();
             new JsonDiffAssertion(data.CurrentMonth,  currentMonth).Assert();
