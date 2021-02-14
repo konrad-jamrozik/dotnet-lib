@@ -56,6 +56,8 @@ namespace Wikitools
             // kja once Merge is tested, replace with:
             var merged2 = previousStats.UnionUsing(currentStats, ps => ps.Id, Merge);
 
+            merged = merged.Select(ps => ps with { Stats = ps.Stats.OrderBy(ds => ds.Day).ToArray() }).ToArray();
+
             Debug.Assert(merged.DistinctBy(m => m.Id).Count() == merged.Length, "Any given page appears only once");
             merged.ForEach(ps => Debug.Assert(
                 ps.Stats.DistinctBy(s => s.Day).Count() == ps.Stats.Length,

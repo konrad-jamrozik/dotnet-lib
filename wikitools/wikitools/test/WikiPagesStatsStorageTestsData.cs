@@ -18,7 +18,8 @@ namespace Wikitools.Tests
             // PageStatsSameDay,
             // PageStatsSamePreviousDay,
             // PageStatsSameDayDifferentCounts,
-            PageStatsSameMonth,
+            // PageStatsSameMonth,
+            PageStatsUnorderedDayStats
         };
 
         public IEnumerator<object[]> GetEnumerator() => _data.Select(tp => new object[] { tp }).GetEnumerator();
@@ -94,6 +95,37 @@ namespace Wikitools.Tests
                 SplitByMonthThrows: true,
                 MergeThrows: true);
 
+        // kja fails because split is not sorting
+        private static WikiPagesStatsTestPayload PageStatsUnorderedDayStats =>
+            new(FebruaryDate,
+                FooPagePreviousDays: new WikiPageStats.DayStat[]
+                {
+                    new(107, JanuaryDate.AddDays(4)), 
+                    new(217, FebruaryDate.AddDays(2)), 
+                    new(103, JanuaryDate)
+                },
+                FooPageCurrentDays: new WikiPageStats.DayStat[]
+                {
+                    new(219, FebruaryDate.AddDays(4)), 
+                    new(105, JanuaryDate.AddDays(2)), 
+                    new(215, FebruaryDate)
+                },
+                new WikiPageStats.DayStat[] {},
+                new WikiPageStats.DayStat[] {},
+                FooPagePreviousMonthDayStats: new WikiPageStats.DayStat[]
+                {
+                    new(103, JanuaryDate),
+                    new(105, JanuaryDate.AddDays(2)),
+                    new(107, JanuaryDate.AddDays(4)), 
+                },
+                FooPageCurrentMonthDayStats: new WikiPageStats.DayStat[]
+                {
+                    new(215, FebruaryDate),
+                    new(217, FebruaryDate.AddDays(2)),
+                    new(219, FebruaryDate.AddDays(4)), 
+                }
+                );
+
         private static WikiPagesStatsTestPayload PageStats
         {
             get
@@ -140,24 +172,26 @@ namespace Wikitools.Tests
             }
         }
 
+        // kja add test that even when splitting unsorted, they will be sorted
+
         private static WikiPagesStatsTestPayload PageStatsSameMonth =>
-            // kja this passes, but shouldn't. The expectations (MergedDataStats) are all wrong
             new(FebruaryDate,
                 FooPagePreviousDays: new WikiPageStats.DayStat[]
                 {
                     new(108, JanuaryDate.AddDays(5)),
                     new(218, FebruaryDate.AddDays(3))
                 },
-                BarPagePreviousDays: new WikiPageStats.DayStat[]
-                {
-                    new(103, JanuaryDate), 
-                    new(215, FebruaryDate), 
-                    new(216, FebruaryDate.AddDays(1))
-                },
                 FooPageCurrentDays: new WikiPageStats.DayStat[]
                 {
+                    new(104, JanuaryDate.AddDays(1)),
                     new(108, JanuaryDate.AddDays(5)),
                     new(110, JanuaryDate.AddDays(7))
+                },
+                BarPagePreviousDays: new WikiPageStats.DayStat[]
+                {
+                    new(215, FebruaryDate), 
+                    new(216, FebruaryDate.AddDays(1)),
+                    new(103, JanuaryDate)
                 },
                 BarPageCurrentDays: new WikiPageStats.DayStat[]
                 {
@@ -168,10 +202,10 @@ namespace Wikitools.Tests
                 { 
                     new WikiPageStats.DayStat[]
                     {
-                        //new(103, JanuaryDate),
+                        new(104, JanuaryDate.AddDays(1)),
                         new(108, JanuaryDate.AddDays(5)),
-                        new(218, FebruaryDate.AddDays(3)),
                         new(110, JanuaryDate.AddDays(7)),
+                        new(218, FebruaryDate.AddDays(3)),
                         
                     }, 
                     new WikiPageStats.DayStat[]

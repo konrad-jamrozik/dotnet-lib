@@ -4,6 +4,7 @@ using Wikitools.AzureDevOps;
 
 namespace Wikitools.Tests
 {
+    // kja Days -> DayStats
     public record WikiPagesStatsTestPayload(
         DateTime Date,
         WikiPageStats.DayStat[] FooPagePreviousDays,
@@ -11,6 +12,10 @@ namespace Wikitools.Tests
         WikiPageStats.DayStat[] BarPagePreviousDays,
         WikiPageStats.DayStat[] BarPageCurrentDays,
         WikiPageStats.DayStat[][]? MergedDayStats = null,
+        WikiPageStats.DayStat[]? FooPagePreviousMonthDayStats = null,
+        WikiPageStats.DayStat[]? FooPageCurrentMonthDayStats = null,
+        WikiPageStats.DayStat[]? BarPagePreviousMonthDayStats = null,
+        WikiPageStats.DayStat[]? BarPageCurrentMonthDayStats = null,
         bool SplitByMonthThrows = false,
         bool MergeThrows = false,
         string FooPagePath = "/Foo",
@@ -28,14 +33,14 @@ namespace Wikitools.Tests
 
         public WikiPageStats[] PreviousMonth => new[]
         {
-            FooPage with { Stats = FooPagePreviousDays },
-            BarPage with { Stats = BarPagePreviousDays }
+            FooPage with { Stats = FooPagePreviousMonthDayStats ?? FooPagePreviousDays },
+            BarPage with { Stats = BarPagePreviousMonthDayStats ?? BarPagePreviousDays }
         };
 
         public WikiPageStats[] CurrentMonth => new[]
         {
-            FooPage with { Stats = FooPageCurrentDays },
-            BarPage with { Stats = BarPageCurrentDays }
+            FooPage with { Stats = FooPageCurrentMonthDayStats ?? FooPageCurrentDays },
+            BarPage with { Stats = BarPageCurrentMonthDayStats ?? BarPageCurrentDays }
         };
 
         public WikiPageStats[] AllPagesStats => new[] { FooPage, BarPage };
