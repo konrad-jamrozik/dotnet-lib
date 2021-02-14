@@ -183,8 +183,6 @@ namespace Wikitools.Tests
             }
         }
 
-        // kja add test that even when splitting unsorted, they will be sorted
-
         private static WikiPagesStatsTestPayload PageStatsSameMonth =>
             new(FebruaryDate,
                 FooPagePreviousDays: new WikiPageStats.DayStat[]
