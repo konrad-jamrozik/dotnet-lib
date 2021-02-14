@@ -10,14 +10,15 @@ namespace Wikitools.Tests
     {
         private readonly WikiPagesStatsTestPayload[] _data =
         {
-            PageStatsEmpty,
-            PageStatsPreviousMonthOnly,
-            PageStatsYearWrap,
-            PageStatsBeforeYearWrap,
-            PageStats,
-            PageStatsSameDay,
-            PageStatsSamePreviousDay,
-            PageStatsSameDayDifferentCounts
+            // PageStatsEmpty,
+            // PageStatsPreviousMonthOnly,
+            // PageStatsYearWrap,
+            // PageStatsBeforeYearWrap,
+            // PageStats,
+            // PageStatsSameDay,
+            // PageStatsSamePreviousDay,
+            // PageStatsSameDayDifferentCounts,
+            PageStatsSameMonth,
         };
 
         public IEnumerator<object[]> GetEnumerator() => _data.Select(tp => new object[] { tp }).GetEnumerator();
@@ -138,5 +139,45 @@ namespace Wikitools.Tests
                     barDaysCurrentMonth);
             }
         }
+
+        private static WikiPagesStatsTestPayload PageStatsSameMonth =>
+            new(FebruaryDate,
+                new WikiPageStats.DayStat[]
+                {
+                    new(108, JanuaryDate.AddDays(5)),
+                    new(218, FebruaryDate.AddDays(3))
+                },
+                new WikiPageStats.DayStat[]
+                {
+                    new(108, JanuaryDate.AddDays(5)),
+                    new(110, JanuaryDate.AddDays(7))
+                },
+                new WikiPageStats.DayStat[]
+                {
+                    new(103, JanuaryDate), 
+                    new(215, FebruaryDate), 
+                    new(216, FebruaryDate.AddDays(1))
+                },
+                new WikiPageStats.DayStat[]
+                {
+                    new(216, FebruaryDate.AddDays(1)), 
+                    new(217, FebruaryDate.AddDays(2))
+                },
+                MergedDayStats: new[]
+                { 
+                    new WikiPageStats.DayStat[]
+                    {
+                        new(108, JanuaryDate),
+                        new(110, JanuaryDate.AddDays(7)),
+                        new(218, FebruaryDate.AddDays(3))
+                    }, 
+                    new WikiPageStats.DayStat[]
+                    {
+                        new(103, JanuaryDate),
+                        new(215, FebruaryDate), 
+                        new(216, FebruaryDate.AddDays(1)), 
+                        new(217, FebruaryDate.AddDays(2))
+                    }
+                });
     }
 }

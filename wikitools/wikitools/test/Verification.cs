@@ -41,10 +41,12 @@ namespace Wikitools.Tests
                 {
                     return ret;
                 }
+
+                Assert.False(true, e.Message);
             }
 
             if (excType != null)
-                Assert.False(true);
+                Assert.False(true, $"Expected exception of type {excType}");
 
             return ret;
         }
