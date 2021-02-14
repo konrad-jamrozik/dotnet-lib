@@ -103,7 +103,12 @@ namespace Wikitools
 
             // For each page, group and order its day stats by month
             var pagesWithOrderedDayStats = pagesStats
-                .Select(ps => (ps, ps.Stats.GroupAndOrderBy(s => s.Day.Trim(DateTimePrecision.Month)))).ToArray();
+                .Select(ps => (ps, dayStatsByMonth: ps.Stats.GroupAndOrderBy(s => s.Day.Trim(DateTimePrecision.Month))))
+                .ToArray();
+
+            // Assert there are no duplicate day stats for given (page, month) tuple.
+            pagesWithOrderedDayStats.ForEach(p =>
+                p.dayStatsByMonth.ForEach(ds => ds.items.AssertDistinctBy(dayStat => dayStat.Day)));
 
             // For each page, return a tuple of that page stats for previous and current month
             var statsByMonth = pagesWithOrderedDayStats.Select(ps => SplitByMonth(ps, currentDate)).ToArray();
@@ -115,30 +120,30 @@ namespace Wikitools
 
         private static (WikiPageStats previousMonthPageStats, WikiPageStats currentMonthPageStats)
             SplitByMonth(
-                (WikiPageStats stats, (DateTime date, WikiPageStats.DayStat[])[] dayStatsByDate) page,
+                (WikiPageStats stats, (DateTime date, WikiPageStats.DayStat[])[] dayStatsByMonth) page,
                 DateTime currentDate)
         {
-            Debug.Assert(page.dayStatsByDate.Length <= 2,
+            Debug.Assert(page.dayStatsByMonth.Length <= 2,
                 "The wiki stats are expected to come from no more than 2 months");
-            Debug.Assert(page.dayStatsByDate.Length <= 1 ||
-                         (page.dayStatsByDate[0].date.AddMonths(1) == page.dayStatsByDate[1].date),
+            Debug.Assert(page.dayStatsByMonth.Length <= 1 ||
+                         (page.dayStatsByMonth[0].date.AddMonths(1) == page.dayStatsByMonth[1].date),
                 "The wiki stats are expected to come from consecutive months");
 
             var previousMonthPageStats = page.stats with
             {
-                Stats = SingleMonthStats(page.dayStatsByDate, currentDate.AddMonths(-1))
+                Stats = SingleMonthStats(page.dayStatsByMonth, currentDate.AddMonths(-1))
             };
             var currentMonthPageStats = page.stats with
             {
-                Stats = SingleMonthStats(page.dayStatsByDate, currentDate)
+                Stats = SingleMonthStats(page.dayStatsByMonth, currentDate)
             };
             return (previousMonthPageStats, currentMonthPageStats);
 
             WikiPageStats.DayStat[] SingleMonthStats(
-                (DateTime date, WikiPageStats.DayStat[] dayStatsByDate)[] dayStatsByDate,
+                (DateTime month, WikiPageStats.DayStat[] dayStatsByMonth)[] dayStatsByDate,
                 DateTime date) =>
-                dayStatsByDate.Any(stats => stats.date.Month == date.Month)
-                    ? dayStatsByDate.Single(stats => stats.date.Month == date.Month).dayStatsByDate
+                dayStatsByDate.Any(stats => stats.month.Month == date.Month)
+                    ? dayStatsByDate.Single(stats => stats.month.Month == date.Month).dayStatsByMonth
                     : Array.Empty<WikiPageStats.DayStat>();
         }
 

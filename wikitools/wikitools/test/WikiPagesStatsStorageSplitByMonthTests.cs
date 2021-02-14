@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Linq;
 using Wikitools.AzureDevOps;
 using Wikitools.Lib.Tests.Json;
@@ -24,39 +25,58 @@ namespace Wikitools.Tests
         [Fact] public void SplitByMonthTestYearWrap()           => VerifySplitByMonth(PageStatsYearWrap);
         [Fact] public void SplitByMonthTestJustBeforeYearWrap() => VerifySplitByMonth(PageStatsJustBeforeYearWrap);
         [Fact] public void SplitByMonthTest()                   => VerifySplitByMonth(PageStats);
+        [Fact] public void SplitByMonthTestSameDay()            => VerifySplitByMonthThrows(PageStatsSameDay);
+        [Fact] public void SplitByMonthTestSamePreviousDay()    => VerifySplitByMonthThrows(PageStatsSamePreviousDay);
         // @formatter:on
 
-        private static readonly DateTime JanuaryDate = new DateTime(year: 2021,  month: 1,  day: 3).ToUniversalTime();
-        private static readonly DateTime FebruaryDate = new DateTime(year: 2021, month: 2,  day: 15).ToUniversalTime();
-        private static readonly DateTime DecemberDate = new DateTime(year: 2021, month: 12, day: 22).ToUniversalTime();
+        // @formatter:off
+        private static readonly DateTime  JanuaryDate = new DateTime(year: 2021, month:  1, day:  3).ToUniversalTime();
+        private static readonly DateTime FebruaryDate = new DateTime(year: 2021, month:  2, day: 15).ToUniversalTime();
+        private static readonly DateTime DecemberDate = new DateTime(year: 2020, month: 12, day: 22).ToUniversalTime();
+        // @formatter:on
 
         private static TestPayload PageStatsEmpty =>
             new(FebruaryDate,
-                new WikiPageStats.DayStat[0],
-                new WikiPageStats.DayStat[0],
-                new WikiPageStats.DayStat[0],
-                new WikiPageStats.DayStat[0]);
+                new WikiPageStats.DayStat[] { },
+                new WikiPageStats.DayStat[] { },
+                new WikiPageStats.DayStat[] { },
+                new WikiPageStats.DayStat[] { });
 
         private static TestPayload PageStatsPreviousMonthOnly =>
             new(FebruaryDate,
-                new WikiPageStats.DayStat[0],
-                new WikiPageStats.DayStat[0],
+                new WikiPageStats.DayStat[] { },
+                new WikiPageStats.DayStat[] { },
                 new WikiPageStats.DayStat[] { new(115, FebruaryDate.AddMonths(-1)) },
-                new WikiPageStats.DayStat[0]);
+                new WikiPageStats.DayStat[] { });
 
         private static TestPayload PageStatsYearWrap =>
             new(JanuaryDate,
-                new WikiPageStats.DayStat[0],
-                new WikiPageStats.DayStat[0],
+                new WikiPageStats.DayStat[] { },
+                new WikiPageStats.DayStat[] { },
                 new WikiPageStats.DayStat[] { new(1201, JanuaryDate.AddMonths(-1).AddDays(-2)) },
                 new WikiPageStats.DayStat[] { new(103, JanuaryDate) });
 
         private static TestPayload PageStatsJustBeforeYearWrap =>
             new(DecemberDate,
-                new WikiPageStats.DayStat[0],
-                new WikiPageStats.DayStat[0],
+                new WikiPageStats.DayStat[] { },
+                new WikiPageStats.DayStat[] { },
                 new WikiPageStats.DayStat[] { new(1122, DecemberDate.AddMonths(-1)) },
                 new WikiPageStats.DayStat[] { new(1223, DecemberDate.AddDays(1)) });
+
+        private static TestPayload PageStatsSameDay =>
+            new(FebruaryDate,
+                new WikiPageStats.DayStat[] { },
+                new WikiPageStats.DayStat[] { },
+                new WikiPageStats.DayStat[] { new(215, FebruaryDate) },
+                new WikiPageStats.DayStat[] { new(215, FebruaryDate) });
+
+        private static TestPayload PageStatsSamePreviousDay =>
+            new(FebruaryDate,
+                new WikiPageStats.DayStat[] { },
+                new WikiPageStats.DayStat[] { },
+                new WikiPageStats.DayStat[] { new(103, JanuaryDate) },
+                new WikiPageStats.DayStat[] { new(103, JanuaryDate) });
+
 
         private static TestPayload PageStats
         {
@@ -110,10 +130,19 @@ namespace Wikitools.Tests
             WikiPageStats.DayStat[] FooPagePreviousDays,
             WikiPageStats.DayStat[] FooPageCurrentDays,
             WikiPageStats.DayStat[] BarPagePreviousDays,
-            WikiPageStats.DayStat[] BarPageCurrentDays)
+            WikiPageStats.DayStat[] BarPageCurrentDays,
+            string FooPagePath = "/Foo",
+            string BarPagePath = "/Bar",
+            int FooPageId = 100,
+            int BarPageId = 200)
         {
-            private WikiPageStats FooPage => new("/Foo", 100, FooPagePreviousDays.Concat(FooPageCurrentDays).ToArray());
-            private WikiPageStats BarPage => new("/Bar", 200, BarPagePreviousDays.Concat(BarPageCurrentDays).ToArray());
+            private WikiPageStats FooPage => new(FooPagePath,
+                FooPageId,
+                FooPagePreviousDays.Concat(FooPageCurrentDays).ToArray());
+
+            private WikiPageStats BarPage => new(BarPagePath,
+                BarPageId,
+                BarPagePreviousDays.Concat(BarPageCurrentDays).ToArray());
 
             public WikiPageStats[] PreviousMonth => new[]
             {
@@ -137,6 +166,21 @@ namespace Wikitools.Tests
 
             new JsonDiffAssertion(data.PreviousMonth, previousMonth).Assert();
             new JsonDiffAssertion(data.CurrentMonth,  currentMonth).Assert();
+        }
+
+        private static void VerifySplitByMonthThrows(TestPayload data)
+        {
+            try
+            {
+                VerifySplitByMonth(data);
+            }
+            catch (ArgumentException)
+            {
+                // Pass
+                return;
+            }
+
+            Assert.False(true);
         }
     }
 }

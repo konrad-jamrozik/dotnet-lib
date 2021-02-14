@@ -14,5 +14,6 @@ namespace Wikitools.AzureDevOps
             ?? Array.Empty<DayStat>();
 
         public record DayStat(int Count, DateTime Day) { }
+
     }
 }
