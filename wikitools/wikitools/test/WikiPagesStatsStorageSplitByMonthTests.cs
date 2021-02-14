@@ -18,45 +18,47 @@ namespace Wikitools.Tests
     // Some test checking which page rename takes precedence, both in correct ((prev,curr)) and flipped ((curr,prev)) ordering.
     public class WikiPagesStatsStorageTests
     {
-        [Fact] public void SplitByMonthTestNoStats() => VerifySplitByMonth(PageStatsDataEmpty);
-        [Fact] public void SplitByMonthTestOnlyPreviousMonth() => VerifySplitByMonth(PageStatsDataPreviousMonthOnly);
-        [Fact] public void SplitByMonthTestYearWrap() => VerifySplitByMonth(PageStatsDataYearWrap);
-        [Fact] public void SplitByMonthTestJustBeforeYearWrap() => VerifySplitByMonth(PageStatsDataJustBeforeYearWrap);
-        [Fact] public void SplitByMonthTest() => VerifySplitByMonth(PageStatsData);
+        // @formatter:off
+        [Fact] public void SplitByMonthTestNoStats()            => VerifySplitByMonth(PageStatsEmpty);
+        [Fact] public void SplitByMonthTestOnlyPreviousMonth()  => VerifySplitByMonth(PageStatsPreviousMonthOnly);
+        [Fact] public void SplitByMonthTestYearWrap()           => VerifySplitByMonth(PageStatsYearWrap);
+        [Fact] public void SplitByMonthTestJustBeforeYearWrap() => VerifySplitByMonth(PageStatsJustBeforeYearWrap);
+        [Fact] public void SplitByMonthTest()                   => VerifySplitByMonth(PageStats);
+        // @formatter:on
 
         private static readonly DateTime JanuaryDate = new DateTime(year: 2021,  month: 1,  day: 3).ToUniversalTime();
         private static readonly DateTime FebruaryDate = new DateTime(year: 2021, month: 2,  day: 15).ToUniversalTime();
         private static readonly DateTime DecemberDate = new DateTime(year: 2021, month: 12, day: 22).ToUniversalTime();
 
-        private static TestPayload PageStatsDataEmpty =>
+        private static TestPayload PageStatsEmpty =>
             new(FebruaryDate,
                 new WikiPageStats.DayStat[0],
                 new WikiPageStats.DayStat[0],
                 new WikiPageStats.DayStat[0],
                 new WikiPageStats.DayStat[0]);
 
-        private static TestPayload PageStatsDataPreviousMonthOnly =>
+        private static TestPayload PageStatsPreviousMonthOnly =>
             new(FebruaryDate,
                 new WikiPageStats.DayStat[0],
                 new WikiPageStats.DayStat[0],
                 new WikiPageStats.DayStat[] { new(115, FebruaryDate.AddMonths(-1)) },
                 new WikiPageStats.DayStat[0]);
 
-        private static TestPayload PageStatsDataYearWrap =>
+        private static TestPayload PageStatsYearWrap =>
             new(JanuaryDate,
                 new WikiPageStats.DayStat[0],
                 new WikiPageStats.DayStat[0],
                 new WikiPageStats.DayStat[] { new(1201, JanuaryDate.AddMonths(-1).AddDays(-2)) },
                 new WikiPageStats.DayStat[] { new(103, JanuaryDate) });
 
-        private static TestPayload PageStatsDataJustBeforeYearWrap =>
+        private static TestPayload PageStatsJustBeforeYearWrap =>
             new(DecemberDate,
                 new WikiPageStats.DayStat[0],
                 new WikiPageStats.DayStat[0],
                 new WikiPageStats.DayStat[] { new(1122, DecemberDate.AddMonths(-1)) },
                 new WikiPageStats.DayStat[] { new(1223, DecemberDate.AddDays(1)) });
 
-        private static TestPayload PageStatsData
+        private static TestPayload PageStats
         {
             get
             {
@@ -112,16 +114,19 @@ namespace Wikitools.Tests
         {
             private WikiPageStats FooPage => new("/Foo", 100, FooPagePreviousDays.Concat(FooPageCurrentDays).ToArray());
             private WikiPageStats BarPage => new("/Bar", 200, BarPagePreviousDays.Concat(BarPageCurrentDays).ToArray());
+
             public WikiPageStats[] PreviousMonth => new[]
             {
                 FooPage with { Stats = FooPagePreviousDays },
                 BarPage with { Stats = BarPagePreviousDays }
             };
+
             public WikiPageStats[] CurrentMonth => new[]
             {
                 FooPage with { Stats = FooPageCurrentDays },
                 BarPage with { Stats = BarPageCurrentDays }
             };
+
             public WikiPageStats[] PageStats => new[] { FooPage, BarPage };
         }
 
