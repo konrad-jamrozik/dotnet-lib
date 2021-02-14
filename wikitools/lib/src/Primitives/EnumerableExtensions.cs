@@ -63,5 +63,16 @@ namespace Wikitools.Lib.Primitives
                 throw new ArgumentException();
             }
         }
+
+        public static void AssertSingleBy<TSource, TKey>(
+            this IEnumerable<TSource> source,
+            Func<TSource, TKey> keySelector,
+            string message)
+        {
+            if (MoreEnumerable.DistinctBy(source, keySelector).Count() != 1)
+            {
+                throw new ArgumentException(message);
+            }
+        }
     }
 }

@@ -33,7 +33,7 @@ namespace Wikitools
                 : new WikiPageStats[0];
 
             // BUG (already fixed, needs test) add filtering here to the pageViewsForDays, i.e. don't use all days of previous month.
-            // Note that also the following case has to be handled:
+            // Note that also the following case has to be tested for:
             //   the *current* (not previous) month needs to be filtered down.
             return Trim(Merge(previousMonthStats, currentMonthStats), previousDate, CurrentDate);
         }
@@ -53,7 +53,7 @@ namespace Wikitools
                 intersectingIds.Select(id => Merge(previousStatsByPageId[id], currentStatsByPageId[id]));
 
             var merged = previousOnlyStats.Union(intersectingStats).Union(currentOnlyStats).ToArray();
-            // kja once tested, replace with:
+            // kja once Merge is tested, replace with:
             var merged2 = previousStats.UnionUsing(currentStats, ps => ps.Id, Merge);
 
             Debug.Assert(merged.DistinctBy(m => m.Id).Count() == merged.Length, "Any given page appears only once");
@@ -88,8 +88,7 @@ namespace Wikitools
             var groupedByDay = pagePreviousStats.Concat(pageCurrentStats).GroupBy(stat => stat.Day);
             var mergedStats = groupedByDay.Select(dayStats =>
             {
-                Debug.Assert(dayStats.DistinctBy(s => s.Count).Count() == 1,
-                    "Stats merged for the same day have the same visit count");
+                dayStats.AssertSingleBy(s => s.Count, "Stats merged for the same day have the same visit count");
                 return dayStats.First();
             }).ToArray();
             return mergedStats;

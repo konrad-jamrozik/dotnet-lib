@@ -1,5 +1,4 @@
 using System;
-using System.Diagnostics;
 using System.Linq;
 using Wikitools.AzureDevOps;
 using Wikitools.Lib.Tests.Json;
@@ -9,13 +8,14 @@ namespace Wikitools.Tests
 {
     // kja NEXT: add Merge tests.
     // Some tests:
-    // Split(x,x) = x, where x is only for one month
+    // DONE Split(x,x) = x, where x is only for one month
     // Merge(Split(x,y)) == (x,y)
     // Split(Merge(x,y)) == (x,y)
     // Merge(x,x) == x
-    // Merge(page1, page2) == stats for both page1 and page2
+    // DONE Merge(page1, page2) == stats for both page1 and page2
     // Merge(page1month1, page1month2) == stats for both months for page1
     // Merge(page1day1, page1day2) == stats for both days for page1
+    // DONE Merge(page1day1, page1day1) == either one stat, or error if different counts
     // Some test checking which page rename takes precedence, both in correct ((prev,curr)) and flipped ((curr,prev)) ordering.
     public class WikiPagesStatsStorageTests
     {
@@ -27,6 +27,17 @@ namespace Wikitools.Tests
         [Fact] public void SplitByMonthTest()                   => VerifySplitByMonth(PageStats);
         [Fact] public void SplitByMonthTestSameDay()            => VerifySplitByMonthThrows(PageStatsSameDay);
         [Fact] public void SplitByMonthTestSamePreviousDay()    => VerifySplitByMonthThrows(PageStatsSamePreviousDay);
+        // @formatter:on
+
+        // @formatter:off
+        [Fact] public void MergeTestNoStats()           => VerifyMerge(PageStatsEmpty);
+        [Fact] public void MergeTestPreviousMonthOnly() => VerifyMerge(PageStatsPreviousMonthOnly);
+        [Fact] public void MergeTest()                  => VerifyMerge(PageStats);
+        [Fact] public void MergeTestSameDay()           => VerifyMerge(PageStatsSameDay);
+        // @formatter:on
+
+        // @formatter:off
+        [Fact] public void MergeTestSameDayDifferentCounts() => VerifyMergeThrows(PageStatsSameDayDifferentCounts);
         // @formatter:on
 
         // @formatter:off
@@ -68,7 +79,19 @@ namespace Wikitools.Tests
                 new WikiPageStats.DayStat[] { },
                 new WikiPageStats.DayStat[] { },
                 new WikiPageStats.DayStat[] { new(215, FebruaryDate) },
-                new WikiPageStats.DayStat[] { new(215, FebruaryDate) });
+                new WikiPageStats.DayStat[] { new(215, FebruaryDate) },
+                MergedDayStats: new[]
+                { 
+                    new WikiPageStats.DayStat[] {}, 
+                    new WikiPageStats.DayStat[] { new(215, FebruaryDate)}
+                });
+
+        private static TestPayload PageStatsSameDayDifferentCounts =>
+            new(FebruaryDate,
+                new WikiPageStats.DayStat[] { },
+                new WikiPageStats.DayStat[] { },
+                new WikiPageStats.DayStat[] { new(215, FebruaryDate) },
+                new WikiPageStats.DayStat[] { new(217, FebruaryDate) });
 
         private static TestPayload PageStatsSamePreviousDay =>
             new(FebruaryDate,
@@ -77,6 +100,7 @@ namespace Wikitools.Tests
                 new WikiPageStats.DayStat[] { new(103, JanuaryDate) },
                 new WikiPageStats.DayStat[] { new(103, JanuaryDate) });
 
+        
 
         private static TestPayload PageStats
         {
@@ -125,12 +149,14 @@ namespace Wikitools.Tests
         }
 
 
+        // kja pass as input: expected splitByMonth and MergeBehaviors: green/throw.
         private record TestPayload(
             DateTime Date,
             WikiPageStats.DayStat[] FooPagePreviousDays,
             WikiPageStats.DayStat[] FooPageCurrentDays,
             WikiPageStats.DayStat[] BarPagePreviousDays,
             WikiPageStats.DayStat[] BarPageCurrentDays,
+            WikiPageStats.DayStat[][]? MergedDayStats = null,
             string FooPagePath = "/Foo",
             string BarPagePath = "/Bar",
             int FooPageId = 100,
@@ -157,6 +183,14 @@ namespace Wikitools.Tests
             };
 
             public WikiPageStats[] AllPagesStats => new[] { FooPage, BarPage };
+
+            public WikiPageStats[] MergedPagesStats => MergedDayStats != null
+                ? new[]
+                {
+                    FooPage with { Stats = MergedDayStats[0] },
+                    BarPage with { Stats = MergedDayStats[1] }
+                }
+                : AllPagesStats;
         }
 
         private static void VerifySplitByMonth(TestPayload data)
@@ -168,11 +202,34 @@ namespace Wikitools.Tests
             new JsonDiffAssertion(data.CurrentMonth,  currentMonth).Assert();
         }
 
+        private static void VerifyMerge(TestPayload data)
+        {
+            // Act
+            var merged = WikiPagesStatsStorage.Merge(data.PreviousMonth, data.CurrentMonth);
+
+            new JsonDiffAssertion(data.MergedPagesStats, merged).Assert();
+        }
+
         private static void VerifySplitByMonthThrows(TestPayload data)
         {
             try
             {
                 VerifySplitByMonth(data);
+            }
+            catch (ArgumentException)
+            {
+                // Pass
+                return;
+            }
+
+            Assert.False(true);
+        }
+
+        private static void VerifyMergeThrows(TestPayload data)
+        {
+            try
+            {
+                VerifyMerge(data);
             }
             catch (ArgumentException)
             {
