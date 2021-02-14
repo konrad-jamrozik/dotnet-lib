@@ -1,8 +1,10 @@
 using System;
 using Xunit;
+using Xunit.Sdk;
 
 namespace Wikitools.Tests
 {
+    // kja come up with better class name
     internal static class Verification
     {
         public static TReturn? Verify<TData, TReturn>(Func<TData, TReturn> target, TData data, Type? excType) 
@@ -13,7 +15,7 @@ namespace Wikitools.Tests
             {
                 ret = target(data);
             }
-            catch (Exception e)
+            catch (Exception e) when (e is not XunitException)
             {
                 if (excType != null && excType.IsInstanceOfType(e))
                 {
@@ -35,14 +37,14 @@ namespace Wikitools.Tests
             {
                 ret = target(data);
             }
-            catch (Exception e)
+            catch (Exception e) when (e is not XunitException)
             {
                 if (excType != null && excType.IsInstanceOfType(e))
                 {
                     return ret;
                 }
 
-                Assert.False(true, e.Message);
+                Assert.False(true, e.Message + Environment.NewLine + e.StackTrace);
             }
 
             if (excType != null)
