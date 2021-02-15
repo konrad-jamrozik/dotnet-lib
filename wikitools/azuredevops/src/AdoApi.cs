@@ -27,6 +27,7 @@ namespace Wikitools.AzureDevOps
 
         private static WikiHttpClient WikiHttpClient(AdoWikiUri adoWikiUri, string patEnvVar)
         {
+            // kja dehardcode - should be abstracted by OS
             var pat = Environment.GetEnvironmentVariable(patEnvVar);
 
             // Construction of VssConnection with PAT based on
