@@ -66,11 +66,11 @@ namespace Wikitools.Tests
                 new WikiPageStats.DayStat[] { },
                 new WikiPageStats.DayStat[] { new(215, FebruaryDate) },
                 new WikiPageStats.DayStat[] { new(215, FebruaryDate) },
-                MergedDayStats: new[]
-                { 
+                MergedDayStats:
+                (
                     new WikiPageStats.DayStat[] {}, 
                     new WikiPageStats.DayStat[] { new(215, FebruaryDate)}
-                },
+                ),
                 SplitByMonthThrows: true);
 
         private static WikiPagesStatsTestPayload PageStatsSamePreviousDay =>
@@ -79,11 +79,11 @@ namespace Wikitools.Tests
                 new WikiPageStats.DayStat[] { },
                 new WikiPageStats.DayStat[] { new(103, JanuaryDate) },
                 new WikiPageStats.DayStat[] { new(103, JanuaryDate) },
-                MergedDayStats: new[]
-                { 
+                MergedDayStats:
+                ( 
                     new WikiPageStats.DayStat[] {}, 
                     new WikiPageStats.DayStat[] { new(103, JanuaryDate)}
-                },
+                ),
                 SplitByMonthThrows: true);
 
         private static WikiPagesStatsTestPayload PageStatsSameDayDifferentCounts =>
@@ -123,8 +123,8 @@ namespace Wikitools.Tests
                     new(217, FebruaryDate.AddDays(2)),
                     new(219, FebruaryDate.AddDays(4)), 
                 },
-                MergedDayStats: new[]
-                { 
+                MergedDayStats:
+                ( 
                     new WikiPageStats.DayStat[]
                     {
                         new(103, JanuaryDate),
@@ -135,7 +135,7 @@ namespace Wikitools.Tests
                         new(219, FebruaryDate.AddDays(4))
                     }, 
                     new WikiPageStats.DayStat[] { }
-                });
+                ));
 
         private static WikiPagesStatsTestPayload PageStats
         {
@@ -207,8 +207,8 @@ namespace Wikitools.Tests
                     new(216, FebruaryDate.AddDays(1)), 
                     new(217, FebruaryDate.AddDays(2))
                 },
-                MergedDayStats: new[]
-                { 
+                MergedDayStats:
+                ( 
                     new WikiPageStats.DayStat[]
                     {
                         new(104, JanuaryDate.AddDays(1)),
@@ -224,7 +224,7 @@ namespace Wikitools.Tests
                         new(216, FebruaryDate.AddDays(1)), 
                         new(217, FebruaryDate.AddDays(2))
                     }
-                },
+                ),
                 SplitByMonthThrows: true);
     }
 }

@@ -26,6 +26,22 @@ namespace Wikitools.Tests
             // Act - Merge(foo, bar)
             WikiPageStats[]? merged = VerifyMerge(data, data.MergeThrows ? typeof(ArgumentException) : null);
 
+            if (!data.SplitByMonthThrows)
+            {
+                // Act - Split(Split({foo, bar}))
+                var (previousPreviousMonth, currentPreviousMonth) = WikiPagesStatsStorage.SplitByMonth(split!.Value.previousMonth, data.Date);
+                var (previousCurrentMonth, currentCurrentMonth) = WikiPagesStatsStorage.SplitByMonth(split!.Value.currentMonth, data.Date);
+                new JsonDiffAssertion(split!.Value.previousMonth, previousPreviousMonth).Assert();
+                Assert.DoesNotContain(currentPreviousMonth, ps => ps.DayStats.Any());
+                Assert.DoesNotContain(previousCurrentMonth, ps => ps.DayStats.Any());
+                new JsonDiffAssertion(split!.Value.currentMonth,  currentCurrentMonth).Assert();
+            }
+
+            if (!data.MergeThrows)
+            {
+                // kja add Merge(Merge()) tests
+            }
+
             if (data.MergeThrows || data.SplitByMonthThrows) 
                 return;
 

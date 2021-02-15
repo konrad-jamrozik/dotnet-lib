@@ -4,14 +4,24 @@ using Wikitools.AzureDevOps;
 
 namespace Wikitools.Tests
 {
-    // kja Days -> DayStats
+    /// <summary>
+    /// Data for testing method processing on WikiPageStats.
+    ///
+    /// Composed of four parts, that can be visualized as cells of 2-dimensional array of:
+    /// X-axis: (previousMonth, currentMonth)
+    /// Y-axis: (fooPage, barPage).
+    /// An example of one of the 4 cells is thus (fooPage for previousMonth).
+    /// Each cell is a WikiPageStats object, and thus also contains DayStat[] array.
+    /// The DayStat arrays are passed as ctor param, with the remaining WikiPageStats data
+    /// provided by default, but also overridable.
+    /// </summary>
     public record WikiPagesStatsTestPayload(
         DateTime Date,
         WikiPageStats.DayStat[] FooPagePreviousDayStats,
         WikiPageStats.DayStat[] FooPageCurrentDayStats,
         WikiPageStats.DayStat[] BarPagePreviousDayStats,
         WikiPageStats.DayStat[] BarPageCurrentDayStats,
-        WikiPageStats.DayStat[][]? MergedDayStats = null,
+        (WikiPageStats.DayStat[] FooPage, WikiPageStats.DayStat[] BarPage)? MergedDayStats = null,
         WikiPageStats.DayStat[]? FooPagePreviousMonthDayStats = null,
         WikiPageStats.DayStat[]? FooPageCurrentMonthDayStats = null,
         WikiPageStats.DayStat[]? BarPagePreviousMonthDayStats = null,
@@ -48,8 +58,8 @@ namespace Wikitools.Tests
         public WikiPageStats[] MergedPagesStats => MergedDayStats != null
             ? new[]
             {
-                FooPage with { DayStats = MergedDayStats[0] },
-                BarPage with { DayStats = MergedDayStats[1] }
+                FooPage with { DayStats = MergedDayStats!.Value.FooPage },
+                BarPage with { DayStats = MergedDayStats!.Value.BarPage }
             }
             : AllPagesStats;
     }
