@@ -1,10 +1,9 @@
 using System;
 using System.Linq;
-using MoreLinq;
 using Wikitools.AzureDevOps;
 using Wikitools.Lib.Tests.Json;
 using Xunit;
-
+using Data = Wikitools.Tests.WikiPagesStatsStorageTestsData;
 namespace Wikitools.Tests
 {
     // kja NEXT: add Merge tests.
@@ -13,11 +12,20 @@ namespace Wikitools.Tests
     //   Do this test by passing the same data but flipped current/previous.
     public class WikiPagesStatsStorageTests
     {
-        [Theory]
-        [ClassData(typeof(WikiPagesStatsStorageTestsData))]
-        public void TestTheory(WikiPagesStatsTestPayload payload) { Verify(payload); }
+        // @formatter:off
+        [Fact] public void PageStatsEmpty()                  => Verify(Data.PageStatsEmpty);
+        [Fact] public void PageStatsYearWrap()               => Verify(Data.PageStatsYearWrap);
+        [Fact] public void PageStatsBeforeYearWrap()         => Verify(Data.PageStatsBeforeYearWrap);
+        [Fact] public void PageStatsPreviousMonthOnly()      => Verify(Data.PageStatsPreviousMonthOnly);
+        [Fact] public void PageStats()                       => Verify(Data.PageStats);
+        [Fact] public void PageStatsSameDay()                => Verify(Data.PageStatsSameDay);
+        [Fact] public void PageStatsSamePreviousDay()        => Verify(Data.PageStatsSamePreviousDay);
+        [Fact] public void PageStatsSameDayDifferentCounts() => Verify(Data.PageStatsSameDayDifferentCounts);
+        [Fact] public void PageStatsSameMonth()              => Verify(Data.PageStatsSameMonth);
+        [Fact] public void PageStatsUnorderedDayStats()      => Verify(Data.PageStatsUnorderedDayStats);
+        // @formatter:on
 
-        private static void Verify(WikiPagesStatsTestPayload data)
+        private static void Verify(WikiPagesStatsTestData data)
         {
             // Act - Split({foo, bar})
             (WikiPageStats[] previousMonth, WikiPageStats[] currentMonth)? split =
@@ -39,7 +47,9 @@ namespace Wikitools.Tests
 
             if (!data.MergeThrows)
             {
-                // kja add Merge(Merge()) tests
+                // Act - Merge(Merge(foo, bar), Merge(foo, bar))
+                var mergedTwice = WikiPagesStatsStorage.Merge(merged!, merged!);
+                new JsonDiffAssertion(merged!, mergedTwice).Assert();
             }
 
             if (data.MergeThrows || data.SplitByMonthThrows) 
@@ -57,16 +67,16 @@ namespace Wikitools.Tests
         }
 
         private static (WikiPageStats[] previousMonth, WikiPageStats[] currentMonth)? VerifySplitByMonth(
-            WikiPagesStatsTestPayload data, Type? excType) =>
+            WikiPagesStatsTestData data, Type? excType) =>
             Verification.VerifyStruct(VerifySplitByMonth, data, excType);
 
-        private static WikiPageStats[]? VerifyMerge(WikiPagesStatsTestPayload data, Type? excType) =>
-            Verification.Verify<WikiPagesStatsTestPayload, WikiPageStats[]?>(VerifyMerge,
+        private static WikiPageStats[]? VerifyMerge(WikiPagesStatsTestData data, Type? excType) =>
+            Verification.Verify<WikiPagesStatsTestData, WikiPageStats[]?>(VerifyMerge,
                 data,
                 excType);
 
         private static (WikiPageStats[] previousMonth, WikiPageStats[] currentMonth) VerifySplitByMonth(
-            WikiPagesStatsTestPayload data)
+            WikiPagesStatsTestData data)
         {
             // Act
             var (previousMonth, currentMonth) = WikiPagesStatsStorage.SplitByMonth(data.AllPagesStats, data.Date);
@@ -75,7 +85,7 @@ namespace Wikitools.Tests
             return (previousMonth, currentMonth);
         }
 
-        private static WikiPageStats[] VerifyMerge(WikiPagesStatsTestPayload data)
+        private static WikiPageStats[] VerifyMerge(WikiPagesStatsTestData data)
         {
             // Act
             var merged = WikiPagesStatsStorage.Merge(data.PreviousMonth, data.CurrentMonth);

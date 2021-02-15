@@ -6,9 +6,9 @@ using Wikitools.Lib.Primitives;
 
 namespace Wikitools.Tests
 {
-    public record Data
+    public record ReportTestsData
     {
-        public Data()
+        public ReportTestsData()
         {
             var now = new SimulatedTimeline().UtcNow;
             CommitsLogs = GetCommitsLogs(now);

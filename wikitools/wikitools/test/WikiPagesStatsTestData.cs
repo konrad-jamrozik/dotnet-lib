@@ -15,7 +15,7 @@ namespace Wikitools.Tests
     /// The DayStat arrays are passed as ctor param, with the remaining WikiPageStats data
     /// provided by default, but also overridable.
     /// </summary>
-    public record WikiPagesStatsTestPayload(
+    public record WikiPagesStatsTestData(
         DateTime Date,
         WikiPageStats.DayStat[] FooPagePreviousDayStats,
         WikiPageStats.DayStat[] FooPageCurrentDayStats,

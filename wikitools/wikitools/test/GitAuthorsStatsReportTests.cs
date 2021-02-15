@@ -16,7 +16,7 @@ namespace Wikitools.Tests
         public async Task ReportsGitAuthorsStats()
         {
             // Arrange inputs
-            var data              = new Data();
+            var data              = new ReportTestsData();
             var commitsData       = data.CommitsLogs;
             var logDays           = 15;
             var gitExecutablePath = @"C:\Program Files\Git\bin\sh.exe";

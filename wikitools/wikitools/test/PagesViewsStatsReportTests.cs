@@ -15,7 +15,7 @@ namespace Wikitools.Tests
         public async Task ReportsPagesViewsStats()
         {
             // Arrange inputs
-            var data             = new Data();
+            var data             = new ReportTestsData();
             var pagesStatsData   = data.PagesStats;
             var wikiUri          = "https://dev.azure.com/adoOrg/adoProject/_wiki/wikis/wikiName";
             var patEnvVar        = string.Empty;
