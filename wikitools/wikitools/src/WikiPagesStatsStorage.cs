@@ -41,6 +41,9 @@ namespace Wikitools
         public static WikiPageStats[] Merge(WikiPageStats[] previousStats, WikiPageStats[] currentStats)
         {
             // kja curr bug when multiple pages when the same ID
+            // Proposed fix: identify not by ID, but by pair of (Path, ID).
+            // In such case Merge has to be updated, as it no longer will be possible to have
+            // two pages with the same ID but different paths.
             var previousStatsByPageId = previousStats.ToDictionary(ps => ps.Id);
             var currentStatsByPageId  = currentStats.ToDictionary(ps => ps.Id);
 
