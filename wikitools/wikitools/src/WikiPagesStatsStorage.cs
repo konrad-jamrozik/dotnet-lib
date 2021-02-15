@@ -40,6 +40,7 @@ namespace Wikitools
 
         public static WikiPageStats[] Merge(WikiPageStats[] previousStats, WikiPageStats[] currentStats)
         {
+            // kja curr bug when multiple pages when the same ID
             var previousStatsByPageId = previousStats.ToDictionary(ps => ps.Id);
             var currentStatsByPageId  = currentStats.ToDictionary(ps => ps.Id);
 
