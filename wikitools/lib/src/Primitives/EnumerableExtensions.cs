@@ -64,6 +64,11 @@ namespace Wikitools.Lib.Primitives
             }
         }
 
+        public static void Assert<TSource>(
+            this IEnumerable<TSource> source,
+            Func<TSource, bool> predicate) =>
+            MoreEnumerable.Assert(source, predicate);
+
         public static void AssertSingleBy<TSource, TKey>(
             this IEnumerable<TSource> source,
             Func<TSource, TKey> keySelector,

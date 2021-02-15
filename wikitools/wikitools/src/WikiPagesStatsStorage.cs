@@ -47,7 +47,7 @@ namespace Wikitools
             var currentIds      = currentStats.Select(ps => ps.Id).ToHashSet();
             var intersectingIds = previousIds.Intersect(currentIds).ToHashSet();
 
-            var currentOnlyStats  = currentIds.Except(intersectingIds).Select(id => currentStatsByPageId[id]);
+            var currentOnlyStats  = currentIds.Except(intersectingIds).Select(id => currentStatsByPageId[id]); // kja test for this .Except in .UnionUsing
             var previousOnlyStats = previousIds.Except(intersectingIds).Select(id => previousStatsByPageId[id]);
             var intersectingStats =
                 intersectingIds.Select(id => Merge(previousStatsByPageId[id], currentStatsByPageId[id]));
@@ -77,6 +77,7 @@ namespace Wikitools
             var currentMaxDate = currentPageStats.DayStats.Any()
                 ? currentPageStats.DayStats.Max(stat => stat.Day)
                 : new DateTime(0);
+            // kja test for this
             // Here we ensure that the 'current' stats path takes precedence over 'previous' page stats.
             var path = previousMaxDate > currentMaxDate ? previousPageStats.Path : currentPageStats.Path;
 
@@ -106,6 +107,10 @@ namespace Wikitools
             var pagesWithOrderedDayStats = pagesStats
                 .Select(ps => (ps, dayStatsByMonth: ps.DayStats.GroupAndOrderBy(s => s.Day.Trim(DateTimePrecision.Month))))
                 .ToArray();
+
+            // Assert that all days for given month come from that month, for all pages.
+            pagesWithOrderedDayStats.ForEach(p =>
+                p.dayStatsByMonth.ForEach(ds => ds.items.Assert(dayStat => dayStat.Day.Trim(DateTimePrecision.Month) == ds.key)));
 
             // Assert there are no duplicate day stats for given (page, month) tuple.
             pagesWithOrderedDayStats.ForEach(p =>

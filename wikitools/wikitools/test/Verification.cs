@@ -10,21 +10,20 @@ namespace Wikitools.Tests
         public static TReturn? Verify<TData, TReturn>(Func<TData, TReturn> target, TData data, Type? excType) 
             where TReturn : class?
         {
-            TReturn? ret = null;
+            TReturn? ret;
             try
             {
                 ret = target(data);
             }
-            catch (Exception e) when (e is not XunitException)
+            catch (Exception e)
             {
                 if (excType != null && excType.IsInstanceOfType(e))
-                {
-                    return ret;
-                }
+                    return null;
+                throw;
             }
 
             if (excType != null)
-                Assert.False(true);
+                Assert.False(true, $"Expected {excType}");
 
             return ret;
         }

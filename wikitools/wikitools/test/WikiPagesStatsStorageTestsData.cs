@@ -116,6 +116,26 @@ namespace Wikitools.Tests
                     new WikiPageStats.DayStat[] { }
                 ));
 
+        public static WikiPagesStatsTestData PageStatsRenamedToNewPath =>
+            new(FebruaryDate,
+                FooPagePreviousDayStats: new WikiPageStats.DayStat[] { new(103, JanuaryDate) },
+                new WikiPageStats.DayStat[] { },
+                new WikiPageStats.DayStat[] { },
+                BarPageCurrentDayStats: new WikiPageStats.DayStat[] { new(217, FebruaryDate.AddDays(2)) },
+                FooPageId: 12300,
+                BarPageId: 12300 // Page /Foo was renamed to /Bar, thus the same ID
+            );
+
+        public static WikiPagesStatsTestData PageStatsRenamedToExistingPath =>
+            new(FebruaryDate,
+                FooPagePreviousDayStats: new WikiPageStats.DayStat[] { new(103, JanuaryDate) },
+                new WikiPageStats.DayStat[] { },
+                new WikiPageStats.DayStat[] { },
+                BarPageCurrentDayStats: new WikiPageStats.DayStat[] { new(217, FebruaryDate.AddDays(2)) },
+                FooPagePath: "/Foo",
+                BarPagePath: "/Foo" // Bar was renamed to "/Foo". Assuming here that old Foo no longer exists.
+            );
+
         public static WikiPagesStatsTestData PageStats
         {
             get

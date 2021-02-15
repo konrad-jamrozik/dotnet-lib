@@ -23,6 +23,8 @@ namespace Wikitools.Tests
         [Fact] public void PageStatsSameDayDifferentCounts() => Verify(Data.PageStatsSameDayDifferentCounts);
         [Fact] public void PageStatsSameMonth()              => Verify(Data.PageStatsSameMonth);
         [Fact] public void PageStatsUnorderedDayStats()      => Verify(Data.PageStatsUnorderedDayStats);
+        [Fact] public void PageStatsRenamedToNewPath()       => Verify(Data.PageStatsRenamedToNewPath);
+        [Fact] public void PageStatsRenamedToExistingPath()  => Verify(Data.PageStatsRenamedToExistingPath);
         // @formatter:on
 
         private static void Verify(WikiPagesStatsTestData data)
