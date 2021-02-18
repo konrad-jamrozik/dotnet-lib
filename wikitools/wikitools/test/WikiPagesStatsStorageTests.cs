@@ -26,6 +26,7 @@ namespace Wikitools.Tests
         [Fact] public void PageStatsRenamedToExistingPath()  => Verify(Data.PageStatsRenamedToExistingPath);
         // @formatter:on
 
+        // kja 3 consider moving this verify logic onto the data type itself.
         private static void Verify(WikiPagesStatsTestData data)
         {
             // Act - Split({foo, bar})
