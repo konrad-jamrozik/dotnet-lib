@@ -38,6 +38,16 @@ namespace Wikitools
             return Trim(Merge(previousMonthStats, currentMonthStats), previousDate, CurrentDate);
         }
 
+        /// <summary>
+        /// Merges ADO Wiki page stats. previousStats with currentStats.
+        /// The merge behaves as follows:
+        /// - // kja Wikitools.AzureDevOps.AdoApi.GetAllWikiPagesDetails
+        /// 
+        /// 
+        /// </summary>
+        /// <param name="previousStats"></param>
+        /// <param name="currentStats"></param>
+        /// <returns></returns>
         public static WikiPageStats[] Merge(WikiPageStats[] previousStats, WikiPageStats[] currentStats)
         {
             // kja curr bug when multiple pages when the same ID
