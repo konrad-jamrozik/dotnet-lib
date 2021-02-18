@@ -40,14 +40,37 @@ namespace Wikitools
 
         /// <summary>
         /// Merges ADO Wiki page stats. previousStats with currentStats.
+        ///
+        /// The merge makes following assumptions about the inputs.
+        /// - The data within each of the two parameters obeys the constraints
+        /// as outlined by the comment of
+        /// Wikitools.AzureDevOps.AdoApi.GetAllWikiPagesDetails.
+        /// - However, these constraints might be violated when considering
+        /// the union of these arguments. Specifically:
+        ///   - Page with the same ID might appear twice: once in each argument.
+        ///   - Page with the same ID might appear under different paths.
+        ///   - A day views stat for a page with given ID and Day date
+        ///   can appear in appear twice: once in each argument.
+        ///     - In such case, the view counts for that day
+        ///     are guaranteed to be the same.
+        /// 
+        /// The merge guarantees the following: 
+        /// The output will obey the constraints as outlined by
+        /// the comment of 
+        /// Wikitools.AzureDevOps.AdoApi.GetAllWikiPagesDetails.
+        ///
         /// The merge behaves as follows:
-        /// - // kja Wikitools.AzureDevOps.AdoApi.GetAllWikiPagesDetails
-        /// 
-        /// 
+        /// - Pages with the same ID are merged into one page.
+        ///   - If the Paths were different, the Path from the currentStats
+        ///   is taken and the Path from previousStats is discarded.
+        ///     - This operations on the assumption the page was renamed,
+        ///     and the currentStats are newer, i.e. after the rename.
+        /// - A page with given ID will have union of all day view stats
+        ///   from both arguments.
+        /// - Day view stats for the same Day date for given page are merged
+        ///   into one. Observe that we have assumed the Counts of the day
+        ///   view stats were the same for both arguments.
         /// </summary>
-        /// <param name="previousStats"></param>
-        /// <param name="currentStats"></param>
-        /// <returns></returns>
         public static WikiPageStats[] Merge(WikiPageStats[] previousStats, WikiPageStats[] currentStats)
         {
             // kja curr bug when multiple pages when the same ID

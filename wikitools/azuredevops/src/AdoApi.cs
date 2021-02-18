@@ -65,6 +65,7 @@ namespace Wikitools.AzureDevOps
         ///   - This can happen in case of page rename, as explained above.
         /// 
         /// </summary>
+        // kja strongly type the returned collection, asserting all the constraints on it.
         private static async Task<List<WikiPageDetail>> GetAllWikiPagesDetails(
             AdoWikiUri adoWikiUri,
             int pageViewsForDays,
