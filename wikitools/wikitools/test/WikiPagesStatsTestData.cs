@@ -33,6 +33,15 @@ namespace Wikitools.Tests
         int FooPageId = 100,
         int BarPageId = 200)
     {
+        // kja once the specced out invariants are enforced by the type, this fixture will adapt (otherwise it wouldn't compile)
+        // making things work.
+        //
+        // currMonth = fooPage(currMonthDayStats), barPage(currMonthDayStats)
+        // previousMonth = fooPage(prevMonthDayStats), barPage(prevMonthDayStats)
+        // allStats = fooPage(prevMonthDayStats ++ currMonthDayStats), barPage(prevMonthDayStats ++ currMonthDayStats)
+        // (previousMonth, currentMonth) = split(AllStats)
+        // merged = merge(previousMonth, currentMonth)
+
         private WikiPageStats FooPage => new(FooPagePath,
             FooPageId,
             FooPagePreviousDayStats.Concat(FooPageCurrentDayStats).ToArray());
@@ -63,4 +72,6 @@ namespace Wikitools.Tests
             }
             : AllPagesStats;
     }
+
+
 }

@@ -59,7 +59,7 @@ namespace Wikitools.Lib.Primitives
             var sourceArray = source as TSource[] ?? source.ToArray();
             if (MoreEnumerable.DistinctBy(sourceArray, keySelector).Count() != sourceArray.Length)
             {
-                // kja introduce my own assertion and get rid of all Debug.Assert, as they are untestable (private exception type).
+                // kja 3 introduce my own assertion and get rid of all Debug.Assert, as they are untestable (private exception type).
                 throw new ArgumentException();
             }
         }

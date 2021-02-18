@@ -27,7 +27,7 @@ namespace Wikitools.AzureDevOps
 
         private static WikiHttpClient WikiHttpClient(AdoWikiUri adoWikiUri, string patEnvVar)
         {
-            // kja dehardcode - should be abstracted by OS
+            // kja 3 dehardcode - should be abstracted by OS
             var pat = Environment.GetEnvironmentVariable(patEnvVar);
 
             // Construction of VssConnection with PAT based on
@@ -50,8 +50,12 @@ namespace Wikitools.AzureDevOps
         /// Assumed invariants about the underlying ADO API behavior, confirmed by manual tests:
         /// - All dates provided are in UTC.
         /// - For any given page, visit stats for given day appear only once.
-        /// - For any given page, its (Path, ID) pair is unique within the scope of one call to this method.
+        /// - For any given page, it might have an empty array of day visit stats.
+        /// - For any given page, the day visit stats are ordered ascending by date.
+        /// - For any day visit stats, its Count is int that is 1 or more.
         /// - No page ID will appear more than once.
+        /// - As a consequence, for any given page, its (Path, ID) pair is unique within the scope
+        ///   of one call to this method.
         /// - If a page path was changed since last call to this method, it will appear only with the new path.
         ///   Consider a page with (ID, Path) of (42, "/Foo") and some set XDayViews of daily view counts.
         ///   Consider following sequence of events:

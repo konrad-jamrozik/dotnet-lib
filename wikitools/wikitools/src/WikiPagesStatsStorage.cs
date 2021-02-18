@@ -32,7 +32,7 @@ namespace Wikitools
                 ? Storage.Read<WikiPageStats[]>(previousDate)
                 : new WikiPageStats[0];
 
-            // BUG (already fixed, needs test) add filtering here to the pageViewsForDays, i.e. don't use all days of previous month.
+            // BUG 2 (already fixed, needs test) add filtering here to the pageViewsForDays, i.e. don't use all days of previous month.
             // Note that also the following case has to be tested for:
             //   the *current* (not previous) month needs to be filtered down.
             return Trim(Merge(previousMonthStats, currentMonthStats), previousDate, CurrentDate);
@@ -79,10 +79,8 @@ namespace Wikitools
         /// </summary>
         public static WikiPageStats[] Merge(WikiPageStats[] previousStats, WikiPageStats[] currentStats)
         {
-            // kja curr bug when multiple pages when the same ID
-            // Proposed fix: identify not by ID, but by pair of (Path, ID).
-            // In such case Merge has to be updated, as it no longer will be possible to have
-            // two pages with the same ID but different paths.
+            // kja test-breaking-issue: when multiple pages when the same ID
+            // This is problem with tests and unclear invariants. Should be no longer an issue once I fix those (see todos on tests).
             var previousStatsByPageId = previousStats.ToDictionary(ps => ps.Id);
             var currentStatsByPageId  = currentStats.ToDictionary(ps => ps.Id);
 
@@ -90,13 +88,13 @@ namespace Wikitools
             var currentIds      = currentStats.Select(ps => ps.Id).ToHashSet();
             var intersectingIds = previousIds.Intersect(currentIds).ToHashSet();
 
-            var currentOnlyStats  = currentIds.Except(intersectingIds).Select(id => currentStatsByPageId[id]); // kja test for this .Except in .UnionUsing
+            var currentOnlyStats  = currentIds.Except(intersectingIds).Select(id => currentStatsByPageId[id]); // kja 2 test for this .Except in .UnionUsing (not covered)
             var previousOnlyStats = previousIds.Except(intersectingIds).Select(id => previousStatsByPageId[id]);
             var intersectingStats =
                 intersectingIds.Select(id => Merge(previousStatsByPageId[id], currentStatsByPageId[id]));
 
             var merged = previousOnlyStats.Union(intersectingStats).Union(currentOnlyStats).ToArray();
-            // kja once Merge is tested, replace with:
+            // kja 2 once Merge is tested, replace the set logic with UnionUsing
             var merged2 = previousStats.UnionUsing(currentStats, ps => ps.Id, Merge);
 
             merged = merged.Select(ps => ps with { DayStats = ps.DayStats.OrderBy(ds => ds.Day).ToArray() }).ToArray();
@@ -120,7 +118,7 @@ namespace Wikitools
             var currentMaxDate = currentPageStats.DayStats.Any()
                 ? currentPageStats.DayStats.Max(stat => stat.Day)
                 : new DateTime(0);
-            // kja test for this
+            // kja 1 test for proper page renames in Merge
             // Here we ensure that the 'current' stats path takes precedence over 'previous' page stats.
             var path = previousMaxDate > currentMaxDate ? previousPageStats.Path : currentPageStats.Path;
 
@@ -203,7 +201,7 @@ namespace Wikitools
     }
 }
 
-// kja curr work.
+// kja 4 high level next tasks
 // Next tasks in Wikitools.WikiPagesStatsStorage.Update
 // - deduplicate serialization logic with JsonDiff
 // - replace File.WriteAllTextAsync. Introduce File abstraction or similar,

@@ -6,8 +6,7 @@ using Xunit;
 using Data = Wikitools.Tests.WikiPagesStatsStorageTestsData;
 namespace Wikitools.Tests
 {
-    // kja NEXT: add Merge tests.
-    // Some tests:
+    // kja 1 remaining merge tests to add
     // Some test checking which page rename takes precedence, both in correct ((prev,curr)) and flipped ((curr,prev)) ordering.
     //   Do this test by passing the same data but flipped current/previous.
     public class WikiPagesStatsStorageTests

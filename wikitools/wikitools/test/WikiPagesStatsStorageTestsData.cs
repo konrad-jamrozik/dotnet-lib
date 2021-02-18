@@ -74,6 +74,8 @@ namespace Wikitools.Tests
                 SplitByMonthThrows: true,
                 MergeThrows: true);
 
+        // kja this test will be unnecessary once I put constraints on the input
+        //(see todos in Wikitools.AzureDevOps.AdoApi.GetAllWikiPagesDetails)
         public static WikiPagesStatsTestData PageStatsUnorderedDayStats =>
             new(FebruaryDate,
                 FooPagePreviousDayStats: new WikiPageStats.DayStat[]
@@ -120,7 +122,18 @@ namespace Wikitools.Tests
             new(FebruaryDate,
                 FooPagePreviousDayStats: new WikiPageStats.DayStat[] { new(103, JanuaryDate) },
                 new WikiPageStats.DayStat[] { },
-                new WikiPageStats.DayStat[] { }, // kja this test fails because now this is (12300, "/Bar"), causing one ID twice in the inputs.
+                new WikiPageStats.DayStat[] { }, // kja this test fails because now this is (12300, "/Bar"), causing one ID twice in the inputs...
+                // ... note that currently the ID overrides duplicate IDs per each month, breaking invariants. The same ID is in all four quadrants.
+                // What I actually want is to have (12300, Foo) in previous month (as Foo in the fixture) and (42000, Bar) in previous month
+                // and (12300, Bar) in the current month (as Bar fixture). Thus the params of FooPageId and BarPageId should work differently:
+                // the override should allow to instead say "in current month page 12300 was renamed to Bar; page 42000 no longer exists.
+                // KJA NEXT TASK TO DO. Once test all tests green, do the type invariants, then fix the UnionUsing and add tests for it.
+                // Probably I need params like that instead:
+                // FooPagePathInCurrentMonth: "different name" // null denotes "no longer exists"
+                // BarPagePathInCurrentMonth: same as above.
+                //
+                // kja I will probably also want another test: that not only renames (12300, Foo) to (12300, Bar), but at the same time
+                // renames (42000, Bar) to (42000, Foo), and things still work out.
                 BarPageCurrentDayStats: new WikiPageStats.DayStat[] { new(217, FebruaryDate.AddDays(2)) },
                 FooPageId: 12300,
                 BarPageId: 12300 // Page /Foo was renamed to /Bar, thus the same ID
@@ -132,6 +145,10 @@ namespace Wikitools.Tests
                 new WikiPageStats.DayStat[] { },
                 new WikiPageStats.DayStat[] { },
                 BarPageCurrentDayStats: new WikiPageStats.DayStat[] { new(217, FebruaryDate.AddDays(2)) },
+                // kja this test also violates type invariant from AdoApi (see todos there), as it should not be 
+                // possible to have two IDs with the same path in the same month, and this currently does that.
+                //
+                // Ultimately this test will be redundant with the test above.
                 FooPagePath: "/Foo",
                 BarPagePath: "/Foo" // Bar was renamed to "/Foo". Assuming here that old Foo no longer exists.
             );
