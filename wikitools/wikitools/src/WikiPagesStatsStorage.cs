@@ -70,6 +70,12 @@ namespace Wikitools
         /// - Day view stats for the same Day date for given page are merged
         ///   into one. Observe that we have assumed the Counts of the day
         ///   view stats were the same for both arguments.
+        ///
+        /// Following constraints are *not* enforced, and thus might be
+        /// violated by the arguments:
+        /// - dates of all day view stats for page with given ID in currentStats
+        /// are equal or more recent than all day view stats for the same page
+        /// in previousStats.
         /// </summary>
         public static WikiPageStats[] Merge(WikiPageStats[] previousStats, WikiPageStats[] currentStats)
         {

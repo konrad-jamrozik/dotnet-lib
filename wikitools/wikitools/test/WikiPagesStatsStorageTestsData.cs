@@ -120,7 +120,7 @@ namespace Wikitools.Tests
             new(FebruaryDate,
                 FooPagePreviousDayStats: new WikiPageStats.DayStat[] { new(103, JanuaryDate) },
                 new WikiPageStats.DayStat[] { },
-                new WikiPageStats.DayStat[] { },
+                new WikiPageStats.DayStat[] { }, // kja this test fails because now this is (12300, "/Bar"), causing one ID twice in the inputs.
                 BarPageCurrentDayStats: new WikiPageStats.DayStat[] { new(217, FebruaryDate.AddDays(2)) },
                 FooPageId: 12300,
                 BarPageId: 12300 // Page /Foo was renamed to /Bar, thus the same ID
