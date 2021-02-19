@@ -84,8 +84,6 @@ namespace Wikitools
             var previousStats = validPreviousStats.Value;
             var currentStats  = validCurrentStats.Value;
 
-            // kja test-breaking-issue: when multiple pages when the same ID
-            // This is problem with tests and unclear invariants. Should be no longer an issue once I fix those (see todos on tests).
             var previousStatsByPageId = previousStats.ToDictionary(ps => ps.Id);
             var currentStatsByPageId  = currentStats.ToDictionary(ps => ps.Id);
 
@@ -201,6 +199,7 @@ namespace Wikitools
                     : Array.Empty<WikiPageStats.DayStat>();
         }
 
+        // kja make it a method on valid stats; probably same with Merge and Split
         public static WikiPageStats[] Trim(WikiPageStats[] stats, DateTime startDate, DateTime endDate) =>
             stats.Select(ps =>
                 ps with { DayStats = ps.DayStats.Where(s => s.Day >= startDate && s.Day <= endDate).ToArray() }).ToArray();

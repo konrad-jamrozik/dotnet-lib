@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Wikitools.AzureDevOps;
@@ -41,8 +42,12 @@ namespace Wikitools.Tests
             var januaryDate  = new DateTime(2021, 1, 1).ToUniversalTime();
             var backup1Path  = cfg.StorageDirPath + "/wiki_stats_2021_01_19_30days.json";
             var backup2Path  = cfg.StorageDirPath + "/wiki_stats_2021_02_06_30days.json";
-            var backup1Stats = new ValidWikiPagesStats(JsonSerializer.Deserialize<WikiPageStats[]>(File.ReadAllText(backup1Path))!);
-            var backup2Stats = new ValidWikiPagesStats(JsonSerializer.Deserialize<WikiPageStats[]>(File.ReadAllText(backup2Path))!);
+            var backup1Stats = new ValidWikiPagesStats(
+                JsonSerializer.Deserialize<WikiPageStats[]>(File.ReadAllText(backup1Path))!
+                    .Select(WikiPageStats.FixNulls));
+            var backup2Stats = new ValidWikiPagesStats(
+                JsonSerializer.Deserialize<WikiPageStats[]>(File.ReadAllText(backup2Path))!
+                    .Select(WikiPageStats.FixNulls));
 
             var mergedStats = WikiPagesStatsStorage.Merge(backup1Stats, backup2Stats);
             var trimmedStats =
