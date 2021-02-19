@@ -64,10 +64,22 @@ namespace Wikitools.Lib.Primitives
             }
         }
 
+        public static void AssertOrderedBy<TSource, TKey>(
+            this IEnumerable<TSource> source,
+            Func<TSource, TKey> keySelector)
+        {
+            var sourceArray = source as TSource[] ?? source.ToArray();
+            var ordered     = sourceArray.OrderBy(keySelector).ToArray();
+            if (!ordered.SequenceEqual(sourceArray))
+            {
+                // kja 3 introduce my own assertion and get rid of all Debug.Assert, as they are untestable (private exception type).
+                throw new ArgumentException();
+            }
+        }
+
         public static void Assert<TSource>(
             this IEnumerable<TSource> source,
-            Func<TSource, bool> predicate) =>
-            MoreEnumerable.Assert(source, predicate);
+            Func<TSource, bool> predicate) => MoreEnumerable.Assert(source, predicate);
 
         public static void AssertSingleBy<TSource, TKey>(
             this IEnumerable<TSource> source,

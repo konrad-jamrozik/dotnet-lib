@@ -10,5 +10,8 @@ namespace Wikitools.Lib.Primitives
                 DateTimePrecision.Month => new DateTime(date.Year, date.Month, 1),
                 _ => throw new ArgumentOutOfRangeException(nameof(precision), precision, null)
             };
+
+        public static DateTime Utc(this DateTime date) =>
+            new(date.Year, date.Month, date.Day, date.Hour, date.Minute, date.Second, DateTimeKind.Utc);
     }
 }
