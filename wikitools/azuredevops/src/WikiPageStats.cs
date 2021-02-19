@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Linq;
-using System.Text.Json.Serialization;
+using System.Runtime.CompilerServices;
 using Microsoft.TeamFoundation.Wiki.WebApi;
 using Wikitools.Lib.Primitives;
 
@@ -17,5 +17,10 @@ namespace Wikitools.AzureDevOps
             ?? Array.Empty<DayStat>();
 
         public record DayStat(int Count, DateTime Day) { }
+
+        public static WikiPageStats FixNulls(WikiPageStats stats) =>
+            // ReSharper disable once ConstantNullCoalescingCondition
+            // reason: this method exist to fix this null, caused by System.Text.Json.JsonSerializer.Deserialize.
+            stats with { DayStats = stats.DayStats ?? Array.Empty<DayStat>() };
     }
 }
