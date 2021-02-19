@@ -84,7 +84,8 @@ namespace Wikitools.Tests
                 // (Foo,Bar) -> (Bar, _ )
                 // (Foo,Bar) -> (Bar,Foo)
                 BarPageCurrentDayStats: new WikiPageStats.DayStat[] { new(217, FebruaryDate.AddDays(2)) },
-                // kja this doesn't work, because now it is unclear what should be feed to Split
+                // kja this doesn't work, because now it is unclear what should be feed to Split.
+                // Basically, the page rename breaks Split(Merge(x)) == x and other invariants.
                 FooPagePathInCurrentMonth: "/Qux"
             );
 
