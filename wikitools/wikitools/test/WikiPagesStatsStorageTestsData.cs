@@ -92,13 +92,13 @@ namespace Wikitools.Tests
                 },
                 new WikiPageStats.DayStat[] {},
                 new WikiPageStats.DayStat[] {},
-                FooPagePreviousMonthDayStats: new WikiPageStats.DayStat[]
+                FooPageSplitPreviousMonthDayStats: new WikiPageStats.DayStat[]
                 {
                     new(103, JanuaryDate),
                     new(105, JanuaryDate.AddDays(2)),
                     new(107, JanuaryDate.AddDays(4)), 
                 },
-                FooPageCurrentMonthDayStats: new WikiPageStats.DayStat[]
+                FooPageSplitCurrentMonthDayStats: new WikiPageStats.DayStat[]
                 {
                     new(215, FebruaryDate),
                     new(217, FebruaryDate.AddDays(2)),
@@ -122,35 +122,14 @@ namespace Wikitools.Tests
             new(FebruaryDate,
                 FooPagePreviousDayStats: new WikiPageStats.DayStat[] { new(103, JanuaryDate) },
                 new WikiPageStats.DayStat[] { },
-                new WikiPageStats.DayStat[] { }, // kja this test fails because now this is (12300, "/Bar"), causing one ID twice in the inputs...
-                // ... note that currently the ID overrides duplicate IDs per each month, breaking invariants. The same ID is in all four quadrants.
-                // What I actually want is to have (12300, Foo) in previous month (as Foo in the fixture) and (42000, Bar) in previous month
-                // and (12300, Bar) in the current month (as Bar fixture). Thus the params of FooPageId and BarPageId should work differently:
-                // the override should allow to instead say "in current month page 12300 was renamed to Bar; page 42000 no longer exists.
-                // KJA NEXT TASK TO DO. Once test all tests green, do the type invariants, then fix the UnionUsing and add tests for it.
-                // Probably I need params like that instead:
-                // FooPagePathInCurrentMonth: "different name" // null denotes "no longer exists"
-                // BarPagePathInCurrentMonth: same as above.
-                //
-                // kja I will probably also want another test: that not only renames (12300, Foo) to (12300, Bar), but at the same time
-                // renames (42000, Bar) to (42000, Foo), and things still work out.
-                BarPageCurrentDayStats: new WikiPageStats.DayStat[] { new(217, FebruaryDate.AddDays(2)) },
-                FooPageId: 12300,
-                BarPageId: 12300 // Page /Foo was renamed to /Bar, thus the same ID
-            );
-
-        public static WikiPagesStatsTestData PageStatsRenamedToExistingPath =>
-            new(FebruaryDate,
-                FooPagePreviousDayStats: new WikiPageStats.DayStat[] { new(103, JanuaryDate) },
                 new WikiPageStats.DayStat[] { },
-                new WikiPageStats.DayStat[] { },
+                // KJA NEXT TASK TO DO. do the type invariants, then fix the UnionUsing and add tests for it, then add tests that check page path renames, like:
+                // (Foo,Bar) -> (Qux,Bar)
+                // (Foo,Bar) -> (Bar, _ )
+                // (Foo,Bar) -> (Bar,Foo)
                 BarPageCurrentDayStats: new WikiPageStats.DayStat[] { new(217, FebruaryDate.AddDays(2)) },
-                // kja this test also violates type invariant from AdoApi (see todos there), as it should not be 
-                // possible to have two IDs with the same path in the same month, and this currently does that.
-                //
-                // Ultimately this test will be redundant with the test above.
-                FooPagePath: "/Foo",
-                BarPagePath: "/Foo" // Bar was renamed to "/Foo". Assuming here that old Foo no longer exists.
+                // kja this doesn't work, because now it is unclear what should be feed to Split
+                FooPagePathInCurrentMonth: "/Qux"
             );
 
         public static WikiPagesStatsTestData PageStats

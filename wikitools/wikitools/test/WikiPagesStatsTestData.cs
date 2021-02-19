@@ -22,16 +22,16 @@ namespace Wikitools.Tests
         WikiPageStats.DayStat[] BarPagePreviousDayStats,
         WikiPageStats.DayStat[] BarPageCurrentDayStats,
         (WikiPageStats.DayStat[] FooPage, WikiPageStats.DayStat[] BarPage)? MergedDayStats = null,
-        WikiPageStats.DayStat[]? FooPagePreviousMonthDayStats = null,
-        WikiPageStats.DayStat[]? FooPageCurrentMonthDayStats = null,
-        WikiPageStats.DayStat[]? BarPagePreviousMonthDayStats = null,
-        WikiPageStats.DayStat[]? BarPageCurrentMonthDayStats = null,
+        WikiPageStats.DayStat[]? FooPageSplitPreviousMonthDayStats = null,
+        WikiPageStats.DayStat[]? FooPageSplitCurrentMonthDayStats = null,
+        WikiPageStats.DayStat[]? BarPageSplitPreviousMonthDayStats = null,
+        WikiPageStats.DayStat[]? BarPageSplitCurrentMonthDayStats = null,
         bool SplitByMonthThrows = false,
         bool MergeThrows = false,
         string FooPagePath = "/Foo",
         string BarPagePath = "/Bar",
-        int FooPageId = 100,
-        int BarPageId = 200)
+        string? FooPagePathInCurrentMonth = null,
+        string? BarPagePathInCurrentMonth = null)
     {
         // kja once the specced out invariants are enforced by the type, this fixture will adapt (otherwise it wouldn't compile)
         // making things work.
@@ -43,26 +43,36 @@ namespace Wikitools.Tests
         // merged = merge(previousMonth, currentMonth)
 
         private WikiPageStats FooPage => new(FooPagePath,
-            FooPageId,
+            101,
             FooPagePreviousDayStats.Concat(FooPageCurrentDayStats).ToArray());
 
         private WikiPageStats BarPage => new(BarPagePath,
-            BarPageId,
+            202,
             BarPagePreviousDayStats.Concat(BarPageCurrentDayStats).ToArray());
 
         public WikiPageStats[] PreviousMonth => new[]
         {
-            FooPage with { DayStats = FooPagePreviousMonthDayStats ?? FooPagePreviousDayStats },
-            BarPage with { DayStats = BarPagePreviousMonthDayStats ?? BarPagePreviousDayStats }
+            FooPage with { DayStats = FooPageSplitPreviousMonthDayStats ?? FooPagePreviousDayStats },
+            BarPage with { DayStats = BarPageSplitPreviousMonthDayStats ?? BarPagePreviousDayStats }
         };
 
         public WikiPageStats[] CurrentMonth => new[]
         {
-            FooPage with { DayStats = FooPageCurrentMonthDayStats ?? FooPageCurrentDayStats },
-            BarPage with { DayStats = BarPageCurrentMonthDayStats ?? BarPageCurrentDayStats }
+            FooPage with
+            {
+                Path = FooPagePathInCurrentMonth ?? FooPagePath,
+                DayStats = FooPageSplitCurrentMonthDayStats ?? FooPageCurrentDayStats
+            },
+            BarPage with { 
+                Path = BarPagePathInCurrentMonth ?? BarPagePath,
+                DayStats = BarPageSplitCurrentMonthDayStats ?? BarPageCurrentDayStats }
         };
 
-        public WikiPageStats[] AllPagesStats => new[] { FooPage, BarPage };
+        public WikiPageStats[] AllPagesStats => new[]
+        {
+            FooPage with { Path = FooPagePath }, 
+            BarPage with { Path = BarPagePath }
+        };
 
         public WikiPageStats[] MergedPagesStats => MergedDayStats != null
             ? new[]
