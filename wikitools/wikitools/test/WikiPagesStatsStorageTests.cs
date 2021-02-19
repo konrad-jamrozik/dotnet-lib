@@ -40,10 +40,10 @@ namespace Wikitools.Tests
                 // Act - Split(Split({foo, bar}))
                 var (previousPreviousMonth, currentPreviousMonth) = WikiPagesStatsStorage.SplitByMonth(split!.Value.previousMonth, data.Date);
                 var (previousCurrentMonth, currentCurrentMonth) = WikiPagesStatsStorage.SplitByMonth(split!.Value.currentMonth, data.Date);
-                new JsonDiffAssertion(split!.Value.previousMonth, previousPreviousMonth.Value).Assert();
+                new JsonDiffAssertion(split!.Value.previousMonth.Value, previousPreviousMonth.Value).Assert();
                 Assert.DoesNotContain(currentPreviousMonth.Value, ps => ps.DayStats.Any());
                 Assert.DoesNotContain(previousCurrentMonth.Value, ps => ps.DayStats.Any());
-                new JsonDiffAssertion(split!.Value.currentMonth,  currentCurrentMonth.Value).Assert();
+                new JsonDiffAssertion(split!.Value.currentMonth.Value,  currentCurrentMonth.Value).Assert();
             }
 
             if (!data.MergeThrows)
