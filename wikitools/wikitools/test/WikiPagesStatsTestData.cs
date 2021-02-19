@@ -22,17 +22,15 @@ namespace Wikitools.Tests
         WikiPageStats.DayStat[] BarPagePreviousDayStats,
         WikiPageStats.DayStat[] BarPageCurrentDayStats,
         (WikiPageStats.DayStat[] FooPage, WikiPageStats.DayStat[] BarPage)? MergedDayStats = null,
-        WikiPageStats.DayStat[]? FooPageSplitPreviousMonthDayStats = null,
-        WikiPageStats.DayStat[]? FooPageSplitCurrentMonthDayStats = null,
-        WikiPageStats.DayStat[]? BarPageSplitPreviousMonthDayStats = null,
-        WikiPageStats.DayStat[]? BarPageSplitCurrentMonthDayStats = null,
         bool SplitByMonthThrows = false,
         bool MergeThrows = false,
-        string FooPagePath = "/Foo",
-        string BarPagePath = "/Bar",
         string? FooPagePathInCurrentMonth = null,
         string? BarPagePathInCurrentMonth = null)
     {
+
+        private const string FooPagePath = "/Foo";
+        private const string BarPagePath = "/Bar";
+
         // kja once the specced out invariants are enforced by the type, this fixture will adapt (otherwise it wouldn't compile)
         // making things work.
         //
@@ -52,8 +50,8 @@ namespace Wikitools.Tests
 
         public ValidWikiPagesStats PreviousMonth => new(new[]
         {
-            FooPage with { DayStats = FooPageSplitPreviousMonthDayStats ?? FooPagePreviousDayStats },
-            BarPage with { DayStats = BarPageSplitPreviousMonthDayStats ?? BarPagePreviousDayStats }
+            FooPage with { DayStats = FooPagePreviousDayStats },
+            BarPage with { DayStats = BarPagePreviousDayStats }
         });
 
         public ValidWikiPagesStats CurrentMonth => new(new[]
@@ -61,11 +59,13 @@ namespace Wikitools.Tests
             FooPage with
             {
                 Path = FooPagePathInCurrentMonth ?? FooPagePath,
-                DayStats = FooPageSplitCurrentMonthDayStats ?? FooPageCurrentDayStats
+                DayStats = FooPageCurrentDayStats
             },
-            BarPage with { 
+            BarPage with 
+            { 
                 Path = BarPagePathInCurrentMonth ?? BarPagePath,
-                DayStats = BarPageSplitCurrentMonthDayStats ?? BarPageCurrentDayStats }
+                DayStats = BarPageCurrentDayStats
+            }
         });
 
         public ValidWikiPagesStats AllPagesStats => new(new[]
