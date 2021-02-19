@@ -21,7 +21,6 @@ namespace Wikitools.Tests
         [Fact] public void PageStatsSamePreviousDay()        => Verify(Data.PageStatsSamePreviousDay);
         [Fact] public void PageStatsSameDayDifferentCounts() => Verify(Data.PageStatsSameDayDifferentCounts);
         [Fact] public void PageStatsSameMonth()              => Verify(Data.PageStatsSameMonth);
-        [Fact] public void PageStatsUnorderedDayStats()      => Verify(Data.PageStatsUnorderedDayStats);
         // kja [Fact] public void PageStatsRenamedToNewPath()       => Verify(Data.PageStatsRenamedToNewPath);
         // @formatter:on
 

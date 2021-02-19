@@ -74,50 +74,6 @@ namespace Wikitools.Tests
                 SplitByMonthThrows: true,
                 MergeThrows: true);
 
-        // kja this test will be unnecessary once I put constraints on the input
-        //(see todos in Wikitools.AzureDevOps.AdoApi.GetAllWikiPagesDetails)
-        public static WikiPagesStatsTestData PageStatsUnorderedDayStats =>
-            new(FebruaryDate,
-                FooPagePreviousDayStats: new WikiPageStats.DayStat[]
-                {
-                    new(107, JanuaryDate.AddDays(4)), 
-                    new(217, FebruaryDate.AddDays(2)), 
-                    new(103, JanuaryDate)
-                },
-                FooPageCurrentDayStats: new WikiPageStats.DayStat[]
-                {
-                    new(219, FebruaryDate.AddDays(4)), 
-                    new(105, JanuaryDate.AddDays(2)), 
-                    new(215, FebruaryDate)
-                },
-                new WikiPageStats.DayStat[] {},
-                new WikiPageStats.DayStat[] {},
-                FooPageSplitPreviousMonthDayStats: new WikiPageStats.DayStat[]
-                {
-                    new(103, JanuaryDate),
-                    new(105, JanuaryDate.AddDays(2)),
-                    new(107, JanuaryDate.AddDays(4)), 
-                },
-                FooPageSplitCurrentMonthDayStats: new WikiPageStats.DayStat[]
-                {
-                    new(215, FebruaryDate),
-                    new(217, FebruaryDate.AddDays(2)),
-                    new(219, FebruaryDate.AddDays(4)), 
-                },
-                MergedDayStats:
-                ( 
-                    new WikiPageStats.DayStat[]
-                    {
-                        new(103, JanuaryDate),
-                        new(105, JanuaryDate.AddDays(2)), 
-                        new(107, JanuaryDate.AddDays(4)), 
-                        new(215, FebruaryDate),
-                        new(217, FebruaryDate.AddDays(2)),
-                        new(219, FebruaryDate.AddDays(4))
-                    }, 
-                    new WikiPageStats.DayStat[] { }
-                ));
-
         public static WikiPagesStatsTestData PageStatsRenamedToNewPath =>
             new(FebruaryDate,
                 FooPagePreviousDayStats: new WikiPageStats.DayStat[] { new(103, JanuaryDate) },
@@ -193,9 +149,9 @@ namespace Wikitools.Tests
                 },
                 BarPagePreviousDayStats: new WikiPageStats.DayStat[]
                 {
+                    new(103, JanuaryDate),
                     new(215, FebruaryDate), 
                     new(216, FebruaryDate.AddDays(1)),
-                    new(103, JanuaryDate)
                 },
                 BarPageCurrentDayStats: new WikiPageStats.DayStat[]
                 {
