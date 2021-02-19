@@ -41,12 +41,12 @@ namespace Wikitools.Tests
             var januaryDate  = new DateTime(2021, 1, 1).ToUniversalTime();
             var backup1Path  = cfg.StorageDirPath + "/wiki_stats_2021_01_19_30days.json";
             var backup2Path  = cfg.StorageDirPath + "/wiki_stats_2021_02_06_30days.json";
-            var backup1Stats = JsonSerializer.Deserialize<WikiPageStats[]>(File.ReadAllText(backup1Path))!;
-            var backup2Stats = JsonSerializer.Deserialize<WikiPageStats[]>(File.ReadAllText(backup2Path))!;
+            var backup1Stats = new ValidWikiPagesStats(JsonSerializer.Deserialize<WikiPageStats[]>(File.ReadAllText(backup1Path))!);
+            var backup2Stats = new ValidWikiPagesStats(JsonSerializer.Deserialize<WikiPageStats[]>(File.ReadAllText(backup2Path))!);
 
             var mergedStats = WikiPagesStatsStorage.Merge(backup1Stats, backup2Stats);
             var trimmedStats =
-                WikiPagesStatsStorage.Trim(mergedStats, januaryDate, januaryDate.AddMonths(1).AddDays(-1));
+                WikiPagesStatsStorage.Trim(mergedStats.Value, januaryDate, januaryDate.AddMonths(1).AddDays(-1));
 
             await storage.Write(trimmedStats, januaryDate, "merged_stats_2021_01_19_2021_02_06.json");
         }

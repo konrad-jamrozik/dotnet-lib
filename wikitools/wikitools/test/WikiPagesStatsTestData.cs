@@ -50,13 +50,13 @@ namespace Wikitools.Tests
             202,
             BarPagePreviousDayStats.Concat(BarPageCurrentDayStats).ToArray());
 
-        public WikiPageStats[] PreviousMonth => new[]
+        public ValidWikiPagesStats PreviousMonth => new(new[]
         {
             FooPage with { DayStats = FooPageSplitPreviousMonthDayStats ?? FooPagePreviousDayStats },
             BarPage with { DayStats = BarPageSplitPreviousMonthDayStats ?? BarPagePreviousDayStats }
-        };
+        });
 
-        public WikiPageStats[] CurrentMonth => new[]
+        public ValidWikiPagesStats CurrentMonth => new(new[]
         {
             FooPage with
             {
@@ -66,20 +66,20 @@ namespace Wikitools.Tests
             BarPage with { 
                 Path = BarPagePathInCurrentMonth ?? BarPagePath,
                 DayStats = BarPageSplitCurrentMonthDayStats ?? BarPageCurrentDayStats }
-        };
+        });
 
-        public WikiPageStats[] AllPagesStats => new[]
+        public ValidWikiPagesStats AllPagesStats => new(new[]
         {
             FooPage with { Path = FooPagePath }, 
             BarPage with { Path = BarPagePath }
-        };
+        });
 
-        public WikiPageStats[] MergedPagesStats => MergedDayStats != null
-            ? new[]
+        public ValidWikiPagesStats MergedPagesStats => MergedDayStats != null
+            ? new ValidWikiPagesStats(new[]
             {
                 FooPage with { DayStats = MergedDayStats!.Value.FooPage },
                 BarPage with { DayStats = MergedDayStats!.Value.BarPage }
-            }
+            })
             : AllPagesStats;
     }
 

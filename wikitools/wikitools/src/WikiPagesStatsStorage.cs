@@ -15,27 +15,27 @@ namespace Wikitools
 
             var (previousMonthStats, currentMonthStats) = SplitByMonth(pageStats, CurrentDate);
 
-            await Storage.With(CurrentDate,               (WikiPageStats[] stats) => Merge(stats, currentMonthStats));
-            await Storage.With(CurrentDate.AddMonths(-1), (WikiPageStats[] stats) => Merge(stats, previousMonthStats));
+            await Storage.With(CurrentDate,               (WikiPageStats[] stats) => Merge(new ValidWikiPagesStats(stats), currentMonthStats).Value);
+            await Storage.With(CurrentDate.AddMonths(-1), (WikiPageStats[] stats) => Merge(new ValidWikiPagesStats(stats), previousMonthStats).Value);
 
             return this;
         }
 
-        public WikiPageStats[] PagesStats(int pageViewsForDays)
+        public ValidWikiPagesStats PagesStats(int pageViewsForDays)
         {
             var currentMonthDate = CurrentDate;
             var previousDate     = currentMonthDate.AddDays(-pageViewsForDays);
             var monthsDiffer     = previousDate.Month != currentMonthDate.Month;
 
-            var currentMonthStats = Storage.Read<WikiPageStats[]>(currentMonthDate);
-            var previousMonthStats = monthsDiffer
+            var currentMonthStats = new ValidWikiPagesStats(Storage.Read<WikiPageStats[]>(currentMonthDate));
+            var previousMonthStats = new ValidWikiPagesStats(monthsDiffer
                 ? Storage.Read<WikiPageStats[]>(previousDate)
-                : new WikiPageStats[0];
+                : new WikiPageStats[0]);
 
             // BUG 2 (already fixed, needs test) add filtering here to the pageViewsForDays, i.e. don't use all days of previous month.
             // Note that also the following case has to be tested for:
             //   the *current* (not previous) month needs to be filtered down.
-            return Trim(Merge(previousMonthStats, currentMonthStats), previousDate, CurrentDate);
+            return new ValidWikiPagesStats(Trim(Merge(previousMonthStats, currentMonthStats).Value, previousDate, CurrentDate));
         }
 
         /// <summary>
@@ -77,8 +77,11 @@ namespace Wikitools
         /// are equal or more recent than all day view stats for the same page
         /// in previousStats.
         /// </summary>
-        public static WikiPageStats[] Merge(WikiPageStats[] previousStats, WikiPageStats[] currentStats)
+        public static ValidWikiPagesStats Merge(ValidWikiPagesStats validPreviousStats, ValidWikiPagesStats validCurrentStats)
         {
+            var previousStats = validPreviousStats.Value;
+            var currentStats  = validCurrentStats.Value;
+
             // kja test-breaking-issue: when multiple pages when the same ID
             // This is problem with tests and unclear invariants. Should be no longer an issue once I fix those (see todos on tests).
             var previousStatsByPageId = previousStats.ToDictionary(ps => ps.Id);
@@ -104,7 +107,7 @@ namespace Wikitools
                 ps.DayStats.DistinctBy(s => s.Day).Count() == ps.DayStats.Length,
                 "There is only one stat per page per day"));
 
-            return merged;
+            return new ValidWikiPagesStats(merged);
         }
 
         private static WikiPageStats Merge(WikiPageStats previousPageStats, WikiPageStats currentPageStats)
@@ -138,10 +141,11 @@ namespace Wikitools
             return mergedStats;
         }
 
-        public static (WikiPageStats[] previousMonthStats, WikiPageStats[] currentMonthStats) SplitByMonth(
-            WikiPageStats[] pagesStats,
+        public static (ValidWikiPagesStats previousMonthStats, ValidWikiPagesStats currentMonthStats) SplitByMonth(
+            ValidWikiPagesStats validPagesStats,
             DateTime currentDate)
         {
+            var pagesStats = validPagesStats.Value;
             Debug.Assert(pagesStats.Any());
 
             // For each page, group and order its day stats by month
@@ -162,7 +166,7 @@ namespace Wikitools
 
             var previousMonthStats = statsByMonth.Select(t => t.previousMonthPageStats).ToArray();
             var currentMonthStats  = statsByMonth.Select(t => t.currentMonthPageStats).ToArray();
-            return (previousMonthStats, currentMonthStats);
+            return (new ValidWikiPagesStats(previousMonthStats), new ValidWikiPagesStats(currentMonthStats));
         }
 
         private static (WikiPageStats previousMonthPageStats, WikiPageStats currentMonthPageStats)

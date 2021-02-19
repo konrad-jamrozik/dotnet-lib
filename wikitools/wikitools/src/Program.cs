@@ -55,10 +55,10 @@ namespace Wikitools
 
             var docsToWrite = new MarkdownDocument[]
             {
-                //authorsReport,
-                //filesReport,
+                authorsReport,
+                filesReport,
                 pagesViewsReport,
-                //monthlyReport
+                monthlyReport
             };
 
             return WriteAll(docsToWrite, outputSink);

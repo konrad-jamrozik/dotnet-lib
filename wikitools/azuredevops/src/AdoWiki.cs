@@ -4,7 +4,7 @@ namespace Wikitools.AzureDevOps
 {
     public record AdoWiki(IAdoApi AdoApi, AdoWikiUri AdoWikiUri, string PatEnvVar)
     {
-        public Task<WikiPageStats[]> PagesStats(int pageViewsForDays) =>
+        public Task<ValidWikiPagesStats> PagesStats(int pageViewsForDays) =>
             AdoApi.WikiPagesStats(AdoWikiUri, PatEnvVar, pageViewsForDays);
     }
 }
