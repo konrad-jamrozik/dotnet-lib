@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using Microsoft.TeamFoundation.Wiki.WebApi;
+using Wikitools.Lib.Contracts;
 using Wikitools.Lib.Primitives;
 
 namespace Wikitools.AzureDevOps
@@ -42,10 +42,11 @@ namespace Wikitools.AzureDevOps
             statsArr.AssertDistinctBy(ps => ps.Path);
             statsArr.ForEach(ps =>
             {
-                ps.DayStats.AssertDistinctBy(ds => ds.Day);
-                ps.DayStats.AssertOrderedBy(ds => ds.Day);
-                ps.DayStats.Assert(ds => ds.Count >= 1);
-                ps.DayStats.Assert(ds => ds.Day.Kind == DateTimeKind.Utc);
+                var (_, _, dayStats) = ps;
+                dayStats.AssertDistinctBy(ds => ds.Day);
+                dayStats.AssertOrderedBy(ds => ds.Day);
+                dayStats.Assert(ds => ds.Count >= 1);
+                dayStats.Assert(ds => ds.Day.Kind == DateTimeKind.Utc);
             });
 
             Value = statsArr;
@@ -70,9 +71,9 @@ namespace Wikitools.AzureDevOps
         ///   - Page with the same ID might appear twice: once in each argument.
         ///   - Page with the same ID might appear under different paths.
         ///   - A day views stat for a page with given ID and Day date
-        ///   can appear in appear twice: once in each argument.
-        ///     - In such case, the view counts for that day
-        ///     are guaranteed to be the same.
+        ///   can appear twice: once in each argument.
+        ///     - In such case, the view count for currentStats is >=
+        ///     of the view count of previousStats.
         /// 
         /// The merge guarantees the following: 
         /// The output will obey the constraints as outlined by
@@ -153,8 +154,10 @@ namespace Wikitools.AzureDevOps
             var groupedByDay = pagePreviousStats.Concat(pageCurrentStats).GroupBy(stat => stat.Day);
             var mergedStats = groupedByDay.Select(dayStats =>
             {
-                dayStats.AssertSingleBy(s => s.Count, "DayStats merged for the same day have the same visit count");
-                return dayStats.First();
+                new Contract(dayStats.Count(), "dayStats.Count()", new Range(1, 2))
+                    .Assert(upperBoundReason: "Given day stat may appear once for previous stats and once for current stats");
+                Debug.Assert(dayStats.Last().Count >= dayStats.First().Count, "Day stat count for current stats >= day stat count for previous stats");
+                return dayStats.Last();
             }).ToArray();
             return mergedStats;
         }

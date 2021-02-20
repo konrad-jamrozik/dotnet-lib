@@ -52,6 +52,10 @@ namespace Wikitools.Lib.Primitives
             this IEnumerable<TSource> source,
             Action<TSource> action) => MoreEnumerable.ForEach(source, action);
 
+        public static IExtremaEnumerable<TSource> MaxBy<TSource, TKey>(
+            this IEnumerable<TSource> source,
+            Func<TSource, TKey> selector) => MoreEnumerable.MaxBy(source, selector);
+
         public static void AssertDistinctBy<TSource, TKey>(
             this IEnumerable<TSource> source,
             Func<TSource, TKey> keySelector)

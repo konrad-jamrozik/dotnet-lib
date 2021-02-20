@@ -17,7 +17,7 @@ namespace Wikitools.AzureDevOps
             string patEnvVar,
             int pageViewsForDays)
         {
-            new Contract(pageViewsForDays, nameof(pageViewsForDays), new Range(1, 30)).Assert();
+            new Contract(pageViewsForDays, nameof(pageViewsForDays), new Range(1, 30)).Assert(upperBoundReason: "ADO API limit");
 
             var wikiHttpClient   = WikiHttpClient(adoWikiUri, patEnvVar);
             var wikiPagesDetails = await GetAllWikiPagesDetails(adoWikiUri, pageViewsForDays, wikiHttpClient);

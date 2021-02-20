@@ -25,13 +25,13 @@ namespace Wikitools
             {
                 string.Format(DescriptionFormat, pageViewsForDays, timeline.UtcNow, awaitedStats.Value.Length),
                 "",
-                new TabularData(GetRows(awaitedStats.Value))
+                new TabularData(GetRows(awaitedStats))
             };
         }
 
-        private static (object[] headerRow, object[][] rows) GetRows(WikiPageStats[] stats)
+        private static (object[] headerRow, object[][] rows) GetRows(ValidWikiPagesStats stats)
         {
-            (string path, int views)[] pathsStats = stats
+            (string path, int views)[] pathsStats = stats.Value
                 .Select(pageStats =>
                     (
                         path: pageStats.Path,
