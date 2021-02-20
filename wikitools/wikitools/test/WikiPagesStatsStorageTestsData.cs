@@ -65,6 +65,9 @@ namespace Wikitools.Tests
                 ),
                 SplitByMonthThrows: true);
 
+        // kja this Merge should not throw! Split by month should NEVER throw!
+        // This currently passes because the Valid* type throws ArgumentException, which is expected
+        // Solve this by adding InvariantException
         public static WikiPagesStatsTestData PageStatsSameDayDifferentCounts =>
             new(FebruaryDate,
                 new WikiPageStats.DayStat[] { },
@@ -72,21 +75,25 @@ namespace Wikitools.Tests
                 new WikiPageStats.DayStat[] { new(215, FebruaryDate) },
                 new WikiPageStats.DayStat[] { new(217, FebruaryDate) },
                 SplitByMonthThrows: true,
-                MergeThrows: true);
+                MergeThrows: false);
 
         public static WikiPagesStatsTestData PageStatsRenamedToNewPath =>
             new(FebruaryDate,
-                FooPagePreviousDayStats: new WikiPageStats.DayStat[] { new(103, JanuaryDate) },
-                new WikiPageStats.DayStat[] { },
-                new WikiPageStats.DayStat[] { },
-                // KJA NEXT TASK TO DO. do the type invariants, then fix the UnionUsing and add tests for it, then add tests that check page path renames, like:
-                // (Foo,Bar) -> (Qux,Bar)
-                // (Foo,Bar) -> (Bar, _ )
-                // (Foo,Bar) -> (Bar,Foo)
-                BarPageCurrentDayStats: new WikiPageStats.DayStat[] { new(217, FebruaryDate.AddDays(2)) },
-                // kja this doesn't work, because now it is unclear what should be feed to Split.
-                // Basically, the page rename breaks Split(Merge(x)) == x and other invariants.
+                new WikiPageStats.DayStat[] { new(103, JanuaryDate) },
+                new WikiPageStats.DayStat[] { new(217, FebruaryDate.AddDays(2)) },
+                new WikiPageStats.DayStat[] { new(104, JanuaryDate.AddDays(1)) },
+                new WikiPageStats.DayStat[] { new(219, FebruaryDate.AddDays(4)) },
                 FooPagePathInCurrentMonth: "/Qux"
+            );
+
+        public static WikiPagesStatsTestData PageStatsExchangedPaths =>
+            new(FebruaryDate,
+                new WikiPageStats.DayStat[] { new(103, JanuaryDate) },
+                new WikiPageStats.DayStat[] { new(217, FebruaryDate.AddDays(2)) },
+                new WikiPageStats.DayStat[] { new(104, JanuaryDate.AddDays(1)) },
+                new WikiPageStats.DayStat[] { new(219, FebruaryDate.AddDays(4)) },
+                FooPagePathInCurrentMonth: "/Bar",
+                BarPagePathInCurrentMonth: "/Foo"
             );
 
         public static WikiPagesStatsTestData PageStats

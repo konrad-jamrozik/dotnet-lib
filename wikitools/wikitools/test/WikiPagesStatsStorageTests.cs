@@ -22,6 +22,7 @@ namespace Wikitools.Tests
         [Fact] public void PageStatsSameDayDifferentCounts() => Verify(Data.PageStatsSameDayDifferentCounts);
         [Fact] public void PageStatsSameMonth()              => Verify(Data.PageStatsSameMonth);
         [Fact] public void PageStatsRenamedToNewPath()       => Verify(Data.PageStatsRenamedToNewPath);
+        [Fact] public void PageStatsExchangedPaths()         => Verify(Data.PageStatsExchangedPaths);
         // @formatter:on
 
         // kja 3 consider moving this verify logic onto the data type itself.
