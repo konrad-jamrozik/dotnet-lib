@@ -49,9 +49,9 @@ namespace Wikitools.Tests
                 JsonSerializer.Deserialize<WikiPageStats[]>(File.ReadAllText(backup2Path))!
                     .Select(WikiPageStats.FixNulls));
 
-            var mergedStats = WikiPagesStatsStorage.Merge(backup1Stats, backup2Stats);
+            var mergedStats = ValidWikiPagesStats.Merge(backup1Stats, backup2Stats);
             var trimmedStats =
-                WikiPagesStatsStorage.Trim(mergedStats.Value, januaryDate, januaryDate.AddMonths(1).AddDays(-1));
+                mergedStats.Trim(januaryDate, januaryDate.AddMonths(1).AddDays(-1));
 
             await storage.Write(trimmedStats, januaryDate, "merged_stats_2021_01_19_2021_02_06.json");
         }

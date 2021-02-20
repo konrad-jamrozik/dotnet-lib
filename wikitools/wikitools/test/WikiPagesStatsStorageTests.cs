@@ -37,8 +37,8 @@ namespace Wikitools.Tests
             if (!data.SplitByMonthThrows)
             {
                 // Act - Split(Split({foo, bar}))
-                var (previousPreviousMonth, currentPreviousMonth) = WikiPagesStatsStorage.SplitByMonth(split!.Value.previousMonth, data.Date);
-                var (previousCurrentMonth, currentCurrentMonth) = WikiPagesStatsStorage.SplitByMonth(split!.Value.currentMonth, data.Date);
+                var (previousPreviousMonth, currentPreviousMonth) = ValidWikiPagesStats.SplitByMonth(split!.Value.previousMonth, data.Date);
+                var (previousCurrentMonth, currentCurrentMonth) = ValidWikiPagesStats.SplitByMonth(split!.Value.currentMonth, data.Date);
                 new JsonDiffAssertion(split!.Value.previousMonth.Value, previousPreviousMonth.Value).Assert();
                 Assert.DoesNotContain(currentPreviousMonth.Value, ps => ps.DayStats.Any());
                 Assert.DoesNotContain(previousCurrentMonth.Value, ps => ps.DayStats.Any());
@@ -48,7 +48,7 @@ namespace Wikitools.Tests
             if (!data.MergeThrows)
             {
                 // Act - Merge(Merge(foo, bar), Merge(foo, bar))
-                var mergedTwice = WikiPagesStatsStorage.Merge(merged!, merged!);
+                var mergedTwice = ValidWikiPagesStats.Merge(merged!, merged!);
                 new JsonDiffAssertion(merged!, mergedTwice).Assert();
             }
 
@@ -59,12 +59,12 @@ namespace Wikitools.Tests
             // Merge will lose the previous month name, and splitting back will do so too.
             // Act - Split(Merge(foo, bar)) == (foo, bar)
             var (previousMonthUnmerged, currentMonthUnmerged) =
-                WikiPagesStatsStorage.SplitByMonth(merged!, data.Date);
+                ValidWikiPagesStats.SplitByMonth(merged!, data.Date);
             new JsonDiffAssertion(data.PreviousMonth, previousMonthUnmerged).Assert();
             new JsonDiffAssertion(data.CurrentMonth,  currentMonthUnmerged).Assert();
 
             // Act - Merge(Split({foo, bar})) == Merge(foo, bar)
-            var mergedSplit = WikiPagesStatsStorage.Merge(split!.Value.previousMonth, split!.Value.currentMonth);
+            var mergedSplit = ValidWikiPagesStats.Merge(split!.Value.previousMonth, split!.Value.currentMonth);
             new JsonDiffAssertion(data.MergedPagesStats, mergedSplit).Assert();
         }
 
@@ -81,7 +81,7 @@ namespace Wikitools.Tests
             WikiPagesStatsTestData data)
         {
             // Act
-            var (previousMonth, currentMonth) = WikiPagesStatsStorage.SplitByMonth(data.AllPagesStats, data.Date);
+            var (previousMonth, currentMonth) = ValidWikiPagesStats.SplitByMonth(data.AllPagesStats, data.Date);
             new JsonDiffAssertion(data.PreviousMonth, previousMonth).Assert();
             new JsonDiffAssertion(data.CurrentMonth,  currentMonth).Assert();
             return (previousMonth, currentMonth);
@@ -90,7 +90,7 @@ namespace Wikitools.Tests
         private static ValidWikiPagesStats VerifyMerge(WikiPagesStatsTestData data)
         {
             // Act
-            var merged = WikiPagesStatsStorage.Merge(data.PreviousMonth, data.CurrentMonth);
+            var merged = ValidWikiPagesStats.Merge(data.PreviousMonth, data.CurrentMonth);
             new JsonDiffAssertion(data.MergedPagesStats, merged).Assert();
             return merged;
         }
