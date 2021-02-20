@@ -52,6 +52,10 @@ namespace Wikitools.AzureDevOps
             Value = statsArr;
         }
 
+        // kja this should be private. This means that:
+        // - serialization to HDD serializes this type directly
+        // - assertions operate on this type directly
+        // - reporting logic (data rows projection) cannot access this value directly
         public WikiPageStats[] Value { get; }
 
         public static ValidWikiPagesStats From(IEnumerable<WikiPageStats> stats) =>
