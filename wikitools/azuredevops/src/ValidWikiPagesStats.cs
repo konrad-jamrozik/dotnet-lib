@@ -102,6 +102,7 @@ namespace Wikitools.AzureDevOps
         /// are equal or more recent than all day view stats for the same page
         /// in previousStats.
         /// </summary>
+        // kja make this private
         public static ValidWikiPagesStats Merge(ValidWikiPagesStats validPreviousStats, ValidWikiPagesStats validCurrentStats)
         {
             var previousStats = validPreviousStats.Value;
@@ -226,7 +227,7 @@ namespace Wikitools.AzureDevOps
 
         public ValidWikiPagesStats Trim(DateTime startDate, DateTime endDate) => Trim(this, startDate, endDate);
 
-        public static ValidWikiPagesStats Trim(ValidWikiPagesStats stats, DateTime startDate, DateTime endDate) =>
+        private static ValidWikiPagesStats Trim(ValidWikiPagesStats stats, DateTime startDate, DateTime endDate) =>
             new(stats.Value.Select(ps =>
                     ps with { DayStats = ps.DayStats.Where(s => s.Day >= startDate && s.Day <= endDate).ToArray() })
                 .ToArray());
