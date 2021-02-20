@@ -61,6 +61,8 @@ namespace Wikitools.Tests
             var mergedSplit = ValidWikiPagesStats.Merge(split!.Value.previousMonth, split!.Value.currentMonth);
             new JsonDiffAssertion(data.MergedPagesStats, mergedSplit).Assert();
 
+            // The invariant verified below does not hold if page rename is present.
+            // This is because Merge erases the previous name.
             if (data.PageRenamePresent)
                 return;
 
