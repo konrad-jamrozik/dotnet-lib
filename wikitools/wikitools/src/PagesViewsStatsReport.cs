@@ -31,7 +31,13 @@ namespace Wikitools
 
         private static (object[] headerRow, object[][] rows) GetRows(ValidWikiPagesStats stats)
         {
-            (string path, int views)[] pathsStats = stats.Value
+            // kja to prevent stats.Value access here, simulate double dispatch, by doing the following:
+            // rows = stats.GetRowsFor(this);
+            // where stats has method of GetRowsFor(IReport report) which does:
+            // return report.GetRows(this.Value);
+            // this ensures that ValidWikiPagesStats allows only instances of IReport
+            // to access its direct data, and only by passing it to IReport.GetRows.
+            (string path, int views)[] pathsStats = stats.Value 
                 .Select(pageStats =>
                     (
                         path: pageStats.Path,

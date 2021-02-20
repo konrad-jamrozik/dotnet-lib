@@ -12,8 +12,7 @@ namespace Wikitools.Lib.Markdown
         public async Task WriteAsync(TextWriter textWriter) => await textWriter.WriteAsync(await ToMarkdown(this));
 
         private static async Task<string> ToMarkdown(MarkdownDocument doc) =>
-            (await doc.Content)
-            .Select(entry => entry switch
+            (await doc.Content).Select(entry => entry switch
             {
                 TabularData td => new MarkdownTable(td) + Environment.NewLine,
                 _ => entry + Environment.NewLine
