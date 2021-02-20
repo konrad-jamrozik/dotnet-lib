@@ -31,23 +31,25 @@ namespace Wikitools.Tests
             (ValidWikiPagesStats previousMonth, ValidWikiPagesStats currentMonth)? split =
                 VerifySplitByMonth(data, data.SplitByMonthThrows ? typeof(ArgumentException) : null);
 
-            // Act - Merge(foo, bar)
+            // Act - Merge(prev, curr)
             ValidWikiPagesStats? merged = VerifyMerge(data, data.MergeThrows ? typeof(ArgumentException) : null);
 
             if (!data.SplitByMonthThrows)
             {
-                // Act - Split(Split({foo, bar}))
+                // Act - Split(Split({foo, bar})[prev]) == prev
                 var (previousPreviousMonth, currentPreviousMonth) = ValidWikiPagesStats.SplitByMonth(split!.Value.previousMonth, data.Date);
-                var (previousCurrentMonth, currentCurrentMonth) = ValidWikiPagesStats.SplitByMonth(split!.Value.currentMonth, data.Date);
                 new JsonDiffAssertion(split!.Value.previousMonth.Value, previousPreviousMonth.Value).Assert();
                 Assert.DoesNotContain(currentPreviousMonth.Value, ps => ps.DayStats.Any());
+
+                // Act - Split(Split({foo, bar})[curr]) == curr
+                var (previousCurrentMonth, currentCurrentMonth) = ValidWikiPagesStats.SplitByMonth(split!.Value.currentMonth, data.Date);
                 Assert.DoesNotContain(previousCurrentMonth.Value, ps => ps.DayStats.Any());
                 new JsonDiffAssertion(split!.Value.currentMonth.Value,  currentCurrentMonth.Value).Assert();
             }
 
             if (!data.MergeThrows)
             {
-                // Act - Merge(Merge(foo, bar), Merge(foo, bar))
+                // Act - Merge(Merge(prev, curr), Merge(prev, curr)) == Merge(prev, curr)
                 var mergedTwice = ValidWikiPagesStats.Merge(merged!, merged!);
                 new JsonDiffAssertion(merged!, mergedTwice).Assert();
             }
@@ -55,17 +57,18 @@ namespace Wikitools.Tests
             if (data.MergeThrows || data.SplitByMonthThrows) 
                 return;
 
-            // kja observation: this is not going to work if page was renamed.
-            // Merge will lose the previous month name, and splitting back will do so too.
+            // Act - Merge(Split({foo, bar})) == Merge(prev, curr)
+            var mergedSplit = ValidWikiPagesStats.Merge(split!.Value.previousMonth, split!.Value.currentMonth);
+            new JsonDiffAssertion(data.MergedPagesStats, mergedSplit).Assert();
+
+            if (data.PageRenamePresent)
+                return;
+
             // Act - Split(Merge(foo, bar)) == (foo, bar)
             var (previousMonthUnmerged, currentMonthUnmerged) =
                 ValidWikiPagesStats.SplitByMonth(merged!, data.Date);
             new JsonDiffAssertion(data.PreviousMonth, previousMonthUnmerged).Assert();
             new JsonDiffAssertion(data.CurrentMonth,  currentMonthUnmerged).Assert();
-
-            // Act - Merge(Split({foo, bar})) == Merge(foo, bar)
-            var mergedSplit = ValidWikiPagesStats.Merge(split!.Value.previousMonth, split!.Value.currentMonth);
-            new JsonDiffAssertion(data.MergedPagesStats, mergedSplit).Assert();
         }
 
         private static (ValidWikiPagesStats previousMonth, ValidWikiPagesStats currentMonth)? VerifySplitByMonth(

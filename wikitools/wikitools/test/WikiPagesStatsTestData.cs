@@ -48,6 +48,8 @@ namespace Wikitools.Tests
             202,
             BarPagePreviousDayStats.Concat(BarPageCurrentDayStats).ToArray());
 
+        public readonly bool PageRenamePresent = FooPagePathInCurrentMonth != null || BarPagePathInCurrentMonth != null;
+
         public ValidWikiPagesStats PreviousMonth => new(new[]
         {
             FooPage with { DayStats = FooPagePreviousDayStats },
