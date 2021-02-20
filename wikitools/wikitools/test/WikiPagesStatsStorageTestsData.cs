@@ -66,8 +66,6 @@ namespace Wikitools.Tests
                 SplitByMonthThrows: true);
 
         // kja this Merge should not throw! Split by month should NEVER throw!
-        // This currently passes because the Valid* type throws ArgumentException, which is expected
-        // Solve this by adding InvariantException
         public static WikiPagesStatsTestData PageStatsSameDayDifferentCounts =>
             new(FebruaryDate,
                 new WikiPageStats.DayStat[] { },

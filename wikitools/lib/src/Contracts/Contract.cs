@@ -2,16 +2,17 @@
 
 namespace Wikitools.Lib.Contracts
 {
-    public record Contract(int Subject, string SubjectName, Range Range)
+    public static class Contract
     {
-        public void Assert(string upperBoundReason)
+        public static void Assert(int subject, string subjectName, Range range, string upperBoundReason)
         {
-            if (!(Subject >= Range.Start.Value))
-                throw new ArgumentOutOfRangeException(SubjectName,
-                    $"Expected value >= {Range.Start.Value}; value = {Subject}");
-            if (!(Subject <= Range.End.Value))
-                throw new ArgumentOutOfRangeException(SubjectName,
-                    $"Expected value <= {Range.End.Value}. value = {Subject}. Reason: {upperBoundReason}");
+            if (!(subject >= range.Start.Value))
+                throw new InvariantException(
+                    $"{subjectName}: Expected value >= {range.Start.Value}; value = {subject}");
+            if (!(subject <= range.End.Value))
+                throw new InvariantException(
+                    $"{subjectName}: Expected value <= {range.End.Value}. value = {subject}. " +
+                    $"Reason: {upperBoundReason}");
         }
     }
 }

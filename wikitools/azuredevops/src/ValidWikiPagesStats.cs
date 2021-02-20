@@ -150,8 +150,8 @@ namespace Wikitools.AzureDevOps
             var groupedByDay = pagePreviousStats.Concat(pageCurrentStats).GroupBy(stat => stat.Day);
             var mergedStats = groupedByDay.Select(dayStats =>
             {
-                new Contract(dayStats.Count(), "dayStats.Count()", new Range(1, 2))
-                    .Assert(upperBoundReason: "Given day stat may appear once for previous stats and once for current stats");
+                Contract.Assert(dayStats.Count(), "dayStats.Count()", new Range(1, 2),
+                    upperBoundReason: "Given day stat may appear once for previous stats and once for current stats");
                 Debug.Assert(dayStats.Last().Count >= dayStats.First().Count, "Day stat count for current stats >= day stat count for previous stats");
                 return dayStats.Last();
             }).ToArray();

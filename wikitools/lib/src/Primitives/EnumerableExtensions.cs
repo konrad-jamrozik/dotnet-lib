@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using MoreLinq;
+using Wikitools.Lib.Contracts;
 
 namespace Wikitools.Lib.Primitives
 {
@@ -64,7 +65,7 @@ namespace Wikitools.Lib.Primitives
             if (MoreEnumerable.DistinctBy(sourceArray, keySelector).Count() != sourceArray.Length)
             {
                 // kja 3 introduce my own assertion and get rid of all Debug.Assert, as they are untestable (private exception type).
-                throw new ArgumentException();
+                throw new InvariantException();
             }
         }
 
@@ -77,13 +78,23 @@ namespace Wikitools.Lib.Primitives
             if (!ordered.SequenceEqual(sourceArray))
             {
                 // kja 3 introduce my own assertion and get rid of all Debug.Assert, as they are untestable (private exception type).
-                throw new ArgumentException();
+                throw new InvariantException();
             }
         }
 
         public static void Assert<TSource>(
             this IEnumerable<TSource> source,
-            Func<TSource, bool> predicate) => MoreEnumerable.Assert(source, predicate);
+            Func<TSource, bool> predicate)
+        {
+            try
+            {
+                MoreEnumerable.Assert(source, predicate);
+            }
+            catch (Exception e)
+            {
+                throw new InvariantException("MoreEnumerable.Assert failed", e);
+            }
+        }
 
         public static void AssertSingleBy<TSource, TKey>(
             this IEnumerable<TSource> source,
@@ -92,7 +103,7 @@ namespace Wikitools.Lib.Primitives
         {
             if (MoreEnumerable.DistinctBy(source, keySelector).Count() != 1)
             {
-                throw new ArgumentException(message);
+                throw new InvariantException(message);
             }
         }
     }
