@@ -52,28 +52,20 @@ namespace Wikitools.Tests
 
         public ValidWikiPagesStats PreviousMonth => new(new[]
         {
-            FooPage with { DayStats = FooPagePreviousDayStats },
-            BarPage with { DayStats = BarPagePreviousDayStats }
+            FooPage with { Path = FooPagePath, DayStats = FooPagePreviousDayStats },
+            BarPage with { Path = BarPagePath, DayStats = BarPagePreviousDayStats }
         });
 
         public ValidWikiPagesStats CurrentMonth => new(new[]
         {
-            FooPage with
-            {
-                Path = FooPagePathInCurrentMonth ?? FooPagePath,
-                DayStats = FooPageCurrentDayStats
-            },
-            BarPage with 
-            { 
-                Path = BarPagePathInCurrentMonth ?? BarPagePath,
-                DayStats = BarPageCurrentDayStats
-            }
+            FooPage with { Path = FooPagePathInCurrentMonth ?? FooPagePath, DayStats = FooPageCurrentDayStats },
+            BarPage with { Path = BarPagePathInCurrentMonth ?? BarPagePath, DayStats = BarPageCurrentDayStats }
         });
 
         public ValidWikiPagesStats AllPagesStats => new(new[]
         {
-            FooPage with { Path = FooPagePath }, 
-            BarPage with { Path = BarPagePath }
+            FooPage with { Path = FooPagePathInCurrentMonth ?? FooPagePath }, 
+            BarPage with { Path = BarPagePathInCurrentMonth ?? BarPagePath }
         });
 
         public ValidWikiPagesStats MergedPagesStats => MergedDayStats != null
