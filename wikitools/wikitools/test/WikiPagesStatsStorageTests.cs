@@ -66,11 +66,11 @@ namespace Wikitools.Tests
             if (data.PageRenamePresent)
                 return;
 
-            // Act - Split(Merge(foo, bar)) == (foo, bar)
-            var (previousMonthUnmerged, currentMonthUnmerged) =
+            // Act - Split(Merge(foo, bar)) == {foo, bar}
+            var (previousMonthPostMerge, currentMonthPostMerge) =
                 ValidWikiPagesStats.SplitByMonth(merged!, data.Date);
-            new JsonDiffAssertion(data.PreviousMonth, previousMonthUnmerged).Assert();
-            new JsonDiffAssertion(data.CurrentMonth,  currentMonthUnmerged).Assert();
+            new JsonDiffAssertion(data.PreviousMonthAfterSplit, previousMonthPostMerge).Assert();
+            new JsonDiffAssertion(data.CurrentMonth,  currentMonthPostMerge).Assert();
         }
 
         private static (ValidWikiPagesStats previousMonth, ValidWikiPagesStats currentMonth)? VerifySplitByMonth(
@@ -87,7 +87,7 @@ namespace Wikitools.Tests
         {
             // Act
             var (previousMonth, currentMonth) = ValidWikiPagesStats.SplitByMonth(data.AllPagesStats, data.Date);
-            new JsonDiffAssertion(data.PreviousMonth, previousMonth).Assert();
+            new JsonDiffAssertion(data.PreviousMonthAfterSplit, previousMonth).Assert();
             new JsonDiffAssertion(data.CurrentMonth,  currentMonth).Assert();
             return (previousMonth, currentMonth);
         }

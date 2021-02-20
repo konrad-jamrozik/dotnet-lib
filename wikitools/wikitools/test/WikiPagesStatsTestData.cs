@@ -56,6 +56,12 @@ namespace Wikitools.Tests
             BarPage with { Path = BarPagePath, DayStats = BarPagePreviousDayStats }
         });
 
+        public ValidWikiPagesStats PreviousMonthAfterSplit => new(new[]
+        {
+            FooPage with { Path = FooPagePathInCurrentMonth ?? FooPagePath, DayStats = FooPagePreviousDayStats },
+            BarPage with { Path = BarPagePathInCurrentMonth ?? BarPagePath, DayStats = BarPagePreviousDayStats }
+        });
+
         public ValidWikiPagesStats CurrentMonth => new(new[]
         {
             FooPage with { Path = FooPagePathInCurrentMonth ?? FooPagePath, DayStats = FooPageCurrentDayStats },
@@ -71,8 +77,8 @@ namespace Wikitools.Tests
         public ValidWikiPagesStats MergedPagesStats => MergedDayStats != null
             ? new ValidWikiPagesStats(new[]
             {
-                FooPage with { DayStats = MergedDayStats!.Value.FooPage },
-                BarPage with { DayStats = MergedDayStats!.Value.BarPage }
+                FooPage with { Path = FooPagePathInCurrentMonth ?? FooPagePath, DayStats = MergedDayStats!.Value.FooPage },
+                BarPage with { Path = BarPagePathInCurrentMonth ?? BarPagePath, DayStats = MergedDayStats!.Value.BarPage }
             })
             : AllPagesStats;
     }

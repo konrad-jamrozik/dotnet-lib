@@ -137,19 +137,10 @@ namespace Wikitools.AzureDevOps
         private static WikiPageStats Merge(WikiPageStats previousPageStats, WikiPageStats currentPageStats)
         {
             Debug.Assert(previousPageStats.Id == currentPageStats.Id);
-            var id = previousPageStats.Id;
-
-            var previousMaxDate = previousPageStats.DayStats.Any()
-                ? previousPageStats.DayStats.Max(stat => stat.Day)
-                : new DateTime(0);
-            var currentMaxDate = currentPageStats.DayStats.Any()
-                ? currentPageStats.DayStats.Max(stat => stat.Day)
-                : new DateTime(0);
-            // kja 1 test for proper page renames in Merge
-            // Here we ensure that the 'current' stats path takes precedence over 'previous' page stats.
-            var path = previousMaxDate > currentMaxDate ? previousPageStats.Path : currentPageStats.Path;
-
-            return new WikiPageStats(path, id, Merge(previousPageStats.DayStats, currentPageStats.DayStats));
+            return new WikiPageStats(
+                currentPageStats.Path, // Ensure that the currentPageStats.Path takes precedence.
+                previousPageStats.Id,
+                Merge(previousPageStats.DayStats, currentPageStats.DayStats));
         }
 
         private static WikiPageStats.DayStat[] Merge(
