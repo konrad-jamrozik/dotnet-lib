@@ -52,6 +52,7 @@ namespace Wikitools.Tests
 
         public ValidWikiPagesStats PreviousMonth => new(new[]
         {
+            // kja replace all the 'with' with direct ctor calls
             FooPage with { Path = FooPagePath, DayStats = FooPagePreviousDayStats },
             BarPage with { Path = BarPagePath, DayStats = BarPagePreviousDayStats }
         });
