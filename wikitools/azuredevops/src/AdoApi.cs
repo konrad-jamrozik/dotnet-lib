@@ -44,7 +44,6 @@ namespace Wikitools.AzureDevOps
             return connection.GetClient<WikiHttpClient>();
         }
 
-        // kja strongly type the returned collection, asserting all the constraints on it.
         private static async Task<List<WikiPageDetail>> GetAllWikiPagesDetails(
             AdoWikiUri adoWikiUri,
             int pageViewsForDays,

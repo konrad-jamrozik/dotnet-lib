@@ -89,7 +89,7 @@ namespace Wikitools.Lib.Primitives
             }
             catch (Exception e)
             {
-                throw new InvariantException("MoreEnumerable.Assert failed", e);
+                throw new InvariantException("MoreEnumerable.Assert threw", e);
             }
         }
 

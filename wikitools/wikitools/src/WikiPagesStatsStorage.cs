@@ -29,9 +29,6 @@ namespace Wikitools
                 ? Storage.Read<WikiPageStats[]>(previousDate)
                 : new WikiPageStats[0]);
 
-            // BUG 2 (already fixed, needs test) add filtering here to the pageViewsForDays, i.e. don't use all days of previous month.
-            // Note that also the following case has to be tested for:
-            //   the *current* (not previous) month needs to be filtered down.
             return previousMonthStats.Merge(currentMonthStats).Trim(previousDate, CurrentDate);
         }
     }
