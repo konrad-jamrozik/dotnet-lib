@@ -3,7 +3,7 @@ using Wikitools.AzureDevOps;
 
 namespace Wikitools.Tests
 {
-    public static class WikiPagesStatsStorageTestsData
+    public static class ValidWikiPagesStatsTestsData
     {
         // @formatter:off
         private static readonly DateTime  JanuaryDate = new DateTime(year: 2021, month:  1, day:  3).ToUniversalTime();

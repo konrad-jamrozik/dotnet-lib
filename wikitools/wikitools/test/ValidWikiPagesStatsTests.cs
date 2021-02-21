@@ -4,26 +4,26 @@ using Wikitools.AzureDevOps;
 using Wikitools.Lib.Contracts;
 using Wikitools.Lib.Tests.Json;
 using Xunit;
-using Data = Wikitools.Tests.WikiPagesStatsStorageTestsData;
+
 namespace Wikitools.Tests
 {
     // kja 1 remaining merge tests to add
     // Some test checking which page rename takes precedence, both in correct ((prev,curr)) and flipped ((curr,prev)) ordering.
     //   Do this test by passing the same data but flipped current/previous.
-    public class WikiPagesStatsStorageTests
+    public class ValidWikiPagesStatsTests
     {
         // @formatter:off
-        [Fact] public void PageStatsEmpty()                  => Verify(Data.PageStatsEmpty);
-        [Fact] public void PageStatsYearWrap()               => Verify(Data.PageStatsYearWrap);
-        [Fact] public void PageStatsBeforeYearWrap()         => Verify(Data.PageStatsBeforeYearWrap);
-        [Fact] public void PageStatsPreviousMonthOnly()      => Verify(Data.PageStatsPreviousMonthOnly);
-        [Fact] public void PageStats()                       => Verify(Data.PageStats);
-        [Fact] public void PageStatsSameDay()                => Verify(Data.PageStatsSameDay);
-        [Fact] public void PageStatsSamePreviousDay()        => Verify(Data.PageStatsSamePreviousDay);
-        [Fact] public void PageStatsSameDayDifferentCounts() => Verify(Data.PageStatsSameDayDifferentCounts);
-        [Fact] public void PageStatsSameMonth()              => Verify(Data.PageStatsSameMonth);
-        [Fact] public void PageStatsRenamedToNewPath()       => Verify(Data.PageStatsRenamedToNewPath);
-        [Fact] public void PageStatsExchangedPaths()         => Verify(Data.PageStatsExchangedPaths);
+        [Fact] public void PageStatsEmpty()                  => Verify(ValidWikiPagesStatsTestsData.PageStatsEmpty);
+        [Fact] public void PageStatsYearWrap()               => Verify(ValidWikiPagesStatsTestsData.PageStatsYearWrap);
+        [Fact] public void PageStatsBeforeYearWrap()         => Verify(ValidWikiPagesStatsTestsData.PageStatsBeforeYearWrap);
+        [Fact] public void PageStatsPreviousMonthOnly()      => Verify(ValidWikiPagesStatsTestsData.PageStatsPreviousMonthOnly);
+        [Fact] public void PageStats()                       => Verify(ValidWikiPagesStatsTestsData.PageStats);
+        [Fact] public void PageStatsSameDay()                => Verify(ValidWikiPagesStatsTestsData.PageStatsSameDay);
+        [Fact] public void PageStatsSamePreviousDay()        => Verify(ValidWikiPagesStatsTestsData.PageStatsSamePreviousDay);
+        [Fact] public void PageStatsSameDayDifferentCounts() => Verify(ValidWikiPagesStatsTestsData.PageStatsSameDayDifferentCounts);
+        [Fact] public void PageStatsSameMonth()              => Verify(ValidWikiPagesStatsTestsData.PageStatsSameMonth);
+        [Fact] public void PageStatsRenamedToNewPath()       => Verify(ValidWikiPagesStatsTestsData.PageStatsRenamedToNewPath);
+        [Fact] public void PageStatsExchangedPaths()         => Verify(ValidWikiPagesStatsTestsData.PageStatsExchangedPaths);
         // @formatter:on
 
         // kja 3 move these methods to ValidWikiPagesStatsTests
