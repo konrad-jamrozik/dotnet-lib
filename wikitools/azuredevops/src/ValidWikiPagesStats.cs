@@ -125,24 +125,7 @@ namespace Wikitools.AzureDevOps
         /// </summary>
         private static ValidWikiPagesStats Merge(ValidWikiPagesStats validPreviousStats, ValidWikiPagesStats validCurrentStats)
         {
-            var previousStats = validPreviousStats.Value;
-            var currentStats  = validCurrentStats.Value;
-
-            var previousStatsByPageId = previousStats.ToDictionary(ps => ps.Id);
-            var currentStatsByPageId  = currentStats.ToDictionary(ps => ps.Id);
-
-            var previousIds     = previousStats.Select(ps => ps.Id).ToHashSet();
-            var currentIds      = currentStats.Select(ps => ps.Id).ToHashSet();
-            var intersectingIds = previousIds.Intersect(currentIds).ToHashSet();
-
-            var currentOnlyStats  = currentIds.Except(intersectingIds).Select(id => currentStatsByPageId[id]); // kja 2 test for this .Except in .UnionUsing (not covered)
-            var previousOnlyStats = previousIds.Except(intersectingIds).Select(id => previousStatsByPageId[id]);
-            var intersectingStats =
-                intersectingIds.Select(id => Merge(previousStatsByPageId[id], currentStatsByPageId[id]));
-
-            var merged = previousOnlyStats.Union(intersectingStats).Union(currentOnlyStats).ToArray();
-            // kja 2 once Merge is tested, replace the set logic with UnionUsing
-            var merged2 = previousStats.UnionUsing(currentStats, ps => ps.Id, Merge);
+            var merged = validPreviousStats.Value.UnionUsing(validCurrentStats.Value, ps => ps.Id, Merge);
 
             merged = merged.Select(ps => ps with { DayStats = ps.DayStats.OrderBy(ds => ds.Day).ToArray() }).ToArray();
 

@@ -34,7 +34,7 @@ namespace Wikitools.Lib.Primitives
             var secondKeySet     = Enumerable.ToHashSet(secondArray.Select(keySelector));
             var intersectingKeys = Enumerable.ToHashSet(firstKeySet.Intersect(secondKeySet));
 
-            var firstExceptSecond = firstKeySet.Except(secondKeySet).Select(key => firstByKey[key]);
+            var firstExceptSecond = firstKeySet.Except(secondKeySet).Select(key => firstByKey[key]); // kja test for this .Except
             var secondExceptFirst = secondKeySet.Except(firstKeySet).Select(key => secondByKey[key]);
             var intersecting      = intersectingKeys.Select(key => intersector(firstByKey[key], secondByKey[key]));
 
