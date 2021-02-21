@@ -1,8 +1,7 @@
 using System;
 using System.Linq;
-using Wikitools.AzureDevOps;
 
-namespace Wikitools.Tests
+namespace Wikitools.AzureDevOps.Tests
 {
     /// <summary>
     /// Data for testing method processing on WikiPageStats.
@@ -15,7 +14,7 @@ namespace Wikitools.Tests
     /// The DayStat arrays are passed as ctor param, with the remaining WikiPageStats data
     /// provided by default, but also overridable.
     /// </summary>
-    public record WikiPagesStatsTestData(
+    public record ValidWikiPagesStatsTestData(
         DateTime Date,
         WikiPageStats.DayStat[] FooPagePreviousDayStats,
         WikiPageStats.DayStat[] FooPageCurrentDayStats,

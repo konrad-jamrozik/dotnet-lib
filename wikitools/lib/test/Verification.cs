@@ -2,10 +2,10 @@ using System;
 using Xunit;
 using Xunit.Sdk;
 
-namespace Wikitools.Tests
+namespace Wikitools.Lib.Tests
 {
     // kja 3 come up with better class name
-    internal static class Verification
+    public static class Verification
     {
         public static TReturn? Verify<TData, TReturn>(Func<TData, TReturn> target, TData data, Type? excType) 
             where TReturn : class?

@@ -1,9 +1,8 @@
 using System;
-using Wikitools.AzureDevOps;
 
-namespace Wikitools.Tests
+namespace Wikitools.AzureDevOps.Tests
 {
-    public static class ValidWikiPagesStatsTestsData // kja move to AzureDevOps project & namespace
+    public static class ValidWikiPagesStatsTestDataFixture
     {
         // @formatter:off
         private static readonly DateTime  JanuaryDate = new DateTime(year: 2021, month:  1, day:  3).ToUniversalTime();
@@ -11,35 +10,35 @@ namespace Wikitools.Tests
         private static readonly DateTime DecemberDate = new DateTime(year: 2020, month: 12, day: 22).ToUniversalTime();
         // @formatter:on
 
-        public static WikiPagesStatsTestData PageStatsEmpty =>
+        public static ValidWikiPagesStatsTestData PageStatsEmpty =>
             new(FebruaryDate,
                 new WikiPageStats.DayStat[] { },
                 new WikiPageStats.DayStat[] { },
                 new WikiPageStats.DayStat[] { },
                 new WikiPageStats.DayStat[] { });
 
-        public static WikiPagesStatsTestData PageStatsPreviousMonthOnly =>
+        public static ValidWikiPagesStatsTestData PageStatsPreviousMonthOnly =>
             new(FebruaryDate,
                 new WikiPageStats.DayStat[] { },
                 new WikiPageStats.DayStat[] { },
                 new WikiPageStats.DayStat[] { new(115, FebruaryDate.AddMonths(-1)) },
                 new WikiPageStats.DayStat[] { });
 
-        public static WikiPagesStatsTestData PageStatsYearWrap =>
+        public static ValidWikiPagesStatsTestData PageStatsYearWrap =>
             new(JanuaryDate,
                 new WikiPageStats.DayStat[] { },
                 new WikiPageStats.DayStat[] { },
                 new WikiPageStats.DayStat[] { new(1201, JanuaryDate.AddMonths(-1).AddDays(-2)) },
                 new WikiPageStats.DayStat[] { new(103, JanuaryDate) });
 
-        public static WikiPagesStatsTestData PageStatsBeforeYearWrap =>
+        public static ValidWikiPagesStatsTestData PageStatsBeforeYearWrap =>
             new(DecemberDate,
                 new WikiPageStats.DayStat[] { },
                 new WikiPageStats.DayStat[] { },
                 new WikiPageStats.DayStat[] { new(1122, DecemberDate.AddMonths(-1)) },
                 new WikiPageStats.DayStat[] { new(1223, DecemberDate.AddDays(1)) });
 
-        public static WikiPagesStatsTestData PageStatsSameDay =>
+        public static ValidWikiPagesStatsTestData PageStatsSameDay =>
             new(FebruaryDate,
                 new WikiPageStats.DayStat[] { },
                 new WikiPageStats.DayStat[] { },
@@ -52,7 +51,7 @@ namespace Wikitools.Tests
                     new WikiPageStats.DayStat[] { new(215, FebruaryDate) }
                 ));
 
-        public static WikiPagesStatsTestData PageStatsSamePreviousDay =>
+        public static ValidWikiPagesStatsTestData PageStatsSamePreviousDay =>
             new(FebruaryDate,
                 new WikiPageStats.DayStat[] { },
                 new WikiPageStats.DayStat[] { },
@@ -65,7 +64,7 @@ namespace Wikitools.Tests
                 ),
                 SplitPreconditionsViolated: true);
 
-        public static WikiPagesStatsTestData PageStatsSameDayDifferentCounts =>
+        public static ValidWikiPagesStatsTestData PageStatsSameDayDifferentCounts =>
             new(FebruaryDate,
                 new WikiPageStats.DayStat[] { },
                 new WikiPageStats.DayStat[] { },
@@ -78,7 +77,7 @@ namespace Wikitools.Tests
                 ),
                 SplitPreconditionsViolated: true);
 
-        public static WikiPagesStatsTestData PageStatsRenamedToNewPath =>
+        public static ValidWikiPagesStatsTestData PageStatsRenamedToNewPath =>
             new(FebruaryDate,
                 new WikiPageStats.DayStat[] { new(103, JanuaryDate) },
                 new WikiPageStats.DayStat[] { new(217, FebruaryDate.AddDays(2)) },
@@ -87,17 +86,17 @@ namespace Wikitools.Tests
                 FooPagePathInCurrentMonth: "/Qux"
             );
 
-        public static WikiPagesStatsTestData PageStatsExchangedPaths =>
+        public static ValidWikiPagesStatsTestData PageStatsExchangedPaths =>
             new(FebruaryDate,
                 new WikiPageStats.DayStat[] { new(103, JanuaryDate) },
                 new WikiPageStats.DayStat[] { new(217, FebruaryDate.AddDays(2)) },
                 new WikiPageStats.DayStat[] { new(104, JanuaryDate.AddDays(1)) },
                 new WikiPageStats.DayStat[] { new(219, FebruaryDate.AddDays(4)) },
-                FooPagePathInCurrentMonth: WikiPagesStatsTestData.BarPagePath,
-                BarPagePathInCurrentMonth: WikiPagesStatsTestData.FooPagePath
+                FooPagePathInCurrentMonth: ValidWikiPagesStatsTestData.BarPagePath,
+                BarPagePathInCurrentMonth: ValidWikiPagesStatsTestData.FooPagePath
             );
 
-        public static WikiPagesStatsTestData PageStats
+        public static ValidWikiPagesStatsTestData PageStats
         {
             get
             {
@@ -135,7 +134,7 @@ namespace Wikitools.Tests
                     new(228, FebruaryDate.AddDays(13))
                 };
 
-                return new WikiPagesStatsTestData(FebruaryDate,
+                return new ValidWikiPagesStatsTestData(FebruaryDate,
                     fooDaysPreviousMonth,
                     fooDaysCurrentMonth,
                     barDaysPreviousMonth,
@@ -143,7 +142,7 @@ namespace Wikitools.Tests
             }
         }
 
-        public static WikiPagesStatsTestData PageStatsSameMonth =>
+        public static ValidWikiPagesStatsTestData PageStatsSameMonth =>
             new(FebruaryDate,
                 FooPagePreviousDayStats: new WikiPageStats.DayStat[]
                 {

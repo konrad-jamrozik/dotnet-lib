@@ -1,35 +1,36 @@
 using System;
 using System.Linq;
-using Wikitools.AzureDevOps;
 using Wikitools.Lib.Contracts;
+using Wikitools.Lib.Tests;
 using Wikitools.Lib.Tests.Json;
 using Xunit;
+using Data = Wikitools.AzureDevOps.Tests.ValidWikiPagesStatsTestDataFixture;
 
-namespace Wikitools.Tests
+namespace Wikitools.AzureDevOps.Tests
 {
-    public class ValidWikiPagesStatsTests // kja move to AzureDevOps project & namespace
+    public class ValidWikiPagesStatsTests
     {
         // @formatter:off
-        [Fact] public void PageStatsEmpty()                  => Verify(ValidWikiPagesStatsTestsData.PageStatsEmpty);
-        [Fact] public void PageStatsYearWrap()               => Verify(ValidWikiPagesStatsTestsData.PageStatsYearWrap);
-        [Fact] public void PageStatsBeforeYearWrap()         => Verify(ValidWikiPagesStatsTestsData.PageStatsBeforeYearWrap);
-        [Fact] public void PageStatsPreviousMonthOnly()      => Verify(ValidWikiPagesStatsTestsData.PageStatsPreviousMonthOnly);
-        [Fact] public void PageStats()                       => Verify(ValidWikiPagesStatsTestsData.PageStats);
-        [Fact] public void PageStatsSameDay()                => Verify(ValidWikiPagesStatsTestsData.PageStatsSameDay);
-        [Fact] public void PageStatsSamePreviousDay()        => Verify(ValidWikiPagesStatsTestsData.PageStatsSamePreviousDay);
-        [Fact] public void PageStatsSameDayDifferentCounts() => Verify(ValidWikiPagesStatsTestsData.PageStatsSameDayDifferentCounts);
-        [Fact] public void PageStatsSameMonth()              => Verify(ValidWikiPagesStatsTestsData.PageStatsSameMonth);
-        [Fact] public void PageStatsRenamedToNewPath()       => Verify(ValidWikiPagesStatsTestsData.PageStatsRenamedToNewPath);
-        [Fact] public void PageStatsExchangedPaths()         => Verify(ValidWikiPagesStatsTestsData.PageStatsExchangedPaths);
+        [Fact] public void PageStatsEmpty()                  => Verify(Data.PageStatsEmpty);
+        [Fact] public void PageStatsYearWrap()               => Verify(Data.PageStatsYearWrap);
+        [Fact] public void PageStatsBeforeYearWrap()         => Verify(Data.PageStatsBeforeYearWrap);
+        [Fact] public void PageStatsPreviousMonthOnly()      => Verify(Data.PageStatsPreviousMonthOnly);
+        [Fact] public void PageStats()                       => Verify(Data.PageStats);
+        [Fact] public void PageStatsSameDay()                => Verify(Data.PageStatsSameDay);
+        [Fact] public void PageStatsSamePreviousDay()        => Verify(Data.PageStatsSamePreviousDay);
+        [Fact] public void PageStatsSameDayDifferentCounts() => Verify(Data.PageStatsSameDayDifferentCounts);
+        [Fact] public void PageStatsSameMonth()              => Verify(Data.PageStatsSameMonth);
+        [Fact] public void PageStatsRenamedToNewPath()       => Verify(Data.PageStatsRenamedToNewPath);
+        [Fact] public void PageStatsExchangedPaths()         => Verify(Data.PageStatsExchangedPaths);
         // @formatter:on
 
-        private static void Verify(WikiPagesStatsTestData data)
+        private static void Verify(ValidWikiPagesStatsTestData data)
         {
             VerifySplitInvariants(data);
             VerifyMergeInvariants(data);
         }
 
-        private static void VerifySplitInvariants(WikiPagesStatsTestData data)
+        private static void VerifySplitInvariants(ValidWikiPagesStatsTestData data)
         {
             if (!data.SplitPreconditionsViolated)
             {
@@ -66,7 +67,7 @@ namespace Wikitools.Tests
                 VerifySplitByMonth(data, typeof(InvariantException));
         }
 
-        private static void VerifyMergeInvariants(WikiPagesStatsTestData data)
+        private static void VerifyMergeInvariants(ValidWikiPagesStatsTestData data)
         {
             // Act - Merge(prev, curr)
             ValidWikiPagesStats merged = VerifyMerge(data);
@@ -77,11 +78,11 @@ namespace Wikitools.Tests
         }
 
         private static void VerifySplitByMonth(
-            WikiPagesStatsTestData data, Type? excType) =>
+            ValidWikiPagesStatsTestData data, Type? excType) =>
             Verification.VerifyStruct(VerifySplitByMonth, data, excType);
 
         private static (ValidWikiPagesStats previousMonth, ValidWikiPagesStats currentMonth) VerifySplitByMonth(
-            WikiPagesStatsTestData data)
+            ValidWikiPagesStatsTestData data)
         {
             // Act
             var (previousMonth, currentMonth) = ValidWikiPagesStats.SplitByMonth(data.AllPagesStats, data.Date);
@@ -90,7 +91,7 @@ namespace Wikitools.Tests
             return (previousMonth, currentMonth);
         }
 
-        private static ValidWikiPagesStats VerifyMerge(WikiPagesStatsTestData data)
+        private static ValidWikiPagesStats VerifyMerge(ValidWikiPagesStatsTestData data)
         {
             // Act
             var merged = ValidWikiPagesStats.Merge(data.PreviousMonth, data.CurrentMonth);

@@ -21,4 +21,9 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\lib\test\lib-tests.csproj" />
+    <ProjectReference Include="..\src\azuredevops.csproj" />
+  </ItemGroup>
+
 </Project>
