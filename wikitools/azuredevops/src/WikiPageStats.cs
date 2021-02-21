@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using Microsoft.TeamFoundation.Wiki.WebApi;
 using Wikitools.Lib.Primitives;
 

@@ -10,7 +10,7 @@ namespace Wikitools.Tests
     /// Composed of four parts, that can be visualized as cells of 2-dimensional array of:
     /// X-axis: (previousMonth, currentMonth)
     /// Y-axis: (fooPage, barPage).
-    /// An example of one of the 4 cells is thus (fooPage for previousMonth).
+    /// An example of one of the 4 cells: (previousMonth, fooPage).
     /// Each cell is a WikiPageStats object, and thus also contains DayStat[] array.
     /// The DayStat arrays are passed as ctor param, with the remaining WikiPageStats data
     /// provided by default, but also overridable.
@@ -26,62 +26,39 @@ namespace Wikitools.Tests
         string? FooPagePathInCurrentMonth = null,
         string? BarPagePathInCurrentMonth = null)
     {
-
         public const string FooPagePath = "/Foo";
         public const string BarPagePath = "/Bar";
+        private static int FooPageId = 101;
+        private static int BarPageId = 202;
 
-        // kja once the specced out invariants are enforced by the type, this fixture will adapt (otherwise it wouldn't compile)
-        // making things work.
-        //
-        // currMonth = fooPage(currMonthDayStats), barPage(currMonthDayStats)
-        // previousMonth = fooPage(prevMonthDayStats), barPage(prevMonthDayStats)
-        // allStats = fooPage(prevMonthDayStats ++ currMonthDayStats), barPage(prevMonthDayStats ++ currMonthDayStats)
-        // (previousMonth, currentMonth) = split(AllStats)
-        // merged = merge(previousMonth, currentMonth)
-
-        private WikiPageStats FooPage => new(FooPagePath,
-            101,
-            FooPagePreviousDayStats.Concat(FooPageCurrentDayStats).ToArray());
-
-        private WikiPageStats BarPage => new(BarPagePath,
-            202,
-            BarPagePreviousDayStats.Concat(BarPageCurrentDayStats).ToArray());
+        // @formatter:off
+        private readonly WikiPageStats _fooPagePreviousMonth = new(FooPagePath, FooPageId, FooPagePreviousDayStats);
+        private readonly WikiPageStats _barPagePreviousMonth = new(BarPagePath, BarPageId, BarPagePreviousDayStats);
+        private readonly WikiPageStats _fooPagePreviousMonthWithCurrentMonthPath = new(FooPagePathInCurrentMonth ?? FooPagePath, FooPageId, FooPagePreviousDayStats);
+        private readonly WikiPageStats _barPagePreviousMonthWithCurrentMonthPath = new(BarPagePathInCurrentMonth ?? BarPagePath, BarPageId, BarPagePreviousDayStats);
+        private readonly WikiPageStats _fooPageCurrentMonth = new(FooPagePathInCurrentMonth ?? FooPagePath, FooPageId, FooPageCurrentDayStats);
+        private readonly WikiPageStats _barPageCurrentMonth = new(BarPagePathInCurrentMonth ?? BarPagePath, BarPageId, BarPageCurrentDayStats);
+        private readonly WikiPageStats _fooPage = new(FooPagePathInCurrentMonth ?? FooPagePath, FooPageId, FooPagePreviousDayStats.Concat(FooPageCurrentDayStats).ToArray());
+        private readonly WikiPageStats _barPage = new(BarPagePathInCurrentMonth ?? BarPagePath, BarPageId, BarPagePreviousDayStats.Concat(BarPageCurrentDayStats).ToArray());
+        private WikiPageStats FooPageMerged => new(FooPagePathInCurrentMonth ?? FooPagePath, FooPageId, MergedDayStats!.Value.FooPage);
+        private WikiPageStats BarPageMerged => new(BarPagePathInCurrentMonth ?? BarPagePath, BarPageId, MergedDayStats!.Value.BarPage);
+        // @formatter:on
 
         public readonly bool PageRenamePresent = FooPagePathInCurrentMonth != null || BarPagePathInCurrentMonth != null;
-        
+
+        public ValidWikiPagesStats PreviousMonth => new(new[] { _fooPagePreviousMonth, _barPagePreviousMonth });
+
         public ValidWikiPagesStats PreviousMonthWithCurrentMonthPaths => new(new[]
         {
-            FooPage with { Path = FooPagePathInCurrentMonth ?? FooPagePath, DayStats = FooPagePreviousDayStats },
-            BarPage with { Path = BarPagePathInCurrentMonth ?? BarPagePath, DayStats = BarPagePreviousDayStats }
+            _fooPagePreviousMonthWithCurrentMonthPath,
+            _barPagePreviousMonthWithCurrentMonthPath
         });
 
-        public ValidWikiPagesStats PreviousMonth => new(new[]
-        {
-            FooPage with { Path = FooPagePath, DayStats = FooPagePreviousDayStats },
-            BarPage with { Path = BarPagePath, DayStats = BarPagePreviousDayStats }
-        });
-
-        // kja replace all the 'with' with direct ctor calls
-        public ValidWikiPagesStats CurrentMonth => new(new[]
-        {
-            FooPage with { Path = FooPagePathInCurrentMonth ?? FooPagePath, DayStats = FooPageCurrentDayStats },
-            BarPage with { Path = BarPagePathInCurrentMonth ?? BarPagePath, DayStats = BarPageCurrentDayStats }
-        });
-
-        public ValidWikiPagesStats AllPagesStats => new(new[]
-        {
-            FooPage with { Path = FooPagePathInCurrentMonth ?? FooPagePath }, 
-            BarPage with { Path = BarPagePathInCurrentMonth ?? BarPagePath }
-        });
+        public ValidWikiPagesStats CurrentMonth => new(new[] { _fooPageCurrentMonth, _barPageCurrentMonth });
+        public ValidWikiPagesStats AllPagesStats => new(new[] { _fooPage, _barPage });
 
         public ValidWikiPagesStats MergedPagesStats => MergedDayStats != null
-            ? new ValidWikiPagesStats(new[]
-            {
-                FooPage with { Path = FooPagePathInCurrentMonth ?? FooPagePath, DayStats = MergedDayStats!.Value.FooPage },
-                BarPage with { Path = BarPagePathInCurrentMonth ?? BarPagePath, DayStats = MergedDayStats!.Value.BarPage }
-            })
+            ? new ValidWikiPagesStats(new[] { FooPageMerged, BarPageMerged })
             : AllPagesStats;
     }
-
-
 }

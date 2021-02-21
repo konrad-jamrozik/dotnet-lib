@@ -39,8 +39,6 @@ namespace Wikitools.Tests
                 new WikiPageStats.DayStat[] { new(1122, DecemberDate.AddMonths(-1)) },
                 new WikiPageStats.DayStat[] { new(1223, DecemberDate.AddDays(1)) });
 
-        // kja use a boolean to communicate invariant violation - see other comment.
-        // The invariant violated: given day stat date can appear only once per page stats.
         public static WikiPagesStatsTestData PageStatsSameDay =>
             new(FebruaryDate,
                 new WikiPageStats.DayStat[] { },
