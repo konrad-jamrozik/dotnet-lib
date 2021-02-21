@@ -49,10 +49,16 @@ namespace Wikitools.Tests
 
         public readonly bool PageRenamePresent = FooPagePathInCurrentMonth != null || BarPagePathInCurrentMonth != null;
         
-        public ValidWikiPagesStats PreviousMonth => new(new[]
+        public ValidWikiPagesStats PreviousMonthWithCurrentMonthPaths => new(new[]
         {
             FooPage with { Path = FooPagePathInCurrentMonth ?? FooPagePath, DayStats = FooPagePreviousDayStats },
             BarPage with { Path = BarPagePathInCurrentMonth ?? BarPagePath, DayStats = BarPagePreviousDayStats }
+        });
+
+        public ValidWikiPagesStats PreviousMonth => new(new[]
+        {
+            FooPage with { Path = FooPagePath, DayStats = FooPagePreviousDayStats },
+            BarPage with { Path = BarPagePath, DayStats = BarPagePreviousDayStats }
         });
 
         // kja replace all the 'with' with direct ctor calls

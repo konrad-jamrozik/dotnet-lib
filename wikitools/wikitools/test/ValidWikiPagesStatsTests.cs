@@ -26,7 +26,6 @@ namespace Wikitools.Tests
         [Fact] public void PageStatsExchangedPaths()         => Verify(ValidWikiPagesStatsTestsData.PageStatsExchangedPaths);
         // @formatter:on
 
-        // kja 3 move these methods to ValidWikiPagesStatsTests
         private static void Verify(WikiPagesStatsTestData data)
         {
             VerifySplitInvariants(data);
@@ -35,24 +34,25 @@ namespace Wikitools.Tests
 
         private static void VerifySplitInvariants(WikiPagesStatsTestData data)
         {
-            // Act - Split({foo, bar})
-            (ValidWikiPagesStats previousMonth, ValidWikiPagesStats currentMonth)? split =
-                VerifySplitByMonth(data, data.SplitPreconditionsViolated ? typeof(InvariantException) : null);
-
             if (!data.SplitPreconditionsViolated)
             {
+                // Act - Split({foo, bar})
+                var split = VerifySplitByMonth(data);
+
                 // Act - Split(Split({prev, curr})[prev]) == prev
-                var (previousPreviousMonth, currentPreviousMonth) = ValidWikiPagesStats.SplitByMonth(split!.Value.previousMonth, data.Date);
-                new JsonDiffAssertion(split!.Value.previousMonth.Value, previousPreviousMonth.Value).Assert();
+                var (previousPreviousMonth, currentPreviousMonth) =
+                    ValidWikiPagesStats.SplitByMonth(split.previousMonth, data.Date);
+                new JsonDiffAssertion(split.previousMonth.Value, previousPreviousMonth.Value).Assert();
                 Assert.DoesNotContain(currentPreviousMonth.Value, ps => ps.DayStats.Any());
 
                 // Act - Split(Split({prev, curr})[curr]) == curr
-                var (previousCurrentMonth, currentCurrentMonth) = ValidWikiPagesStats.SplitByMonth(split!.Value.currentMonth, data.Date);
+                var (previousCurrentMonth, currentCurrentMonth) =
+                    ValidWikiPagesStats.SplitByMonth(split.currentMonth, data.Date);
                 Assert.DoesNotContain(previousCurrentMonth.Value, ps => ps.DayStats.Any());
-                new JsonDiffAssertion(split!.Value.currentMonth.Value, currentCurrentMonth.Value).Assert();
+                new JsonDiffAssertion(split.currentMonth.Value, currentCurrentMonth.Value).Assert();
 
                 // Act - Merge(Split({prev, curr})) == Merge(prev, curr)
-                var mergedSplit = ValidWikiPagesStats.Merge(split!.Value.previousMonth, split!.Value.currentMonth);
+                var mergedSplit = ValidWikiPagesStats.Merge(split.previousMonth, split.currentMonth);
                 new JsonDiffAssertion(data.MergedPagesStats, mergedSplit).Assert();
 
                 if (!data.PageRenamePresent)
@@ -65,6 +65,8 @@ namespace Wikitools.Tests
                     new JsonDiffAssertion(data.CurrentMonth,  currentMonthPostMerge).Assert();
                 }
             }
+            else
+                VerifySplitByMonth(data, typeof(InvariantException));
         }
 
         private static void VerifyMergeInvariants(WikiPagesStatsTestData data)
@@ -77,7 +79,7 @@ namespace Wikitools.Tests
             new JsonDiffAssertion(merged!, mergedTwice).Assert();
         }
 
-        private static (ValidWikiPagesStats previousMonth, ValidWikiPagesStats currentMonth)? VerifySplitByMonth(
+        private static void VerifySplitByMonth(
             WikiPagesStatsTestData data, Type? excType) =>
             Verification.VerifyStruct(VerifySplitByMonth, data, excType);
 
@@ -86,8 +88,8 @@ namespace Wikitools.Tests
         {
             // Act
             var (previousMonth, currentMonth) = ValidWikiPagesStats.SplitByMonth(data.AllPagesStats, data.Date);
-            new JsonDiffAssertion(data.PreviousMonth, previousMonth).Assert();
-            new JsonDiffAssertion(data.CurrentMonth,  currentMonth).Assert();
+            new JsonDiffAssertion(data.PreviousMonthWithCurrentMonthPaths, previousMonth).Assert();
+            new JsonDiffAssertion(data.CurrentMonth, currentMonth).Assert();
             return (previousMonth, currentMonth);
         }
 
