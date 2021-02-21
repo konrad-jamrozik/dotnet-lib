@@ -10,7 +10,7 @@ namespace Wikitools.Tests
     // kja 1 remaining merge tests to add
     // Some test checking which page rename takes precedence, both in correct ((prev,curr)) and flipped ((curr,prev)) ordering.
     //   Do this test by passing the same data but flipped current/previous.
-    public class ValidWikiPagesStatsTests
+    public class ValidWikiPagesStatsTests // kja move to AzureDevOps project & namespace
     {
         // @formatter:off
         [Fact] public void PageStatsEmpty()                  => Verify(ValidWikiPagesStatsTestsData.PageStatsEmpty);
