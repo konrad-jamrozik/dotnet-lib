@@ -78,8 +78,7 @@ namespace Wikitools.AzureDevOps.Tests
         }
 
         private static void VerifySplitByMonth(
-            ValidWikiPagesStatsTestData data, Type? excType) =>
-            Verification.VerifyStruct(VerifySplitByMonth, data, excType);
+            ValidWikiPagesStatsTestData data, Type excType) => TestAssert.Throws(VerifySplitByMonth, data, excType);
 
         private static (ValidWikiPagesStats previousMonth, ValidWikiPagesStats currentMonth) VerifySplitByMonth(
             ValidWikiPagesStatsTestData data)
