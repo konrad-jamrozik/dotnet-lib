@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using Wikitools.AzureDevOps;
+using Wikitools.Lib.Contracts;
 using Wikitools.Lib.Tests.Json;
 using Xunit;
 using Data = Wikitools.Tests.WikiPagesStatsStorageTestsData;
@@ -25,17 +26,17 @@ namespace Wikitools.Tests
         [Fact] public void PageStatsExchangedPaths()         => Verify(Data.PageStatsExchangedPaths);
         // @formatter:on
 
-        // kja 3 consider moving this verify logic onto the data type itself.
+        // kja 3 move these methods to ValidWikiPagesStatsTests
         private static void Verify(WikiPagesStatsTestData data)
         {
             // Act - Split({foo, bar})
             (ValidWikiPagesStats previousMonth, ValidWikiPagesStats currentMonth)? split =
-                VerifySplitByMonth(data, data.SplitByMonthThrows ? typeof(ArgumentException) : null);
+                VerifySplitByMonth(data, data.SplitPreconditionsViolated ? typeof(InvariantException) : null);
 
             // Act - Merge(prev, curr)
-            ValidWikiPagesStats? merged = VerifyMerge(data, data.MergeThrows ? typeof(ArgumentException) : null);
+            ValidWikiPagesStats? merged = VerifyMerge(data, null); // kja simplify
 
-            if (!data.SplitByMonthThrows)
+            if (!data.SplitPreconditionsViolated)
             {
                 // Act - Split(Split({foo, bar})[prev]) == prev
                 var (previousPreviousMonth, currentPreviousMonth) = ValidWikiPagesStats.SplitByMonth(split!.Value.previousMonth, data.Date);
@@ -48,30 +49,31 @@ namespace Wikitools.Tests
                 new JsonDiffAssertion(split!.Value.currentMonth.Value,  currentCurrentMonth.Value).Assert();
             }
 
-            if (!data.MergeThrows)
+            // Act - Merge(Merge(prev, curr), Merge(prev, curr)) == Merge(prev, curr)
+            var mergedTwice = ValidWikiPagesStats.Merge(merged!, merged!);
+            new JsonDiffAssertion(merged!, mergedTwice).Assert();
+
+            if (!data.SplitPreconditionsViolated)
             {
-                // Act - Merge(Merge(prev, curr), Merge(prev, curr)) == Merge(prev, curr)
-                var mergedTwice = ValidWikiPagesStats.Merge(merged!, merged!);
-                new JsonDiffAssertion(merged!, mergedTwice).Assert();
+                // Act - Merge(Split({foo, bar})) == Merge(prev, curr)
+                var mergedSplit = ValidWikiPagesStats.Merge(split!.Value.previousMonth, split!.Value.currentMonth);
+                new JsonDiffAssertion(data.MergedPagesStats, mergedSplit).Assert();
             }
-
-            if (data.MergeThrows || data.SplitByMonthThrows) 
-                return;
-
-            // Act - Merge(Split({foo, bar})) == Merge(prev, curr)
-            var mergedSplit = ValidWikiPagesStats.Merge(split!.Value.previousMonth, split!.Value.currentMonth);
-            new JsonDiffAssertion(data.MergedPagesStats, mergedSplit).Assert();
 
             // The invariant verified below does not hold if page rename is present.
             // This is because Merge erases the previous name.
-            if (data.PageRenamePresent)
-                return;
-
-            // Act - Split(Merge(foo, bar)) == {foo, bar}
-            var (previousMonthPostMerge, currentMonthPostMerge) =
-                ValidWikiPagesStats.SplitByMonth(merged!, data.Date);
-            new JsonDiffAssertion(data.PreviousMonthAfterSplit, previousMonthPostMerge).Assert();
-            new JsonDiffAssertion(data.CurrentMonth,  currentMonthPostMerge).Assert();
+            if (!data.PageRenamePresent)
+            {
+                // Act - Split(Merge(foo, bar)) == {foo, bar}
+                var (previousMonthPostMerge, currentMonthPostMerge) =
+                    ValidWikiPagesStats.SplitByMonth(merged!, data.Date);
+                // kja this fails for SameDay test because PreviousMonthAfterSplit fixture has February date in it, which is erased by the Split
+                // The underlying problem here is that I am trying to reuse prev & curr months also for Merge, but that doesn't make sense,
+                // because for Merge I need an overlap. I am trying to simulate this overlap by putting wrong dates in months, but that
+                // screws up split logic.
+                new JsonDiffAssertion(data.PreviousMonthAfterSplit, previousMonthPostMerge).Assert();
+                new JsonDiffAssertion(data.CurrentMonth,            currentMonthPostMerge).Assert();
+            }
         }
 
         private static (ValidWikiPagesStats previousMonth, ValidWikiPagesStats currentMonth)? VerifySplitByMonth(

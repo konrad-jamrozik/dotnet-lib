@@ -52,28 +52,7 @@ namespace Wikitools.Tests
                     new WikiPageStats.DayStat[] {}, 
                     new WikiPageStats.DayStat[] { new(215, FebruaryDate)}
                 ),
-                SplitByMonthThrows: true);
-
-        // kja PROBLEM: I still want to be able to do Merge test. The problem is:
-        // Merge is verified against (previousMonth, currentMonth), but the test fixture does
-        // Valid(allStats) which enforces the Valid constraints across previousMonth and currentMonth.
-        // POSSIBLE SOLUTION:
-        // Add boolean "cross-month invariants violated", which will communicate that page invariants have been violated across months
-        // and thus there is no points checking for split: the inputs conditions are not fulfilled.
-        // This will replace "SplitByMonthThrows".
-        // Note this still allows for Merge to be tested! And to test Split AFTER a Merge!
-        public static WikiPagesStatsTestData PageStatsMergeTest =>
-            new(FebruaryDate, 
-                FooPagePreviousDayStats: new WikiPageStats.DayStat[] { },
-                BarPagePreviousDayStats: new WikiPageStats.DayStat[] { new(215, FebruaryDate) },
-                FooPageCurrentDayStats:  new WikiPageStats.DayStat[] { },
-                BarPageCurrentDayStats:  new WikiPageStats.DayStat[] { new(300, FebruaryDate) },
-                MergedDayStats:
-                (
-                    new WikiPageStats.DayStat[] {}, 
-                    new WikiPageStats.DayStat[] { new(300, FebruaryDate)}
-                ),
-                SplitByMonthThrows: true);
+                SplitPreconditionsViolated: true);
 
         public static WikiPagesStatsTestData PageStatsSamePreviousDay =>
             new(FebruaryDate,
@@ -86,7 +65,7 @@ namespace Wikitools.Tests
                     new WikiPageStats.DayStat[] {}, 
                     new WikiPageStats.DayStat[] { new(103, JanuaryDate)}
                 ),
-                SplitByMonthThrows: true);
+                SplitPreconditionsViolated: true);
 
         // kja this Merge should not throw! Split by month should NEVER throw!
         // kja use a boolean to communicate invariant violation - see other comment.
@@ -95,10 +74,14 @@ namespace Wikitools.Tests
             new(FebruaryDate,
                 new WikiPageStats.DayStat[] { },
                 new WikiPageStats.DayStat[] { },
-                new WikiPageStats.DayStat[] { new(215, FebruaryDate) },
-                new WikiPageStats.DayStat[] { new(217, FebruaryDate) },
-                SplitByMonthThrows: true,
-                MergeThrows: false);
+                new WikiPageStats.DayStat[] { new(300, FebruaryDate) },
+                new WikiPageStats.DayStat[] { new(400, FebruaryDate) },
+                MergedDayStats:
+                ( 
+                    new WikiPageStats.DayStat[] {}, 
+                    new WikiPageStats.DayStat[] { new(400, FebruaryDate) }
+                ),
+                SplitPreconditionsViolated: true);
 
         public static WikiPagesStatsTestData PageStatsRenamedToNewPath =>
             new(FebruaryDate,
@@ -207,6 +190,6 @@ namespace Wikitools.Tests
                         new(217, FebruaryDate.AddDays(2))
                     }
                 ),
-                SplitByMonthThrows: true);
+                SplitPreconditionsViolated: true);
     }
 }

@@ -22,8 +22,8 @@ namespace Wikitools.Tests
         WikiPageStats.DayStat[] BarPagePreviousDayStats,
         WikiPageStats.DayStat[] BarPageCurrentDayStats,
         (WikiPageStats.DayStat[] FooPage, WikiPageStats.DayStat[] BarPage)? MergedDayStats = null,
-        bool SplitByMonthThrows = false,
         bool MergeThrows = false,
+        bool SplitPreconditionsViolated = false,
         string? FooPagePathInCurrentMonth = null,
         string? BarPagePathInCurrentMonth = null)
     {
