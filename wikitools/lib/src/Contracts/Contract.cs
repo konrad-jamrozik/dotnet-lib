@@ -14,5 +14,14 @@ namespace Wikitools.Lib.Contracts
                     $"{subjectName}: Expected value <= {range.End.Value}. value = {subject}. " +
                     $"Reason: {upperBoundReason}");
         }
+
+        public static void Assert(bool condition, string? message = null)
+        {
+            if (!condition)
+            {
+                throw message != null ? new InvariantException(message!) : new InvariantException();
+            }
+        }
+
     }
 }

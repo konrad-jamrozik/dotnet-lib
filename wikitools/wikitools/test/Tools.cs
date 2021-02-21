@@ -49,7 +49,7 @@ namespace Wikitools.Tests
                 JsonSerializer.Deserialize<WikiPageStats[]>(File.ReadAllText(backup2Path))!
                     .Select(WikiPageStats.FixNulls));
 
-            var mergedStats = ValidWikiPagesStats.Merge(backup1Stats, backup2Stats);
+            var mergedStats = backup1Stats.Merge(backup2Stats);
             var trimmedStats =
                 mergedStats.Trim(januaryDate, januaryDate.AddMonths(1).AddDays(-1));
 

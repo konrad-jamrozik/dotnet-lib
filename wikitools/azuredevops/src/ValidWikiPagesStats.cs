@@ -124,8 +124,7 @@ namespace Wikitools.AzureDevOps
         /// are equal or more recent than all day view stats for the same page
         /// in previousStats.
         /// </summary>
-        // kja make this private
-        public static ValidWikiPagesStats Merge(ValidWikiPagesStats validPreviousStats, ValidWikiPagesStats validCurrentStats)
+        private static ValidWikiPagesStats Merge(ValidWikiPagesStats validPreviousStats, ValidWikiPagesStats validCurrentStats)
         {
             var previousStats = validPreviousStats.Value;
             var currentStats  = validCurrentStats.Value;
@@ -148,8 +147,8 @@ namespace Wikitools.AzureDevOps
 
             merged = merged.Select(ps => ps with { DayStats = ps.DayStats.OrderBy(ds => ds.Day).ToArray() }).ToArray();
 
-            Debug.Assert(merged.DistinctBy(m => m.Id).Count() == merged.Length, "Any given page appears only once");
-            merged.ForEach(ps => Debug.Assert(
+            Contract.Assert(merged.DistinctBy(m => m.Id).Count() == merged.Length, "Any given page appears only once");
+            merged.ForEach(ps => Contract.Assert(
                 ps.DayStats.DistinctBy(s => s.Day).Count() == ps.DayStats.Length,
                 "There is only one stat per page per day"));
 
@@ -158,7 +157,7 @@ namespace Wikitools.AzureDevOps
 
         private static WikiPageStats Merge(WikiPageStats previousPageStats, WikiPageStats currentPageStats)
         {
-            Debug.Assert(previousPageStats.Id == currentPageStats.Id);
+            Contract.Assert(previousPageStats.Id == currentPageStats.Id);
             return new WikiPageStats(
                 currentPageStats.Path, // This path takes precedence over previousPageStats.Path.
                 previousPageStats.Id,
@@ -174,7 +173,8 @@ namespace Wikitools.AzureDevOps
             {
                 Contract.Assert(dayStats.Count(), "dayStats.Count()", new Range(1, 2),
                     upperBoundReason: "Given day stat may appear once for previous stats and once for current stats");
-                Debug.Assert(dayStats.Last().Count >= dayStats.First().Count, "Day stat count for current stats >= day stat count for previous stats");
+                Contract.Assert(dayStats.Last().Count >= dayStats.First().Count,
+                    "Day stat count for current stats >= day stat count for previous stats");
                 return dayStats.Last();
             }).ToArray();
             return mergedStats;
@@ -185,7 +185,7 @@ namespace Wikitools.AzureDevOps
             DateTime currentDate)
         {
             var pagesStats = validPagesStats.Value;
-            Debug.Assert(pagesStats.Any());
+            Contract.Assert(pagesStats.Any());
 
             // For each page, group and order its day stats by month
             var pagesWithOrderedDayStats = pagesStats
@@ -213,10 +213,10 @@ namespace Wikitools.AzureDevOps
                 (WikiPageStats stats, (DateTime date, WikiPageStats.DayStat[])[] dayStatsByMonth) page,
                 DateTime currentDate)
         {
-            Debug.Assert(page.dayStatsByMonth.Length <= 2,
+            Contract.Assert(page.dayStatsByMonth.Length <= 2,
                 "The wiki stats are expected to come from no more than 2 months");
-            Debug.Assert(page.dayStatsByMonth.Length <= 1 ||
-                         (page.dayStatsByMonth[0].date.AddMonths(1) == page.dayStatsByMonth[1].date),
+            Contract.Assert(page.dayStatsByMonth.Length <= 1 ||
+                            (page.dayStatsByMonth[0].date.AddMonths(1) == page.dayStatsByMonth[1].date),
                 "The wiki stats are expected to come from consecutive months");
 
             var previousMonthPageStats = page.stats with

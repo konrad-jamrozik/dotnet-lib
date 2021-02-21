@@ -34,8 +34,6 @@ namespace Wikitools
             //   the *current* (not previous) month needs to be filtered down.
             return previousMonthStats.Merge(currentMonthStats).Trim(previousDate, CurrentDate);
         }
-
-        // kja make it a method on valid stats; probably same with Merge and Split
     }
 }
 

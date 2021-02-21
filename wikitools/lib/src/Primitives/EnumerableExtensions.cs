@@ -41,7 +41,7 @@ namespace Wikitools.Lib.Primitives
 
             var union = firstExceptSecond.Union(intersecting).Union(secondExceptFirst).ToArray();
 
-            Debug.Assert(union.DistinctBy(keySelector).Count() == union.Length, "Any given key appears only once");
+            Contract.Assert(union.DistinctBy(keySelector).Count() == union.Length, "Any given key appears only once");
             return union;
         }
 
@@ -64,7 +64,6 @@ namespace Wikitools.Lib.Primitives
             var sourceArray = source as TSource[] ?? source.ToArray();
             if (MoreEnumerable.DistinctBy(sourceArray, keySelector).Count() != sourceArray.Length)
             {
-                // kja 3 introduce my own assertion and get rid of all Debug.Assert, as they are untestable (private exception type).
                 throw new InvariantException();
             }
         }
@@ -77,7 +76,6 @@ namespace Wikitools.Lib.Primitives
             var ordered     = sourceArray.OrderBy(keySelector).ToArray();
             if (!ordered.SequenceEqual(sourceArray))
             {
-                // kja 3 introduce my own assertion and get rid of all Debug.Assert, as they are untestable (private exception type).
                 throw new InvariantException();
             }
         }

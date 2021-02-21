@@ -4,6 +4,7 @@ using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Linq;
 using System.Text.Json;
+using Wikitools.Lib.Contracts;
 // For explanation of this alias, please see comment on Wikitools.Lib.Json.JsonElementDiff.Value.
 using DiffObject = System.Object;
 
@@ -115,9 +116,9 @@ namespace Wikitools.Lib.Json
         {
             var baselineValueKind = baseline.ValueKind;
 
-            Debug.Assert(baselineValueKind == target.ValueKind);
-            Debug.Assert(baselineValueKind == JsonValueKind.Object 
-                         || baselineValueKind == JsonValueKind.Array);
+            Contract.Assert(baselineValueKind == target.ValueKind);
+            Contract.Assert(baselineValueKind == JsonValueKind.Object 
+                            || baselineValueKind == JsonValueKind.Array);
 
             IDictionary<string, DiffObject> result = baselineValueKind == JsonValueKind.Object
                 ? ComputeObjectsDiff(baseline, target)
