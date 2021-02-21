@@ -29,12 +29,15 @@ namespace Wikitools.Tests
         // kja 3 move these methods to ValidWikiPagesStatsTests
         private static void Verify(WikiPagesStatsTestData data)
         {
+            VerifySplitLogic(data);
+            VerifyMergeLogic(data);
+        }
+
+        private static void VerifySplitLogic(WikiPagesStatsTestData data)
+        {
             // Act - Split({foo, bar})
             (ValidWikiPagesStats previousMonth, ValidWikiPagesStats currentMonth)? split =
                 VerifySplitByMonth(data, data.SplitPreconditionsViolated ? typeof(InvariantException) : null);
-
-            // Act - Merge(prev, curr)
-            ValidWikiPagesStats? merged = VerifyMerge(data, null); // kja simplify
 
             if (!data.SplitPreconditionsViolated)
             {
@@ -46,19 +49,22 @@ namespace Wikitools.Tests
                 // Act - Split(Split({foo, bar})[curr]) == curr
                 var (previousCurrentMonth, currentCurrentMonth) = ValidWikiPagesStats.SplitByMonth(split!.Value.currentMonth, data.Date);
                 Assert.DoesNotContain(previousCurrentMonth.Value, ps => ps.DayStats.Any());
-                new JsonDiffAssertion(split!.Value.currentMonth.Value,  currentCurrentMonth.Value).Assert();
-            }
+                new JsonDiffAssertion(split!.Value.currentMonth.Value, currentCurrentMonth.Value).Assert();
 
-            // Act - Merge(Merge(prev, curr), Merge(prev, curr)) == Merge(prev, curr)
-            var mergedTwice = ValidWikiPagesStats.Merge(merged!, merged!);
-            new JsonDiffAssertion(merged!, mergedTwice).Assert();
-
-            if (!data.SplitPreconditionsViolated)
-            {
                 // Act - Merge(Split({foo, bar})) == Merge(prev, curr)
                 var mergedSplit = ValidWikiPagesStats.Merge(split!.Value.previousMonth, split!.Value.currentMonth);
                 new JsonDiffAssertion(data.MergedPagesStats, mergedSplit).Assert();
             }
+        }
+
+        private static void VerifyMergeLogic(WikiPagesStatsTestData data)
+        {
+            // Act - Merge(prev, curr)
+            ValidWikiPagesStats? merged = VerifyMerge(data, null); // kja simplify
+
+            // Act - Merge(Merge(prev, curr), Merge(prev, curr)) == Merge(prev, curr)
+            var mergedTwice = ValidWikiPagesStats.Merge(merged!, merged!);
+            new JsonDiffAssertion(merged!, mergedTwice).Assert();
 
             // The invariant verified below does not hold if page rename is present.
             // This is because Merge erases the previous name.
