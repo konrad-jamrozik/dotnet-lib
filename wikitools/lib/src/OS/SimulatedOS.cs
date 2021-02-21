@@ -1,5 +1,4 @@
 ﻿using System.Linq;
-using Wikitools.Lib.Git;
 
 namespace Wikitools.Lib.OS
 {
