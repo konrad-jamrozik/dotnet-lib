@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Wikitools.Lib.OS;
@@ -44,7 +45,7 @@ namespace Wikitools
             JsonSerializer.Serialize(data,
                 new JsonSerializerOptions
                 {
-                    Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+                    Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
                     WriteIndented = true
                 });
     }

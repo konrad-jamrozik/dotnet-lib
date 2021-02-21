@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using MoreLinq;
 using Wikitools.Lib.OS;
 
 namespace Wikitools.Lib.Git
@@ -13,7 +14,7 @@ namespace Wikitools.Lib.Git
             .Select(GetStdOutLines)
             .Aggregate((acc, commitLines) =>
                 acc
-                    .Concat(MoreLinq.MoreEnumerable.Return(GitLog.Delimiter))
+                    .Concat(MoreEnumerable.Return(GitLog.Delimiter))
                     .Concat(commitLines).ToList()
             );
 

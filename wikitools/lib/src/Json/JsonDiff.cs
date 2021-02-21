@@ -1,5 +1,6 @@
 ﻿using System;
-using System.Text.Json;
+using System.Text.Encodings.Web;
+using System.Text.Json; 
 // For explanation of this alias, please see comment on Wikitools.Lib.Json.JsonElementDiff.Value.
 using DiffObject = System.Object;
 
@@ -23,7 +24,7 @@ namespace Wikitools.Lib.Json
             // https://stackoverflow.com/questions/58003293/dotnet-core-system-text-json-unescape-unicode-string
             // Issue reporting this, with links to discussions explaining the default escaping behavior:
             // https://github.com/dotnet/runtime/issues/29879
-            Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+            Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
         };
 
         public JsonDiff(object baseline, object target)

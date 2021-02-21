@@ -1,7 +1,6 @@
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using MoreLinq;
 using Wikitools.Lib.Primitives;
 using static MoreLinq.MoreEnumerable;
 
@@ -19,8 +18,8 @@ namespace Wikitools.Lib.Markdown
 
             var content = groups.SelectMany(group =>
             {
-                var table = Return(new MarkdownTable(@group.ToArray()).Data).Cast<object>();
-                return @group.Key ? table : @group.ToArray();
+                var table = Return(new MarkdownTable(group.ToArray()).Data).Cast<object>();
+                return group.Key ? table : group.ToArray();
             }).ToArray();
 
             return content;

@@ -23,7 +23,7 @@ namespace Wikitools
             Func<string, bool> filePathFilter) =>
             new object[]
             {
-                $"Git file insertions and deletions month over month",
+                "Git file insertions and deletions month over month",
                 "",
                 new TabularData(GetRows(await commits, authorFilter, filePathFilter))
             };

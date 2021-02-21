@@ -54,9 +54,9 @@ namespace Wikitools.Lib.Git
             // A: https://stackoverflow.com/a/2528129/986533
             var command =
                 $"git log{afterDaysStr}{afterDateStr}{beforeDateStr} " +
-                $"--ignore-all-space --ignore-blank-lines " +
+                "--ignore-all-space --ignore-blank-lines " +
                 $"--pretty=\"%{delimiter}%n%an%n%as\" " +
-                $"--numstat --date=iso";
+                "--numstat --date=iso";
             return command;
         }
     }
