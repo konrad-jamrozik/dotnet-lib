@@ -21,9 +21,10 @@ namespace Wikitools.Tests
         WikiPageStats.DayStat[] FooPageCurrentDayStats,
         WikiPageStats.DayStat[] BarPagePreviousDayStats,
         WikiPageStats.DayStat[] BarPageCurrentDayStats,
-        (WikiPageStats.DayStat[] FooPage, WikiPageStats.DayStat[] BarPage)? MergedDayStats = null,
-        bool MergeThrows = false,
         bool SplitPreconditionsViolated = false,
+        WikiPageStats.DayStat[]? FooPagePreviousDayStatsToMerge = null,
+        WikiPageStats.DayStat[]? BarPagePreviousDayStatsToMerge = null,
+        (WikiPageStats.DayStat[] FooPage, WikiPageStats.DayStat[] BarPage)? MergedDayStats = null,
         string? FooPagePathInCurrentMonth = null,
         string? BarPagePathInCurrentMonth = null)
     {
@@ -52,15 +53,21 @@ namespace Wikitools.Tests
 
         public ValidWikiPagesStats PreviousMonth => new(new[]
         {
-            // kja replace all the 'with' with direct ctor calls
             FooPage with { Path = FooPagePath, DayStats = FooPagePreviousDayStats },
             BarPage with { Path = BarPagePath, DayStats = BarPagePreviousDayStats }
         });
 
+        // kja replace all the 'with' with direct ctor calls
         public ValidWikiPagesStats PreviousMonthAfterSplit => new(new[]
         {
             FooPage with { Path = FooPagePathInCurrentMonth ?? FooPagePath, DayStats = FooPagePreviousDayStats },
             BarPage with { Path = BarPagePathInCurrentMonth ?? BarPagePath, DayStats = BarPagePreviousDayStats }
+        });
+
+        public ValidWikiPagesStats PreviousMonthAfterMerge => new(new[]
+        {
+            FooPage with { Path = FooPagePathInCurrentMonth ?? FooPagePath, DayStats = FooPagePreviousDayStatsToMerge ?? FooPagePreviousDayStats },
+            BarPage with { Path = BarPagePathInCurrentMonth ?? BarPagePath, DayStats = BarPagePreviousDayStatsToMerge ?? BarPagePreviousDayStats }
         });
 
         public ValidWikiPagesStats CurrentMonth => new(new[]
@@ -73,6 +80,12 @@ namespace Wikitools.Tests
         {
             FooPage with { Path = FooPagePathInCurrentMonth ?? FooPagePath }, 
             BarPage with { Path = BarPagePathInCurrentMonth ?? BarPagePath }
+        });
+
+        public ValidWikiPagesStats PreviousStatsToMerge => new(new[]
+        {
+            FooPage with { Path = FooPagePath, DayStats = FooPagePreviousDayStatsToMerge ?? FooPagePreviousDayStats },
+            BarPage with { Path = BarPagePath, DayStats = BarPagePreviousDayStatsToMerge ?? BarPagePreviousDayStats }
         });
 
         public ValidWikiPagesStats MergedPagesStats => MergedDayStats != null

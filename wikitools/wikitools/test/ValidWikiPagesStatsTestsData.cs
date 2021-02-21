@@ -47,12 +47,14 @@ namespace Wikitools.Tests
                 new WikiPageStats.DayStat[] { },
                 new WikiPageStats.DayStat[] { new(215, FebruaryDate) },
                 new WikiPageStats.DayStat[] { new(215, FebruaryDate) },
+                SplitPreconditionsViolated: true,
+                FooPagePreviousDayStatsToMerge: new WikiPageStats.DayStat[] { },
+                BarPagePreviousDayStatsToMerge: new WikiPageStats.DayStat[] { new(215, FebruaryDate) },
                 MergedDayStats:
                 (
-                    new WikiPageStats.DayStat[] {}, 
-                    new WikiPageStats.DayStat[] { new(215, FebruaryDate)}
-                ),
-                SplitPreconditionsViolated: true);
+                    new WikiPageStats.DayStat[] { },
+                    new WikiPageStats.DayStat[] { new(215, FebruaryDate) }
+                ));
 
         public static WikiPagesStatsTestData PageStatsSamePreviousDay =>
             new(FebruaryDate,
@@ -62,7 +64,7 @@ namespace Wikitools.Tests
                 new WikiPageStats.DayStat[] { new(103, JanuaryDate) },
                 MergedDayStats:
                 ( 
-                    new WikiPageStats.DayStat[] {}, 
+                    new WikiPageStats.DayStat[] { }, 
                     new WikiPageStats.DayStat[] { new(103, JanuaryDate)}
                 ),
                 SplitPreconditionsViolated: true);
