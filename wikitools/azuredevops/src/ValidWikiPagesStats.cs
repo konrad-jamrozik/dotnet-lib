@@ -34,6 +34,28 @@ namespace Wikitools.AzureDevOps
     /// </summary>
     public class ValidWikiPagesStats
     {
+        // kja problems with invariant checks in ctor:
+        // 1. eager, not lazy (maybe fix it by making .Value Lazy and putting it there)
+        // 2. no distinction between required validation of inputs originating
+        // outside of the system, and internal assertions that should always hold
+        // Re 2.: If validation of external input fails, we want to throw
+        // exception, expected during normal operation of the system.
+        // However, after we do that once and obtain the type, any further
+        // operations on the data and subsequent calls to this ctor might
+        // or might not involve external inputs.
+        // If no external inputs are involved, only internal ops, then
+        // any violation of the invariants on subsequent construction 
+        // should never happen and is an assertion failure.
+        // Assertion failures may need to be conditionally skipped from compilation
+        // in production usage for performance reasons.
+        // Thus, ideally, we need to be able to do the following:
+        // - Run these invariants as normal system validation, when ctoring
+        // from external inputs.
+        // - Run these invariants as assertions, that can be skipped from compilation
+        // and result in hard failure, when using this ctor for internal logic checks.
+        // This hints the invariant failure reporting logic should be decoupled from
+        // how to handle the failures. For example, wrap the InvariantException
+        // and rethrow further depending on the validation mode.
         public ValidWikiPagesStats(IEnumerable<WikiPageStats> stats)
         {
             var statsArr = stats.ToArray();
@@ -55,7 +77,7 @@ namespace Wikitools.AzureDevOps
         // kja this should be private. This means that:
         // - serialization to HDD serializes this type directly
         // - assertions operate on this type directly
-        // - reporting logic (data rows projection) cannot access this value directly
+        // - reporting logic (data rows projection) cannot access this value directly (more on that in GetRows comment)
         public WikiPageStats[] Value { get; }
 
         public static ValidWikiPagesStats From(IEnumerable<WikiPageStats> stats) =>
