@@ -48,8 +48,6 @@ namespace Wikitools.Tests
                 new WikiPageStats.DayStat[] { new(215, FebruaryDate) },
                 new WikiPageStats.DayStat[] { new(215, FebruaryDate) },
                 SplitPreconditionsViolated: true,
-                FooPagePreviousDayStatsToMerge: new WikiPageStats.DayStat[] { },
-                BarPagePreviousDayStatsToMerge: new WikiPageStats.DayStat[] { new(215, FebruaryDate) },
                 MergedDayStats:
                 (
                     new WikiPageStats.DayStat[] { },
@@ -60,28 +58,25 @@ namespace Wikitools.Tests
             new(FebruaryDate,
                 new WikiPageStats.DayStat[] { },
                 new WikiPageStats.DayStat[] { },
-                new WikiPageStats.DayStat[] { new(103, JanuaryDate) },
-                new WikiPageStats.DayStat[] { new(103, JanuaryDate) },
+                new WikiPageStats.DayStat[] { new(800, JanuaryDate) },
+                new WikiPageStats.DayStat[] { new(800, JanuaryDate) },
                 MergedDayStats:
                 ( 
                     new WikiPageStats.DayStat[] { }, 
-                    new WikiPageStats.DayStat[] { new(103, JanuaryDate)}
+                    new WikiPageStats.DayStat[] { new(800, JanuaryDate)}
                 ),
                 SplitPreconditionsViolated: true);
 
-        // kja this Merge should not throw! Split by month should NEVER throw!
-        // kja use a boolean to communicate invariant violation - see other comment.
-        // The invariant violated: given day stat date can appear only once per page stats.
         public static WikiPagesStatsTestData PageStatsSameDayDifferentCounts =>
             new(FebruaryDate,
                 new WikiPageStats.DayStat[] { },
                 new WikiPageStats.DayStat[] { },
-                new WikiPageStats.DayStat[] { new(300, FebruaryDate) },
-                new WikiPageStats.DayStat[] { new(400, FebruaryDate) },
+                new WikiPageStats.DayStat[] { new(800, FebruaryDate) },
+                new WikiPageStats.DayStat[] { new(900, FebruaryDate) },
                 MergedDayStats:
                 ( 
                     new WikiPageStats.DayStat[] {}, 
-                    new WikiPageStats.DayStat[] { new(400, FebruaryDate) }
+                    new WikiPageStats.DayStat[] { new(900, FebruaryDate) }
                 ),
                 SplitPreconditionsViolated: true);
 
@@ -100,8 +95,8 @@ namespace Wikitools.Tests
                 new WikiPageStats.DayStat[] { new(217, FebruaryDate.AddDays(2)) },
                 new WikiPageStats.DayStat[] { new(104, JanuaryDate.AddDays(1)) },
                 new WikiPageStats.DayStat[] { new(219, FebruaryDate.AddDays(4)) },
-                FooPagePathInCurrentMonth: "/Bar",
-                BarPagePathInCurrentMonth: "/Foo"
+                FooPagePathInCurrentMonth: WikiPagesStatsTestData.BarPagePath,
+                BarPagePathInCurrentMonth: WikiPagesStatsTestData.FooPagePath
             );
 
         public static WikiPagesStatsTestData PageStats

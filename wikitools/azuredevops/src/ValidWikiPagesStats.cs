@@ -160,7 +160,7 @@ namespace Wikitools.AzureDevOps
         {
             Debug.Assert(previousPageStats.Id == currentPageStats.Id);
             return new WikiPageStats(
-                currentPageStats.Path, // Ensure that the currentPageStats.Path takes precedence.
+                currentPageStats.Path, // This path takes precedence over previousPageStats.Path.
                 previousPageStats.Id,
                 Merge(previousPageStats.DayStats, currentPageStats.DayStats));
         }
