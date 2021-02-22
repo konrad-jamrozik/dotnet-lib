@@ -78,7 +78,7 @@ namespace Wikitools.AzureDevOps.Tests
         }
 
         private static void VerifySplitByMonth(
-            ValidWikiPagesStatsTestData data, Type excType) => TestAssert.Throws(VerifySplitByMonth, data, excType);
+            ValidWikiPagesStatsTestData data, Type excType) => TestAssert.Throws(VerifySplitByMonth, data, excType); // kja maybe instead "new ThrowExpectation(VerifySplitByMonth, data, excType).Verify()" ?
 
         private static (ValidWikiPagesStats previousMonth, ValidWikiPagesStats currentMonth) VerifySplitByMonth(
             ValidWikiPagesStatsTestData data)
