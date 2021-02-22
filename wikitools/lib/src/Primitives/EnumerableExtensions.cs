@@ -40,7 +40,7 @@ namespace Wikitools.Lib.Primitives
 
             var union = firstExceptSecond.Union(intersecting).Union(secondExceptFirst).ToArray();
 
-            Contract.Assert(union.DistinctBy(selectKey).Count() == union.Length, "Any given key appears only once");
+            union.AssertDistinctBy(selectKey);
             return union;
         }
     }
