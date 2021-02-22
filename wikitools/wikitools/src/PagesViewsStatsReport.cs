@@ -23,7 +23,7 @@ namespace Wikitools
             var awaitedStats = await stats;
             return new object[]
             {
-                string.Format(DescriptionFormat, pageViewsForDays, timeline.UtcNow, awaitedStats.Data.Length),
+                string.Format(DescriptionFormat, pageViewsForDays, timeline.UtcNow, awaitedStats.Count()),
                 "",
                 new TabularData(GetRows(awaitedStats))
             };
@@ -31,7 +31,7 @@ namespace Wikitools
 
         private static (object[] headerRow, object[][] rows) GetRows(ValidWikiPagesStats stats)
         {
-            (string path, int views)[] pathsStats = stats.Data 
+            (string path, int views)[] pathsStats = stats 
                 .Select(pageStats =>
                     (
                         path: pageStats.Path,

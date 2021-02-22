@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Wikitools.AzureDevOps;
 
@@ -12,8 +13,10 @@ namespace Wikitools
 
             var (previousMonthStats, currentMonthStats) = ValidWikiPagesStats.SplitByMonth(pageStats, CurrentDate);
 
-            await Storage.With(CurrentDate,               (WikiPageStats[] stats) => ValidWikiPagesStats.From(stats).Merge(currentMonthStats).Data);
-            await Storage.With(CurrentDate.AddMonths(-1), (WikiPageStats[] stats) => ValidWikiPagesStats.From(stats).Merge(previousMonthStats).Data);
+            await Storage.With(CurrentDate,
+                (IEnumerable<WikiPageStats> stats) => ValidWikiPagesStats.From(stats).Merge(currentMonthStats));
+            await Storage.With(CurrentDate.AddMonths(-1),
+                (IEnumerable<WikiPageStats> stats) => ValidWikiPagesStats.From(stats).Merge(previousMonthStats));
 
             return this;
         }

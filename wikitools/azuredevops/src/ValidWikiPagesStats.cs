@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Wikitools.Lib.Contracts;
@@ -31,13 +32,13 @@ namespace Wikitools.AzureDevOps
     ///   - This can happen in case of page rename, as explained above.
     /// 
     /// </summary>
-    public class ValidWikiPagesStats
+    public class ValidWikiPagesStats : IEnumerable<WikiPageStats>
     {
         // Note this setup of invariant checks in ctor has some problems.
         // Details here: https://github.com/dotnet/csharplang/issues/4453#issuecomment-782807066
         public ValidWikiPagesStats(IEnumerable<WikiPageStats> stats)
         {
-            var statsArr = stats.ToArray();
+            var statsArr = stats as WikiPageStats[] ?? stats.ToArray();
 
             statsArr.AssertDistinctBy(ps => ps.Id);
             statsArr.AssertDistinctBy(ps => ps.Path);
@@ -53,10 +54,8 @@ namespace Wikitools.AzureDevOps
             Data = statsArr;
         }
 
-        // kja make the following private:
-        // - serialization to HDD serializes this type directly
-        // - assertions operate on this type directly
-        public WikiPageStats[] Data { get; }
+        // kja make serialization to HDD serialize this type directly
+        public IEnumerable<WikiPageStats> Data { get; }
 
         public static ValidWikiPagesStats From(IEnumerable<WikiPageStats> stats) =>
             new(stats.Select(WikiPageStats.FixNulls));
@@ -104,7 +103,7 @@ namespace Wikitools.AzureDevOps
         /// </summary>
         private static ValidWikiPagesStats Merge(ValidWikiPagesStats validPreviousStats, ValidWikiPagesStats validCurrentStats)
         {
-            var merged = validPreviousStats.Data.UnionUsing(validCurrentStats.Data, ps => ps.Id, Merge);
+            var merged = validPreviousStats.UnionUsing(validCurrentStats, ps => ps.Id, Merge);
 
             merged = merged.Select(ps => ps with { DayStats = ps.DayStats.OrderBy(ds => ds.Day).ToArray() }).ToArray();
 
@@ -142,10 +141,9 @@ namespace Wikitools.AzureDevOps
         }
 
         public static (ValidWikiPagesStats previousMonthStats, ValidWikiPagesStats currentMonthStats) SplitByMonth(
-            ValidWikiPagesStats validPagesStats,
+            ValidWikiPagesStats pagesStats,
             DateTime currentDate)
         {
-            var pagesStats = validPagesStats.Data;
             Contract.Assert(pagesStats.Any());
 
             // For each page, group and order its day stats by month
@@ -202,8 +200,12 @@ namespace Wikitools.AzureDevOps
         public ValidWikiPagesStats Trim(DateTime startDate, DateTime endDate) => Trim(this, startDate, endDate);
 
         private static ValidWikiPagesStats Trim(ValidWikiPagesStats stats, DateTime startDate, DateTime endDate) =>
-            new(stats.Data.Select(ps =>
+            new(stats.Select(ps =>
                     ps with { DayStats = ps.DayStats.Where(s => s.Day >= startDate && s.Day <= endDate).ToArray() })
                 .ToArray());
+
+        public IEnumerator<WikiPageStats> GetEnumerator() => Data.GetEnumerator();
+
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 }

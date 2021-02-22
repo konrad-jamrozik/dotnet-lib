@@ -40,14 +40,14 @@ namespace Wikitools.AzureDevOps.Tests
                 // Act - Split(Split({prev, curr})[prev]) == prev
                 var (previousPreviousMonth, currentPreviousMonth) =
                     ValidWikiPagesStats.SplitByMonth(split.previousMonth, data.Date);
-                new JsonDiffAssertion(split.previousMonth.Data, previousPreviousMonth.Data).Assert();
-                Assert.DoesNotContain(currentPreviousMonth.Data, ps => ps.DayStats.Any());
+                new JsonDiffAssertion(split.previousMonth, previousPreviousMonth).Assert();
+                Assert.DoesNotContain(currentPreviousMonth, ps => ps.DayStats.Any());
 
                 // Act - Split(Split({prev, curr})[curr]) == curr
                 var (previousCurrentMonth, currentCurrentMonth) =
                     ValidWikiPagesStats.SplitByMonth(split.currentMonth, data.Date);
-                Assert.DoesNotContain(previousCurrentMonth.Data, ps => ps.DayStats.Any());
-                new JsonDiffAssertion(split.currentMonth.Data, currentCurrentMonth.Data).Assert();
+                Assert.DoesNotContain(previousCurrentMonth, ps => ps.DayStats.Any());
+                new JsonDiffAssertion(split.currentMonth, currentCurrentMonth).Assert();
 
                 // Act - Merge(Split({prev, curr})) == Merge(prev, curr)
                 var mergedSplit = split.previousMonth.Merge(split.currentMonth);
