@@ -20,7 +20,7 @@ namespace Wikitools.Lib.Primitives
             this IEnumerable<TSource> first,
             IEnumerable<TSource> second,
             Func<TSource, TKey> selectKey,
-            Func<TSource, TSource, TSource> intersect) where TKey : struct
+            Func<TSource, TSource, TSource> intersect) where TKey : notnull
         {
             var firstArray  = first as TSource[] ?? first.ToArray();
             var secondArray = second as TSource[] ?? second.ToArray();
