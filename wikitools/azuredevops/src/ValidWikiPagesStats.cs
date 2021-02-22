@@ -8,17 +8,11 @@ using Wikitools.Lib.Primitives;
 namespace Wikitools.AzureDevOps
 {
     /// <summary>
-    /// Represents a collection of ADO wiki page stats.
+    /// Represents a collection of ADO wiki page stats, originally returned by "Page Stats - Get" [1]
+    /// [1] https://docs.microsoft.com/en-us/rest/api/azure/devops/wiki/page%20stats/get?view=azure-devops-rest-6.0
     ///
     /// Assumed invariants about the underlying ADO API behavior, confirmed by manual tests:
-    /// - All dates provided are in UTC.
-    /// - For any given page, visit stats for given day appear only once.
-    /// - For any given page, it might have an empty array of day visit stats.
-    /// - For any given page, the day visit stats are ordered ascending by date.
-    /// - For any day visit stats, its Count is int that is 1 or more.
-    /// - No page ID will appear more than once.
-    /// - As a consequence, for any given page, its (Path, ID) pair is unique within the scope
-    ///   of one call to this method.
+    /// - Everything evident from the CheckInvariants() method.
     /// - If a page path was changed since last call to this method, it will appear only with the new path.
     ///   Consider a page with (ID, Path) of (42, "/Foo") and some set XDayViews of daily view counts.
     ///   Consider following sequence of events:
@@ -36,26 +30,27 @@ namespace Wikitools.AzureDevOps
     {
         // Note this setup of invariant checks in ctor has some problems.
         // Details here: https://github.com/dotnet/csharplang/issues/4453#issuecomment-782807066
-        public ValidWikiPagesStats(IEnumerable<WikiPageStats> stats)
+        public ValidWikiPagesStats(IEnumerable<WikiPageStats> stats) => Data = CheckInvariants(stats);
+
+        private static IEnumerable<WikiPageStats> CheckInvariants(IEnumerable<WikiPageStats> stats)
         {
             var statsArr = stats as WikiPageStats[] ?? stats.ToArray();
-
             statsArr.AssertDistinctBy(ps => ps.Id);
             statsArr.AssertDistinctBy(ps => ps.Path);
             statsArr.ForEach(ps =>
             {
                 var (_, _, dayStats) = ps;
+                // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+                Contract.Assert(dayStats.Length >= 0);
                 dayStats.AssertDistinctBy(ds => ds.Day);
                 dayStats.AssertOrderedBy(ds => ds.Day);
                 dayStats.Assert(ds => ds.Count >= 1);
                 dayStats.Assert(ds => ds.Day.Kind == DateTimeKind.Utc);
             });
-
-            Data = statsArr;
+            return statsArr;
         }
 
-        // kja make serialization to HDD serialize this type directly
-        public IEnumerable<WikiPageStats> Data { get; }
+        private IEnumerable<WikiPageStats> Data { get; }
 
         public static ValidWikiPagesStats From(IEnumerable<WikiPageStats> stats) =>
             new(stats.Select(WikiPageStats.FixNulls));
@@ -66,44 +61,35 @@ namespace Wikitools.AzureDevOps
         /// Merges ADO Wiki page stats. previousStats with currentStats.
         ///
         /// The merge makes following assumptions about the inputs.
-        /// - The data within each of the two parameters obeys the constraints
-        /// as outlined by the comment of
-        /// Wikitools.AzureDevOps.AdoApi.GetAllWikiPagesDetails.
-        /// - However, these constraints might be violated when considering
-        /// the union of these arguments. Specifically:
+        /// - The arguments obey ValidWikiPagesStats invariants, as evidenced by the argument type.
+        /// - However, the union of arguments doesn't necessarily obey these invariants.
+        /// Specifically:
         ///   - Page with the same ID might appear twice: once in each argument.
         ///   - Page with the same ID might appear under different paths.
         ///   - A day views stat for a page with given ID and Day date
         ///   can appear twice: once in each argument.
-        ///     - In such case, the view count for currentStats is >=
-        ///     of the view count of previousStats.
+        ///     - In such case, the view count for currentStats is
+        ///       greater or equal to the view count of previousStats.
         /// 
-        /// The merge guarantees the following: 
-        /// The output will obey the constraints as outlined by
-        /// the comment of 
-        /// Wikitools.AzureDevOps.AdoApi.GetAllWikiPagesDetails.
-        ///
-        /// The merge behaves as follows:
+        /// The stats returned by Merge obey the following:
         /// - Pages with the same ID are merged into one page.
-        ///   - If the Paths were different, the Path from the currentStats
-        ///   is taken and the Path from previousStats is discarded.
+        ///   - If the Paths were different, the Path from the currentStats is taken.
+        ///     The Path from previousStats is discarded.
         ///     - This operations on the assumption the page was renamed,
-        ///     and the currentStats are newer, i.e. after the rename.
-        /// - A page with given ID will have union of all day view stats
-        ///   from both arguments.
+        ///       and the currentStats are newer, i.e. after the rename.
+        /// - A page with given ID has union of all day view stats from both arguments.
         /// - Day view stats for the same Day date for given page are merged
-        ///   into one. Observe that we have assumed the Counts of the day
-        ///   view stats were the same for both arguments.
+        ///   into one.
         ///
-        /// Following constraints are *not* enforced, and thus might be
-        /// violated by the arguments:
+        /// Following invariants are *not* checked, and thus might be
+        /// violated by the arguments, even though they are invalid data:
         /// - dates of all day view stats for page with given ID in currentStats
-        /// are equal or more recent than all day view stats for the same page
-        /// in previousStats.
+        ///   are equal or more recent than all day view stats
+        ///   for a page with the same ID in previousStats.
         /// </summary>
-        private static ValidWikiPagesStats Merge(ValidWikiPagesStats validPreviousStats, ValidWikiPagesStats validCurrentStats)
+        private static ValidWikiPagesStats Merge(ValidWikiPagesStats previousStats, ValidWikiPagesStats currentStats)
         {
-            var merged = validPreviousStats.UnionUsing(validCurrentStats, ps => ps.Id, Merge);
+            var merged = previousStats.UnionUsing(currentStats, ps => ps.Id, Merge);
 
             merged = merged.Select(ps => ps with { DayStats = ps.DayStats.OrderBy(ds => ds.Day).ToArray() }).ToArray();
 
@@ -125,10 +111,10 @@ namespace Wikitools.AzureDevOps
         }
 
         private static WikiPageStats.DayStat[] Merge(
-            WikiPageStats.DayStat[] pagePreviousStats,
-            WikiPageStats.DayStat[] pageCurrentStats)
+            WikiPageStats.DayStat[] previousDayStats,
+            WikiPageStats.DayStat[] currentDayStats)
         {
-            var groupedByDay = pagePreviousStats.Concat(pageCurrentStats).GroupBy(stat => stat.Day);
+            var groupedByDay = previousDayStats.Concat(currentDayStats).GroupBy(stat => stat.Day);
             var mergedStats = groupedByDay.Select(dayStats =>
             {
                 Contract.Assert(dayStats.Count(), "dayStats.Count()", new Range(1, 2),
