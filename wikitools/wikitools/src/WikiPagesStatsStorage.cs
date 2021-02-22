@@ -12,8 +12,8 @@ namespace Wikitools
 
             var (previousMonthStats, currentMonthStats) = ValidWikiPagesStats.SplitByMonth(pageStats, CurrentDate);
 
-            await Storage.With(CurrentDate,               (WikiPageStats[] stats) => ValidWikiPagesStats.From(stats).Merge(currentMonthStats).Value);
-            await Storage.With(CurrentDate.AddMonths(-1), (WikiPageStats[] stats) => ValidWikiPagesStats.From(stats).Merge(previousMonthStats).Value);
+            await Storage.With(CurrentDate,               (WikiPageStats[] stats) => ValidWikiPagesStats.From(stats).Merge(currentMonthStats).Data);
+            await Storage.With(CurrentDate.AddMonths(-1), (WikiPageStats[] stats) => ValidWikiPagesStats.From(stats).Merge(previousMonthStats).Data);
 
             return this;
         }

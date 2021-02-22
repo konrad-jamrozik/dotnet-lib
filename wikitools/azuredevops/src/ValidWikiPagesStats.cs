@@ -50,14 +50,13 @@ namespace Wikitools.AzureDevOps
                 dayStats.Assert(ds => ds.Day.Kind == DateTimeKind.Utc);
             });
 
-            Value = statsArr;
+            Data = statsArr;
         }
 
-        // kja this should be private. This means that:
+        // kja make the following private:
         // - serialization to HDD serializes this type directly
         // - assertions operate on this type directly
-        // - reporting logic (data rows projection) cannot access this value directly (more on that in GetRows comment)
-        public WikiPageStats[] Value { get; }
+        public WikiPageStats[] Data { get; }
 
         public static ValidWikiPagesStats From(IEnumerable<WikiPageStats> stats) =>
             new(stats.Select(WikiPageStats.FixNulls));
@@ -105,7 +104,7 @@ namespace Wikitools.AzureDevOps
         /// </summary>
         private static ValidWikiPagesStats Merge(ValidWikiPagesStats validPreviousStats, ValidWikiPagesStats validCurrentStats)
         {
-            var merged = validPreviousStats.Value.UnionUsing(validCurrentStats.Value, ps => ps.Id, Merge);
+            var merged = validPreviousStats.Data.UnionUsing(validCurrentStats.Data, ps => ps.Id, Merge);
 
             merged = merged.Select(ps => ps with { DayStats = ps.DayStats.OrderBy(ds => ds.Day).ToArray() }).ToArray();
 
@@ -146,7 +145,7 @@ namespace Wikitools.AzureDevOps
             ValidWikiPagesStats validPagesStats,
             DateTime currentDate)
         {
-            var pagesStats = validPagesStats.Value;
+            var pagesStats = validPagesStats.Data;
             Contract.Assert(pagesStats.Any());
 
             // For each page, group and order its day stats by month
@@ -203,7 +202,7 @@ namespace Wikitools.AzureDevOps
         public ValidWikiPagesStats Trim(DateTime startDate, DateTime endDate) => Trim(this, startDate, endDate);
 
         private static ValidWikiPagesStats Trim(ValidWikiPagesStats stats, DateTime startDate, DateTime endDate) =>
-            new(stats.Value.Select(ps =>
+            new(stats.Data.Select(ps =>
                     ps with { DayStats = ps.DayStats.Where(s => s.Day >= startDate && s.Day <= endDate).ToArray() })
                 .ToArray());
     }
