@@ -19,7 +19,7 @@ namespace Wikitools.AzureDevOps.Tests
         [Fact] public void PageStatsSameDay()                => Verify(Data.PageStatsSameDay);
         [Fact] public void PageStatsSamePreviousDay()        => Verify(Data.PageStatsSamePreviousDay);
         [Fact] public void PageStatsSameDayDifferentCounts() => Verify(Data.PageStatsSameDayDifferentCounts);
-        [Fact] public void PageStatsSameMonth()              => Verify(Data.PageStatsSameMonth);
+        [Fact] public void PageStatsInterleavingDayStats()   => Verify(Data.PageStatsInterleavingDayStats);
         [Fact] public void PageStatsRenamedToNewPath()       => Verify(Data.PageStatsRenamedToNewPath);
         [Fact] public void PageStatsExchangedPaths()         => Verify(Data.PageStatsExchangedPaths);
         // @formatter:on

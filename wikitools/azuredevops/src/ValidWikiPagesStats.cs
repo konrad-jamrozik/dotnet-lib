@@ -55,6 +55,63 @@ namespace Wikitools.AzureDevOps
         public static ValidWikiPagesStats From(IEnumerable<WikiPageStats> stats) =>
             new(stats.Select(WikiPageStats.FixNulls));
 
+        public static (ValidWikiPagesStats previousMonthStats, ValidWikiPagesStats currentMonthStats) SplitByMonth(
+            ValidWikiPagesStats pagesStats,
+            DateTime currentDate)
+        {
+            Contract.Assert(pagesStats.Any());
+
+            // For each page, group and order its day stats by month
+            var pagesWithOrderedDayStats = pagesStats
+                .Select(ps => (ps, dayStatsByMonth: ps.DayStats.GroupAndOrderBy(s => s.Day.Trim(DateTimePrecision.Month))))
+                .ToArray();
+
+            // Assert that all days for given month come from that month, for all pages.
+            pagesWithOrderedDayStats.ForEach(p =>
+                p.dayStatsByMonth.ForEach(ds => ds.items.Assert(dayStat => dayStat.Day.Trim(DateTimePrecision.Month) == ds.key)));
+
+            // Assert there are no duplicate day stats for given (page, month) tuple.
+            pagesWithOrderedDayStats.ForEach(p =>
+                p.dayStatsByMonth.ForEach(ds => ds.items.AssertDistinctBy(dayStat => dayStat.Day)));
+
+            // For each page, return a tuple of that page stats for previous and current month
+            var statsByMonth = pagesWithOrderedDayStats.Select(ps => SplitByMonth(ps, currentDate)).ToArray();
+
+            var previousMonthStats = statsByMonth.Select(t => t.previousMonthPageStats);
+            var currentMonthStats  = statsByMonth.Select(t => t.currentMonthPageStats);
+            return (new ValidWikiPagesStats(previousMonthStats), new ValidWikiPagesStats(currentMonthStats));
+        }
+
+        private static (WikiPageStats previousMonthPageStats, WikiPageStats currentMonthPageStats)
+            SplitByMonth(
+                (WikiPageStats stats, (DateTime date, WikiPageStats.DayStat[])[] dayStatsByMonth) page,
+                DateTime currentDate)
+        {
+            Contract.Assert(page.dayStatsByMonth.Length <= 2,
+                "The wiki stats are expected to come from no more than 2 months");
+            Contract.Assert(page.dayStatsByMonth.Length <= 1 ||
+                            (page.dayStatsByMonth[0].date.AddMonths(1) == page.dayStatsByMonth[1].date),
+                "The wiki stats are expected to come from consecutive months");
+
+            var previousMonthPageStats = page.stats with
+            {
+                DayStats = SingleMonthOrderedDayStats(page.dayStatsByMonth, currentDate.AddMonths(-1))
+            };
+            var currentMonthPageStats = page.stats with
+            {
+                DayStats = SingleMonthOrderedDayStats(page.dayStatsByMonth, currentDate)
+            };
+            return (previousMonthPageStats, currentMonthPageStats);
+
+            WikiPageStats.DayStat[] SingleMonthOrderedDayStats(
+                (DateTime month, WikiPageStats.DayStat[] dayStatsByMonth)[] dayStatsByDate,
+                DateTime date) =>
+                dayStatsByDate.Any(stats => stats.month.Month == date.Month)
+                    ? dayStatsByDate.Single(stats => stats.month.Month == date.Month).dayStatsByMonth
+                        .OrderBy(ds => ds.Day).ToArray()
+                    : Array.Empty<WikiPageStats.DayStat>();
+        }
+
         public ValidWikiPagesStats Merge(ValidWikiPagesStats validCurrentStats) => Merge(this, validCurrentStats);
 
         /// <summary>
@@ -89,15 +146,8 @@ namespace Wikitools.AzureDevOps
         /// </summary>
         private static ValidWikiPagesStats Merge(ValidWikiPagesStats previousStats, ValidWikiPagesStats currentStats)
         {
-            var merged = previousStats.UnionUsing(currentStats, ps => ps.Id, Merge);
-
-            merged = merged.Select(ps => ps with { DayStats = ps.DayStats.OrderBy(ds => ds.Day).ToArray() }).ToArray();
-
-            Contract.Assert(merged.DistinctBy(m => m.Id).Count() == merged.Length, "Any given page appears only once");
-            merged.ForEach(ps => Contract.Assert(
-                ps.DayStats.DistinctBy(s => s.Day).Count() == ps.DayStats.Length,
-                "There is only one stat per page per day"));
-
+            IEnumerable<WikiPageStats> merged = previousStats.UnionUsing(currentStats, ps => ps.Id, Merge);
+            merged = merged.Select(ps => ps with { DayStats = ps.DayStats.OrderBy(ds => ds.Day).ToArray() });
             return new ValidWikiPagesStats(merged);
         }
 
@@ -124,63 +174,6 @@ namespace Wikitools.AzureDevOps
                 return dayStats.Last();
             }).ToArray();
             return mergedStats;
-        }
-
-        public static (ValidWikiPagesStats previousMonthStats, ValidWikiPagesStats currentMonthStats) SplitByMonth(
-            ValidWikiPagesStats pagesStats,
-            DateTime currentDate)
-        {
-            Contract.Assert(pagesStats.Any());
-
-            // For each page, group and order its day stats by month
-            var pagesWithOrderedDayStats = pagesStats
-                .Select(ps => (ps, dayStatsByMonth: ps.DayStats.GroupAndOrderBy(s => s.Day.Trim(DateTimePrecision.Month))))
-                .ToArray();
-
-            // Assert that all days for given month come from that month, for all pages.
-            pagesWithOrderedDayStats.ForEach(p =>
-                p.dayStatsByMonth.ForEach(ds => ds.items.Assert(dayStat => dayStat.Day.Trim(DateTimePrecision.Month) == ds.key)));
-
-            // Assert there are no duplicate day stats for given (page, month) tuple.
-            pagesWithOrderedDayStats.ForEach(p =>
-                p.dayStatsByMonth.ForEach(ds => ds.items.AssertDistinctBy(dayStat => dayStat.Day)));
-
-            // For each page, return a tuple of that page stats for previous and current month
-            var statsByMonth = pagesWithOrderedDayStats.Select(ps => SplitByMonth(ps, currentDate)).ToArray();
-
-            var previousMonthStats = statsByMonth.Select(t => t.previousMonthPageStats).ToArray();
-            var currentMonthStats  = statsByMonth.Select(t => t.currentMonthPageStats).ToArray();
-            return (new ValidWikiPagesStats(previousMonthStats), new ValidWikiPagesStats(currentMonthStats));
-        }
-
-        private static (WikiPageStats previousMonthPageStats, WikiPageStats currentMonthPageStats)
-            SplitByMonth(
-                (WikiPageStats stats, (DateTime date, WikiPageStats.DayStat[])[] dayStatsByMonth) page,
-                DateTime currentDate)
-        {
-            Contract.Assert(page.dayStatsByMonth.Length <= 2,
-                "The wiki stats are expected to come from no more than 2 months");
-            Contract.Assert(page.dayStatsByMonth.Length <= 1 ||
-                            (page.dayStatsByMonth[0].date.AddMonths(1) == page.dayStatsByMonth[1].date),
-                "The wiki stats are expected to come from consecutive months");
-
-            var previousMonthPageStats = page.stats with
-            {
-                DayStats = SingleMonthOrderedDayStats(page.dayStatsByMonth, currentDate.AddMonths(-1))
-            };
-            var currentMonthPageStats = page.stats with
-            {
-                DayStats = SingleMonthOrderedDayStats(page.dayStatsByMonth, currentDate)
-            };
-            return (previousMonthPageStats, currentMonthPageStats);
-
-            WikiPageStats.DayStat[] SingleMonthOrderedDayStats(
-                (DateTime month, WikiPageStats.DayStat[] dayStatsByMonth)[] dayStatsByDate,
-                DateTime date) =>
-                dayStatsByDate.Any(stats => stats.month.Month == date.Month)
-                    ? dayStatsByDate.Single(stats => stats.month.Month == date.Month).dayStatsByMonth
-                        .OrderBy(ds => ds.Day).ToArray()
-                    : Array.Empty<WikiPageStats.DayStat>();
         }
 
         public ValidWikiPagesStats Trim(DateTime startDate, DateTime endDate) => Trim(this, startDate, endDate);

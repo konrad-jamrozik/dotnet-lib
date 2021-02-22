@@ -142,7 +142,7 @@ namespace Wikitools.AzureDevOps.Tests
             }
         }
 
-        public static ValidWikiPagesStatsTestData PageStatsSameMonth =>
+        public static ValidWikiPagesStatsTestData PageStatsInterleavingDayStats =>
             new(FebruaryDate,
                 FooPagePreviousDayStats: new WikiPageStats.DayStat[]
                 {
@@ -163,6 +163,7 @@ namespace Wikitools.AzureDevOps.Tests
                 },
                 BarPageCurrentDayStats: new WikiPageStats.DayStat[]
                 {
+                    new(213, FebruaryDate.AddDays(-2)), 
                     new(216, FebruaryDate.AddDays(1)), 
                     new(217, FebruaryDate.AddDays(2))
                 },
@@ -179,6 +180,7 @@ namespace Wikitools.AzureDevOps.Tests
                     new WikiPageStats.DayStat[]
                     {
                         new(103, JanuaryDate),
+                        new(213, FebruaryDate.AddDays(-2)), 
                         new(215, FebruaryDate), 
                         new(216, FebruaryDate.AddDays(1)), 
                         new(217, FebruaryDate.AddDays(2))
