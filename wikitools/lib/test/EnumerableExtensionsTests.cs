@@ -8,31 +8,55 @@ namespace Wikitools.Lib.Tests
     public class EnumerableExtensionsTests
     {
         [Fact]
-        public void TestUnionUsing()
+        public void UnionMerges()
         {
-            // kja NEXT curr work. Simplify; add test using separate props.
-            var first  = new List<dynamic>
+            var first = new List<List<string>>
             {
-                new { Foo = "val1" },
-                new { Foo = "val2" }
-            };
-            var second = new List<dynamic>
-            {
-                new { Foo = "val2" },
-                new { Foo = "val3" }
+                new() { "key1A", "bodyA", "foo" },
+                new() { "key2", "bodyA", "bar" },
+                new() { "key3", "bodyB", "foo" },
+                new() { "key4A", "bodyB", "bar" },
             };
 
-            var expected = new List<dynamic>
+            var second = new List<List<string>>
             {
-                new { Foo = "val1" },
-                new { Foo = "val2val2" },
-                new { Foo = "val3" }
+                new() { "key1B", "bodyA", "foo" },
+                new() { "key2", "bodyC", "foo" },
+                new() { "key3", "bodyD", "bar" },
+                new() { "key4B", "bodyB", "bar" },
+            };
+
+            var expected = new List<List<string>>
+            {
+                new() { "key1A", "bodyA", "foo" },
+                new() { "key4A", "bodyB", "bar" },
+                new() { "key2", "bodyA_bodyC", "bar|foo" },
+                new() { "key3", "bodyB_bodyD", "foo|bar" },
+                new() { "key1B", "bodyA", "foo" },
+                new() { "key4B", "bodyB", "bar" },
             };
 
             // Act
-            var union = first.UnionUsing(second, obj => obj.Foo, (obj1, obj2) => new { Foo = obj1.Foo + obj2.Foo });
+            var actual = first.UnionMerge(
+                second,
+                i => i[0],
+                (i1, i2) => new List<string> { i1[0], i1[1] + "_" + i2[1], i1[2] + "|" + i2[2] });
 
-            new JsonDiffAssertion(expected, union).Assert();
+            new JsonDiffAssertion(expected, actual).Assert();
+        }
+
+
+        [Fact]
+        public void UnionMergesReusingKeyForMerge()
+        {
+            var first    = new List<dynamic> { new { Foo = "i1" }, new { Foo = "i2" } };
+            var second   = new List<dynamic> { new { Foo = "i2" }, new { Foo = "i3" } };
+            var expected = new List<dynamic> { new { Foo = "i1" }, new { Foo = "i2i2_" }, new { Foo = "i3" } };
+
+            // Act
+            var actual = first.UnionMerge(second, i => i.Foo, (i1, i2) => new { Foo = i1.Foo + i2.Foo + "_" });
+
+            new JsonDiffAssertion(expected, actual).Assert();
         }
     }
 }

@@ -146,7 +146,7 @@ namespace Wikitools.AzureDevOps
         /// </summary>
         private static ValidWikiPagesStats Merge(ValidWikiPagesStats previousStats, ValidWikiPagesStats currentStats)
         {
-            IEnumerable<WikiPageStats> merged = previousStats.UnionUsing(currentStats, ps => ps.Id, Merge);
+            IEnumerable<WikiPageStats> merged = previousStats.UnionMerge(currentStats, ps => ps.Id, Merge);
             merged = merged.Select(ps => ps with { DayStats = ps.DayStats.OrderBy(ds => ds.Day).ToArray() });
             return new ValidWikiPagesStats(merged);
         }
