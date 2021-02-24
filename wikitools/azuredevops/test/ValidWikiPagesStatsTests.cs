@@ -38,16 +38,10 @@ namespace Wikitools.AzureDevOps.Tests
                 var split = VerifySplitByMonth(data);
 
                 // Act - Split(Split({prev, curr})[prev]) == prev
-                var (previousPreviousMonth, currentPreviousMonth) =
-                    split.previousMonth.SplitByMonth(data.Date);
-                new JsonDiffAssertion(split.previousMonth, previousPreviousMonth).Assert();
-                Assert.DoesNotContain(currentPreviousMonth, ps => ps.DayStats.Any());
+                VerifySplitByMonth(split.previousMonth, data.Date, split.previousMonth, null);
 
                 // Act - Split(Split({prev, curr})[curr]) == curr
-                var (previousCurrentMonth, currentCurrentMonth) =
-                    split.currentMonth.SplitByMonth(data.Date);
-                Assert.DoesNotContain(previousCurrentMonth, ps => ps.DayStats.Any());
-                new JsonDiffAssertion(split.currentMonth, currentCurrentMonth).Assert();
+                VerifySplitByMonth(split.currentMonth, data.Date, null, split.currentMonth);
 
                 // Act - Merge(Split({prev, curr})) == Merge(prev, curr)
                 var mergedSplit = VerifyMerge(split.previousMonth, split.currentMonth, data.MergedPagesStats);
@@ -75,14 +69,24 @@ namespace Wikitools.AzureDevOps.Tests
         private static (ValidWikiPagesStats previousMonth, ValidWikiPagesStats currentMonth) VerifySplitByMonth(
             ValidWikiPagesStats target,
             DateTime date,
-            ValidWikiPagesStats previousMonthExpectation,
-            ValidWikiPagesStats currentMonthExpectation)
+            ValidWikiPagesStats? previousMonthExpectation,
+            ValidWikiPagesStats? currentMonthExpectation)
         {
             // Act
             var (previousMonth, currentMonth) = target.SplitByMonth(date);
-            new JsonDiffAssertion(previousMonthExpectation, previousMonth).Assert();
-            new JsonDiffAssertion(currentMonthExpectation,  currentMonth).Assert();
+            
+            AssertMonth(previousMonthExpectation, previousMonth);
+            AssertMonth(currentMonthExpectation,  currentMonth);
+
             return (previousMonth, currentMonth);
+
+            void AssertMonth(ValidWikiPagesStats? expectation, ValidWikiPagesStats actual)
+            {
+                if (expectation != null)
+                    new JsonDiffAssertion(expectation, actual).Assert();
+                else
+                    Assert.DoesNotContain(actual, ps => ps.DayStats.Any());
+            }
         }
 
         private static (ValidWikiPagesStats previousMonth, ValidWikiPagesStats currentMonth) VerifySplitByMonth(
