@@ -70,11 +70,10 @@ namespace Wikitools.AzureDevOps.Tests
         private static void VerifyMergeInvariants(ValidWikiPagesStatsTestData data)
         {
             // Act - Merge(prev, curr)
-            ValidWikiPagesStats merged = VerifyMerge(data);
-
+            ValidWikiPagesStats merged = VerifyMerge(data.PreviousMonth, data.CurrentMonth, data.MergedPagesStats);
+            
             // Act - Merge(Merge(prev, curr), Merge(prev, curr)) == Merge(prev, curr)
-            var mergedTwice = merged!.Merge(merged!);
-            new JsonDiffAssertion(merged!, mergedTwice).Assert();
+            VerifyMerge(merged, merged, merged);
         }
 
         private static (ValidWikiPagesStats previousMonth, ValidWikiPagesStats currentMonth) VerifySplitByMonth(
@@ -90,11 +89,14 @@ namespace Wikitools.AzureDevOps.Tests
         private static void VerifySplitByMonthThrows(
             ValidWikiPagesStatsTestData data, Type excType) => Expect.Throws(VerifySplitByMonth, data, excType);
 
-        private static ValidWikiPagesStats VerifyMerge(ValidWikiPagesStatsTestData data)
+        private static ValidWikiPagesStats VerifyMerge(
+            ValidWikiPagesStats target,
+            ValidWikiPagesStats input,
+            ValidWikiPagesStats expectation)
         {
             // Act
-            var merged = data.PreviousMonth.Merge(data.CurrentMonth);
-            new JsonDiffAssertion(data.MergedPagesStats, merged).Assert();
+            var merged = target.Merge(input);
+            new JsonDiffAssertion(expectation, merged).Assert();
             return merged;
         }
     }
