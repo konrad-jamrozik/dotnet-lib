@@ -77,9 +77,6 @@ namespace Wikitools.AzureDevOps.Tests
             new JsonDiffAssertion(merged!, mergedTwice).Assert();
         }
 
-        private static void VerifySplitByMonthThrows(
-            ValidWikiPagesStatsTestData data, Type excType) => Expect.Throws(VerifySplitByMonth, data, excType);
-
         private static (ValidWikiPagesStats previousMonth, ValidWikiPagesStats currentMonth) VerifySplitByMonth(
             ValidWikiPagesStatsTestData data)
         {
@@ -89,6 +86,9 @@ namespace Wikitools.AzureDevOps.Tests
             new JsonDiffAssertion(data.CurrentMonth, currentMonth).Assert();
             return (previousMonth, currentMonth);
         }
+
+        private static void VerifySplitByMonthThrows(
+            ValidWikiPagesStatsTestData data, Type excType) => Expect.Throws(VerifySplitByMonth, data, excType);
 
         private static ValidWikiPagesStats VerifyMerge(ValidWikiPagesStatsTestData data)
         {
