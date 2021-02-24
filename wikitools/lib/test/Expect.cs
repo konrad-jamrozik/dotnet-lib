@@ -4,7 +4,7 @@ using Xunit.Sdk;
 
 namespace Wikitools.Lib.Tests
 {
-    public static class TestAssert
+    public static class Expect
     {
         public static void Throws<TData, TReturn>(Func<TData, TReturn> target, TData data, Type excType) 
         {
