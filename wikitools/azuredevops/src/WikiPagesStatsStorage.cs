@@ -14,9 +14,9 @@ namespace Wikitools.AzureDevOps
             var (previousMonthStats, currentMonthStats) = pageStats.SplitByMonth(CurrentDate);
 
             await Storage.With(CurrentDate.AddMonths(-1),
-                (IEnumerable<WikiPageStats> stats) => stats.Merge(previousMonthStats));
+                (IEnumerable<WikiPageStats> storedStats) => storedStats.Merge(previousMonthStats));
             await Storage.With(CurrentDate,
-                (IEnumerable<WikiPageStats> stats) => stats.Merge(currentMonthStats));
+                (IEnumerable<WikiPageStats> storedStats) => storedStats.Merge(currentMonthStats));
 
             return this;
         }
