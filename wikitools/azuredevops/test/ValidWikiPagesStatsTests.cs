@@ -26,11 +26,11 @@ namespace Wikitools.AzureDevOps.Tests
 
         private static void Verify(ValidWikiPagesStatsTestData data)
         {
-            VerifySplitInvariants(data);
+            VerifySplitByMonthInvariants(data);
             VerifyMergeInvariants(data);
         }
 
-        private static void VerifySplitInvariants(ValidWikiPagesStatsTestData data)
+        private static void VerifySplitByMonthInvariants(ValidWikiPagesStatsTestData data)
         {
             if (!data.SplitPreconditionsViolated)
             {
@@ -64,7 +64,7 @@ namespace Wikitools.AzureDevOps.Tests
                 }
             }
             else
-                VerifySplitByMonth(data, typeof(InvariantException));
+                VerifySplitByMonthThrows(data, typeof(InvariantException));
         }
 
         private static void VerifyMergeInvariants(ValidWikiPagesStatsTestData data)
@@ -77,7 +77,7 @@ namespace Wikitools.AzureDevOps.Tests
             new JsonDiffAssertion(merged!, mergedTwice).Assert();
         }
 
-        private static void VerifySplitByMonth(
+        private static void VerifySplitByMonthThrows(
             ValidWikiPagesStatsTestData data, Type excType) => Expect.Throws(VerifySplitByMonth, data, excType);
 
         private static (ValidWikiPagesStats previousMonth, ValidWikiPagesStats currentMonth) VerifySplitByMonth(
