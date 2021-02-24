@@ -11,7 +11,7 @@ namespace Wikitools
         {
             var pageStats = await wiki.PagesStats(pageViewsForDays);
 
-            var (previousMonthStats, currentMonthStats) = ValidWikiPagesStats.SplitByMonth(pageStats, CurrentDate);
+            var (previousMonthStats, currentMonthStats) = pageStats.SplitByMonth(CurrentDate);
 
             await Storage.With(CurrentDate,
                 (IEnumerable<WikiPageStats> stats) => stats.Merge(currentMonthStats));
