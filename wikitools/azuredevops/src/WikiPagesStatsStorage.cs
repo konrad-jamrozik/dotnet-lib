@@ -1,22 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Wikitools.AzureDevOps;
+using Wikitools.Lib;
 
-namespace Wikitools
+namespace Wikitools.AzureDevOps
 {
     public record WikiPagesStatsStorage(MonthlyJsonFilesStorage Storage, DateTime CurrentDate)
     {
-        public async Task<WikiPagesStatsStorage> Update(AdoWiki wiki, int pageViewsForDays)
+        public async Task<WikiPagesStatsStorage> Update(IAdoWiki wiki, int pageViewsForDays)
         {
             var pageStats = await wiki.PagesStats(pageViewsForDays);
 
             var (previousMonthStats, currentMonthStats) = pageStats.SplitByMonth(CurrentDate);
 
-            await Storage.With(CurrentDate,
-                (IEnumerable<WikiPageStats> stats) => stats.Merge(currentMonthStats));
             await Storage.With(CurrentDate.AddMonths(-1),
                 (IEnumerable<WikiPageStats> stats) => stats.Merge(previousMonthStats));
+            await Storage.With(CurrentDate,
+                (IEnumerable<WikiPageStats> stats) => stats.Merge(currentMonthStats));
 
             return this;
         }
@@ -44,4 +44,4 @@ namespace Wikitools
 // that depends on OS.FileSystem. Make it create Dirs as needed when writing out.
 //
 // Later: think about decoupling the logic from FileSystem; maybe arbitrary storage via streams/writers
-// would make more sense. At least the merging and splitting algorithm should be decoupled from file system.
+// would make more sense.

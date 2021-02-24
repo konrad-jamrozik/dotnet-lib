@@ -5,9 +5,9 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Wikitools.Lib.OS;
 
-namespace Wikitools
+namespace Wikitools.Lib
 {
-    public record MonthlyJsonFilesStorage(IOperatingSystem OS, string StorageDirPath)
+    public record MonthlyJsonFilesStorage(IFileSystem FileSystem, string StorageDirPath)
     {
         public T Read<T>(DateTime date)
         {
@@ -33,8 +33,9 @@ namespace Wikitools
 
         private async Task WriteToFile(string dataJson, DateTime date, string? fileNameOverride)
         {
+            // kja calls to File. and Directory. should come through IFileSystem
             fileNameOverride ??= $"date_{date:yyy_MM}.json";
-            var storageDir = new Dir(OS.FileSystem, StorageDirPath);
+            var storageDir = new Dir(FileSystem, StorageDirPath);
             if (!storageDir.Exists())
                 Directory.CreateDirectory(storageDir.Path);
             var filePath = Path.Join(StorageDirPath, fileNameOverride);

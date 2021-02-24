@@ -18,7 +18,7 @@ namespace Wikitools
 
             var timeline = new Timeline();
             var os       = new WindowsOS();
-            var adoApi   = new AdoApi();
+            var adoApi   = new AdoApi(os.Environment);
 
             var outputSink = Console.Out;
 
@@ -33,22 +33,24 @@ namespace Wikitools
             TextWriter outputSink)
         {
             var gitLog = GitLog(os, cfg.GitRepoClonePath, cfg.GitExecutablePath);
-            var wiki   = Wiki(adoApi, cfg.AdoWikiUri, cfg.AdoPatEnvVar);
+            var wiki = WikiWithStorage(
+                adoApi,
+                cfg.AdoWikiUri,
+                cfg.AdoPatEnvVar,
+                os.FileSystem,
+                cfg.StorageDirPath,
+                timeline.UtcNow);
 
-            var recentCommits   = gitLog.Commits(cfg.GitLogDays);
-            var pastCommits     = gitLog.Commits(cfg.MonthlyReportStartDate, cfg.MonthlyReportEndDate);
+            var recentCommits = gitLog.Commits(cfg.GitLogDays);
+            var pastCommits   = gitLog.Commits(cfg.MonthlyReportStartDate, cfg.MonthlyReportEndDate);
+
+            var pagesViewsStats = wiki.PagesStats(cfg.AdoWikiPageViewsForDays);
             
-            // Previous code, before storage was added. To remove when migration is done.
-            // var pagesViewsStats = wiki.PagesStats(cfg.AdoWikiPageViewsForDays);
-            var storage         = new WikiPagesStatsStorage(new MonthlyJsonFilesStorage(os, cfg.StorageDirPath), timeline.UtcNow);
-            var updatedStorage  = storage.Update(wiki, cfg.AdoWikiPageViewsForDays);
-            var pagesViewsStats = updatedStorage.Select(s => s.PagesStats(cfg.AdoWikiPageViewsForDays));
-
             bool AuthorFilter(string author) => !cfg.ExcludedAuthors.Any(author.Contains);
             bool PathFilter(string path) => !cfg.ExcludedPaths.Any(path.Contains);
 
-            var authorsReport =
-                new GitAuthorsStatsReport(timeline, recentCommits, cfg.GitLogDays, cfg.Top, AuthorFilter);
+            // kja reports don't need timeline, just "now"
+            var authorsReport    = new GitAuthorsStatsReport(timeline, recentCommits, cfg.GitLogDays, cfg.Top, AuthorFilter);
             var filesReport      = new GitFilesStatsReport(timeline, recentCommits, cfg.GitLogDays, cfg.Top, PathFilter);
             var pagesViewsReport = new PagesViewsStatsReport(timeline, pagesViewsStats, cfg.AdoWikiPageViewsForDays);
             var monthlyReport    = new MonthlyStatsReport(pastCommits, AuthorFilter, PathFilter);

@@ -9,5 +9,7 @@
         }
 
         public IFileSystem FileSystem { get; } = new FileSystem();
+
+        public IOSEnvironment Environment { get; } = new OSEnvironment();
     }
 }

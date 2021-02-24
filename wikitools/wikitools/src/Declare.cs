@@ -1,4 +1,6 @@
-﻿using Wikitools.AzureDevOps;
+﻿using System;
+using Wikitools.AzureDevOps;
+using Wikitools.Lib;
 using Wikitools.Lib.Git;
 using Wikitools.Lib.OS;
 
@@ -16,7 +18,20 @@ namespace Wikitools
             return gitLog;
         }
 
-        public static AdoWiki Wiki(IAdoApi adoApi, string wikiUri, string patEnvVar) =>
-            new(adoApi, new AdoWikiUri(wikiUri), patEnvVar);
+        public static IAdoWiki Wiki(IAdoApi adoApi, string wikiUri, string patEnvVar) 
+            => new AdoWiki(adoApi, new AdoWikiUri(wikiUri), patEnvVar);
+
+        public static IAdoWiki WikiWithStorage(
+            IAdoApi adoApi,
+            string wikiUri,
+            string patEnvVar,
+            IFileSystem filesystem,
+            string storageDirPath,
+            DateTime now)
+        {
+            var storage = new WikiPagesStatsStorage(new MonthlyJsonFilesStorage(filesystem, storageDirPath), now);
+            var wikiWithStorage = new AdoWikiWithStorage(Wiki(adoApi, wikiUri, patEnvVar), storage);
+            return wikiWithStorage;
+        }
     }
 }

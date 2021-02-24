@@ -7,10 +7,11 @@ using Microsoft.TeamFoundation.Wiki.WebApi.Contracts;
 using Microsoft.VisualStudio.Services.Common;
 using Microsoft.VisualStudio.Services.WebApi;
 using Wikitools.Lib.Contracts;
+using Wikitools.Lib.OS;
 
 namespace Wikitools.AzureDevOps
 {
-    public class AdoApi : IAdoApi
+    public record AdoApi(IOSEnvironment Env) : IAdoApi
     {
         public async Task<ValidWikiPagesStats> WikiPagesStats(
             AdoWikiUri adoWikiUri,
@@ -25,10 +26,9 @@ namespace Wikitools.AzureDevOps
             return new ValidWikiPagesStats(wikiPagesStats);
         }
 
-        private static WikiHttpClient WikiHttpClient(AdoWikiUri adoWikiUri, string patEnvVar)
+        private WikiHttpClient WikiHttpClient(AdoWikiUri adoWikiUri, string patEnvVar)
         {
-            // kja 3 dehardcode - should be abstracted by OS
-            var pat = Environment.GetEnvironmentVariable(patEnvVar);
+            var pat = Env.Value(patEnvVar);
 
             // Construction of VssConnection with PAT based on
             // https://docs.microsoft.com/en-us/azure/devops/integrate/get-started/client-libraries/samples?view=azure-devops#personal-access-token-authentication-for-rest-services
