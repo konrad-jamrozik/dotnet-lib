@@ -70,8 +70,13 @@ namespace Wikitools
     }
 }
 
-// kja checkpoint 1/18/2021. Next task: collect and persist data from ADO wiki.
-// - persist data pulled from ADO as a json file on the file system
-// - one json file per each month
-// - on new program execution, check missing whole days. If present, get them from ADO and add to the saved data
-// - compute the data from the saved json, not from data coming directly from ADO
+// kja plan next work
+/*
+ * Work done by 1/18/2021:
+ *   - Markdown reports with data pulled from git, i.e. writing out:
+ *   - GitAuthorsStatsReport, GitFilesStatsReport, MonthlyStatsReport
+ * Work done by 2/27/2021:
+ *   - Markdown report with page view stats data pulled from ADO API, persisted to HDD.
+ *   - Tooling for merging and splitting existing data.
+ *   - PagesViewsStatsReport
+ */

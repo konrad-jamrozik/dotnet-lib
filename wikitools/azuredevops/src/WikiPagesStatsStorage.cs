@@ -38,7 +38,3 @@ namespace Wikitools.AzureDevOps
         }
     }
 }
-
-// kja 4 high level next tasks
-// Next tasks in Wikitools.WikiPagesStatsStorage.Update
-// - deduplicate serialization logic with JsonDiff
