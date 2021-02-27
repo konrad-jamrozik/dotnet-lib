@@ -6,6 +6,6 @@ namespace Wikitools.AzureDevOps
     {
         public static ValidWikiPagesStats Merge(
             this IEnumerable<WikiPageStats> previousStats,
-            ValidWikiPagesStats currentStats) => ValidWikiPagesStats.From(previousStats).Merge(currentStats);
+            ValidWikiPagesStats currentStats) => new ValidWikiPagesStats(previousStats).Merge(currentStats);
     }
 }

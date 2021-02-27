@@ -36,26 +36,36 @@ namespace Wikitools.Tests
         [Fact(Skip = "Tool to be used manually")]
         public async Task ToolMerge()
         {
+            var cfg        = WikitoolsConfig.From("wikitools_config.json");
+            var stats1Path = cfg.StorageDirPath + "/wiki_stats_2021_01_19_30days.json";
+            var stats2Path = cfg.StorageDirPath + "/wiki_stats_2021_02_06_30days.json";
+            var stats3Path = cfg.StorageDirPath + "/wiki_stats_2021_02_19_30days.json";
+            var stats4Path = cfg.StorageDirPath + "/wiki_stats_2021_02_27_30days.json";
+
+            await Merge(cfg, new[] { stats1Path, stats2Path, stats3Path, stats4Path});
+        }
+
+        private static async Task Merge(WikitoolsConfig cfg, string[] statsPaths)
+        {
             var os = new WindowsOS();
 
-            var cfg = WikitoolsConfig.From("wikitools_config.json");
+            var storage     = new MonthlyJsonFilesStorage(os.FileSystem, cfg.StorageDirPath);
+            var januaryDate = new DateTime(2021, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
-            var storage      = new MonthlyJsonFilesStorage(os.FileSystem, cfg.StorageDirPath);
-            var januaryDate  = new DateTime(2021, 1, 1).ToUniversalTime();
-            var backup1Path  = cfg.StorageDirPath + "/wiki_stats_2021_01_19_30days.json";
-            var backup2Path  = cfg.StorageDirPath + "/wiki_stats_2021_02_06_30days.json";
-            var backup1Stats = new ValidWikiPagesStats(
-                JsonSerializer.Deserialize<WikiPageStats[]>(File.ReadAllText(backup1Path))!
-                    .Select(WikiPageStats.FixNulls));
-            var backup2Stats = new ValidWikiPagesStats(
-                JsonSerializer.Deserialize<WikiPageStats[]>(File.ReadAllText(backup2Path))!
-                    .Select(WikiPageStats.FixNulls));
+            var mergedStats = statsPaths.Select(DeserializeStats)
+                .Aggregate((prevStats, currentStats) => prevStats.Merge(currentStats));
 
-            var mergedStats = backup1Stats.Merge(backup2Stats);
-            var trimmedStats =
-                mergedStats.Trim(januaryDate, januaryDate.AddMonths(1).AddDays(-1));
+            await storage.Write(mergedStats, januaryDate, "merged_stats.json");
 
-            await storage.Write(trimmedStats, januaryDate, "merged_stats_2021_01_19_2021_02_06.json");
+            await storage.Write(
+                mergedStats.Trim(januaryDate, januaryDate.AddMonths(1).AddDays(-1)),
+                januaryDate,
+                "date_2021_01_toolmerged.json");
         }
+
+        private static ValidWikiPagesStats DeserializeStats(string prevStatsPath) =>
+            new(
+                JsonSerializer.Deserialize<WikiPageStats[]>(File.ReadAllText(prevStatsPath))!
+                    .Select(WikiPageStats.FixNulls));
     }
 }

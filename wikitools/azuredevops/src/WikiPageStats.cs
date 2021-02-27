@@ -11,15 +11,18 @@ namespace Wikitools.AzureDevOps
             new(pageDetail.Path, pageDetail.Id, DayStatsFrom(pageDetail));
 
         private static DayStat[] DayStatsFrom(WikiPageDetail pageDetail) =>
-            pageDetail.ViewStats?.Select(dayStat => new DayStat(dayStat.Count, dayStat.Day.Utc())).OrderBy(ds => ds.Day)
+            pageDetail.ViewStats?.Select(dayStat => new DayStat(dayStat.Count, dayStat.Day.Utc()))
+                .OrderBy(ds => ds.Day)
                 .ToArray()
             ?? Array.Empty<DayStat>();
 
         public record DayStat(int Count, DateTime Day) { }
 
-        public static WikiPageStats FixNulls(WikiPageStats stats) =>
+        public static WikiPageStats FixNulls(WikiPageStats stats) => stats;
             // ReSharper disable once ConstantNullCoalescingCondition
             // reason: this method exist to fix this null, caused by System.Text.Json.JsonSerializer.Deserialize.
-            stats with { DayStats = stats.DayStats ?? Array.Empty<DayStat>() };
+            // kja disabled temporarily. This probably is not actually needed; it was null because I had wrong property key.
+            // Also delete From if not needed.
+            //stats with { DayStats = stats.DayStats ?? Array.Empty<DayStat>() };
     }
 }

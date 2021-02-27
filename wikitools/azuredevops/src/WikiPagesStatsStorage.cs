@@ -27,7 +27,6 @@ namespace Wikitools.AzureDevOps
             var previousDate     = currentMonthDate.AddDays(-pageViewsForDays);
             var monthsDiffer     = previousDate.Month != currentMonthDate.Month;
 
-            // kja do I need to ensure that FixNulls is called after Read here, before ctor is called?
             var currentMonthStats = new ValidWikiPagesStats(Storage.Read<WikiPageStats[]>(currentMonthDate));
             var previousMonthStats = new ValidWikiPagesStats(monthsDiffer
                 ? Storage.Read<WikiPageStats[]>(previousDate)
