@@ -1,13 +1,14 @@
 using System;
+using Wikitools.Lib.Primitives;
 
 namespace Wikitools.AzureDevOps.Tests
 {
     public static class ValidWikiPagesStatsTestDataFixture
     {
         // @formatter:off
-        private static readonly DateTime  JanuaryDate = new DateTime(year: 2021, month:  1, day:  3).ToUniversalTime();
-        private static readonly DateTime FebruaryDate = new DateTime(year: 2021, month:  2, day: 15).ToUniversalTime();
-        private static readonly DateTime DecemberDate = new DateTime(year: 2020, month: 12, day: 22).ToUniversalTime();
+        private static readonly DateTime  JanuaryDate = new DateTime(year: 2021, month:  1, day:  3).Utc();
+        private static readonly DateTime FebruaryDate = new DateTime(year: 2021, month:  2, day: 15).Utc();
+        private static readonly DateTime DecemberDate = new DateTime(year: 2020, month: 12, day: 22).Utc();
         // @formatter:on
 
         public static ValidWikiPagesStatsTestData PageStatsEmpty =>

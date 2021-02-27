@@ -50,7 +50,7 @@ namespace Wikitools.Tests
             var os = new WindowsOS();
 
             var storage     = new MonthlyJsonFilesStorage(os.FileSystem, cfg.StorageDirPath);
-            var januaryDate = new DateTime(2021, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+            var januaryDate = new DateTime(2021, 1, 1).Utc();
 
             var mergedStats = statsPaths.Select(DeserializeStats)
                 .Aggregate((prevStats, currentStats) => prevStats.Merge(currentStats));
@@ -58,7 +58,7 @@ namespace Wikitools.Tests
             await storage.Write(mergedStats, januaryDate, "merged_stats.json");
 
             await storage.Write(
-                mergedStats.Trim(januaryDate, januaryDate.AddMonths(1).AddDays(-1)),
+                mergedStats.Trim(januaryDate),
                 januaryDate,
                 "date_2021_01_toolmerged.json");
         }
