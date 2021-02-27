@@ -19,7 +19,7 @@ namespace Wikitools.Tests
             var timeline = new Timeline();
             var os       = new WindowsOS();
             var adoApi   = new AdoApi(os.Environment);
-            var cfg      = WikitoolsConfig.From("wikitools_config.json");
+            var cfg      = WikitoolsConfig.From(os.FileSystem, "wikitools_config.json");
 
             var wiki            = Wiki(adoApi, cfg.AdoWikiUri, cfg.AdoPatEnvVar);
             var pagesViewsStats = wiki.PagesStats(cfg.AdoWikiPageViewsForDays);
@@ -34,23 +34,23 @@ namespace Wikitools.Tests
         [Fact(Skip = "Tool to be used manually")]
         public async Task ToolMerge()
         {
-            var cfg        = WikitoolsConfig.From("wikitools_config.json");
+            var os  = new WindowsOS();
+            var cfg = WikitoolsConfig.From(os.FileSystem, "wikitools_config.json");
+
             var stats1Path = cfg.StorageDirPath + "/wiki_stats_2021_01_19_30days.json";
             var stats2Path = cfg.StorageDirPath + "/wiki_stats_2021_02_06_30days.json";
             var stats3Path = cfg.StorageDirPath + "/wiki_stats_2021_02_19_30days.json";
             var stats4Path = cfg.StorageDirPath + "/wiki_stats_2021_02_27_30days.json";
 
-            await Merge(cfg, new[] { stats1Path, stats2Path, stats3Path, stats4Path});
+            await Merge(os.FileSystem, cfg, new[] { stats1Path, stats2Path, stats3Path, stats4Path});
         }
 
-        private static async Task Merge(WikitoolsConfig cfg, string[] statsPaths)
+        private static async Task Merge(IFileSystem fs, WikitoolsConfig cfg, string[] statsPaths)
         {
-            var os = new WindowsOS();
-
-            var storage     = new MonthlyJsonFilesStorage(os.FileSystem, cfg.StorageDirPath);
+            var storage     = new MonthlyJsonFilesStorage(fs, cfg.StorageDirPath);
             var januaryDate = new DateTime(2021, 1, 1).Utc();
 
-            var mergedStats = statsPaths.Select(s => DeserializeStats(os.FileSystem, s))
+            var mergedStats = statsPaths.Select(s => DeserializeStats(fs, s))
                 .Aggregate((prevStats, currentStats) => prevStats.Merge(currentStats));
 
             await storage.Write(mergedStats, januaryDate, "merged_stats.json");

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Text.Json;
+using Wikitools.Lib.OS;
 
 namespace Wikitools
 {
@@ -20,13 +21,13 @@ namespace Wikitools
         int Top,
         string StorageDirPath)
     {
-        public static WikitoolsConfig From(string cfgFileName)
+        public static WikitoolsConfig From(IFileSystem fs, string cfgFileName)
         {
             // kja use FileSystem
-            var cfgFilePath = FindConfigFilePath(cfgFileName);
+            var cfgFilePath = FindConfigFilePath(fs, cfgFileName);
             WikitoolsConfig? cfg = null;
 
-            if (cfgFilePath != null && File.Exists(cfgFilePath))
+            if (cfgFilePath != null && fs.FileExists(cfgFilePath))
                 // kja intro method for Deserialize + ReadAllBytes
                 cfg = JsonSerializer.Deserialize<WikitoolsConfig>(File.ReadAllBytes(cfgFilePath),
                     new JsonSerializerOptions { ReadCommentHandling = JsonCommentHandling.Skip });
@@ -37,13 +38,13 @@ namespace Wikitools
             return cfg;
         }
 
-        private static string? FindConfigFilePath(string cfgFileName)
+        private static string? FindConfigFilePath(IFileSystem fs, string cfgFileName)
         {
             // kja use FileSystem
             var dir = new DirectoryInfo(Directory.GetCurrentDirectory());
             var cfgFilePath = Path.Combine(dir.FullName, cfgFileName);
 
-            while (!File.Exists(cfgFilePath) && dir.Parent != null)
+            while (!fs.FileExists(cfgFilePath) && dir.Parent != null)
             {
                 dir = dir.Parent;
                 cfgFilePath = Path.Combine(dir.FullName, cfgFileName);
