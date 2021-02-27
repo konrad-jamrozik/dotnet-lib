@@ -37,6 +37,7 @@ namespace Wikitools.AzureDevOps
             var statsArr = stats as WikiPageStats[] ?? stats.ToArray();
             statsArr.AssertDistinctBy(ps => ps.Id);
             statsArr.AssertDistinctBy(ps => ps.Path);
+            statsArr.AssertOrderedBy(ps => ps.Id);
             statsArr.ForEach(ps =>
             {
                 var (_, _, dayStats) = ps;
@@ -151,7 +152,9 @@ namespace Wikitools.AzureDevOps
         private static ValidWikiPagesStats Merge(ValidWikiPagesStats previousStats, ValidWikiPagesStats currentStats)
         {
             IEnumerable<WikiPageStats> merged = previousStats.UnionMerge(currentStats, ps => ps.Id, Merge);
-            merged = merged.Select(ps => ps with { DayStats = ps.DayStats.OrderBy(ds => ds.Day).ToArray() });
+            merged = merged.OrderBy(ps => ps.Id)
+                .Select(ps => ps with { DayStats = ps.DayStats.OrderBy(ds => ds.Day).ToArray() });
+            
             return new ValidWikiPagesStats(merged);
         }
 

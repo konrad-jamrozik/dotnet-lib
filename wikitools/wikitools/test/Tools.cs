@@ -32,7 +32,7 @@ namespace Wikitools.Tests
                 $"wiki_stats_{timeline.UtcNow:yyy_MM_dd}_{cfg.AdoWikiPageViewsForDays}days.json");
         }
 
-        // kja do not make calls to File.ReadAllText directly. Instead, obtain them from os.
+        // kja do not make calls to File.ReadAllText directly. Instead, obtain them from OS.
         [Fact(Skip = "Tool to be used manually")]
         public async Task ToolMerge()
         {
