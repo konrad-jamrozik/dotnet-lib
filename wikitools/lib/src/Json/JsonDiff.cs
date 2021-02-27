@@ -27,7 +27,7 @@ namespace Wikitools.Lib.Json
 
             _rawString = new Lazy<string>(() => diff.Value.ToJsonUnsafe());
 
-            _jsonElement = new Lazy<JsonElement>(() => _rawString.Value.FromJsonUnsafe<JsonElement>());
+            _jsonElement = new Lazy<JsonElement>(() => _rawString.Value.FromJsonToUnsafe<JsonElement>());
         }
 
         public bool IsEmpty => JsonElement.GetRawText() == EmptyDiff.GetRawText();

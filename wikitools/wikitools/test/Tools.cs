@@ -1,8 +1,8 @@
 using System;
 using System.Linq;
-using System.Text.Json;
 using System.Threading.Tasks;
 using Wikitools.AzureDevOps;
+using Wikitools.Lib.Json;
 using Wikitools.Lib.OS;
 using Wikitools.Lib.Primitives;
 using Wikitools.Lib.Storage;
@@ -22,7 +22,7 @@ namespace Wikitools.Tests
 
             var cfg = WikitoolsConfig.From(os.FileSystem, "wikitools_config.json");
 
-            var wiki            = Wiki(adoApi, cfg.AdoWikiUri, cfg.AdoPatEnvVar);
+            var wiki = Wiki(adoApi, cfg.AdoWikiUri, cfg.AdoPatEnvVar);
             var pagesViewsStats = wiki.PagesStats(cfg.AdoWikiPageViewsForDays);
 
             var storage = new MonthlyJsonFilesStorage(os.FileSystem, cfg.StorageDirPath);
@@ -54,6 +54,7 @@ namespace Wikitools.Tests
             var februaryDate = new DateTime(2021, 2, 1).Utc();
 
             var mergedStats = statsPaths.Select(s => DeserializeStats(fs, s))
+                // This is O(n^2) while it could be O(n), but for now this is good enough.
                 .Aggregate((prevStats, currentStats) => prevStats.Merge(currentStats));
 
             await storage.Write(mergedStats, januaryDate, "merged_stats.json");
@@ -68,10 +69,10 @@ namespace Wikitools.Tests
                 "date_2021_02_toolmerged.json");
         }
 
-        private static ValidWikiPagesStats DeserializeStats(IFileSystem fs, string prevStatsPath) =>
+        private static ValidWikiPagesStats DeserializeStats(IFileSystem fs, string stats) =>
             new(
-                // kja intro method for Deserialize + ReadAllText
-                JsonSerializer.Deserialize<WikiPageStats[]>(fs.ReadAllText(prevStatsPath))!
+                fs.ReadAllText(stats)
+                    .FromJsonTo<WikiPageStats[]>()
                     .Select(WikiPageStats.FixNulls));
     }
 }

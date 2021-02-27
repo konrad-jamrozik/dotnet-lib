@@ -1,6 +1,5 @@
 ﻿using System;
-using System.IO;
-using System.Text.Json;
+using Wikitools.Lib.Json;
 using Wikitools.Lib.OS;
 
 namespace Wikitools
@@ -28,9 +27,7 @@ namespace Wikitools
             WikitoolsConfig? cfg = null;
 
             if (cfgFilePath != null && fs.FileExists(cfgFilePath))
-                // kja intro method for Deserialize + ReadAllBytes
-                cfg = JsonSerializer.Deserialize<WikitoolsConfig>(File.ReadAllBytes(cfgFilePath),
-                    new JsonSerializerOptions { ReadCommentHandling = JsonCommentHandling.Skip });
+                cfg = fs.ReadAllBytes(cfgFilePath).FromJsonTo<WikitoolsConfig>();
             
             if (cfg is null)
                 throw new Exception($"Failed to find {cfgFileName}.");
