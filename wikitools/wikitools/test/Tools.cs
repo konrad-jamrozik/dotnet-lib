@@ -3,9 +3,9 @@ using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Wikitools.AzureDevOps;
-using Wikitools.Lib;
 using Wikitools.Lib.OS;
 using Wikitools.Lib.Primitives;
+using Wikitools.Lib.Storage;
 using Xunit;
 using static Wikitools.Declare;
 

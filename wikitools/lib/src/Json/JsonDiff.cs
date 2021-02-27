@@ -23,11 +23,11 @@ namespace Wikitools.Lib.Json
                 return elementDiff ?? EmptyDiff;
             });
 
-            _string = new Lazy<string>(() => Json.SerializeIndentedUnsafe(diff.Value));
+            _string = new Lazy<string>(() => diff.Value.ToJsonIndentedUnsafe());
 
-            _rawString = new Lazy<string>(() => Json.SerializeUnsafe(diff.Value));
+            _rawString = new Lazy<string>(() => diff.Value.ToJsonUnsafe());
 
-            _jsonElement = new Lazy<JsonElement>(() => Json.DeserializeUnsafe<JsonElement>(_rawString.Value));
+            _jsonElement = new Lazy<JsonElement>(() => _rawString.Value.FromJsonUnsafe<JsonElement>());
         }
 
         public bool IsEmpty => JsonElement.GetRawText() == EmptyDiff.GetRawText();

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Wikitools.Lib;
+using Wikitools.Lib.Storage;
 
 namespace Wikitools.AzureDevOps
 {

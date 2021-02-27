@@ -3,7 +3,7 @@ using System.Text.Json;
 
 namespace Wikitools.Lib.Json
 {
-    public static class Json
+    public static class JsonExtensions
     {
         private const int MaxDepth = 64;
 
@@ -22,12 +22,13 @@ namespace Wikitools.Lib.Json
         private static readonly JsonSerializerOptions SerializerOptionsIndentedUnsafe =
             new(SerializerOptionsUnsafe) { WriteIndented = true };
 
-        public static T DeserializeUnsafe<T>(string json) =>
+        public static T FromJsonUnsafe<T>(this string json) =>
             JsonSerializer.Deserialize<T>(json, SerializerOptionsUnsafe)!;
 
-        public static string SerializeUnsafe<T>(T data) => JsonSerializer.Serialize(data, SerializerOptionsUnsafe);
+        public static string ToJsonUnsafe(this object data) => 
+            JsonSerializer.Serialize(data, SerializerOptionsUnsafe);
 
-        public static string SerializeIndentedUnsafe<T>(T data) =>
+        public static string ToJsonIndentedUnsafe(this object data) =>
             JsonSerializer.Serialize(data, SerializerOptionsIndentedUnsafe);
     }
 }

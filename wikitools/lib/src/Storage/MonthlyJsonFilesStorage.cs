@@ -1,11 +1,10 @@
 ﻿using System;
-using System.IO;
-using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Wikitools.Lib.Json;
 using Wikitools.Lib.OS;
 
-namespace Wikitools.Lib
+namespace Wikitools.Lib.Storage
 {
     public record MonthlyJsonFilesStorage(IFileSystem FileSystem, string StorageDirPath)
     {
@@ -29,7 +28,7 @@ namespace Wikitools.Lib
         }
 
         public Task Write(object data, DateTime date, string? fileNameOverride = default) =>
-            WriteToFile(ToJson(data), date, fileNameOverride);
+            WriteToFile(data.ToJsonIndentedUnsafe(), date, fileNameOverride);
 
         private async Task WriteToFile(string dataJson, DateTime date, string? fileNameOverride)
         {
@@ -40,14 +39,5 @@ namespace Wikitools.Lib
             var filePath = FileSystem.JoinPath(StorageDirPath, fileNameOverride);
             await FileSystem.WriteAllTextAsync(filePath, dataJson);
         }
-
-        private string ToJson(object data) =>
-            // kja dedup with JsonDiff
-            JsonSerializer.Serialize(data,
-                new JsonSerializerOptions
-                {
-                    Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
-                    WriteIndented = true
-                });
     }
 }
