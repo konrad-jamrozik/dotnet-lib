@@ -17,5 +17,9 @@ namespace Wikitools.Lib.OS
         public string ReadAllText(string path) => File.ReadAllText(path);
 
         public bool FileExists(string? path) => File.Exists(path);
+
+        public DirectoryInfo CurrentDirectoryInfo => new(Directory.GetCurrentDirectory());
+        
+        public string CombinePath(string path1, string path2) => Path.Combine(path1, path2);
     }
 }

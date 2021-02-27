@@ -9,5 +9,7 @@ namespace Wikitools.Lib.OS
                 spec => spec.Matches(executableFilePath, workingDirPath, arguments)).StdOutLines);
 
         public IFileSystem FileSystem { get; } = new FileSystem();
+
+        public IOSEnvironment Environment { get; } = new OSEnvironment();
     }
 }

@@ -49,8 +49,9 @@ namespace Wikitools.Tests
 
         private static async Task Merge(IFileSystem fs, WikitoolsConfig cfg, string[] statsPaths)
         {
-            var storage     = new MonthlyJsonFilesStorage(fs, cfg.StorageDirPath);
-            var januaryDate = new DateTime(2021, 1, 1).Utc();
+            var storage      = new MonthlyJsonFilesStorage(fs, cfg.StorageDirPath);
+            var januaryDate  = new DateTime(2021, 1, 1).Utc();
+            var februaryDate = new DateTime(2021, 2, 1).Utc();
 
             var mergedStats = statsPaths.Select(s => DeserializeStats(fs, s))
                 .Aggregate((prevStats, currentStats) => prevStats.Merge(currentStats));
@@ -61,11 +62,15 @@ namespace Wikitools.Tests
                 mergedStats.Trim(januaryDate),
                 januaryDate,
                 "date_2021_01_toolmerged.json");
+            await storage.Write(
+                mergedStats.Trim(februaryDate),
+                februaryDate,
+                "date_2021_02_toolmerged.json");
         }
 
         private static ValidWikiPagesStats DeserializeStats(IFileSystem fs, string prevStatsPath) =>
             new(
-                // kja intro method for Desrialize + ReadAllText
+                // kja intro method for Deserialize + ReadAllText
                 JsonSerializer.Deserialize<WikiPageStats[]>(fs.ReadAllText(prevStatsPath))!
                     .Select(WikiPageStats.FixNulls));
     }

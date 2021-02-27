@@ -40,19 +40,17 @@ namespace Wikitools
 
         private static string? FindConfigFilePath(IFileSystem fs, string cfgFileName)
         {
-            // kja use FileSystem
-            var dir = new DirectoryInfo(Directory.GetCurrentDirectory());
-            var cfgFilePath = Path.Combine(dir.FullName, cfgFileName);
+            var dir = fs.CurrentDirectoryInfo;
+
+            var cfgFilePath = fs.CombinePath(dir.FullName, cfgFileName);
 
             while (!fs.FileExists(cfgFilePath) && dir.Parent != null)
             {
                 dir = dir.Parent;
-                cfgFilePath = Path.Combine(dir.FullName, cfgFileName);
+                cfgFilePath = fs.CombinePath(dir.FullName, cfgFileName);
             }
 
-            return dir.Parent != null 
-                ? cfgFilePath 
-                : null;
+            return dir.Parent != null ? cfgFilePath : null;
         }
     }
 }
