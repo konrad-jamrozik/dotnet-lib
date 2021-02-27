@@ -16,10 +16,11 @@ namespace Wikitools.Tests
         [Fact(Skip = "Tool to be used manually")]
         public async Task ToolGetWikiStats()
         {
-            var timeline = new Timeline();
-            var os       = new WindowsOS();
-            var adoApi   = new AdoApi(os.Environment);
-            var cfg      = WikitoolsConfig.From(os.FileSystem, "wikitools_config.json");
+            ITimeline        timeline = new Timeline();
+            IOperatingSystem os       = new WindowsOS();
+            IAdoApi          adoApi   = new AdoApi(os.Environment);
+
+            var cfg = WikitoolsConfig.From(os.FileSystem, "wikitools_config.json");
 
             var wiki            = Wiki(adoApi, cfg.AdoWikiUri, cfg.AdoPatEnvVar);
             var pagesViewsStats = wiki.PagesStats(cfg.AdoWikiPageViewsForDays);
@@ -34,7 +35,8 @@ namespace Wikitools.Tests
         [Fact(Skip = "Tool to be used manually")]
         public async Task ToolMerge()
         {
-            var os  = new WindowsOS();
+            IOperatingSystem os = new WindowsOS();
+
             var cfg = WikitoolsConfig.From(os.FileSystem, "wikitools_config.json");
 
             var stats1Path = cfg.StorageDirPath + "/wiki_stats_2021_01_19_30days.json";
