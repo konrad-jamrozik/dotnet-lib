@@ -81,22 +81,23 @@ namespace Wikitools.AzureDevOps
         ///   - Page with the same ID might appear under different paths.
         ///   - A day views stat for a page with given ID and Day date
         ///   can appear twice: once in each argument.
-        ///     - In such case, the view count for currentStats is
-        ///       greater or equal to the view count of previousStats.
         /// 
         /// The stats returned by Merge obey the following:
         /// - Pages with the same ID are merged into one page.
         ///   - If the Paths were different, the Path from the currentStats is taken.
         ///     The Path from previousStats is discarded.
-        ///     - This operations on the assumption the page was renamed,
+        ///     - This operates under the assumption the page was renamed,
         ///       and the currentStats are newer, i.e. after the rename.
         /// - A page with given ID has union of all day view stats from both arguments.
         /// - Day view stats for the same Day date for given page are merged
-        ///   into one.
+        ///   into one by taking the count from currentStats, and discarding the count
+        ///   from previousStats.
+        ///   - This operates under the assumption the currentStats are newer
+        ///     and thus accumulated more views than prevStats.
         ///
-        /// Following invariants are *not* checked, and thus might be
-        /// violated by the arguments, even though they are invalid data:
-        /// - dates of all day view stats for page with given ID in currentStats
+        /// Following invariant is *not* checked. Calling this method with
+        /// arguments violating this invariant is violating this method contract:
+        /// - Dates of all day view stats for page with given ID in currentStats
         ///   are equal or more recent than all day view stats
         ///   for a page with the same ID in previousStats.
         /// </summary>
