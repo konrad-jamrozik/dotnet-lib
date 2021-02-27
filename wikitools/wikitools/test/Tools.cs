@@ -1,5 +1,4 @@
 using System;
-using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -32,7 +31,6 @@ namespace Wikitools.Tests
                 $"wiki_stats_{timeline.UtcNow:yyy_MM_dd}_{cfg.AdoWikiPageViewsForDays}days.json");
         }
 
-        // kja do not make calls to File.ReadAllText directly. Instead, obtain them from OS.
         [Fact(Skip = "Tool to be used manually")]
         public async Task ToolMerge()
         {
@@ -52,7 +50,7 @@ namespace Wikitools.Tests
             var storage     = new MonthlyJsonFilesStorage(os.FileSystem, cfg.StorageDirPath);
             var januaryDate = new DateTime(2021, 1, 1).Utc();
 
-            var mergedStats = statsPaths.Select(DeserializeStats)
+            var mergedStats = statsPaths.Select(s => DeserializeStats(os.FileSystem, s))
                 .Aggregate((prevStats, currentStats) => prevStats.Merge(currentStats));
 
             await storage.Write(mergedStats, januaryDate, "merged_stats.json");
@@ -63,9 +61,10 @@ namespace Wikitools.Tests
                 "date_2021_01_toolmerged.json");
         }
 
-        private static ValidWikiPagesStats DeserializeStats(string prevStatsPath) =>
+        private static ValidWikiPagesStats DeserializeStats(IFileSystem fs, string prevStatsPath) =>
             new(
-                JsonSerializer.Deserialize<WikiPageStats[]>(File.ReadAllText(prevStatsPath))!
+                // kja intro method for Desrialize + ReadAllText
+                JsonSerializer.Deserialize<WikiPageStats[]>(fs.ReadAllText(prevStatsPath))!
                     .Select(WikiPageStats.FixNulls));
     }
 }

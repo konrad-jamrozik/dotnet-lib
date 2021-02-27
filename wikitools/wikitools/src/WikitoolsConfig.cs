@@ -5,7 +5,7 @@ using System.Text.Json;
 namespace Wikitools
 {
     // ReSharper disable once ClassNeverInstantiated.Global
-    // - Reason: instantiated by JsonSerializer.Deserialize in Wikitools.WikitoolsConfig.From
+    // - Reason: hydrated by a call to JsonSerializer.Deserialize in Wikitools.WikitoolsConfig.From
     public record WikitoolsConfig(
         string GitExecutablePath,
         string GitRepoClonePath,
@@ -22,10 +22,12 @@ namespace Wikitools
     {
         public static WikitoolsConfig From(string cfgFileName)
         {
+            // kja use FileSystem
             var cfgFilePath = FindConfigFilePath(cfgFileName);
             WikitoolsConfig? cfg = null;
 
             if (cfgFilePath != null && File.Exists(cfgFilePath))
+                // kja intro method for Deserialize + ReadAllBytes
                 cfg = JsonSerializer.Deserialize<WikitoolsConfig>(File.ReadAllBytes(cfgFilePath),
                     new JsonSerializerOptions { ReadCommentHandling = JsonCommentHandling.Skip });
             
@@ -37,6 +39,7 @@ namespace Wikitools
 
         private static string? FindConfigFilePath(string cfgFileName)
         {
+            // kja use FileSystem
             var dir = new DirectoryInfo(Directory.GetCurrentDirectory());
             var cfgFilePath = Path.Combine(dir.FullName, cfgFileName);
 

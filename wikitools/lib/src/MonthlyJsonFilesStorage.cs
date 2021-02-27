@@ -12,10 +12,11 @@ namespace Wikitools.Lib
         public T Read<T>(DateTime date)
         {
             var fileToReadName = $"date_{date:yyy_MM}.json";
+            // kja FileSysytem for Path and Exists
             var fileToReadPath = Path.Join(StorageDirPath, fileToReadName);
             return !File.Exists(fileToReadPath)
                 ? JsonSerializer.Deserialize<T>("[]")!
-                : JsonSerializer.Deserialize<T>(File.ReadAllText(fileToReadPath))!;
+                : JsonSerializer.Deserialize<T>(FileSystem.ReadAllText(fileToReadPath))!;
         }
 
         // ReSharper disable once UnusedMethodReturnValue.Global
@@ -33,16 +34,16 @@ namespace Wikitools.Lib
 
         private async Task WriteToFile(string dataJson, DateTime date, string? fileNameOverride)
         {
-            // kja calls to File. and Directory. should come through IFileSystem
             fileNameOverride ??= $"date_{date:yyy_MM}.json";
             var storageDir = new Dir(FileSystem, StorageDirPath);
             if (!storageDir.Exists())
-                Directory.CreateDirectory(storageDir.Path);
-            var filePath = Path.Join(StorageDirPath, fileNameOverride);
-            await File.WriteAllTextAsync(filePath, dataJson);
+                FileSystem.CreateDirectory(storageDir.Path);
+            var filePath = FileSystem.JoinPath(StorageDirPath, fileNameOverride);
+            await FileSystem.WriteAllTextAsync(filePath, dataJson);
         }
 
         private string ToJson(object data) =>
+            // kja dedup with JsonDiff
             JsonSerializer.Serialize(data,
                 new JsonSerializerOptions
                 {

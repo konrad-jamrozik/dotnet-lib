@@ -49,7 +49,6 @@ namespace Wikitools
             bool AuthorFilter(string author) => !cfg.ExcludedAuthors.Any(author.Contains);
             bool PathFilter(string path) => !cfg.ExcludedPaths.Any(path.Contains);
 
-            // kja reports don't need timeline, just "now"
             var authorsReport    = new GitAuthorsStatsReport(timeline, recentCommits, cfg.GitLogDays, cfg.Top, AuthorFilter);
             var filesReport      = new GitFilesStatsReport(timeline, recentCommits, cfg.GitLogDays, cfg.Top, PathFilter);
             var pagesViewsReport = new PagesViewsStatsReport(timeline, pagesViewsStats, cfg.AdoWikiPageViewsForDays);
