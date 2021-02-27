@@ -12,9 +12,8 @@ namespace Wikitools.Lib
         public T Read<T>(DateTime date)
         {
             var fileToReadName = $"date_{date:yyy_MM}.json";
-            // kja FileSysytem for Path and Exists
-            var fileToReadPath = Path.Join(StorageDirPath, fileToReadName);
-            return !File.Exists(fileToReadPath)
+            var fileToReadPath = FileSystem.JoinPath(StorageDirPath, fileToReadName);
+            return !FileSystem.FileExists(fileToReadPath)
                 ? JsonSerializer.Deserialize<T>("[]")!
                 : JsonSerializer.Deserialize<T>(FileSystem.ReadAllText(fileToReadPath))!;
         }

@@ -14,5 +14,7 @@ namespace Wikitools.Lib.OS
         string JoinPath(string? path1, string? path2);
 
         string ReadAllText(string path);
+
+        bool FileExists(string? path);
     }
 }
