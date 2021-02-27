@@ -5,7 +5,7 @@ using Wikitools.Lib.OS;
 namespace Wikitools
 {
     // ReSharper disable once ClassNeverInstantiated.Global
-    // - Reason: hydrated by a call to JsonSerializer.Deserialize in Wikitools.WikitoolsConfig.From
+    // - Reason: hydrated by a call to FromJsonTo<WikitoolsConfig>() in Wikitools.WikitoolsConfig.From
     public record WikitoolsConfig(
         string GitExecutablePath,
         string GitRepoClonePath,
@@ -22,17 +22,10 @@ namespace Wikitools
     {
         public static WikitoolsConfig From(IFileSystem fs, string cfgFileName)
         {
-            // kja use FileSystem
             var cfgFilePath = FindConfigFilePath(fs, cfgFileName);
-            WikitoolsConfig? cfg = null;
-
-            if (cfgFilePath != null && fs.FileExists(cfgFilePath))
-                cfg = fs.ReadAllBytes(cfgFilePath).FromJsonTo<WikitoolsConfig>();
-            
-            if (cfg is null)
-                throw new Exception($"Failed to find {cfgFileName}.");
-
-            return cfg;
+            return cfgFilePath != null && fs.FileExists(cfgFilePath)
+                ? fs.ReadAllBytes(cfgFilePath).FromJsonTo<WikitoolsConfig>()
+                : throw new Exception($"Failed to find {cfgFileName}.");
         }
 
         private static string? FindConfigFilePath(IFileSystem fs, string cfgFileName)
