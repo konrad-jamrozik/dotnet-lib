@@ -14,21 +14,21 @@ namespace Wikitools
     {
         public static async Task Main(string[] args)
         {
-            IOperatingSystem os       = new WindowsOS();
             ITimeline        timeline = new Timeline();
+            IOperatingSystem os       = new WindowsOS();
             IAdoApi          adoApi   = new AdoApi(os.Environment);
 
             var cfg = WikitoolsConfig.From(os.FileSystem, "wikitools_config.json");
 
-            var docsToWrite = DocsToWrite(os, timeline, adoApi, cfg);
+            var docsToWrite = DocsToWrite(timeline, os, adoApi, cfg);
             var outputSink  = Console.Out;
 
             await WriteAll(docsToWrite, outputSink);
         }
 
         private static MarkdownDocument[] DocsToWrite(
-            IOperatingSystem os,
             ITimeline timeline,
+            IOperatingSystem os,
             IAdoApi adoApi,
             WikitoolsConfig cfg)
         {
