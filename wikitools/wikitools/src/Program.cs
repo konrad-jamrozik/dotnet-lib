@@ -69,7 +69,7 @@ namespace Wikitools
     }
 }
 
-// kja plan next work
+// kja high-level todos
 // 1. One page TOC
 // - Annotations (icons): Newly added, lots of traffic, stale.
 // 2. Instead of outputting to TextWriter, point to local wiki git clone.
