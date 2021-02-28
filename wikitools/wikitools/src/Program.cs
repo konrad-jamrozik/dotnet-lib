@@ -78,7 +78,7 @@ namespace Wikitools
  * - Markdown report with page view stats data pulled from ADO API.
  * - Explore from: Program, GitAuthorsStatsReport, GitFilesStatsReport, MonthlyStatsReport, PagesViewsStatsReport
  * 2/27/2021:
- * - Persisting wiki data to HDD as monthly json.
+ * - Persisting wiki data to HDD as monthly json, allowing to report more than 30 days.
  * - Tooling for merging and splitting existing wiki data.
  * - Explore from: Program, AdoWikiWithStorage
  */
