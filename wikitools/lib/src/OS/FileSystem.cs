@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Threading.Tasks;
+using Wikitools.Lib.Data;
 
 namespace Wikitools.Lib.OS
 {
@@ -23,5 +24,11 @@ namespace Wikitools.Lib.OS
         public string ReadAllText(string path) => File.ReadAllText(path);
 
         public byte[] ReadAllBytes(string path) => File.ReadAllBytes(path);
+        
+        public Task<TreeData<string>> FileTree(string path)
+        {
+            // kja to implement
+            return Task.FromResult(new TreeData<string>(new string[0]));
+        }
     }
 }

@@ -47,8 +47,13 @@ namespace Wikitools
 
             var pagesViewsStats = wiki.PagesStats(cfg.AdoWikiPageViewsForDays);
 
-            // kja populate
-            var treeData = Task.FromResult(new TreeData<WikiTocEntry>(new WikiTocEntry[0])); 
+            // kja work in progress
+            var fileTree = os.FileSystem.FileTree(cfg.GitRepoClonePath);
+            var wikiTocEntries = fileTree.Select(
+                tree => tree.Select(
+                    // kja match the page with stats
+                    path => new WikiTocEntry(0, path, new WikiPageStats("", 0, new WikiPageStats.DayStat[0]))));
+            var treeData = wikiTocEntries.Select(enumerable => new TreeData<WikiTocEntry>(enumerable));
 
             bool AuthorFilter(string author) => !cfg.ExcludedAuthors.Any(author.Contains);
             bool PathFilter(string path) => !cfg.ExcludedPaths.Any(path.Contains);
