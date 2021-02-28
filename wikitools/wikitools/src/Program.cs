@@ -14,8 +14,8 @@ namespace Wikitools
     {
         public static async Task Main(string[] args)
         {
-            ITimeline        timeline = new Timeline();
             IOperatingSystem os       = new WindowsOS();
+            ITimeline        timeline = new Timeline();
             IAdoApi          adoApi   = new AdoApi(os.Environment);
 
             var cfg = WikitoolsConfig.From(os.FileSystem, "wikitools_config.json");
