@@ -20,17 +20,17 @@ namespace Wikitools
 
             var cfg = WikitoolsConfig.From(os.FileSystem, "wikitools_config.json");
 
-            var docsToWrite = DocsToWrite(cfg, timeline, os, adoApi);
+            var docsToWrite = DocsToWrite(os, timeline, adoApi, cfg);
             var outputSink  = Console.Out;
 
             await WriteAll(docsToWrite, outputSink);
         }
 
         private static MarkdownDocument[] DocsToWrite(
-            WikitoolsConfig cfg,
-            ITimeline timeline,
             IOperatingSystem os,
-            IAdoApi adoApi)
+            ITimeline timeline,
+            IAdoApi adoApi,
+            WikitoolsConfig cfg)
         {
             var gitLog = GitLog(os, cfg.GitRepoClonePath, cfg.GitExecutablePath);
             var wiki = WikiWithStorage(
