@@ -1,29 +1,36 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Wikitools.Lib.Data;
 using Wikitools.Lib.Markdown;
 
 namespace Wikitools
 {
     public record WikiTableOfContents : MarkdownDocument
     {
-        public WikiTableOfContents(Task<object[]> data) : base(GetContent(data)) { }
+        public WikiTableOfContents(Task<TreeData<WikiTocEntry>> data) : base(GetContent(data)) { }
 
-        private static Task<object[]> GetContent(Task<object[]> data)
+        private static async Task<object[]> GetContent(Task<TreeData<WikiTocEntry>> dataTask)
         {
-            // kja current work
+            // kja current work 
             // Build tree of relative paths, indented by depth
             // Input:
-            // DataTree<WikiTocEntry>
+            // TreeData<WikiTocEntry>
             // - enumerable by lexicographically sorted DFS, i.e. in the order it should
             //   be printed out.
-            // WikiTocEntry: (int depth, WikiPagePath path, WikiPageStats stats)
+            // WikiTocEntry: (int depth, FilePath path, WikiPageStats stats)
             // - depth will be used to compute indent
-            // - WikiPagePath can be enumerated for each components
+            // - FilePath can be enumerated for each components
             //   - this report knows how to convert path to hyperlink
-            //     - hyperlink conversion probably should be abstracted to be generic
+            //     - hyperlink conversion probably should be abstracted to be generic: in MarkdownDocument
             // - stats will be used to compute if icons should show: new, active, stale
             //  - thresholds for icons passed separately as param, coming from config
             // - this report knows how to print out wikiTocEntry
-            return data;
+
+            var data = await dataTask;
+            var lines = data.Select(entry => new string(' ', entry.Depth * 2) + entry.Path);
+            return lines.Cast<object>().ToArray();
         }
     }
 }

@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Wikitools.AzureDevOps;
+using Wikitools.Lib.Data;
 using Wikitools.Lib.Markdown;
 using Wikitools.Lib.OS;
 using Wikitools.Lib.Primitives;
@@ -46,6 +47,9 @@ namespace Wikitools
 
             var pagesViewsStats = wiki.PagesStats(cfg.AdoWikiPageViewsForDays);
 
+            // kja populate
+            var treeData = Task.FromResult(new TreeData<WikiTocEntry>(new WikiTocEntry[0])); 
+
             bool AuthorFilter(string author) => !cfg.ExcludedAuthors.Any(author.Contains);
             bool PathFilter(string path) => !cfg.ExcludedPaths.Any(path.Contains);
 
@@ -53,7 +57,7 @@ namespace Wikitools
             var filesReport      = new GitFilesStatsReport(timeline, recentCommits, cfg.GitLogDays, cfg.Top, PathFilter);
             var pagesViewsReport = new PagesViewsStatsReport(timeline, pagesViewsStats, cfg.AdoWikiPageViewsForDays);
             var monthlyReport    = new MonthlyStatsReport(pastCommits, AuthorFilter, PathFilter);
-            var wikiToc          = new WikiTableOfContents(Task.FromResult(new object[0]));
+            var wikiToc          = new WikiTableOfContents(treeData);
 
             var docsToWrite = new MarkdownDocument[]
             {

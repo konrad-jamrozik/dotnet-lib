@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.Threading.Tasks;
 
-namespace Wikitools.Lib.Tables
+namespace Wikitools.Lib.Primitives
 {
     public interface IWritableToText
     {

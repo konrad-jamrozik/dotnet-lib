@@ -2,7 +2,7 @@ using System.Threading.Tasks;
 using Wikitools.AzureDevOps;
 using Wikitools.Lib.Markdown;
 using Wikitools.Lib.Primitives;
-using Wikitools.Lib.Tables;
+using Wikitools.Lib.Data;
 using Wikitools.Lib.Tests.Markdown;
 using Xunit;
 using static Wikitools.Declare;

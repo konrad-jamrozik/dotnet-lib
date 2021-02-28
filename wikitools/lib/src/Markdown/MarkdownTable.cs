@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Wikitools.Lib.Tables;
+using Wikitools.Lib.Data;
 
 namespace Wikitools.Lib.Markdown
 {

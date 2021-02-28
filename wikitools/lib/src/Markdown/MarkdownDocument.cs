@@ -3,7 +3,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Wikitools.Lib.Tables;
+using Wikitools.Lib.Data;
+using Wikitools.Lib.Primitives;
 
 namespace Wikitools.Lib.Markdown
 {

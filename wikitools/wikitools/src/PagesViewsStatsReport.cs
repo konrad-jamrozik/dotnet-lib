@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Wikitools.AzureDevOps;
 using Wikitools.Lib.Markdown;
 using Wikitools.Lib.Primitives;
-using Wikitools.Lib.Tables;
+using Wikitools.Lib.Data;
 
 namespace Wikitools
 {

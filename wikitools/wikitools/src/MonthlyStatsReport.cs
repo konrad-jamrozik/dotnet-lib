@@ -3,7 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Wikitools.Lib.Git;
 using Wikitools.Lib.Markdown;
-using Wikitools.Lib.Tables;
+using Wikitools.Lib.Data;
 
 namespace Wikitools
 {
