@@ -20,17 +20,17 @@ namespace Wikitools
 
             var cfg = WikitoolsConfig.From(os.FileSystem, "wikitools_config.json");
 
-            var outputSink = Console.Out;
+            var docsToWrite = DocsToWrite(cfg, timeline, os, adoApi);
+            var outputSink  = Console.Out;
 
-            await Execute(cfg, timeline, os, adoApi, outputSink);
+            await WriteAll(docsToWrite, outputSink);
         }
 
-        public static Task Execute(
+        private static MarkdownDocument[] DocsToWrite(
             WikitoolsConfig cfg,
             ITimeline timeline,
             IOperatingSystem os,
-            IAdoApi adoApi,
-            TextWriter outputSink)
+            IAdoApi adoApi)
         {
             var gitLog = GitLog(os, cfg.GitRepoClonePath, cfg.GitExecutablePath);
             var wiki = WikiWithStorage(
@@ -45,7 +45,7 @@ namespace Wikitools
             var pastCommits   = gitLog.Commits(cfg.MonthlyReportStartDate, cfg.MonthlyReportEndDate);
 
             var pagesViewsStats = wiki.PagesStats(cfg.AdoWikiPageViewsForDays);
-            
+
             bool AuthorFilter(string author) => !cfg.ExcludedAuthors.Any(author.Contains);
             bool PathFilter(string path) => !cfg.ExcludedPaths.Any(path.Contains);
 
@@ -61,8 +61,7 @@ namespace Wikitools
                 pagesViewsReport,
                 monthlyReport
             };
-
-            return WriteAll(docsToWrite, outputSink);
+            return docsToWrite;
         }
 
         private static Task WriteAll(MarkdownDocument[] docs, TextWriter textWriter) =>
