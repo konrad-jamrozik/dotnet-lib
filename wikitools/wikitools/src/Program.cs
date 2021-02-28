@@ -53,13 +53,15 @@ namespace Wikitools
             var filesReport      = new GitFilesStatsReport(timeline, recentCommits, cfg.GitLogDays, cfg.Top, PathFilter);
             var pagesViewsReport = new PagesViewsStatsReport(timeline, pagesViewsStats, cfg.AdoWikiPageViewsForDays);
             var monthlyReport    = new MonthlyStatsReport(pastCommits, AuthorFilter, PathFilter);
+            var wikiToc          = new WikiTableOfContents(Task.FromResult(new object[0]));
 
             var docsToWrite = new MarkdownDocument[]
             {
                 authorsReport,
                 filesReport,
                 pagesViewsReport,
-                monthlyReport
+                monthlyReport,
+                wikiToc
             };
             return docsToWrite;
         }
