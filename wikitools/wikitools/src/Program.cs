@@ -71,6 +71,10 @@ namespace Wikitools
 }
 
 // kja plan next work
+// 1. One page TOC
+// - Annotations (icons): Newly added, lots of traffic, stale.
+// 2. Instead of outputting to TextWriter, point to local wiki git clone.
+// - Output to configurable file paths, to be .md files in the git clone.
 /*
  * Work progress milestones:
  * 1/18/2021:
