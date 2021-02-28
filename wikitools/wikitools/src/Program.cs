@@ -72,11 +72,13 @@ namespace Wikitools
 
 // kja plan next work
 /*
- * Work done by 1/18/2021:
- *   - Markdown reports with data pulled from git, i.e. writing out:
- *   - GitAuthorsStatsReport, GitFilesStatsReport, MonthlyStatsReport
- * Work done by 2/27/2021:
- *   - Markdown report with page view stats data pulled from ADO API, persisted to HDD.
- *   - Tooling for merging and splitting existing data.
- *   - PagesViewsStatsReport
+ * Work progress milestones:
+ * 1/18/2021:
+ * - Markdown reports with data pulled from git.
+ * - Markdown report with page view stats data pulled from ADO API.
+ * - Explore from: Program, GitAuthorsStatsReport, GitFilesStatsReport, MonthlyStatsReport, PagesViewsStatsReport
+ * 2/27/2021:
+ * - Persisting wiki data to HDD as monthly json.
+ * - Tooling for merging and splitting existing wiki data.
+ * - Explore from: Program, AdoWikiWithStorage
  */
