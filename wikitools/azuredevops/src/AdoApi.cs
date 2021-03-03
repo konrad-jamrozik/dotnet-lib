@@ -42,7 +42,7 @@ namespace Wikitools.AzureDevOps
             // Microsoft.TeamFoundation.Wiki.WebApi Namespace Doc:
             // https://docs.microsoft.com/en-us/dotnet/api/?term=Wiki
             return connection.GetClient<WikiHttpClient>();
-        }
+        } 
 
         private static async Task<List<WikiPageDetail>> GetAllWikiPagesDetails(
             AdoWikiUri adoWikiUri,
