@@ -44,6 +44,10 @@ namespace Wikitools.AzureDevOps
             return connection.GetClient<WikiHttpClient>();
         }
 
+        // kja add test showing that Merge retains previous day stats upon page deletion
+        // If a page got deleted, this call will not return it anymore.
+        // This means that a) merge has to retain them and b) all view (day) stats since last time
+        // stats were obtained, until the page was deleted, will be lost.
         private static async Task<List<WikiPageDetail>> GetAllWikiPagesDetails(
             AdoWikiUri adoWikiUri,
             int pageViewsForDays,
