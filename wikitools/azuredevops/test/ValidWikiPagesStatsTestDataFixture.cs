@@ -97,6 +97,37 @@ namespace Wikitools.AzureDevOps.Tests
                 BarPagePathInCurrentMonth: ValidWikiPagesStatsTestData.FooPagePath
             );
 
+        /// <summary>
+        /// This test specifically aims to show how the tested class logic
+        /// behaves on data that:
+        /// - had a given Foo page deleted in the most recent month, thus resulting
+        /// in the Foo page stats being completely absent from data returned
+        /// from Wikitools.AzureDevOps.AdoApi.GetAllWikiPagesDetails,
+        /// even if there were day view stats for it in the queried days.
+        /// - and had a given Bar page created in current month,
+        /// but not yet present in previous month.
+        ///
+        /// The expected behavior is as follows:
+        /// - when merging data for previous and current month, retain the day view
+        /// stats for the page that was deleted, even though ADO would no longer show
+        /// the view stats for that page in current month.
+        /// - as a consequence, when calling .SplitByMonth() merged data, always show the pages
+        /// with empty day view stats, even if they didn't exist because they were deleted
+        /// or didn't exist yet. .SplitByMonth() is unable to determine if pages
+        /// were nonexistent or just with no views, as merging doesn't retain this information.
+        /// For details, please see comment on:
+        /// ValidWikiPagesStatsTestData.CurrentMonthAfterSplit
+        /// </summary>
+        public static ValidWikiPagesStatsTestData PageStatsPagesMissing =>
+            new(FebruaryDate,
+                new WikiPageStats.DayStat[] { new(103, JanuaryDate) },
+                new WikiPageStats.DayStat[] { },
+                new WikiPageStats.DayStat[] { },
+                new WikiPageStats.DayStat[] { new(219, FebruaryDate.AddDays(4)) },
+                FooPageDeletedInCurrentMonth: true,
+                BarPageDeletedInPreviousMonth: true
+            );
+
         public static ValidWikiPagesStatsTestData PageStats
         {
             get
@@ -145,24 +176,24 @@ namespace Wikitools.AzureDevOps.Tests
 
         public static ValidWikiPagesStatsTestData PageStatsInterleavingDayStats =>
             new(FebruaryDate,
-                FooPagePreviousDayStats: new WikiPageStats.DayStat[]
+                FooPagePreviousMonthDayStats: new WikiPageStats.DayStat[]
                 {
                     new(108, JanuaryDate.AddDays(5)),
                     new(218, FebruaryDate.AddDays(3))
                 },
-                FooPageCurrentDayStats: new WikiPageStats.DayStat[]
+                FooPageCurrentMonthDayStats: new WikiPageStats.DayStat[]
                 {
                     new(104, JanuaryDate.AddDays(1)),
                     new(108, JanuaryDate.AddDays(5)),
                     new(110, JanuaryDate.AddDays(7))
                 },
-                BarPagePreviousDayStats: new WikiPageStats.DayStat[]
+                BarPagePreviousMonthDayStats: new WikiPageStats.DayStat[]
                 {
                     new(103, JanuaryDate),
                     new(215, FebruaryDate), 
                     new(216, FebruaryDate.AddDays(1)),
                 },
-                BarPageCurrentDayStats: new WikiPageStats.DayStat[]
+                BarPageCurrentMonthDayStats: new WikiPageStats.DayStat[]
                 {
                     new(213, FebruaryDate.AddDays(-2)), 
                     new(216, FebruaryDate.AddDays(1)), 

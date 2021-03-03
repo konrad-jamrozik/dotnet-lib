@@ -22,6 +22,7 @@ namespace Wikitools.AzureDevOps.Tests
         [Fact] public void PageStatsInterleavingDayStats()   => Verify(Data.PageStatsInterleavingDayStats);
         [Fact] public void PageStatsRenamedToNewPath()       => Verify(Data.PageStatsRenamedToNewPath);
         [Fact] public void PageStatsExchangedPaths()         => Verify(Data.PageStatsExchangedPaths);
+        [Fact] public void PageStatsPagesMissing()           => Verify(Data.PageStatsPagesMissing);
         // @formatter:on
 
         private static void Verify(ValidWikiPagesStatsTestData data)
@@ -48,9 +49,13 @@ namespace Wikitools.AzureDevOps.Tests
 
                 if (!data.PageRenamePresent)
                 {
-                    // Act - Split({Merge[prev], Merge[curr]}) == {prev, curr}
+                    // Act - Split({Merge[prev], Merge[curr]}) == {prev', curr'}
                     // where Merge = Merge(Split({prev, curr})) 
-                    VerifySplitByMonth(mergedSplit, data.Date, data.PreviousMonth, data.CurrentMonth);
+                    // where prev', curr' denote page stats for the corresponding months, but also
+                    // having empty page entries for pages that were not yet existing (in case of prev month) or were
+                    // since deleted (in case of curr month), instead of these pages being completely absent from the
+                    // prev and curr data. For details why is that, please see the comment on data.CurrentMonthAfterSplit.
+                    VerifySplitByMonth(mergedSplit, data.Date, data.PreviousMonthAfterSplit, data.CurrentMonthAfterSplit);
                 }
             }
             else
@@ -60,7 +65,10 @@ namespace Wikitools.AzureDevOps.Tests
         private static void VerifyMergeInvariants(ValidWikiPagesStatsTestData data)
         {
             // Act - Merge(prev, curr)
-            ValidWikiPagesStats merged = VerifyMerge(data.PreviousMonth, data.CurrentMonth, data.MergedPagesStats);
+            ValidWikiPagesStats merged = VerifyMerge(
+                data.PreviousMonthToMerge,
+                data.CurrentMonthToMerge,
+                data.MergedPagesStats);
             
             // Act - Merge(Merge(prev, curr), Merge(prev, curr)) == Merge(prev, curr)
             VerifyMerge(merged, merged, merged);
@@ -95,7 +103,7 @@ namespace Wikitools.AzureDevOps.Tests
                 data.AllPagesStats,
                 data.Date,
                 data.PreviousMonthWithCurrentMonthPaths,
-                data.CurrentMonth);
+                data.CurrentMonthAfterSplit);
 
         private static void VerifySplitByMonthThrows(
             ValidWikiPagesStatsTestData data, Type excType) => Expect.Throws(VerifySplitByMonth, data, excType);
