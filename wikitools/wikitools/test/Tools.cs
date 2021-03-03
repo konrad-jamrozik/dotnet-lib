@@ -43,8 +43,9 @@ namespace Wikitools.Tests
             var stats2Path = cfg.StorageDirPath + "/wiki_stats_2021_02_06_30days.json";
             var stats3Path = cfg.StorageDirPath + "/wiki_stats_2021_02_19_30days.json";
             var stats4Path = cfg.StorageDirPath + "/wiki_stats_2021_02_27_30days.json";
+            var stats5Path = cfg.StorageDirPath + "/wiki_stats_2021_03_03_30days.json";
 
-            await Merge(os.FileSystem, cfg, new[] { stats1Path, stats2Path, stats3Path, stats4Path});
+            await Merge(os.FileSystem, cfg, new[] { stats1Path, stats2Path, stats3Path, stats4Path, stats5Path});
         }
 
         private static async Task Merge(IFileSystem fs, WikitoolsConfig cfg, string[] statsPaths)
