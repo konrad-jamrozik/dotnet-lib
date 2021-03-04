@@ -5,6 +5,24 @@ namespace Wikitools.Lib.Data
 {
     public record TreeData<T>(IEnumerable<T> Data) : IEnumerable<T>
     {
+        private List<(int depth, T)> BuildPreorderTree(IEnumerable<T> data)
+        {
+            // kja curr work
+            return new List<(int depth, T)>();
+        }
+
+        public IEnumerable<(int depth, T)> AsPreorderEnumerable()
+        {
+            List<(int depth, T)> preorderTree = BuildPreorderTree(Data);
+
+            // kj2 instead of building the preorderTree at once, do yield. Also:
+            // - the record ctor probably should have the raw tree data as ctor input,
+            // and the serialized format should be one of the "From" method.
+            //   - The From method probably should take lambda for splitting the input entries,
+            //   possibly with well-known case for strings.
+            return preorderTree;
+        }
+
         public IEnumerator<T> GetEnumerator() => Data.GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();

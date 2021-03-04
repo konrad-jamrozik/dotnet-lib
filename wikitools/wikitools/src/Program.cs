@@ -45,6 +45,9 @@ namespace Wikitools
             var recentCommits = gitLog.Commits(cfg.GitLogDays);
             var pastCommits   = gitLog.Commits(cfg.MonthlyReportStartDate, cfg.MonthlyReportEndDate);
 
+            // kj2 this will trigger call to ADO API. Not good. Should be deferred until WriteAll by the caller.
+            // I might need to fix all Tasks to AsyncLazy to make this work, or by using new Task() and then task.Start();
+            // https://docs.microsoft.com/en-us/dotnet/api/system.threading.tasks.task?view=net-5.0#separating-task-creation-and-execution
             var pagesViewsStats = wiki.PagesStats(cfg.AdoWikiPageViewsForDays);
 
             var treeData = GetFileTreeData(os, cfg);

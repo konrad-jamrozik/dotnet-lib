@@ -14,7 +14,7 @@ namespace Wikitools.Lib.OS
         {
             _fileSystem = fileSystem;
             _path = path;
-            
+
         }
 
         // kj2 consider making FileTree implement TreeData<string> instead
@@ -23,7 +23,8 @@ namespace Wikitools.Lib.OS
         // https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/file-system/how-to-iterate-through-a-directory-tree
         public Task<TreeData<string>> TreeData()
         {
-            // kja implement properly walking the tree, with decoupled IFilesystem etc.
+            // kja make this method Lazy
+            // kja implement properly walking the tree: decoupled from IFilesystem
             var directoryInfo = new DirectoryInfo(_path);
             var fileInfos     = directoryInfo.GetFiles("*.*", SearchOption.AllDirectories);
             var paths         = fileInfos.Select(fi => Path.GetRelativePath(_path, fi.FullName));

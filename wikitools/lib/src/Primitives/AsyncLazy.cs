@@ -19,10 +19,10 @@ namespace Wikitools.Lib.Primitives
         {
         }
 
-        // Thanks to this method, once can call:
-        // await asyncLazy 
+        // Thanks to this method, one can call:
+        //   await asyncLazy 
         // instead of:
-        // await asyncLazy.Value
+        //   await asyncLazy.Value
         // ReSharper disable once UnusedMember.Global
         public TaskAwaiter<T> GetAwaiter()
         {
