@@ -47,13 +47,7 @@ namespace Wikitools
 
             var pagesViewsStats = wiki.PagesStats(cfg.AdoWikiPageViewsForDays);
 
-            // kja work in progress
-            var fileTree = os.FileSystem.FileTree(cfg.GitRepoClonePath);
-            var wikiTocEntries = fileTree.Select(
-                tree => tree.Select(
-                    // kja match the page with stats
-                    path => new WikiTocEntry(0, path, new WikiPageStats("", 0, new WikiPageStats.DayStat[0]))));
-            var treeData = wikiTocEntries.Select(enumerable => new TreeData<WikiTocEntry>(enumerable));
+            var treeData = GetFileTreeData(os, cfg);
 
             bool AuthorFilter(string author) => !cfg.ExcludedAuthors.Any(author.Contains);
             bool PathFilter(string path) => !cfg.ExcludedPaths.Any(path.Contains);
@@ -66,13 +60,25 @@ namespace Wikitools
 
             var docsToWrite = new MarkdownDocument[]
             {
-                authorsReport,
-                filesReport,
-                pagesViewsReport,
-                monthlyReport,
+                // authorsReport,
+                // filesReport,
+                // pagesViewsReport,
+                // monthlyReport,
                 wikiToc
             };
             return docsToWrite;
+        }
+
+        private static Task<TreeData<WikiTocEntry>> GetFileTreeData(IOperatingSystem os, WikitoolsConfig cfg)
+        {
+            // kj2 clean this up
+            var fileTree = os.FileSystem.FileTree(cfg.GitRepoClonePath);
+            var wikiTocEntries = fileTree.Select(
+                tree => tree.Select(
+                    // kja match the page with stats
+                    path => new WikiTocEntry(path, new WikiPageStats("", 0, new WikiPageStats.DayStat[0]))));
+            var treeData = wikiTocEntries.Select(enumerable => new TreeData<WikiTocEntry>(enumerable));
+            return treeData;
         }
 
         private static Task WriteAll(MarkdownDocument[] docs, TextWriter textWriter) =>

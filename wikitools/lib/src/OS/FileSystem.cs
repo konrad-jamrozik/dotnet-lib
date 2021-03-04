@@ -27,8 +27,8 @@ namespace Wikitools.Lib.OS
         
         public Task<TreeData<string>> FileTree(string path)
         {
-            // kja to implement
-            return Task.FromResult(new TreeData<string>(new string[0]));
+            var fileTree = new FileTree(this, path);
+            return fileTree.TreeData();
         }
     }
 }

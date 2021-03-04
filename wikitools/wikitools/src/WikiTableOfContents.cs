@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Wikitools.Lib.Data;
 using Wikitools.Lib.Markdown;
@@ -13,7 +11,7 @@ namespace Wikitools
 
         private static async Task<object[]> GetContent(Task<TreeData<WikiTocEntry>> dataTask)
         {
-            // kja current work 
+            // kj2 pseudocode for WikiTableOfContents
             // Build tree of relative paths, indented by depth
             // Input:
             // TreeData<WikiTocEntry>
@@ -28,8 +26,12 @@ namespace Wikitools
             //  - thresholds for icons passed separately as param, coming from config
             // - this report knows how to print out wikiTocEntry
 
-            var data = await dataTask;
-            var lines = data.Select(entry => new string(' ', entry.Depth * 2) + entry.Path);
+            var data  = await dataTask;
+            var lines = data.Select(entry =>
+            {
+                int depth = 0; // kj2 to obtain from TreeData: see todos there.
+                return new string(' ', depth * 2) + entry.Path;
+            });
             return lines.Cast<object>().ToArray();
         }
     }
