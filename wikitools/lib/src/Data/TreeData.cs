@@ -1,14 +1,64 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 
 namespace Wikitools.Lib.Data
 {
-    public record TreeData<T>(IEnumerable<T> Data) : IEnumerable<T>
+    // https://en.wikipedia.org/wiki/Trie
+    public record TreeData<T>(IEnumerable<T> Data) : IEnumerable<T> where T : notnull
     {
+        // kja curr work
         private List<(int depth, T)> BuildPreorderTree(IEnumerable<T> data)
         {
-            // kja curr work
+            List<TreeNode> nodes = new();
+
+            // kj2 the ToString()!.Split() should be a lambda param
+            List<string[]> dataEntriesParts = data.Select(entry => entry.ToString()!.Split(Path.DirectorySeparatorChar)).ToList();
+
+            foreach (string[] entryParts in dataEntriesParts)
+            {
+                (List<TreeNode> prefixChildren, string[] entryPartsSuffix) = FindExistingPrefix(nodes, entryParts);
+                AppendSuffix(prefixChildren, entryPartsSuffix);
+            }
+
             return new List<(int depth, T)>();
+        }
+
+        private void AppendSuffix(List<TreeNode> prefixChildren, string[] entryPartsSuffix)
+        {
+            List<TreeNode> currentChildren = prefixChildren;
+            foreach (string entryPart in entryPartsSuffix)
+            {
+                var entryPartNode = new TreeNode(entryPart, new List<TreeNode>());
+                currentChildren.Add(entryPartNode);
+                currentChildren = entryPartNode.Children;
+            }
+        }
+
+        private (List<TreeNode>, string[]) FindExistingPrefix(List<TreeNode> nodes, string[] entryParts)
+        {
+            List<TreeNode> currentChildren = nodes;
+
+            int suffixIndex = 0;
+
+            for (var i = 0; i < entryParts.Length; i++)
+            {
+                suffixIndex = i;
+                var entryPart = entryParts[i];
+                if (currentChildren.Select(node => node.Value).Contains(entryPart))
+                {
+                    var childNode = nodes.Single(node => node.Value == entryPart);
+                    currentChildren = childNode.Children;
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            return (currentChildren, entryParts.Skip(suffixIndex).ToArray());
         }
 
         public IEnumerable<(int depth, T)> AsPreorderEnumerable()
@@ -26,6 +76,9 @@ namespace Wikitools.Lib.Data
         public IEnumerator<T> GetEnumerator() => Data.GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+        // kj2 should be T instead of string.
+        private record TreeNode(string Value, List<TreeNode> Children);
 
         /* kja this record should implement generic algorithm on Tree-like data structures.
         That allows to project into nested structure.

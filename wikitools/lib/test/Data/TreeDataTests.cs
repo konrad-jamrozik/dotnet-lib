@@ -23,7 +23,7 @@ namespace Wikitools.Lib.Tests.Data
         [Fact]
         public void TestTreeData()
         {
-            var treeData = new TreeData<string>(new[] { "foo/bar1", "foo/bar2" });
+            var treeData = new TreeData<string>(new[] { "foo\\bar1", "foo\\bar2" });
             foreach ((int depth, string s) entry in treeData.AsPreorderEnumerable())
             {
                 
