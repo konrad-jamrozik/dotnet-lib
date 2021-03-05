@@ -7,29 +7,47 @@ using System.Linq;
 namespace Wikitools.Lib.Data
 {
     // https://en.wikipedia.org/wiki/Trie
-    public record TreeData<T>(IEnumerable<T> Data) : IEnumerable<T> where T : notnull
+    public record TreeData<T>(IEnumerable<T> Data) : IEnumerable<T> where T : IEquatable<T>
     {
         // kja curr work
         private List<(int depth, T)> BuildPreorderTree(IEnumerable<T> data)
         {
             List<TreeNode> nodes = new();
 
-            // kj2 the ToString()!.Split() should be a lambda param
-            List<string[]> dataEntriesParts = data.Select(entry => entry.ToString()!.Split(Path.DirectorySeparatorChar)).ToList();
+            // kj2 the ToString()!.Split() should be a lambda param and .Cast<T> should be removed.
+            // Basically the input should be an enumerable of "T == array of U", and a lambda function
+            // telling how to convert T to array of U.
+            // Maybe have dedicated method that it will recognize that if T is string, then U is also string, and the conversion
+            // logic from T to U[] is the Splitting currently hardcoded here.
+            List<T[]> dataEntriesParts = data.Select(entry => entry.ToString()!.Split(Path.DirectorySeparatorChar).Cast<T>().ToArray()).ToList();
 
-            foreach (string[] entryParts in dataEntriesParts)
+            foreach (T[] entryParts in dataEntriesParts)
             {
-                (List<TreeNode> prefixChildren, string[] entryPartsSuffix) = FindExistingPrefix(nodes, entryParts);
+                (List<TreeNode> prefixChildren, T[] entryPartsSuffix) = FindExistingPrefix(nodes, entryParts);
                 AppendSuffix(prefixChildren, entryPartsSuffix);
             }
 
-            return new List<(int depth, T)>();
+            // kj2 abstract this into generic preorder traversal algorithm
+            List<(int depth, T)> preorderTree = TreeNodesToPreorderTree(nodes, depth: 0);
+            return preorderTree;
         }
 
-        private void AppendSuffix(List<TreeNode> prefixChildren, string[] entryPartsSuffix)
+        private List<(int depth, T)> TreeNodesToPreorderTree(List<TreeNode> nodes, int depth) =>
+            nodes.SelectMany(node => TreeNodeToPreorderTree(node, depth)).ToList();
+
+        private List<(int depth, T)> TreeNodeToPreorderTree(TreeNode node, int depth)
+        {
+            var currNode = new List<(int depth, T)> { (depth, node.Value) };
+            var childNodes = node.Children.Any()
+                ? TreeNodesToPreorderTree(node.Children, depth + 1)
+                : new List<(int depth, T)>();
+            return currNode.Concat(childNodes).ToList();
+        }
+
+        private void AppendSuffix(List<TreeNode> prefixChildren, T[] entryPartsSuffix)
         {
             List<TreeNode> currentChildren = prefixChildren;
-            foreach (string entryPart in entryPartsSuffix)
+            foreach (T entryPart in entryPartsSuffix)
             {
                 var entryPartNode = new TreeNode(entryPart, new List<TreeNode>());
                 currentChildren.Add(entryPartNode);
@@ -37,7 +55,7 @@ namespace Wikitools.Lib.Data
             }
         }
 
-        private (List<TreeNode>, string[]) FindExistingPrefix(List<TreeNode> nodes, string[] entryParts)
+        private (List<TreeNode>, T[]) FindExistingPrefix(List<TreeNode> nodes, T[] entryParts)
         {
             List<TreeNode> currentChildren = nodes;
 
@@ -49,7 +67,7 @@ namespace Wikitools.Lib.Data
                 var entryPart = entryParts[i];
                 if (currentChildren.Select(node => node.Value).Contains(entryPart))
                 {
-                    var childNode = nodes.Single(node => node.Value == entryPart);
+                    var childNode = nodes.Single(node => node.Value.Equals(entryPart));
                     currentChildren = childNode.Children;
                 }
                 else
@@ -77,8 +95,7 @@ namespace Wikitools.Lib.Data
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-        // kj2 should be T instead of string.
-        private record TreeNode(string Value, List<TreeNode> Children);
+        private record TreeNode(T Value, List<TreeNode> Children);
 
         /* kja this record should implement generic algorithm on Tree-like data structures.
         That allows to project into nested structure.
