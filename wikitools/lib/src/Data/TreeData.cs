@@ -65,6 +65,7 @@ namespace Wikitools.Lib.Data
             {
                 suffixIndex = i;
                 var entryPart = entryParts[i];
+                // kj2 optimize this select, and also the recursion. See also the todo about yield.
                 if (currentChildren.Select(node => node.Value).Contains(entryPart))
                 {
                     var childNode = nodes.Single(node => node.Value.Equals(entryPart));
