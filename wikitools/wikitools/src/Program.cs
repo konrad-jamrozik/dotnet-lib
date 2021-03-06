@@ -81,6 +81,7 @@ namespace Wikitools
                     // kja match the page with stats
                     path => new WikiTocEntry(path, new WikiPageStats("", 0, new WikiPageStats.DayStat[0]))));
             // kja currently, this will fail to cast the WikiTocEntry to string, due to hardcoded strings in TreeData
+            // kj2 add .ToTreeData() extension method, on IEnumerable().
             var treeData = wikiTocEntries.Select(entries => new TreeData<WikiTocEntry>(entries));
             return treeData;
         }
@@ -97,6 +98,8 @@ namespace Wikitools
 // - Output to configurable file paths, to be .md files in the git clone.
 /*
  * Work progress milestones:
+ * 12/29/2020:
+ * - Work start. Reused GitRepository and AsyncLazy abstractions written in 2017.
  * 1/18/2021:
  * - Markdown reports with data pulled from git.
  * - Markdown report with page view stats data pulled from ADO API.
