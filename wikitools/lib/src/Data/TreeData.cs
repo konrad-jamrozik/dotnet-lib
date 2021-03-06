@@ -3,31 +3,9 @@ using System.Linq;
 
 namespace Wikitools.Lib.Data
 {
-    // kja to remove
-    // // kja only way to enumerate: (depth, value)
-    // // primary ctor: TreeData(treeNode)
-    // // secondary ctors, inheriting:
-    // // TreeData<entry, item>(rows, extract) : TreeData(buildTreeNode(rows, extract))
-    // // FileTreeData ...  :  TreeData<string, string>(...)
-    // // https://en.wikipedia.org/wiki/Trie
-    // public record TreeData<TEntry, TItem>(IEnumerable<TEntry> Rows, Func<TEntry, IEnumerable<TItem>> Segments) : IEnumerable<TEntry> where TItem : IEquatable<TItem>
-    // {
-    //     public IEnumerator<TEntry> GetEnumerator() => Rows.GetEnumerator();
-    //
-    //     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-    // }
-
     public abstract record TreeData<TValue>(IEnumerable<TreeNode<TValue>> Nodes)
     {
-        public IEnumerable<(int depth, TValue value)> AsPreorderEnumerable()
-        {
-            // kj2 instead of building the preorderTree at once, do yield. Also:
-            // - the record ctor probably should have the raw tree data as ctor input,
-            // and the serialized format should be one of the "From" method.
-            //   - The From method probably should take lambda for splitting the input entries,
-            //   possibly with well-known case for strings.
-            return PreorderTraversal();
-        }
+        public IEnumerable<(int depth, TValue value)> AsPreorderEnumerable() => PreorderTraversal();
 
         private IEnumerable<(int depth, TValue value)> PreorderTraversal()
         {
