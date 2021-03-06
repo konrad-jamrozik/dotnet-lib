@@ -28,6 +28,10 @@ namespace Wikitools
             // - this report knows how to print out wikiTocEntry.
             // See the to-do in Wikitools.Program.GetWikiPagesData for more.
 
+            // Example output:
+            // [/foo](foo) 10 views
+            //     [/bar](foo/bar) 30 views
+
             var preorderData = await dataTask;
 
             // kja need to add here ability to "erase" path prefixes of the parent above.
