@@ -36,7 +36,6 @@ namespace Wikitools.Lib.Tests.Data
             Verify(treeData, expectedRows);
         }
 
-        // kja curr test failure
         [Fact]
         public void TestTreeData2()
         {
@@ -60,7 +59,6 @@ namespace Wikitools.Lib.Tests.Data
             Verify(treeData, expectedRows);
         }
 
-        // kja curr test failure
         [Fact]
         public void TestTreeData3()
         {

@@ -68,7 +68,7 @@ namespace Wikitools.Lib.Data
                 // kj2 optimize this select, and also the recursion. See also the todo about yield.
                 if (currentChildren.Select(node => node.Value).Contains(entryPart))
                 {
-                    var childNode = nodes.Single(node => node.Value.Equals(entryPart));
+                    var childNode = currentChildren.Single(node => node.Value.Equals(entryPart));
                     currentChildren = childNode.Children;
                 }
                 else
