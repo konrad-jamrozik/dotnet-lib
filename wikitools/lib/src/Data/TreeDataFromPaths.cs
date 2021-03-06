@@ -15,11 +15,11 @@ namespace Wikitools.Lib.Data
             Func<TPath, IEnumerable<TSegment>> extractSegments)
         {
             IEnumerable<IEnumerable<TSegment>> pathsSegments = paths.Select(extractSegments);
-            IEnumerable<TreeNode<TSegment>> nodes = TreeNodesFromItems(pathsSegments);
+            IEnumerable<TreeNode<TSegment>> nodes = TreeNodesFromSegments(pathsSegments);
             return nodes;
         }
 
-        private static IEnumerable<TreeNode<TSegment>> TreeNodesFromItems(IEnumerable<IEnumerable<TSegment>> dataEntriesParts)
+        private static IEnumerable<TreeNode<TSegment>> TreeNodesFromSegments(IEnumerable<IEnumerable<TSegment>> dataEntriesParts)
         {
             IList<TreeNode<TSegment>> nodes = new List<TreeNode<TSegment>>();
 
