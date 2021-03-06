@@ -24,65 +24,26 @@ namespace Wikitools.Lib.Data
     // kja adapt. Now it will need also TValue, where for file system TValue is object which will be null (there is no 'void')
     public record TrieFromPaths<TPath, TSegment>
         (IEnumerable<TPath> Paths, Func<TPath, IEnumerable<TSegment>> ExtractSegments) 
-        : TreeData<TSegment>(TreeNodes(Paths, ExtractSegments)), IEnumerable<TPath> 
+        : Trie<object>(PathPrefixes(Paths, ExtractSegments)), IEnumerable<TPath> 
         where TSegment : IEquatable<TSegment>
     {
-        private static IEnumerable<TreeNode<TSegment>> TreeNodes(
+        private static IEnumerable<PathPrefix<object>> PathPrefixes(
             IEnumerable<TPath> paths,
             Func<TPath, IEnumerable<TSegment>> extractSegments)
         {
             IEnumerable<IEnumerable<TSegment>> pathsSegments = paths.Select(extractSegments);
-            IEnumerable<TreeNode<TSegment>> nodes = TreeNodesFromSegments(pathsSegments);
-            return nodes;
-        }
 
-        private static IEnumerable<TreeNode<TSegment>> TreeNodesFromSegments(IEnumerable<IEnumerable<TSegment>> dataEntriesParts)
-        {
-            IList<TreeNode<TSegment>> nodes = new List<TreeNode<TSegment>>();
+            // kja new approach:
+            // 1. Transpose the pathSegments, so first dimension is the depth, and the second dimension is the path.
+            // 2. Then go from left (depth 0) to right (depth max). Continue as long as all the segments at given depth are the same.
+            // Once they are no longer the same:
+            // 1. create a prefix segment set,
+            // 2. recursively build SegmentSets for all the suffixes
+            // 3. prepend the prefix segment set to all the build suffix sets.
 
-            foreach (IEnumerable<TSegment> entryParts in dataEntriesParts)
-            {
-                (IList<TreeNode<TSegment>> prefixChildren, TSegment[] entryPartsSuffix) = FindExistingPrefix(nodes, entryParts.ToArray());
-                AppendSuffix(prefixChildren, entryPartsSuffix);
-            }
 
-            return nodes;
-        }
-
-        private static void AppendSuffix(IList<TreeNode<TSegment>> prefixChildren, TSegment[] entryPartsSuffix)
-        {
-            IList<TreeNode<TSegment>> currentChildren = prefixChildren;
-            foreach (TSegment entryPart in entryPartsSuffix)
-            {
-                TreeNode<TSegment> entryPartNode = new(entryPart, new List<TreeNode<TSegment>>());
-                currentChildren.Add(entryPartNode);
-                currentChildren = entryPartNode.Children;
-            }
-        }
-
-        private static (IList<TreeNode<TSegment>>, TSegment[]) FindExistingPrefix(IList<TreeNode<TSegment>> nodes, TSegment[] entryParts)
-        {
-            IList<TreeNode<TSegment>> currentChildren = nodes;
-
-            int suffixIndex = 0;
-
-            for (var i = 0; i < entryParts.Length; i++)
-            {
-                suffixIndex = i;
-                var entryPart = entryParts[i];
-                // kj2 optimize this select, and also the recursion. See also the todo about yield.
-                if (currentChildren.Select(node => node.Value).Contains(entryPart))
-                {
-                    var childNode = currentChildren.Single(node => node.Value.Equals(entryPart));
-                    currentChildren = childNode.Children;
-                }
-                else
-                {
-                    break;
-                }
-            }
-
-            return (currentChildren, entryParts.Skip(suffixIndex).ToArray());
+            // IEnumerable<PathPrefix<object>> nodes = PathPrefixesFromSegments(pathsSegments);
+            return new List<PathPrefix<object>>();
         }
 
         public IEnumerator<TPath> GetEnumerator() => Paths.GetEnumerator();
