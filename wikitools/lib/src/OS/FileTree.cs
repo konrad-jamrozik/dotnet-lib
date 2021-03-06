@@ -23,8 +23,8 @@ namespace Wikitools.Lib.OS
         // https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/file-system/how-to-iterate-through-a-directory-tree
         public Task<TreeData<string>> TreeData()
         {
-            // kja make this method Lazy
-            // kja implement properly walking the tree: decoupled from IFilesystem
+            // kj2 make this method Lazy
+            // kj2 implement properly walking the tree: decoupled from IFilesystem
             var directoryInfo = new DirectoryInfo(_path);
             var fileInfos     = directoryInfo.GetFiles("*.*", SearchOption.AllDirectories);
             var paths         = fileInfos.Select(fi => Path.GetRelativePath(_path, fi.FullName));

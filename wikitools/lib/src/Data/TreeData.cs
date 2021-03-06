@@ -9,7 +9,6 @@ namespace Wikitools.Lib.Data
     // https://en.wikipedia.org/wiki/Trie
     public record TreeData<T>(IEnumerable<T> Data) : IEnumerable<T> where T : IEquatable<T>
     {
-        // kja curr work
         private List<(int depth, T)> BuildPreorderTree(IEnumerable<T> data)
         {
             List<TreeNode> nodes = new();
@@ -80,7 +79,7 @@ namespace Wikitools.Lib.Data
             return (currentChildren, entryParts.Skip(suffixIndex).ToArray());
         }
 
-        public IEnumerable<(int depth, T)> AsPreorderEnumerable()
+        public IEnumerable<(int depth, T value)> AsPreorderEnumerable()
         {
             List<(int depth, T)> preorderTree = BuildPreorderTree(Data);
 
@@ -97,28 +96,5 @@ namespace Wikitools.Lib.Data
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
         private record TreeNode(T Value, List<TreeNode> Children);
-
-        /* kja this record should implement generic algorithm on Tree-like data structures.
-        That allows to project into nested structure.
-
-        Namely, entries like:
-        foo/bar1/baz1
-        foo/bar1/baz2
-        foo/bar2/baz1
-        foo/bar2/baz1
-        should be projectable to:
-        foo
-          bar1
-            baz1
-            baz2
-          bar2
-            baz3
-            baz4
-
-        It should be possible to provide the input entries as a series of leafs with separators,
-        as in the example above. 
-        However, internally, the record probably should keep the data efficiently, via a tree.
-
-        */
     }
 }

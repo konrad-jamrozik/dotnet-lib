@@ -80,7 +80,8 @@ namespace Wikitools
                 tree => tree.Select(
                     // kja match the page with stats
                     path => new WikiTocEntry(path, new WikiPageStats("", 0, new WikiPageStats.DayStat[0]))));
-            var treeData = wikiTocEntries.Select(enumerable => new TreeData<WikiTocEntry>(enumerable));
+            // kja currently, this will fail to cast the WikiTocEntry to string, due to hardcoded strings in TreeData
+            var treeData = wikiTocEntries.Select(entries => new TreeData<WikiTocEntry>(entries));
             return treeData;
         }
 

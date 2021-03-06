@@ -24,9 +24,6 @@ namespace Wikitools.Lib.Primitives
         // instead of:
         //   await asyncLazy.Value
         // ReSharper disable once UnusedMember.Global
-        public TaskAwaiter<T> GetAwaiter()
-        {
-            return Value.GetAwaiter();
-        }
+        public TaskAwaiter<T> GetAwaiter() => Value.GetAwaiter();
     }
 }
