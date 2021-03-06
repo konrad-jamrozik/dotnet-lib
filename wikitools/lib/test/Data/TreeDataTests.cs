@@ -21,7 +21,7 @@ namespace Wikitools.Lib.Tests.Data
         [Fact]
         public void TestTreeData1()
         {
-            var treeData = new TreeData<string>(new[]
+            var treeData = new FilePathTreeData(new[]
             {
                 "foo\\bar1", 
                 "foo\\bar2"
@@ -39,7 +39,7 @@ namespace Wikitools.Lib.Tests.Data
         [Fact]
         public void TestTreeData2()
         {
-            var treeData = new TreeData<string>(new[]
+            var treeData = new FilePathTreeData(new[]
             {
                 "foo\\bar1\\baz1", 
                 "foo\\bar1\\baz2",
@@ -62,7 +62,7 @@ namespace Wikitools.Lib.Tests.Data
         [Fact]
         public void TestTreeData3()
         {
-            var treeData = new TreeData<string>(new[]
+            var treeData = new FilePathTreeData(new[]
             {
                 "qux1\\foo\\bar1", 
                 "qux1\\foo\\bar2",
@@ -90,10 +90,10 @@ namespace Wikitools.Lib.Tests.Data
             Verify(treeData, expectedRows);
         }
 
-        private static void Verify(TreeData<string> treeData, (int depth, string)[] expectedRows)
+        private static void Verify(TreeData<string, string> treeData, (int depth, string)[] expectedRows)
         {
             // Act
-            (int depth, string)[] rows = treeData.AsPreorderEnumerable().ToArray();
+            (int depth, string value)[] rows = treeData.AsPreorderEnumerable().ToArray();
 
             // kj2 introduce abstraction for this
             expectedRows.Zip(rows).ToList().ForEach(entry => Assert.Equal(entry.First, entry.Second));

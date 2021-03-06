@@ -15,6 +15,6 @@ namespace Wikitools.Lib.OS
         string CombinePath(string path1, string path2);
         string ReadAllText(string path);
         byte[] ReadAllBytes(string path);
-        Task<TreeData<string>> FileTree(string path);
+        Task<FilePathTreeData> FileTree(string path);
     }
 }

@@ -25,7 +25,7 @@ namespace Wikitools.Lib.OS
 
         public byte[] ReadAllBytes(string path) => File.ReadAllBytes(path);
         
-        public Task<TreeData<string>> FileTree(string path)
+        public Task<FilePathTreeData> FileTree(string path)
         {
             var fileTree = new FileTree(this, path);
             return fileTree.TreeData();

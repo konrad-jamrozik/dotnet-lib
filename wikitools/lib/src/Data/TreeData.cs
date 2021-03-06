@@ -1,52 +1,63 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 
 namespace Wikitools.Lib.Data
 {
+    // kja only way to enumerate: (depth, value)
+    // primary ctor: TreeData(treeNode)
+    // secondary ctors, inheriting:
+    // TreeData<entry, item>(rows, extract) : TreeData(buildTreeNode(rows, extract))
+    // FileTreeData ...  :  TreeData<string, string>(...)
     // https://en.wikipedia.org/wiki/Trie
-    public record TreeData<T>(IEnumerable<T> Data) : IEnumerable<T> where T : IEquatable<T>
+    public record TreeData<TEntry, TItem>(IEnumerable<TEntry> Rows, Func<TEntry, IEnumerable<TItem>> ExtractItems) : IEnumerable<TEntry> where TItem : IEquatable<TItem>
     {
-        private List<(int depth, T)> BuildPreorderTree(IEnumerable<T> data)
+        public IEnumerable<(int depth, TItem value)> AsPreorderEnumerable()
+        {
+            IEnumerable<IEnumerable<TItem>> itemsColl = Rows.Select(ExtractItems);
+
+            // kj2 instead of building the preorderTree at once, do yield. Also:
+            // - the record ctor probably should have the raw tree data as ctor input,
+            // and the serialized format should be one of the "From" method.
+            //   - The From method probably should take lambda for splitting the input entries,
+            //   possibly with well-known case for strings.
+            IEnumerable<(int depth, TItem value)> buildPreorderTree2 = BuildPreorderTree2(itemsColl);
+
+            return buildPreorderTree2;
+        }
+
+        private static List<(int depth, TItem value)> BuildPreorderTree2(IEnumerable<IEnumerable<TItem>> dataEntriesParts)
         {
             List<TreeNode> nodes = new();
 
-            // kj2 the ToString()!.Split() should be a lambda param and .Cast<T> should be removed.
-            // Basically the input should be an enumerable of "T == array of U", and a lambda function
-            // telling how to convert T to array of U.
-            // Maybe have dedicated method that it will recognize that if T is string, then U is also string, and the conversion
-            // logic from T to U[] is the Splitting currently hardcoded here.
-            List<T[]> dataEntriesParts = data.Select(entry => entry.ToString()!.Split(Path.DirectorySeparatorChar).Cast<T>().ToArray()).ToList();
-
-            foreach (T[] entryParts in dataEntriesParts)
+            foreach (IEnumerable<TItem> entryParts in dataEntriesParts)
             {
-                (List<TreeNode> prefixChildren, T[] entryPartsSuffix) = FindExistingPrefix(nodes, entryParts);
+                (List<TreeNode> prefixChildren, TItem[] entryPartsSuffix) = FindExistingPrefix(nodes, entryParts.ToArray());
                 AppendSuffix(prefixChildren, entryPartsSuffix);
             }
 
             // kj2 abstract this into generic preorder traversal algorithm
-            List<(int depth, T)> preorderTree = TreeNodesToPreorderTree(nodes, depth: 0);
+            List<(int depth, TItem value)> preorderTree = TreeNodesToPreorderTree(nodes, depth: 0);
             return preorderTree;
         }
 
-        private List<(int depth, T)> TreeNodesToPreorderTree(List<TreeNode> nodes, int depth) =>
+        private static List<(int depth, TItem value)> TreeNodesToPreorderTree(List<TreeNode> nodes, int depth) =>
             nodes.SelectMany(node => TreeNodeToPreorderTree(node, depth)).ToList();
 
-        private List<(int depth, T)> TreeNodeToPreorderTree(TreeNode node, int depth)
+        private static List<(int depth, TItem value)> TreeNodeToPreorderTree(TreeNode node, int depth)
         {
-            var currNode = new List<(int depth, T)> { (depth, node.Value) };
+            var currNode = new List<(int depth, TItem value)> { (depth, node.Value) };
             var childNodes = node.Children.Any()
                 ? TreeNodesToPreorderTree(node.Children, depth + 1)
-                : new List<(int depth, T)>();
+                : new List<(int depth, TItem value)>();
             return currNode.Concat(childNodes).ToList();
         }
 
-        private void AppendSuffix(List<TreeNode> prefixChildren, T[] entryPartsSuffix)
+        private static void AppendSuffix(List<TreeNode> prefixChildren, TItem[] entryPartsSuffix)
         {
             List<TreeNode> currentChildren = prefixChildren;
-            foreach (T entryPart in entryPartsSuffix)
+            foreach (TItem entryPart in entryPartsSuffix)
             {
                 var entryPartNode = new TreeNode(entryPart, new List<TreeNode>());
                 currentChildren.Add(entryPartNode);
@@ -54,7 +65,7 @@ namespace Wikitools.Lib.Data
             }
         }
 
-        private (List<TreeNode>, T[]) FindExistingPrefix(List<TreeNode> nodes, T[] entryParts)
+        private static (List<TreeNode>, TItem[]) FindExistingPrefix(List<TreeNode> nodes, TItem[] entryParts)
         {
             List<TreeNode> currentChildren = nodes;
 
@@ -79,22 +90,10 @@ namespace Wikitools.Lib.Data
             return (currentChildren, entryParts.Skip(suffixIndex).ToArray());
         }
 
-        public IEnumerable<(int depth, T value)> AsPreorderEnumerable()
-        {
-            List<(int depth, T)> preorderTree = BuildPreorderTree(Data);
-
-            // kj2 instead of building the preorderTree at once, do yield. Also:
-            // - the record ctor probably should have the raw tree data as ctor input,
-            // and the serialized format should be one of the "From" method.
-            //   - The From method probably should take lambda for splitting the input entries,
-            //   possibly with well-known case for strings.
-            return preorderTree;
-        }
-
-        public IEnumerator<T> GetEnumerator() => Data.GetEnumerator();
+        public IEnumerator<TEntry> GetEnumerator() => Rows.GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-        private record TreeNode(T Value, List<TreeNode> Children);
+        private record TreeNode(TItem Value, List<TreeNode> Children);
     }
 }
