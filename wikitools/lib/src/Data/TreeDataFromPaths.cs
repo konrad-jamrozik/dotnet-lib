@@ -1,18 +1,20 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace Wikitools.Lib.Data
 {
-    public record TreeDataFromPaths<TLeaf, TSegment>
-        (IEnumerable<TLeaf> Rows, Func<TLeaf, IEnumerable<TSegment>> Segments) : TreeData<TSegment>(
-            TreeNodes(Rows, Segments)) where TSegment : IEquatable<TSegment>
+    public record TreeDataFromPaths<TPath, TSegment>
+        (IEnumerable<TPath> Paths, Func<TPath, IEnumerable<TSegment>> ExtractSegments) 
+        : TreeData<TSegment>(TreeNodes(Paths, ExtractSegments)), IEnumerable<TPath> 
+        where TSegment : IEquatable<TSegment>
     {
         private static IEnumerable<TreeNode<TSegment>> TreeNodes(
-            IEnumerable<TLeaf> paths,
-            Func<TLeaf, IEnumerable<TSegment>> segments)
+            IEnumerable<TPath> paths,
+            Func<TPath, IEnumerable<TSegment>> extractSegments)
         {
-            IEnumerable<IEnumerable<TSegment>> pathsSegments = paths.Select(segments);
+            IEnumerable<IEnumerable<TSegment>> pathsSegments = paths.Select(extractSegments);
             IEnumerable<TreeNode<TSegment>> nodes = TreeNodesFromItems(pathsSegments);
             return nodes;
         }
@@ -65,5 +67,9 @@ namespace Wikitools.Lib.Data
 
             return (currentChildren, entryParts.Skip(suffixIndex).ToArray());
         }
+
+        public IEnumerator<TPath> GetEnumerator() => Paths.GetEnumerator();
+
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 }

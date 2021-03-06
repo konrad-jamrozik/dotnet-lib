@@ -90,7 +90,7 @@ namespace Wikitools.Lib.Tests.Data
             Verify(treeData, expectedRows);
         }
 
-        private static void Verify(TreeData<string, string> treeData, (int depth, string)[] expectedRows)
+        private static void Verify(FilePathTreeData treeData, (int depth, string)[] expectedRows)
         {
             // Act
             (int depth, string value)[] rows = treeData.AsPreorderEnumerable().ToArray();
