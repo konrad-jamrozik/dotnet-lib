@@ -3,12 +3,6 @@ using System.Linq;
 
 namespace Wikitools.Lib.Data
 {
-    // kja design the new TreeData, based on my Dendron projects.wikitools.scratchpad
-
-    public record PathPrefix<TValue>(IList<string> PathSegments, TValue Value, IList<TreeNode<TValue>> PathSuffixes)
-    {
-    }
-
     public abstract record TreeData<TValue>(IEnumerable<TreeNode<TValue>> Nodes)
     {
         public IEnumerable<(int depth, TValue value)> AsPreorderEnumerable() => PreorderTraversal();
