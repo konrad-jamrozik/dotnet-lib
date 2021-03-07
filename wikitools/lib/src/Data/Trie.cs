@@ -16,7 +16,7 @@ namespace Wikitools.Lib.Data
             part.WrapInList().Concat(
                 // kja I think that here the part needs to be prepended to all the children.
                 // Otherwise only the last PathPart will be returned.
-                // So something like PathPart.Prepend(IEnumerable<PathPart>)
+                // So something like PathPart.Prepend(IEnumerable
                 part.Children.Any()
                     ? PreorderTraversal(part.Children)
                     : new List<PathPart<TValue>>());
