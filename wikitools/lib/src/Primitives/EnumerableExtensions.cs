@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Wikitools.Lib.Contracts;
 
 namespace Wikitools.Lib.Primitives
 {
@@ -40,6 +41,33 @@ namespace Wikitools.Lib.Primitives
 
             union.AssertDistinctBy(selectKey);
             return union;
+        }
+
+        public static void AssertOrderedBy<TSource, TKey>(
+            this IEnumerable<TSource> source,
+            Func<TSource, TKey> selectKey)
+        {
+            var sourceArray = source as TSource[] ?? source.ToArray();
+            var ordered     = sourceArray.OrderBy(selectKey).ToArray();
+            if (!ordered.SequenceEqual(sourceArray))
+            {
+                throw new InvariantException();
+            }
+        }
+
+        public static bool AllSame<TSource>(
+            this IEnumerable<TSource> source)
+            => source.Distinct().Count() == 1;
+
+        public static void AssertSameBy<TSource, TKey>(
+            this IEnumerable<TSource> source,
+            Func<TSource, TKey> selectKey,
+            string message)
+        {
+            if (!source.AllSameBy(selectKey))
+            {
+                throw new InvariantException(message);
+            }
         }
     }
 }

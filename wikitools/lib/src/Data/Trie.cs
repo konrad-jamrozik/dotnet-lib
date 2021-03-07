@@ -21,6 +21,4 @@ namespace Wikitools.Lib.Data
         private static IEnumerable<PathPart<TValue>> PreorderTraversal(IEnumerable<PathPart<TValue>> prefixes) =>
             prefixes.SelectMany(PreorderTraversal);
     }
-
-    // kja adapt. Now it will need also TValue, where for file system TValue is object which will be null (there is no 'void')
 }

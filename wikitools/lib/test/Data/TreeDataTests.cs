@@ -84,7 +84,8 @@ namespace Wikitools.Lib.Tests.Data
                 (2, "bar2"),
                 (2, "bar3"),
                 (3, "bar2"),
-                (1, "bar1")
+                (1, "bar1"),
+                (2, "foo"),
             };
 
             Verify(treeData, expectedRows);
@@ -95,6 +96,7 @@ namespace Wikitools.Lib.Tests.Data
             // Act
             (int depth, string value)[] rows = treeData.AsPreorderEnumerable().ToArray();
 
+            // kja this assert is busted, as it doesn't account for expected having more elems.
             // kj2 introduce abstraction for this
             expectedRows.Zip(rows).ToList().ForEach(entry => Assert.Equal(entry.First, entry.Second));
         }

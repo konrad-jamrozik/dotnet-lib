@@ -19,10 +19,10 @@ namespace Wikitools.Lib.Data
             // n-th entry is the collection of n-th segment from all paths.
             var segmentsByDepth = paths.Select(toSegments).Transpose().ToList();
 
-            return BuildPathPart(segmentsByDepth);
+            return BuildTrie(segmentsByDepth);
         }
 
-        private static PathPart<object?> BuildPathPart(IList<IEnumerable<string>> segmentsByDepth)
+        private static PathPart<object?> BuildTrie(IList<IEnumerable<string>> segmentsByDepth)
         {
             // Find the shared common prefix across all paths, i.e.
             // The first n segments that are the same for all paths.
@@ -31,18 +31,25 @@ namespace Wikitools.Lib.Data
             // Select the first n segments that are the same for all paths.
             var samePrefix = segmentsSamePrefix.Select(segmentsAtDepth => segmentsAtDepth.First()).ToList();
 
-            var segmentsSuffixes = segmentsByDepth.Skip(samePrefix.Count);
+            var segmentsSuffixes = segmentsByDepth.Skip(samePrefix.Count).ToList();
 
             var suffixPathsParts = BuildSuffixes(segmentsSuffixes);
             return new PathPart<object?>(samePrefix, null, suffixPathsParts);
         }
 
-        private static List<PathPart<object?>> BuildSuffixes(IEnumerable<IEnumerable<string>> segmentsSuffixes)
+        private static List<PathPart<object?>> BuildSuffixes(IList<IEnumerable<string>> segmentsByDepth)
         {
-            if (!segmentsSuffixes.Any())
+            if (!segmentsByDepth.Any())
                 return new List<PathPart<object?>>();
 
-            return new List<PathPart<object?>>();
+            // kja is it possible to avoid duplicating this call, by restructuring the recursion?
+            // Or maybe pass around both segmentsByDepth and segmentsByPath
+            var paths = segmentsByDepth.Transpose().ToList();
+
+            var prefixes = segmentsByDepth.First().Distinct();
+            var pathsWithPrefix = prefixes.Select(prefix => paths.Where(pathSegments => pathSegments.First() == prefix));
+            var suffixes = pathsWithPrefix.Select(pathWithPrefix => BuildTrie(pathWithPrefix.Transpose().ToList()));
+            return suffixes.ToList();
         }
 
         public IEnumerator<string> GetEnumerator() => Paths.GetEnumerator();
