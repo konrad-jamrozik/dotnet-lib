@@ -29,8 +29,9 @@ namespace Wikitools.Lib.Data
 
             var pathsSuffixes           = pathsSegments.Select(path => path.Skip(prefix.Count));
             var segmentsByDepthSuffixes = segmentsByDepth.Skip(prefix.Count).ToList();
-            return new PathPart<object?>(prefix, null, 
-                Suffixes(pathsSuffixes, segmentsByDepthSuffixes));
+            var suffixes                = Suffixes(pathsSuffixes, segmentsByDepthSuffixes);
+
+            return new PathPart<object?>(prefix, null, suffixes);
         }
 
         private static IEnumerable<PathPart<object?>> Suffixes(
