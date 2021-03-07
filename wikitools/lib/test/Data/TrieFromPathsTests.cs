@@ -11,7 +11,7 @@ namespace Wikitools.Lib.Tests.Data
     public class TrieFromPathsTests
     {
 
-        // kja fails
+        // kja fails. Bug in configuration of Wikitools.Lib.Data.Trie.PreorderTraversal
         [Fact]
         public void TestTreeData1()
         {
