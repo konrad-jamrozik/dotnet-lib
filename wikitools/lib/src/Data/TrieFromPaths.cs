@@ -17,14 +17,21 @@ namespace Wikitools.Lib.Data
         {
             // Organize the paths by their segment at depth.
             // n-th entry is the collection of n-th segment from all paths.
-            var pathsSegmentsByDepth = paths.Select(toSegments).Transpose();
+            var segmentsByDepth = paths.Select(toSegments).Transpose().ToList();
 
+            return BuildPathPart(segmentsByDepth);
+        }
+
+        private static PathPart<object?> BuildPathPart(IList<IEnumerable<string>> segmentsByDepth)
+        {
             // Find the shared common prefix across all paths, i.e.
             // The first n segments that are the same for all paths.
-            IEnumerable<IEnumerable<string>> pathsSegmentsByDepthSamePrefix = pathsSegmentsByDepth.TakeWhile(segmentsAtDepth => segmentsAtDepth.AllSame());
+            var segmentsSamePrefix = segmentsByDepth.TakeWhile(segmentsAtDepth => segmentsAtDepth.AllSame());
 
             // Select the first n segments that are the same for all paths.
-            IEnumerable<string> samePrefix = pathsSegmentsByDepthSamePrefix.Select(segmentsAtDepth => segmentsAtDepth.First());
+            var samePrefix = segmentsSamePrefix.Select(segmentsAtDepth => segmentsAtDepth.First()).ToList();
+
+            var segmentsSuffixes = segmentsByDepth.Skip(samePrefix.Count);
 
             var childPathParts = new List<PathPart<object?>>(); // kja build the suffixes recursively
             return new PathPart<object?>(samePrefix, null, childPathParts);
