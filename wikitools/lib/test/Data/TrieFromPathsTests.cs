@@ -1,8 +1,10 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using MoreLinq;
 using Wikitools.Lib.Data;
+using Wikitools.Lib.Primitives;
 using Xunit;
 
 namespace Wikitools.Lib.Tests.Data
@@ -19,13 +21,12 @@ namespace Wikitools.Lib.Tests.Data
             {
                 "qux2\\foo"
             }, FilePathTreeData.SplitPath);
-            var expectedRows = new (int depth, string)[]
+            var expectedRows = new[]
             {
-                (0, "qux2"),
-                (1, "foo"),
+                PathPart.Leaf(new []{"qux2", "foo"})
             };
 
-            Verify(treeData, expectedRows);
+            Verify2(treeData, expectedRows);
         }
 
 
@@ -103,6 +104,17 @@ namespace Wikitools.Lib.Tests.Data
         }
 
 
+        private static void Verify2(Trie<object?> trie, PathPart<object?>[] expectedPathParts)
+        {
+            // Act
+            PathPart<object?>[] paths = trie.PreorderTraversal().ToArray();
+
+            expectedPathParts.Zip(paths).Assert(
+                tuple => tuple.First == tuple.Second,
+                tuple => new Exception($"expected: {tuple.First} actual: {tuple.Second}")).Consume();
+            Assert.Equal(expectedPathParts.Length, paths.Length);
+        }
+
         private static void Verify(Trie<object?> trie, (int depth, string path)[] expectedRows)
         {
             // Act
@@ -110,7 +122,9 @@ namespace Wikitools.Lib.Tests.Data
 
             Assert.Equal(expectedRows.Length, paths.Length);
 
-            expectedRows.Zip(paths).ForEach(entry =>
+            MoreEnumerable.ForEach(
+                expectedRows.Zip(paths),
+                entry =>
                 {
                     var pathPart = entry.Second;
                     var segments = pathPart.Segments.ToList();
