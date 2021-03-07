@@ -12,21 +12,24 @@ namespace Wikitools.Lib.Tests.Data
     // kja curr work
     public class TrieFromPathsTests
     {
-
-        // kja fails. Bug in configuration of Wikitools.Lib.Data.Trie.PreorderTraversal
         [Fact]
-        public void TestTreeData1()
-        {
-            var treeData = new TrieFromPaths(new[]
-            {
-                "qux2\\foo"
-            }, FilePathTreeData.SplitPath);
-            var expectedRows = new[]
-            {
-                PathPart.Leaf(new []{"qux2", "foo"})
-            };
+        public void TestTreeData1() =>
+            Verify2(
+                data: new[] { "qux2\\foo" }, 
+                expectedSegments: new[] { "qux2", "foo" }.WrapInList());
 
-            Verify2(treeData, expectedRows);
+        private static void Verify2(string[] data, IList<string[]> expectedSegments)
+        {
+            var trie = new TrieFromPaths(data, FilePathTreeData.SplitPath);
+            PathPart<object?>[] expectedPathsParts = expectedSegments.Select(PathPart.Leaf).ToArray();
+            
+            // Act
+            PathPart<object?>[] paths = trie.PreorderTraversal().ToArray();
+
+            expectedPathsParts.Zip(paths).Assert(
+                tuple => tuple.First == tuple.Second,
+                tuple => new Exception($"expected: {tuple.First} actual: {tuple.Second}")).Consume();
+            Assert.Equal(expectedPathsParts.Length, paths.Length);
         }
 
 
@@ -101,18 +104,6 @@ namespace Wikitools.Lib.Tests.Data
             };
 
             Verify(treeData, expectedRows);
-        }
-
-
-        private static void Verify2(Trie<object?> trie, PathPart<object?>[] expectedPathParts)
-        {
-            // Act
-            PathPart<object?>[] paths = trie.PreorderTraversal().ToArray();
-
-            expectedPathParts.Zip(paths).Assert(
-                tuple => tuple.First == tuple.Second,
-                tuple => new Exception($"expected: {tuple.First} actual: {tuple.Second}")).Consume();
-            Assert.Equal(expectedPathParts.Length, paths.Length);
         }
 
         private static void Verify(Trie<object?> trie, (int depth, string path)[] expectedRows)
