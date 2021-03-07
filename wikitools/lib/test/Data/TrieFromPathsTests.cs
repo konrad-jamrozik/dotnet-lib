@@ -18,8 +18,19 @@ namespace Wikitools.Lib.Tests.Data
                 data: new[] { "foo\\bar" }, 
                 expectedSegments: new[] { "foo", "bar" }.WrapInList());
 
+        // kja fails, as the empty prefix is not filtered out
         [Fact]
-        public void TestTreeData12() =>
+        public void TestTreeData11() =>
+            Verify2(
+                data: new[] { "foo", "bar" }, 
+                expectedSegments: new[]
+                {
+                    new[] { "foo" }, 
+                    new[] { "bar" },
+                });
+
+        [Fact]
+        public void TestTreeData2() =>
             Verify2(
                 data: new[] { 
                     "foo\\bar1", 
@@ -32,27 +43,27 @@ namespace Wikitools.Lib.Tests.Data
                 });
 
         [Fact]
-        public void TestTreeData3()
-        {
-            var treeData = new TrieFromPaths(new[]
-            {
-                "foo\\bar1\\baz1", 
-                "foo\\bar1\\baz2",
-                "foo\\bar2\\baz1", 
-                "foo\\bar2\\baz2",
-            }, FilePathTreeData.SplitPath);
-            var expectedRows = new (int depth, string)[]
-            {
-                (0, "foo"),
-                (1, "bar1"),
-                (2, "baz1"),
-                (2, "baz2"),
-                (1, "bar2"),
-                (2, "baz1"),
-                (2, "baz2")
-            };
-            Verify(treeData, expectedRows);
-        }
+        public void TestTreeData31() =>
+            Verify2(
+                data: new[] { 
+                    "foo\\bar2\\baz1",
+                    "foo\\baz1\\foo",
+                    "foo\\bar2\\baz2",
+                    "foo\\bar1\\baz1", 
+                    "foo\\bar1\\baz2"
+                },
+                expectedSegments: new[]
+                {
+                    new[] { "foo" }, 
+                    new[] { "foo", "bar2" }, 
+                    new[] { "foo", "bar2", "baz1" }, 
+                    new[] { "foo", "bar2", "baz2" },
+                    new[] { "foo", "baz1", "foo" }, 
+                    new[] { "foo", "bar1" }, 
+                    new[] { "foo", "bar1", "baz1" }, 
+                    new[] { "foo", "bar1", "baz2" }, 
+                    //new[] { "foo", "baz1" }, 
+                });
 
 
         private static void Verify2(string[] data, IList<string[]> expectedSegments)

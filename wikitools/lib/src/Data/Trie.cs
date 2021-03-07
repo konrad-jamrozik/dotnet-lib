@@ -9,28 +9,26 @@ namespace Wikitools.Lib.Data
     {
         public IEnumerable<PathPart<TValue>> PreorderTraversal() => PreorderTraversal(RootPathPart);
 
-        private static IEnumerable<PathPart<TValue>> PreorderTraversal(PathPart<TValue> pathPart) =>
-            pathPart.WrapInList().Concat(
-                // kja I think that here the pathPart needs to be prepended to all the children.
-                // Otherwise only the last PathPart will be returned.
-                // So something like PathPart.Prepend(IEnumerable)
-                //
-                // kja in general, options like that:
-                // - return PathParts that have nonempty Suffixes, or not
-                // - split each PathParts into a sequence of PathParts, each with one segment, or not.
-                // - for each returned PathPart, include all the segments from all the preceding path parts, or not.
-                // For wiki I can say the following:
-                // - I need each PathPart with nonempty suffix, as it might be a page or dir with subpages
-                //   - However, this should be reflected by the input paths to wiki, so don't really need it.
-                // - I need path each segment independently, as segment is a page or dir
-                //   - However, this should be reflected by the input paths to wiki, so don't really need it.
-                // - I need all the preceding segments, so I can construct full URL to the page.
+        /// <summary>
+        /// This traversal implementation will behave as follows:
+        /// (a) Each returned path part will have all segments of the part itself
+        /// (b) Each returned path part will also have all segments of prefix path parts
+        /// prepended.
+        /// (c) There is entry in the result for each path part that has no suffixes.
+        /// (d) There is entry in the result for each path part that has at least one suffix.
+        /// </summary>
+        private static IEnumerable<PathPart<TValue>> PreorderTraversal(PathPart<TValue> pathPart)
+        {
+            // This variable contains the segments providing property (a)
+            var currentPathPart = pathPart.WrapInList();
+            // The .Select(pathPart.Concat) provides property (b)
+            var suffixes = PreorderTraversal(pathPart.Suffixes).Select(pathPart.Concat);
+            // Excluding currentPathPart if there are no suffixes would negate property (c)
+            // Excluding currentPathPart if there are    suffixes would negate property (d)
+            return currentPathPart.Concat(suffixes);
+        }
 
-                pathPart.Suffixes.Any()
-                    ? PreorderTraversal(pathPart.Suffixes).Select(pathPart.Concat)
-                    : new List<PathPart<TValue>>());
-
-        private static IEnumerable<PathPart<TValue>> PreorderTraversal(IEnumerable<PathPart<TValue>> prefixes) =>
-            prefixes.SelectMany(PreorderTraversal);
+        private static IEnumerable<PathPart<TValue>> PreorderTraversal(IEnumerable<PathPart<TValue>> pathParts) 
+            => pathParts.SelectMany(PreorderTraversal);
     }
 }
