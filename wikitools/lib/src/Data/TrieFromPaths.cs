@@ -33,8 +33,16 @@ namespace Wikitools.Lib.Data
 
             var segmentsSuffixes = segmentsByDepth.Skip(samePrefix.Count);
 
-            var childPathParts = new List<PathPart<object?>>(); // kja build the suffixes recursively
-            return new PathPart<object?>(samePrefix, null, childPathParts);
+            var suffixPathsParts = BuildSuffixes(segmentsSuffixes);
+            return new PathPart<object?>(samePrefix, null, suffixPathsParts);
+        }
+
+        private static List<PathPart<object?>> BuildSuffixes(IEnumerable<IEnumerable<string>> segmentsSuffixes)
+        {
+            if (!segmentsSuffixes.Any())
+                return new List<PathPart<object?>>();
+
+            return new List<PathPart<object?>>();
         }
 
         public IEnumerator<string> GetEnumerator() => Paths.GetEnumerator();

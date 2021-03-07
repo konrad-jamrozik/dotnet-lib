@@ -14,8 +14,8 @@ namespace Wikitools.Lib.Data
                 // kja I think that here the part needs to be prepended to all the children.
                 // Otherwise only the last PathPart will be returned.
                 // So something like PathPart.Prepend(IEnumerable
-                part.Children.Any()
-                    ? PreorderTraversal(part.Children)
+                part.Suffixes.Any()
+                    ? PreorderTraversal(part.Suffixes)
                     : new List<PathPart<TValue>>());
 
         private static IEnumerable<PathPart<TValue>> PreorderTraversal(IEnumerable<PathPart<TValue>> prefixes) =>
