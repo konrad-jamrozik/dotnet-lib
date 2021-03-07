@@ -21,6 +21,7 @@ namespace Wikitools.Lib.Data
                 // - for each returned PathPart, include all the segments from all the preceding path parts, or not.
                 // For wiki I can say the following:
                 // - I need each PathPart with nonempty suffix, as it might be a page or dir with subpages
+                //   - However, this should be reflected by the input paths to wiki, so don't really need it.
                 // - I need path each segment independently, as segment is a page or dir
                 //   - However, this should be reflected by the input paths to wiki, so don't really need it.
                 // - I need all the preceding segments, so I can construct full URL to the page.

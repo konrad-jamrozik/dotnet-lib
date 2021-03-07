@@ -15,41 +15,21 @@ namespace Wikitools.Lib.Tests.Data
         [Fact]
         public void TestTreeData1() =>
             Verify2(
-                data: new[] { "qux2\\foo" }, 
-                expectedSegments: new[] { "qux2", "foo" }.WrapInList());
-
-        private static void Verify2(string[] data, IList<string[]> expectedSegments)
-        {
-            var trie = new TrieFromPaths(data, FilePathTreeData.SplitPath);
-            PathPart<object?>[] expectedPathsParts = expectedSegments.Select(PathPart.Leaf).ToArray();
-            
-            // Act
-            PathPart<object?>[] paths = trie.PreorderTraversal().ToArray();
-
-            expectedPathsParts.Zip(paths).Assert(
-                tuple => tuple.First == tuple.Second,
-                tuple => new Exception($"expected: {tuple.First} actual: {tuple.Second}")).Consume();
-            Assert.Equal(expectedPathsParts.Length, paths.Length);
-        }
-
+                data: new[] { "foo\\bar" }, 
+                expectedSegments: new[] { "foo", "bar" }.WrapInList());
 
         [Fact]
-        public void TestTreeData2()
-        {
-            var treeData = new TrieFromPaths(new[]
-            {
-                "foo\\bar1", 
-                "foo\\bar2"
-            }, FilePathTreeData.SplitPath);
-            var expectedRows = new (int depth, string)[]
-            {
-                (0, "foo"),
-                (1, "bar1"),
-                (1, "bar2")
-            };
-
-            Verify(treeData, expectedRows);
-        }
+        public void TestTreeData12() =>
+            Verify2(
+                data: new[] { 
+                    "foo\\bar1", 
+                    "foo\\bar2" },
+                expectedSegments: new[]
+                {
+                    new[] { "foo" }, 
+                    new[] { "foo", "bar1" }, 
+                    new[] { "foo", "bar2" }
+                });
 
         [Fact]
         public void TestTreeData3()
@@ -73,6 +53,25 @@ namespace Wikitools.Lib.Tests.Data
             };
             Verify(treeData, expectedRows);
         }
+
+
+        private static void Verify2(string[] data, IList<string[]> expectedSegments)
+        {
+            var trie = new TrieFromPaths(data, FilePathTreeData.SplitPath);
+            PathPart<object?>[] expectedPathsParts = expectedSegments.Select(PathPart.Leaf).ToArray();
+            
+            // Act
+            var preorderTraversal = trie.PreorderTraversal();
+
+            // Erase Suffixes by calling PathPart.Leaf, as we don't test for that.
+            PathPart<object?>[] paths = preorderTraversal.Select(path => PathPart.Leaf(path.Segments)).ToArray();
+
+            expectedPathsParts.Zip(paths).Assert(
+                tuple => tuple.First == tuple.Second,
+                tuple => new Exception($"expected: {tuple.First} actual: {tuple.Second}")).Consume();
+            Assert.Equal(expectedPathsParts.Length, paths.Length);
+        }
+
 
         [Fact]
         public void TestTreeData4()
