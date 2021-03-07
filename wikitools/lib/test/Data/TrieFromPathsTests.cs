@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using MoreLinq;
@@ -12,7 +13,7 @@ namespace Wikitools.Lib.Tests.Data
         [Fact]
         public void TestTreeData1()
         {
-            var treeData = new TrieFromPaths<string, string>(new[]
+            var treeData = new TrieFromPaths(new[]
             {
                 "foo\\bar1", 
                 "foo\\bar2"
@@ -30,7 +31,7 @@ namespace Wikitools.Lib.Tests.Data
         [Fact]
         public void TestTreeData2()
         {
-            var treeData = new TrieFromPaths<string, string>(new[]
+            var treeData = new TrieFromPaths(new[]
             {
                 "foo\\bar1\\baz1", 
                 "foo\\bar1\\baz2",
@@ -53,7 +54,7 @@ namespace Wikitools.Lib.Tests.Data
         [Fact]
         public void TestTreeData3()
         {
-            var treeData = new TrieFromPaths<string, string>(new[]
+            var treeData = new TrieFromPaths(new[]
             {
                 "qux1\\foo\\bar1", 
                 "qux1\\foo\\bar2",
@@ -82,17 +83,18 @@ namespace Wikitools.Lib.Tests.Data
         }
 
 
-        private static void Verify(Trie<object> trie, (int depth, string path)[] expectedRows)
+        private static void Verify(Trie<object?> trie, (int depth, string path)[] expectedRows)
         {
             // Act
-            PathPart<object>[] paths = trie.PreorderTraversal().ToArray();
+            PathPart<object?>[] paths = trie.PreorderTraversal().ToArray();
 
             Assert.Equal(expectedRows.Length, paths.Length);
 
             expectedRows.Zip(paths).ForEach(entry =>
                 {
-                    var segments = entry.Second.Segments;
-                    var actual   = (segments.Count, string.Join(Path.DirectorySeparatorChar, segments));
+                    var pathPart = entry.Second;
+                    var segments = pathPart.Segments.ToList();
+                    (int depth, object) actual = (segments.Count, string.Join(Path.DirectorySeparatorChar, segments));
                     Assert.Equal(entry.First, actual);
                 });
         }

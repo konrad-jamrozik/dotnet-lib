@@ -2,33 +2,35 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using MoreLinq;
+using Wikitools.Lib.Primitives;
 
 namespace Wikitools.Lib.Data
 {
-    public record TrieFromPaths<TPath, TSegment>
-        (IEnumerable<TPath> Paths, Func<TPath, IEnumerable<TSegment>> ExtractSegments) 
-        : Trie<object>(PathPrefixes(Paths, ExtractSegments)), IEnumerable<TPath> 
-        where TSegment : IEquatable<TSegment>
+    public record TrieFromPaths
+        (IEnumerable<string> Paths, Func<string, IEnumerable<string>> ToSegments) 
+        : Trie<object?>(RootPathPart(Paths, ToSegments)), IEnumerable<string> 
     {
-        private static IEnumerable<PathPart<object>> PathPrefixes(
-            IEnumerable<TPath> paths,
-            Func<TPath, IEnumerable<TSegment>> extractSegments)
+        private static PathPart<object?> RootPathPart(
+            IEnumerable<string> paths,
+            Func<string, IEnumerable<string>> toSegments)
         {
-            IEnumerable<IEnumerable<TSegment>> pathsSegments = paths.Select(extractSegments);
-            
-            // kja new approach:
-            // 1. Transpose the pathSegments, so first dimension is the depth, and the second dimension is the path.
-            // --> (pathsSegments.Transpose())
-            // 2. Then go from left (depth 0) to right (depth max). Continue as long as all the segments at given depth are the same.
-            // Once they are no longer the same:
-            // 1. create a prefix segment set,
-            // 2. recursively build SegmentSets for all the suffixes
-            // 3. prepend the prefix segment set to all the build suffix sets.
+            // Organize the paths by their segment at depth.
+            // n-th entry is the collection of n-th segment from all paths.
+            var pathsSegmentsByDepth = paths.Select(toSegments).Transpose();
 
-            return new List<PathPart<object>>();
+            // Find the shared common prefix across all paths, i.e.
+            // The first n segments that are the same for all paths.
+            IEnumerable<IEnumerable<string>> pathsSegmentsByDepthSamePrefix = pathsSegmentsByDepth.TakeWhile(segmentsAtDepth => segmentsAtDepth.AllSame());
+
+            // Select the first n segments that are the same for all paths.
+            IEnumerable<string> samePrefix = pathsSegmentsByDepthSamePrefix.Select(segmentsAtDepth => segmentsAtDepth.First());
+
+            var childPathParts = new List<PathPart<object?>>(); // kja build the suffixes recursively
+            return new PathPart<object?>(samePrefix, null, childPathParts);
         }
 
-        public IEnumerator<TPath> GetEnumerator() => Paths.GetEnumerator();
+        public IEnumerator<string> GetEnumerator() => Paths.GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }

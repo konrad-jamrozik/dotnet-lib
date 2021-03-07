@@ -57,15 +57,24 @@ namespace Wikitools.Lib.Primitives
             }
         }
 
-        public static void AssertSingleBy<TSource, TKey>(
+        public static void AssertSameBy<TSource, TKey>(
             this IEnumerable<TSource> source,
             Func<TSource, TKey> selectKey,
             string message)
         {
-            if (MoreEnumerable.DistinctBy(source, selectKey).Count() != 1)
+            if (!source.AllSameBy(selectKey))
             {
                 throw new InvariantException(message);
             }
         }
+
+        public static bool AllSame<TSource>(
+            this IEnumerable<TSource> source)
+            => source.Distinct().Count() == 1;
+
+        public static bool AllSameBy<TSource, TKey>(
+            this IEnumerable<TSource> source,
+            Func<TSource, TKey> selectKey)
+            => MoreEnumerable.DistinctBy(source, selectKey).Count() == 1;
     }
 }
