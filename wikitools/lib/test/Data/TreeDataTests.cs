@@ -98,42 +98,5 @@ namespace Wikitools.Lib.Tests.Data
             // kj2 introduce abstraction for this
             expectedRows.Zip(rows).ToList().ForEach(entry => Assert.Equal(entry.First, entry.Second));
         }
-
-        // kj2 to remove
-        [Fact]
-        public async Task TaskTests()
-        {
-
-            // var task = Task.Factory.StartNew(() =>
-            // {
-            //     output.WriteLine("Ungh");
-            //     return "bums";
-            // });
-            //
-            // var task2 = MyMethod();
-
-            // var task = new Task<string>(() =>
-            // {
-            //     output.WriteLine("stdout");
-            //     return "bums";
-            // });
-            var stringBuilder = new StringBuilder();
-            var ret = MyMethod(stringBuilder);
-            output.WriteLine(stringBuilder.ToString());
-
-            output.WriteLine("reached end");
-            await Task.Delay(100);
-            //var str = await task;
-        }
-
-        public async Task<string> MyMethod(StringBuilder stringBuilder)
-        {
-            TextWriter tw = new StringWriter(stringBuilder);
-            output.WriteLine("delay start");
-            await Task.Delay(300);
-            output.WriteLine("delay end");
-            await tw.WriteAsync("bums");
-            return "bla";
-        }
     }
 }
