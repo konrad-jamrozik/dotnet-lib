@@ -41,7 +41,7 @@ namespace Wikitools.Lib.Data
                 return new List<PathPart<object?>>();
 
             var prefixes = segmentsByDepth.First().Distinct();
-            var pathsWithPrefix = prefixes 
+            var pathsWithPrefix = prefixes
                 .Select(prefix => pathsSegments.Where(segments => segments.First() == prefix).ToList());
 
             var suffixes = pathsWithPrefix.Select(PathPart);

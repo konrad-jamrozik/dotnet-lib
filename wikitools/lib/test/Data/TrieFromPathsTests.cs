@@ -10,8 +10,27 @@ namespace Wikitools.Lib.Tests.Data
     // kja curr work
     public class TrieFromPathsTests
     {
+
+        // kja fails
         [Fact]
         public void TestTreeData1()
+        {
+            var treeData = new TrieFromPaths(new[]
+            {
+                "qux2\\foo"
+            }, FilePathTreeData.SplitPath);
+            var expectedRows = new (int depth, string)[]
+            {
+                (0, "qux2"),
+                (1, "foo"),
+            };
+
+            Verify(treeData, expectedRows);
+        }
+
+
+        [Fact]
+        public void TestTreeData2()
         {
             var treeData = new TrieFromPaths(new[]
             {
@@ -29,7 +48,7 @@ namespace Wikitools.Lib.Tests.Data
         }
 
         [Fact]
-        public void TestTreeData2()
+        public void TestTreeData3()
         {
             var treeData = new TrieFromPaths(new[]
             {
@@ -52,7 +71,7 @@ namespace Wikitools.Lib.Tests.Data
         }
 
         [Fact]
-        public void TestTreeData3()
+        public void TestTreeData4()
         {
             var treeData = new TrieFromPaths(new[]
             {
