@@ -62,7 +62,6 @@ namespace Wikitools.Lib.Tests.Data
                     new[] { "foo", "bar1" }, 
                     new[] { "foo", "bar1", "baz1" }, 
                     new[] { "foo", "bar1", "baz2" }, 
-                    //new[] { "foo", "baz1" }, 
                 });
 
 

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Wikitools.Lib.Primitives;
 
@@ -7,15 +8,19 @@ namespace Wikitools.Lib.Data
     // kja wire this in, instead of TreeData
     public abstract record Trie<TValue>(PathPart<TValue> RootPathPart)
     {
-        public IEnumerable<PathPart<TValue>> PreorderTraversal() => PreorderTraversal(RootPathPart);
+        public IEnumerable<PathPart<TValue>> PreorderTraversal() => RootPathPart switch
+        {
+            var (segments, _, _) when segments.Any() => PreorderTraversal(RootPathPart),
+            var (_, _, suffixes) when suffixes.Any() => PreorderTraversal(RootPathPart.Suffixes),
+            _ => Array.Empty<PathPart<TValue>>()
+        };
 
         /// <summary>
         /// This traversal implementation will behave as follows:
-        /// (a) Each returned path part will have all segments of the part itself
-        /// (b) Each returned path part will also have all segments of prefix path parts
-        /// prepended.
-        /// (c) There is entry in the result for each path part that has no suffixes.
-        /// (d) There is entry in the result for each path part that has at least one suffix.
+        /// (a) each returned path part will have all segments of the part itself
+        /// and (b) each returned path part will also have all segments of prefix path parts prepended.
+        /// and (c) there will be entry in the result for each path part that has no suffixes.
+        /// and (d) there will be entry in the result for each path part that has at least one suffix.
         /// </summary>
         private static IEnumerable<PathPart<TValue>> PreorderTraversal(PathPart<TValue> pathPart)
         {
