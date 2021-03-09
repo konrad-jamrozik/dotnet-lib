@@ -8,7 +8,6 @@ using Xunit;
 
 namespace Wikitools.Lib.Tests.Data
 {
-    // kja curr work
     public class TrieFromPathsTests
     {
         [Fact] 

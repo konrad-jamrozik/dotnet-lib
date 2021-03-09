@@ -53,14 +53,16 @@ namespace Wikitools.Lib.Data
 
         /// <summary>
         /// Select the first n segments that are the same for all paths.
+        /// The paths are represented by segmentsByDepth.
         /// </summary> 
         private static IList<string> SamePrefix(IList<IEnumerable<string>> segmentsByDepth)
         {
             // Find the shared common prefix across all paths, i.e.
-            // The first n segments that are the same for all paths.
+            // the first n segments that are the same for all paths.
             var segmentsSamePrefix = segmentsByDepth.TakeWhile(segmentsAtDepth => segmentsAtDepth.AllSame());
 
             // Select the first n segments that are the same for all paths.
+            // Note that .First() is arbitrary, as the prefix is common for all paths, not just the first.
             var samePrefix = segmentsSamePrefix.Select(segmentsAtDepth => segmentsAtDepth.First()).ToList();
             return samePrefix;
         }

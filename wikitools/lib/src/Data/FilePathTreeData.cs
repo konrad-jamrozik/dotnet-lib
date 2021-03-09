@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 
 namespace Wikitools.Lib.Data
 {
+    // kja CURR WORK rewire to use TrieFromPaths
     public record FilePathTreeData(IEnumerable<string> FilePaths) : TreeDataFromPaths<string, string>(
         FilePaths, SplitPath)
     {
