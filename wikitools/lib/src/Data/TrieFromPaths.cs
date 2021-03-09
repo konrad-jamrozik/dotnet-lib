@@ -27,9 +27,11 @@ namespace Wikitools.Lib.Data
 
             var prefix = SamePrefix(segmentsByDepth);
 
-            var pathsSuffixes           = pathsSegments.Select(path => path.Skip(prefix.Count));
+            var pathsSuffixes = pathsSegments.Select(pathSegments => pathSegments.Skip(prefix.Count));
+
             var segmentsByDepthSuffixes = segmentsByDepth.Skip(prefix.Count).ToList();
-            var suffixes                = Suffixes(pathsSuffixes, segmentsByDepthSuffixes);
+            
+            var suffixes = Suffixes(pathsSuffixes, segmentsByDepthSuffixes);
 
             return new PathPart<object?>(prefix, null, suffixes);
         }
@@ -41,9 +43,9 @@ namespace Wikitools.Lib.Data
             if (!segmentsByDepth.Any())
                 return new List<PathPart<object?>>();
 
-            var prefixes = segmentsByDepth.First().Distinct();
-            var pathsWithPrefix = prefixes
-                .Select(prefix => pathsSegments.Where(segments => segments.First() == prefix).ToList());
+            var firstSegmentsOfSuffixes = segmentsByDepth.First().Distinct();
+            var pathsWithPrefix = firstSegmentsOfSuffixes
+                .Select(prefix => pathsSegments.Where(segments => segments.FirstOrDefault() == prefix).ToList());
 
             var suffixes = pathsWithPrefix.Select(PathPart);
             return suffixes.ToList();

@@ -19,8 +19,9 @@ namespace Wikitools.Lib.Data
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return Segments.SequenceEqual(other.Segments) && EqualityComparer<TValue>.Default.Equals(Value, other.Value) &&
-                   Suffixes.SequenceEqual(other.Suffixes);
+            return Segments.SequenceEqual(other.Segments) 
+                   && EqualityComparer<TValue>.Default.Equals(Value, other.Value) 
+                   && Suffixes.SequenceEqual(other.Suffixes);
         }
 
         public override int GetHashCode() => this.GetHashCodeOnProperties();
