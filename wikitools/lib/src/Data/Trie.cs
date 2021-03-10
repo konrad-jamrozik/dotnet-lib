@@ -5,7 +5,6 @@ using Wikitools.Lib.Primitives;
 
 namespace Wikitools.Lib.Data
 {
-    // kja wire this in, instead of TreeData
     public abstract record Trie<TValue>(PathPart<TValue> RootPathPart)
     {
         public IEnumerable<PathPart<TValue>> PreorderTraversal() => RootPathPart switch
