@@ -25,10 +25,10 @@ namespace Wikitools.Lib.OS
 
         public byte[] ReadAllBytes(string path) => File.ReadAllBytes(path);
         
-        public Task<FilePathTreeData> FileTree(string path)
+        public Task<FilePathTrie> FileTree(string path)
         {
             var fileTree = new FileTree(this, path);
-            return fileTree.TreeData();
+            return fileTree.FilePathTrie();
         }
     }
 }

@@ -5,30 +5,20 @@ using Wikitools.Lib.Data;
 
 namespace Wikitools.Lib.OS
 {
-    public class FileTree
+    public record FileTree(IFileSystem FileSystem, string Path)
     {
-        private readonly IFileSystem _fileSystem;
-        private readonly string _path;
-
-        public FileTree(IFileSystem fileSystem, string path)
-        {
-            _fileSystem = fileSystem;
-            _path = path;
-
-        }
-
         // kj2 consider making FileTree implement TreeData<string> instead
-        // This will possibly require making th record abstract, and also
+        // This will possibly require making the record abstract, and also
         // the problem of task / laziness needs to be addressed
         // https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/file-system/how-to-iterate-through-a-directory-tree
-        public Task<FilePathTreeData> TreeData()
+        public Task<FilePathTrie> FilePathTrie()
         {
             // kj2 make this method Lazy
             // kj2 implement properly walking the tree: decoupled from IFilesystem
-            var directoryInfo = new DirectoryInfo(_path);
+            var directoryInfo = new DirectoryInfo(Path);
             var fileInfos     = directoryInfo.GetFiles("*.*", SearchOption.AllDirectories);
-            var paths         = fileInfos.Select(fi => Path.GetRelativePath(_path, fi.FullName));
-            return Task.FromResult(new FilePathTreeData(paths.ToArray()));
+            var paths         = fileInfos.Select(fi => System.IO.Path.GetRelativePath(Path, fi.FullName));
+            return Task.FromResult(new FilePathTrie(paths.ToArray()));
         }
     }
 }

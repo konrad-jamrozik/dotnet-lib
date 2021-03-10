@@ -3,8 +3,7 @@ using System.IO;
 
 namespace Wikitools.Lib.Data
 {
-    // kja CURR WORK rewire to use TrieFromPaths
-    public record FilePathTreeData(IEnumerable<string> FilePaths) : TreeDataFromPaths<string, string>(
+    public record FilePathTrie(IEnumerable<string> FilePaths) : TrieFromPaths(
         FilePaths, SplitPath)
     {
         // kj2 need to think about better home for this. (I)Filesystem?

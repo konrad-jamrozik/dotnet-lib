@@ -159,7 +159,7 @@ namespace Wikitools.Lib.Tests.Data
 
         private static void Verify(string[] pathsData, IList<string[]> expectedSegments)
         {
-            var trie = new TrieFromPaths(pathsData, FilePathTreeData.SplitPath);
+            var trie = new TrieFromPaths(pathsData, FilePathTrie.SplitPath);
             PathPart<object?>[] expectedPaths = expectedSegments.Select(PathPart.Leaf).ToArray();
             
             // Act

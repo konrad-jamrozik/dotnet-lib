@@ -44,7 +44,7 @@ namespace Wikitools
             //   Bar1
             //   Bar2
             //
-            // To do this elegantly, I need to grok how to convert FilePathTreeData
+            // To do this elegantly, I need to grok how to convert FilePathTrie
             // to TreeData<WikiTocEntry>
             // Note that now WikiTocEntry has Path and no Depth.
             // Depth would be redundant with abstract TreeData depth,

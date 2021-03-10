@@ -75,7 +75,7 @@ namespace Wikitools
 
         private static Task<IEnumerable<WikiTocEntry>> GetWikiPagesData(IOperatingSystem os, WikitoolsConfig cfg)
         {
-            Task<FilePathTreeData> fileTree = os.FileSystem.FileTree(cfg.GitRepoClonePath);
+            Task<FilePathTrie> fileTree = os.FileSystem.FileTree(cfg.GitRepoClonePath);
             Task<IEnumerable<WikiTocEntry>> wikiTocEntries = fileTree.Select(
                 tree => tree.Select(
                     // kja match the page with stats
