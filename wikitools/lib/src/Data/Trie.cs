@@ -25,6 +25,8 @@ namespace Wikitools.Lib.Data
         private static IEnumerable<PathPart<TValue>> PreorderTraversal(PathPart<TValue> pathPart)
         {
             // This variable contains the segments providing property (a)
+            // Note that currentPathPart.Suffixes is nonempty, but redundant, as all suffixes will be
+            // returned as other elements of the return enumerable, thanks to property (d).
             var currentPathPart = pathPart.WrapInList();
             // The .Select(pathPart.Concat) provides property (b)
             var suffixes = PreorderTraversal(pathPart.Suffixes).Select(pathPart.Concat);

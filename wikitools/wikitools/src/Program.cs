@@ -51,8 +51,6 @@ namespace Wikitools
             // https://docs.microsoft.com/en-us/dotnet/api/system.threading.tasks.task?view=net-5.0#separating-task-creation-and-execution
             var pagesViewsStats = wiki.PagesStats(cfg.AdoWikiPageViewsForDays);
 
-            var wikiPagesData = GetWikiPagesData(os, cfg);
-
             bool AuthorFilter(string author) => !cfg.ExcludedAuthors.Any(author.Contains);
             bool PathFilter(string path) => !cfg.ExcludedPaths.Any(path.Contains);
 
@@ -60,7 +58,9 @@ namespace Wikitools
             var filesReport      = new GitFilesStatsReport(timeline, recentCommits, cfg.GitLogDays, cfg.Top, PathFilter);
             var pagesViewsReport = new PagesViewsStatsReport(timeline, pagesViewsStats, cfg.AdoWikiPageViewsForDays);
             var monthlyReport    = new MonthlyStatsReport(pastCommits, AuthorFilter, PathFilter);
-            var wikiToc          = new WikiTableOfContents(wikiPagesData);
+            var wikiToc          = new WikiTableOfContents(
+                os.FileSystem.FileTree(cfg.GitRepoClonePath), 
+                Task.FromResult((IEnumerable<WikiPageStats>) new List<WikiPageStats>()));
 
             var docsToWrite = new MarkdownDocument[]
             {
@@ -71,18 +71,6 @@ namespace Wikitools
                 wikiToc
             };
             return docsToWrite;
-        }
-
-        private static Task<IEnumerable<WikiTocEntry>> GetWikiPagesData(IOperatingSystem os, WikitoolsConfig cfg)
-        {
-            Task<FilePathTrie> fileTree = os.FileSystem.FileTree(cfg.GitRepoClonePath);
-            Task<IEnumerable<WikiTocEntry>> wikiTocEntries = fileTree.Select(
-                tree => tree.Select(
-                    // kja match the page with stats
-                    // kja BUG should create entry for each segment, not for each path
-                    // More discussion on this problem in Wikitools.WikiTableOfContents.GetContent
-                    path => new WikiTocEntry(path, new WikiPageStats("", 0, new WikiPageStats.DayStat[0]))));
-            return wikiTocEntries;
         }
 
         private static Task WriteAll(MarkdownDocument[] docs, TextWriter textWriter) =>
