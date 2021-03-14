@@ -17,8 +17,8 @@ namespace Wikitools.Tests
             // Arrange inputs
             var data             = new ReportTestsData();
             var pagesStatsData   = data.PagesStats;
-            var wikiUri          = "https://dev.azure.com/adoOrg/adoProject/_wiki/wikis/wikiName";
-            var patEnvVar        = string.Empty;
+            var wikiUri          = "unused://unused";
+            var patEnvVar        = "unused";
             var pageViewsForDays = 30;
 
             // Arrange simulations

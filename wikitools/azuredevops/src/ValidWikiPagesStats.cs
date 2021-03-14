@@ -42,6 +42,8 @@ namespace Wikitools.AzureDevOps
             {
                 var (_, _, dayStats) = ps;
                 // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+                // This condition is written out here explicitly to clarify
+                // that the length can be as low as 0.
                 Contract.Assert(dayStats.Length >= 0);
                 dayStats.AssertDistinctBy(ds => ds.Day);
                 dayStats.AssertOrderedBy(ds => ds.Day);
@@ -74,7 +76,7 @@ namespace Wikitools.AzureDevOps
         /// Merges ADO Wiki page stats. previousStats with currentStats.
         ///
         /// The merge makes following assumptions about the inputs.
-        /// - The arguments obey ValidWikiPagesStats invariants, as evidenced by the argument type.
+        /// - The arguments obey ValidWikiPagesStats invariants, as evidenced by the argument types.
         /// - However, the union of arguments doesn't necessarily obey these invariants.
         /// Specifically:
         ///   - Page with the same ID might appear twice: once in each argument.
@@ -114,7 +116,9 @@ namespace Wikitools.AzureDevOps
         {
             Contract.Assert(previousPageStats.Id == currentPageStats.Id);
             return new WikiPageStats(
-                currentPageStats.Path, // This path takes precedence over previousPageStats.Path.
+                // You don't see previousPageStats.Path here as currentPageStats.Path takes precedence over it,
+                // to reflect any page Path changes that happened since previousPageStats were obtained.
+                currentPageStats.Path, 
                 previousPageStats.Id,
                 Merge(previousPageStats.DayStats, currentPageStats.DayStats));
         }
@@ -127,7 +131,7 @@ namespace Wikitools.AzureDevOps
             var mergedStats = groupedByDay.Select(dayStats =>
             {
                 Contract.Assert(dayStats.Count(), "dayStats.Count()", new Range(1, 2),
-                    upperBoundReason: "Given day stat may appear once for previous stats and once for current stats");
+                    upperBoundReason: "Given day stat may appear max twice: once for previous stats and once for current stats");
                 Contract.Assert(dayStats.Last().Count >= dayStats.First().Count,
                     "Day stat count for current stats >= day stat count for previous stats");
                 return dayStats.Last();

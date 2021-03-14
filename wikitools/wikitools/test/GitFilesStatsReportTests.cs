@@ -19,8 +19,8 @@ namespace Wikitools.Tests
             var data              = new ReportTestsData();
             var commitsData       = data.CommitsLogs;
             var logDays           = 15;
-            var gitExecutablePath = @"C:\Program Files\Git\bin\sh.exe";
-            var gitRepoDirPath    = @"C:\Users\fooUser\barRepo";
+            var gitExecutablePath = "unused";
+            var gitRepoDirPath    = "unused";
             var top               = 5;
 
             // Arrange simulations

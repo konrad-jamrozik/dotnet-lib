@@ -13,12 +13,14 @@ namespace Wikitools.AzureDevOps
 {
     public record AdoApi(IOSEnvironment Env) : IAdoApi
     {
+        public const int MaxPageViewsForDays = 30;
+
         public async Task<ValidWikiPagesStats> WikiPagesStats(
             AdoWikiUri adoWikiUri,
             string patEnvVar,
             int pageViewsForDays)
         {
-            Contract.Assert(pageViewsForDays, nameof(pageViewsForDays), new Range(1, 30), upperBoundReason: "ADO API limit");
+            Contract.Assert(pageViewsForDays, nameof(pageViewsForDays), new Range(1, MaxPageViewsForDays), upperBoundReason: "ADO API limit");
 
             var wikiHttpClient   = WikiHttpClient(adoWikiUri, patEnvVar);
             var wikiPagesDetails = await GetAllWikiPagesDetails(adoWikiUri, pageViewsForDays, wikiHttpClient);
@@ -37,7 +39,7 @@ namespace Wikitools.AzureDevOps
                 new Uri(adoWikiUri.CollectionUri),
                 new VssBasicCredential(string.Empty, password: pat));
 
-            // Microsoft.TeamFoundation.Wiki.WebApi Namespace Doc:
+            // Microsoft.TeamFoundation.Wiki.WebApi Namespace doc:
             // https://docs.microsoft.com/en-us/dotnet/api/?term=Wiki
             return connection.GetClient<WikiHttpClient>();
         }

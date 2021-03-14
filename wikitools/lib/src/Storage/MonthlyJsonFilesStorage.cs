@@ -6,6 +6,8 @@ using Wikitools.Lib.OS;
 
 namespace Wikitools.Lib.Storage
 {
+    // kj2 instead of passing StorageDirPath separately of FileSystem,
+    // introduce StorageDir class, that will encapsulate both
     public record MonthlyJsonFilesStorage(IFileSystem FileSystem, string StorageDirPath)
     {
         public T Read<T>(DateTime date)
