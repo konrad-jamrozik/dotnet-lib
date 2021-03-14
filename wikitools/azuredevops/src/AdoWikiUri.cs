@@ -2,6 +2,8 @@
 
 namespace Wikitools.AzureDevOps
 {
+    // Example value:
+    // https://dev.azure.com/adoOrg/adoProject/_wiki/wikis/wikiName
     public record AdoWikiUri(Uri Uri)
     {
         public AdoWikiUri(string uri) : this(new Uri(uri)) { }

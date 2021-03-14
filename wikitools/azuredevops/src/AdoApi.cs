@@ -37,6 +37,8 @@ namespace Wikitools.AzureDevOps
                 new Uri(adoWikiUri.CollectionUri),
                 new VssBasicCredential(string.Empty, password: pat));
 
+            // Microsoft.TeamFoundation.Wiki.WebApi Namespace Doc:
+            // https://docs.microsoft.com/en-us/dotnet/api/?term=Wiki
             return connection.GetClient<WikiHttpClient>();
         }
 
