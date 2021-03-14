@@ -8,22 +8,22 @@ namespace Wikitools.AzureDevOps.Tests
 {
     public class AdoWikiWithStorageTests
     {
+        // kja integration test:
+        // - Obtain 10 days from wiki (days 1 to 10)
+        // - Obtain 5 days from wiki (days 6 to 10)
+        // - Save to storage days 3 to 7
+        // - Obtain 5 days from "wiki with storage"
+        // - Assert the storage now has days 3 to 10
+
+        // kja simulated tests
+        // - Everything empty: no data from wiki, no data from storage
+        // - Data in wiki, nothing in storage
+        // - Storage with data from 3 months
+
         // kja curr work: ObtainsDataFromAdoApiAndStorage
         [Fact]
         public async Task ObtainsDataFromAdoApiAndStorage()
         {
-            // kja integration test:
-            // - Obtain 10 days from wiki (days 1 to 10)
-            // - Obtain 5 days from wiki (days 6 to 10)
-            // - Save to storage days 3 to 7
-            // - Obtain 5 days from "wiki with storage"
-            // - Assert the storage now has days 3 to 10
-
-            // kja simulated tests
-            // - Everything empty: no data from wiki, no data from storage
-            // - Data in wiki, nothing in storage
-            // - Storage with data from 3 months
-
             var wikiPagesStats = new WikiPageStats[] {};
 
             var pageViewsForDays = 30;
