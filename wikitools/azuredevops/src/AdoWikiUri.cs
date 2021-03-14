@@ -2,8 +2,6 @@
 
 namespace Wikitools.AzureDevOps
 {
-    // Example value:
-    // https://dev.azure.com/mseng/1ES/_wiki/wikis/SaCE Team Wiki
     public record AdoWikiUri(Uri Uri)
     {
         public AdoWikiUri(string uri) : this(new Uri(uri)) { }

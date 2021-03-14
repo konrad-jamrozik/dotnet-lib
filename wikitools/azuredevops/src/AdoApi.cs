@@ -37,10 +37,6 @@ namespace Wikitools.AzureDevOps
                 new Uri(adoWikiUri.CollectionUri),
                 new VssBasicCredential(string.Empty, password: pat));
 
-            // WikiHttpClient source:
-            // https://dev.azure.com/mseng/AzureDevOps/_git/AzureDevOps?path=%2FTfs%2FClient%2FWiki%2FGenerated%2FWikiHttpClient.cs&version=GBmaster&line=4635&lineEnd=4635&lineStartColumn=37&lineEndColumn=53&lineStyle=plain&_a=contents
-            // Microsoft.TeamFoundation.Wiki.WebApi Namespace Doc:
-            // https://docs.microsoft.com/en-us/dotnet/api/?term=Wiki
             return connection.GetClient<WikiHttpClient>();
         }
 
