@@ -36,5 +36,10 @@ namespace Wikitools.AzureDevOps
 
             return previousMonthStats.Merge(currentMonthStats).Trim(previousDate, CurrentDate);
         }
+
+        public void Save(ValidWikiPagesStats stats)
+        {
+            // kja NEXT to implement
+        }
     }
 }
