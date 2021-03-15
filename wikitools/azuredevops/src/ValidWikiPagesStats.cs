@@ -144,6 +144,10 @@ namespace Wikitools.AzureDevOps
             monthDate.MonthFirstDay(),
             monthDate.MonthLastDay());
 
+        public ValidWikiPagesStats Trim(DateTime currentDate, int daysFrom, int daysTo) => Trim(
+            currentDate.AddDays(-daysFrom),
+            currentDate.AddDays(-daysTo));
+
         public ValidWikiPagesStats Trim(DateTime startDate, DateTime endDate) => Trim(this, startDate, endDate);
 
         private static ValidWikiPagesStats Trim(ValidWikiPagesStats stats, DateTime startDate, DateTime endDate) =>
