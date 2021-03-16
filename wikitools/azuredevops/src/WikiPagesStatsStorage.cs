@@ -21,6 +21,12 @@ namespace Wikitools.AzureDevOps
             return this;
         }
 
+        public async Task<WikiPagesStatsStorage> DeleteExistingAndSave(ValidWikiPagesStats stats, DateTime date)
+        {
+            await Storage.With<IEnumerable<WikiPageStats>>(date, _ => stats);
+            return this;
+        }
+
         public ValidWikiPagesStats PagesStats(int pageViewsForDays)
         {
             var currentMonthDate = CurrentDate;
@@ -35,11 +41,6 @@ namespace Wikitools.AzureDevOps
                     : new WikiPageStats[0]);
 
             return previousMonthStats.Merge(currentMonthStats).Trim(previousDate, CurrentDate);
-        }
-
-        public void Save(ValidWikiPagesStats stats)
-        {
-            // kja NEXT to implement
         }
     }
 }

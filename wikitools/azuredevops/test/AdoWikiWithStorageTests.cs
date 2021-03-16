@@ -64,7 +64,7 @@ namespace Wikitools.AzureDevOps.Tests
             // Also, make it use separate dir, for integration tests
             var cfg = WikitoolsConfig.From(fileSystem, "wikitools_config.json");
 
-            var storageDirPath = cfg.StorageDirPath;
+            var storageDirPath = cfg.TestStorageDirPath;
             var adoWikiUri     = cfg.AdoWikiUri;
             var patEnvVar      = cfg.AdoPatEnvVar;
 
@@ -80,13 +80,15 @@ namespace Wikitools.AzureDevOps.Tests
             var storage          = Storage(fileSystem, storageDirPath, timeline);
 
             // Act 3. Save to storage page stats days 3 to 6
-            storage.Save(statsForDays3To6);
+            var storageWithStats = await storage.DeleteExistingAndSave(statsForDays3To6, timeline.UtcNow);
 
-            // Act 4. Obtain 3 days of page stats from "wiki with storage"
-            var statsForDays7To10 = await AdoWikiWithStorage(adoWiki, storage).PagesStats(pageViewsForDays: 4);
+            // Act 4. Obtain last 8 days, with last 4 days of page stats from wiki.
+            // kja To test what I want, I need to pass pageViewsForDays to 8, but set the wiki limit constant from 30 to 3.
+            var statsForDays3To10 = await AdoWikiWithStorage(adoWiki, storageWithStats).PagesStats(pageViewsForDays: 8);
 
             // Assert 4.1. Corresponds to page stats days of 3 to 10 (storage 3 to 6 merged with API 7 to 10)
-            new JsonDiffAssertion(statsForDays3To6.Merge(statsForDays5To10), statsForDays7To10).Assert();
+            var expected = statsForDays3To6.Merge(statsForDays5To10);
+            new JsonDiffAssertion(expected, statsForDays3To10).Assert();
         }
 
         private static AdoWikiWithStorage AdoWikiWithStorage(

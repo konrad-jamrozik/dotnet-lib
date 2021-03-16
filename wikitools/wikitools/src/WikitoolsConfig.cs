@@ -18,7 +18,8 @@ namespace Wikitools
         DateTime MonthlyReportStartDate,
         DateTime MonthlyReportEndDate,
         int Top,
-        string StorageDirPath)
+        string StorageDirPath,
+        string TestStorageDirPath)
     {
         public static WikitoolsConfig From(IFileSystem fs, string cfgFileName)
         {
