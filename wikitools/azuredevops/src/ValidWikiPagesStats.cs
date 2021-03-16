@@ -151,7 +151,9 @@ namespace Wikitools.AzureDevOps
         public ValidWikiPagesStats Trim(DateTime startDate, DateTime endDate) => Trim(this, startDate, endDate);
 
         // kja bug in trim on startDate? Consider startDate of 1/1/2001 9 pm and s.Day of 1/1/2001. Then it is not true that s.Day >= startDate.
-        // Test for exact startDates and inexact.
+        // - Test for exact startDates and inexact.
+        // - Maybe instead strongly type it: DateDay instead of DateTime    
+        // - Also: will have to redo my data with Wikitools.Tests.Tools.ToolMerge
         private static ValidWikiPagesStats Trim(ValidWikiPagesStats stats, DateTime startDate, DateTime endDate) =>
             new(stats.Select(ps =>
                     ps with { DayStats = ps.DayStats.Where(s => s.Day >= startDate && s.Day <= endDate).ToArray() })

@@ -76,7 +76,7 @@ namespace Wikitools.AzureDevOps.Tests
             // Act 2. Obtain 6 days of page stats from wiki (days 5 to 10)
             var statsForDays5To10 = await adoWiki.PagesStats(pageViewsForDays: 6);
 
-            var statsForDays3To6 = statsForDays1To10.Trim(timeline.UtcNow, -7, -4);
+            var statsForDays3To6 = statsForDays1To10.Trim(timeline.UtcNow.Trim(DateTimePrecision.Day), -7, -4);
             var storage          = Storage(fileSystem, storageDirPath, timeline);
 
             // Act 3. Save to storage page stats days 3 to 6

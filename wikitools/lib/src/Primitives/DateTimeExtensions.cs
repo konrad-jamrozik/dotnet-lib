@@ -8,6 +8,7 @@ namespace Wikitools.Lib.Primitives
             precision switch
             {
                 DateTimePrecision.Month => new DateTime(date.Year, date.Month, 1),
+                DateTimePrecision.Day => new DateTime(date.Year, date.Month, date.Day),
                 _ => throw new ArgumentOutOfRangeException(nameof(precision), precision, null)
             };
 
