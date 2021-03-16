@@ -140,23 +140,24 @@ namespace Wikitools.AzureDevOps
         }
 
         public ValidWikiPagesStats Trim(DateTime monthDate) => Trim(
-            this,
             monthDate.MonthFirstDay(),
             monthDate.MonthLastDay());
 
         public ValidWikiPagesStats Trim(DateTime currentDate, int daysFrom, int daysTo) => Trim(
             currentDate.AddDays(daysFrom),
-            currentDate.AddDays(daysTo));
+            currentDate.AddDays(daysTo)); 
 
-        public ValidWikiPagesStats Trim(DateTime startDate, DateTime endDate) => Trim(this, startDate, endDate);
+        // kja add unit test showing that if I would do roundUpDay: true here, then it would return wrong results
+        // kja add unit test showing correct behavior on currentDate being exact day, or not.
+        public ValidWikiPagesStats Trim(DateTime startDate, DateTime endDate) => Trim(
+            this,
+            new DateDay(startDate),
+            new DateDay(endDate));
 
-        // kja bug in trim on startDate? Consider startDate of 1/1/2001 9 pm and s.Day of 1/1/2001. Then it is not true that s.Day >= startDate.
-        // - Test for exact startDates and inexact.
-        // - Maybe instead strongly type it: DateDay instead of DateTime    
-        // - Also: will have to redo my data with Wikitools.Tests.Tools.ToolMerge
-        private static ValidWikiPagesStats Trim(ValidWikiPagesStats stats, DateTime startDate, DateTime endDate) =>
+        // kja have to redo my data with Wikitools.Tests.Tools.ToolMerge, after I introduced DateDay
+        private static ValidWikiPagesStats Trim(ValidWikiPagesStats stats, DateDay startDay, DateDay endDay) =>
             new(stats.Select(ps =>
-                    ps with { DayStats = ps.DayStats.Where(s => s.Day >= startDate && s.Day <= endDate).ToArray() })
+                    ps with { DayStats = ps.DayStats.Where(s => s.Day >= startDay && s.Day <= endDay).ToArray() })
                 .ToArray());
 
         public IEnumerator<WikiPageStats> GetEnumerator() => Data.GetEnumerator();

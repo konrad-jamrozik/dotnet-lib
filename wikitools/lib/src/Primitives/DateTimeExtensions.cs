@@ -15,8 +15,8 @@ namespace Wikitools.Lib.Primitives
         public static DateTime Utc(this DateTime date) =>
             new(date.Year, date.Month, date.Day, date.Hour, date.Minute, date.Second, DateTimeKind.Utc);
 
-        public static DateTime MonthFirstDay(this DateTime date) => new(date.Year, date.Month, 1);
+        public static DateDay MonthFirstDay(this DateTime date) => new(date.Year, date.Month, 1);
 
-        public static DateTime MonthLastDay(this DateTime date) => date.MonthFirstDay().AddMonths(1).AddDays(-1);
+        public static DateDay MonthLastDay(this DateTime date) => date.MonthFirstDay().AddMonths(1).AddDays(-1);
     }
 }

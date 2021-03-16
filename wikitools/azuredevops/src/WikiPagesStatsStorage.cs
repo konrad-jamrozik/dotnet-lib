@@ -13,6 +13,7 @@ namespace Wikitools.AzureDevOps
 
             var (previousMonthStats, currentMonthStats) = pageStats.SplitByMonth(CurrentDate);
 
+            // kja causes test AdoWikiWithStorageTests.NoData to fail, as it doesn't detect there is nothing to write.
             await Storage.With<IEnumerable<WikiPageStats>>(CurrentDate.AddMonths(-1),
                 storedStats => storedStats.Merge(previousMonthStats));
             await Storage.With<IEnumerable<WikiPageStats>>(CurrentDate,
