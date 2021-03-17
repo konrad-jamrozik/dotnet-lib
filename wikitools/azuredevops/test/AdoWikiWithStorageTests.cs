@@ -22,7 +22,6 @@ namespace Wikitools.AzureDevOps.Tests
             var pageViewsForDays = 30;
 
             var storageDirPath = "S:/simulatedStorageDir";
-            var adoWikiUri     = "unused://unused";
             var patEnvVar      = "unused";
 
             var fileSystem = new SimulatedOS().FileSystem;
@@ -30,11 +29,13 @@ namespace Wikitools.AzureDevOps.Tests
             var adoApi     = new SimulatedAdoWikiApi(wikiPagesStats);
 
             var wiki = AdoWikiWithStorage(
-                AdoWiki(adoApi, adoWikiUri, patEnvVar), 
+                AdoWiki(adoApi, patEnvVar), 
                 Storage(fileSystem, storageDirPath, ((ITimeline) timeline).UtcNow));
 
             // Act
             var pagesStats = await wiki.PagesStats(pageViewsForDays);
+
+            // kj2 assert pagesStats is empty
         }
 
         /// <summary>
@@ -59,16 +60,15 @@ namespace Wikitools.AzureDevOps.Tests
             var windowsOS  = new WindowsOS();
             var fileSystem = windowsOS.FileSystem;
             var utcNow     = new Timeline().UtcNow;
-            var adoApi     = new AdoWikiApi(windowsOS.Environment);
-
             // kja circular dependency: azuredevops-tests should not depend on wikitools
             var cfg = WikitoolsConfig.From(fileSystem, "wikitools_config.json");
 
+            var adoApi = new AdoWikiApi(new AdoWikiUri(cfg.AdoWikiUri), windowsOS.Environment);
+
             var storageDirPath = cfg.TestStorageDirPath;
-            var adoWikiUri     = cfg.AdoWikiUri;
             var patEnvVar      = cfg.AdoPatEnvVar;
 
-            var adoWiki = AdoWiki(adoApi, adoWikiUri, patEnvVar);
+            var adoWiki = AdoWiki(adoApi, patEnvVar);
 
             // Act 1. Obtain 10 days of page stats from wiki (days 1 to 10)
             var statsForDays1To10 = await adoWiki.PagesStats(pageViewsForDays: 10);
@@ -104,8 +104,7 @@ namespace Wikitools.AzureDevOps.Tests
 
         private static AdoWiki AdoWiki(
             IAdoWikiApi adoWikiApi,
-            string adoWikiUri,
             string patEnvVar)
-            => new(adoWikiApi, new AdoWikiUri(adoWikiUri), patEnvVar);
+            => new(adoWikiApi, patEnvVar);
     }
 }

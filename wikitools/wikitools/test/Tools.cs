@@ -23,11 +23,11 @@ namespace Wikitools.Tests
         {
             ITimeline        timeline   = new Timeline();
             IOperatingSystem os         = new WindowsOS();
-            IAdoWikiApi      adoWikiApi = new AdoWikiApi(os.Environment);
+            WikitoolsConfig  cfg        = WikitoolsConfig.From(os.FileSystem, "wikitools_config.json");
+            IAdoWikiApi      adoWikiApi = new AdoWikiApi(new AdoWikiUri(cfg.AdoWikiUri), os.Environment);
 
-            var cfg = WikitoolsConfig.From(os.FileSystem, "wikitools_config.json");
 
-            var wiki = Wiki(adoWikiApi, cfg.AdoWikiUri, cfg.AdoPatEnvVar);
+            var wiki = Wiki(adoWikiApi,cfg.AdoPatEnvVar);
             var pagesViewsStats = wiki.PagesStats(cfg.AdoWikiPageViewsForDays);
 
             var storage = new MonthlyJsonFilesStorage(os.FileSystem, cfg.StorageDirPath);

@@ -17,9 +17,10 @@ namespace Wikitools
         {
             ITimeline        timeline   = new Timeline();
             IOperatingSystem os         = new WindowsOS();
-            IAdoWikiApi      adoWikiApi = new AdoWikiApi(os.Environment);
+            WikitoolsConfig  cfg        = WikitoolsConfig.From(os.FileSystem, "wikitools_config.json");
+            IAdoWikiApi      adoWikiApi = new AdoWikiApi(new AdoWikiUri(cfg.AdoWikiUri), os.Environment);
 
-            var cfg = WikitoolsConfig.From(os.FileSystem, "wikitools_config.json");
+            
 
             var docsToWrite = DocsToWrite(timeline, os, adoWikiApi, cfg);
             var outputSink  = Console.Out;
@@ -36,7 +37,6 @@ namespace Wikitools
             var gitLog = GitLog(os, cfg.GitRepoClonePath, cfg.GitExecutablePath);
             var wiki = WikiWithStorage(
                 adoWikiApi,
-                cfg.AdoWikiUri,
                 cfg.AdoPatEnvVar,
                 os.FileSystem,
                 cfg.StorageDirPath,
