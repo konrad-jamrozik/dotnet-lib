@@ -61,7 +61,6 @@ namespace Wikitools.AzureDevOps.Tests
             var adoApi     = new AdoApi(windowsOS.Environment);
 
             // kja circular dependency: azuredevops-tests should not depend on wikitools
-            // Also, make it use separate dir, for integration tests
             var cfg = WikitoolsConfig.From(fileSystem, "wikitools_config.json");
 
             var storageDirPath = cfg.TestStorageDirPath;
@@ -80,11 +79,12 @@ namespace Wikitools.AzureDevOps.Tests
             var storage          = Storage(fileSystem, storageDirPath, timeline);
 
             // Act 3. Save to storage page stats days 3 to 6
-            var storageWithStats = await storage.DeleteExistingAndSave(statsForDays3To6, timeline.UtcNow);
+            var storageWithStats   = await storage.DeleteExistingAndSave(statsForDays3To6, timeline.UtcNow);
+
+            var adoWikiWithStorage = AdoWikiWithStorage(adoWiki, storageWithStats, pageViewsForDaysWikiLimit: 4);
 
             // Act 4. Obtain last 8 days, with last 4 days of page stats from wiki.
-            // kja Fails when "pageViewsForDaysWikiLimit: 3" passed to AdoWikiWithStorage
-            var statsForDays3To10 = await AdoWikiWithStorage(adoWiki, storageWithStats).PagesStats(pageViewsForDays: 8);
+            var statsForDays3To10  = await adoWikiWithStorage.PagesStats(pageViewsForDays: 8);
 
             // Assert 4.1. Corresponds to page stats days of 3 to 10 (storage 3 to 6 merged with API 7 to 10)
             var expected = statsForDays3To6.Merge(statsForDays5To10);
