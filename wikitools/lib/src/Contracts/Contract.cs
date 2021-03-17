@@ -18,9 +18,7 @@ namespace Wikitools.Lib.Contracts
         public static void Assert(bool condition, string? message = null)
         {
             if (!condition)
-            {
                 throw message != null ? new InvariantException(message!) : new InvariantException();
-            }
         }
 
     }

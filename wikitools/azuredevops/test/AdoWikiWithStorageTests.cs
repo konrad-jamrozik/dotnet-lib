@@ -83,7 +83,7 @@ namespace Wikitools.AzureDevOps.Tests
             var storageWithStats = await storage.DeleteExistingAndSave(statsForDays3To6, timeline.UtcNow);
 
             // Act 4. Obtain last 8 days, with last 4 days of page stats from wiki.
-            // kja To test what I want, I need to pass pageViewsForDays to 8, but set the wiki limit constant from 30 to 3.
+            // kja Fails when "pageViewsForDaysWikiLimit: 3" passed to AdoWikiWithStorage
             var statsForDays3To10 = await AdoWikiWithStorage(adoWiki, storageWithStats).PagesStats(pageViewsForDays: 8);
 
             // Assert 4.1. Corresponds to page stats days of 3 to 10 (storage 3 to 6 merged with API 7 to 10)
@@ -93,8 +93,9 @@ namespace Wikitools.AzureDevOps.Tests
 
         private static AdoWikiWithStorage AdoWikiWithStorage(
             AdoWiki adoWiki,
-            WikiPagesStatsStorage storage) 
-            => new(adoWiki, storage);
+            WikiPagesStatsStorage storage,
+            int? pageViewsForDaysWikiLimit = null) 
+            => new(adoWiki, storage, pageViewsForDaysWikiLimit);
 
         private static WikiPagesStatsStorage Storage(IFileSystem fileSystem, string storageDirPath, ITimeline timeline) 
             => new(

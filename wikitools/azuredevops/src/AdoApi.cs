@@ -13,7 +13,9 @@ namespace Wikitools.AzureDevOps
 {
     public record AdoApi(IOSEnvironment Env) : IAdoApi
     {
-        public const int MaxPageViewsForDays = 30;
+        // Max value supported by https://docs.microsoft.com/en-us/rest/api/azure/devops/wiki/pages%20batch/get?view=azure-devops-rest-6.1
+        // Confirmed empirically.
+        private const int MaxPageViewsForDays = 30;
 
         public async Task<ValidWikiPagesStats> WikiPagesStats(
             AdoWikiUri adoWikiUri,
