@@ -18,7 +18,7 @@ namespace Wikitools
             ITimeline        timeline   = new Timeline();
             IOperatingSystem os         = new WindowsOS();
             WikitoolsConfig  cfg        = WikitoolsConfig.From(os.FileSystem, "wikitools_config.json");
-            IAdoWikiApi      adoWikiApi = new AdoWikiApi(new AdoWikiUri(cfg.AdoWikiUri), os.Environment);
+            IAdoWikiApi      adoWikiApi = new AdoWikiApi(new AdoWikiUri(cfg.AdoWikiUri), cfg.AdoPatEnvVar, os.Environment);
 
             
 

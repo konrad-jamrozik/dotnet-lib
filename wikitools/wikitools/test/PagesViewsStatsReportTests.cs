@@ -17,7 +17,6 @@ namespace Wikitools.Tests
             // Arrange inputs
             var data             = new ReportTestsData();
             var pagesStatsData   = data.PagesStats;
-            var patEnvVar        = "unused";
             var pageViewsForDays = 30;
 
             // Arrange simulations
@@ -25,7 +24,7 @@ namespace Wikitools.Tests
             var adoApi   = new SimulatedAdoWikiApi(pagesStatsData);
 
             // Arrange SUT declaration
-            var wiki       = Wiki(adoApi, patEnvVar);
+            var wiki       = Wiki(adoApi);
             var pagesStats = wiki.PagesStats(pageViewsForDays);
             var sut        = new PagesViewsStatsReport(timeline, pagesStats, pageViewsForDays);
 

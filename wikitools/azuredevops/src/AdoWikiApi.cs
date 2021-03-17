@@ -11,19 +11,18 @@ using Wikitools.Lib.OS;
 
 namespace Wikitools.AzureDevOps
 {
-    public record AdoWikiApi(AdoWikiUri AdoWikiUri, IOSEnvironment Env) : IAdoWikiApi
+    public record AdoWikiApi(AdoWikiUri AdoWikiUri, string PatEnvVar, IOSEnvironment Env) : IAdoWikiApi
     {
         // Max value supported by https://docs.microsoft.com/en-us/rest/api/azure/devops/wiki/pages%20batch/get?view=azure-devops-rest-6.1
         // Confirmed empirically.
         private const int MaxPageViewsForDays = 30;
 
         public async Task<ValidWikiPagesStats> WikiPagesStats(
-            string patEnvVar,
             int pageViewsForDays)
         {
             Contract.Assert(pageViewsForDays, nameof(pageViewsForDays), new Range(1, MaxPageViewsForDays), upperBoundReason: "ADO API limit");
 
-            var wikiHttpClient   = WikiHttpClient(AdoWikiUri, patEnvVar);
+            var wikiHttpClient   = WikiHttpClient(AdoWikiUri, PatEnvVar);
             var wikiPagesDetails = await GetAllWikiPagesDetails(AdoWikiUri, pageViewsForDays, wikiHttpClient);
             var wikiPagesStats   = wikiPagesDetails.Select(WikiPageStats.From);
             return new ValidWikiPagesStats(wikiPagesStats);
