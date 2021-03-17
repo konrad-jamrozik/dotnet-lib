@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using Wikitools.Lib.OS;
 using Wikitools.Lib.Primitives;
@@ -30,7 +31,7 @@ namespace Wikitools.AzureDevOps.Tests
 
             var wiki = AdoWikiWithStorage(
                 AdoWiki(adoApi, adoWikiUri, patEnvVar), 
-                Storage(fileSystem, storageDirPath, timeline));
+                Storage(fileSystem, storageDirPath, ((ITimeline) timeline).UtcNow));
 
             // Act
             var pagesStats = await wiki.PagesStats(pageViewsForDays);
@@ -57,7 +58,7 @@ namespace Wikitools.AzureDevOps.Tests
         {
             var windowsOS  = new WindowsOS();
             var fileSystem = windowsOS.FileSystem;
-            var timeline   = new Timeline();
+            var utcNow     = new Timeline().UtcNow;
             var adoApi     = new AdoApi(windowsOS.Environment);
 
             // kja circular dependency: azuredevops-tests should not depend on wikitools
@@ -72,22 +73,21 @@ namespace Wikitools.AzureDevOps.Tests
             // Act 1. Obtain 10 days of page stats from wiki (days 1 to 10)
             var statsForDays1To10 = await adoWiki.PagesStats(pageViewsForDays: 10);
             
-            // Act 2. Obtain 6 days of page stats from wiki (days 5 to 10)
-            var statsForDays5To10 = await adoWiki.PagesStats(pageViewsForDays: 6);
-
-            var statsForDays3To6 = statsForDays1To10.Trim(timeline.UtcNow, -7, -4);
-            var storage          = Storage(fileSystem, storageDirPath, timeline);
+            // Act 2. Obtain 4 days of page stats from wiki (days 7 to 10)
+            var statsForDays7To10 = await adoWiki.PagesStats(pageViewsForDays: 4);
 
             // Act 3. Save to storage page stats days 3 to 6
-            var storageWithStats   = await storage.DeleteExistingAndSave(statsForDays3To6, timeline.UtcNow);
+            var statsForDays3To6 = statsForDays1To10.Trim(utcNow, -7, -4);
+            var storage          = Storage(fileSystem, storageDirPath, utcNow);
+            var storageWithStats = await storage.DeleteExistingAndSave(statsForDays3To6, utcNow);
 
+            // Act 4. Obtain last 8 days, with last 4 days of page stats from wiki
             var adoWikiWithStorage = AdoWikiWithStorage(adoWiki, storageWithStats, pageViewsForDaysWikiLimit: 4);
-
-            // Act 4. Obtain last 8 days, with last 4 days of page stats from wiki.
             var statsForDays3To10  = await adoWikiWithStorage.PagesStats(pageViewsForDays: 8);
 
-            // Assert 4.1. Corresponds to page stats days of 3 to 10 (storage 3 to 6 merged with API 7 to 10)
-            var expected = statsForDays3To6.Merge(statsForDays5To10);
+            // Assert 4.1. Act 4 corresponds to page stats days of 3 to 10
+            // (data from storage for days 3 to 6 merged with data from ADO API for days 7 to 10)
+            var expected = statsForDays3To6.Merge(statsForDays7To10);
             new JsonDiffAssertion(expected, statsForDays3To10).Assert();
         }
 
@@ -97,10 +97,10 @@ namespace Wikitools.AzureDevOps.Tests
             int? pageViewsForDaysWikiLimit = null) 
             => new(adoWiki, storage, pageViewsForDaysWikiLimit);
 
-        private static WikiPagesStatsStorage Storage(IFileSystem fileSystem, string storageDirPath, ITimeline timeline) 
+        private static WikiPagesStatsStorage Storage(IFileSystem fileSystem, string storageDirPath, DateTime utcNow) 
             => new(
                 new MonthlyJsonFilesStorage(fileSystem, storageDirPath),
-                timeline.UtcNow);
+                utcNow);
 
         private static AdoWiki AdoWiki(
             IAdoApi adoApi,

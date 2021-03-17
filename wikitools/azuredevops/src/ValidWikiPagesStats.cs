@@ -147,8 +147,6 @@ namespace Wikitools.AzureDevOps
             currentDate.AddDays(daysFrom),
             currentDate.AddDays(daysTo)); 
 
-        // kja add unit test showing that if I would do roundUpDay: true here, then it would return wrong results
-        // kja add unit test showing correct behavior on currentDate being exact day, or not.
         public ValidWikiPagesStats Trim(DateTime startDate, DateTime endDate) => Trim(
             this,
             new DateDay(startDate),
