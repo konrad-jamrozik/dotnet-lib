@@ -62,7 +62,7 @@ namespace Wikitools.AzureDevOps.Tests
             // kja circular dependency: azuredevops-tests should not depend on wikitools
             var cfg = WikitoolsConfig.From(fileSystem, "wikitools_config.json");
 
-            var adoApi = new AdoWikiApi(new AdoWikiUri(cfg.AdoWikiUri), cfg.AdoPatEnvVar, windowsOS.Environment);
+            var adoApi = new AdoWikiApi(cfg.AdoWikiUri, cfg.AdoPatEnvVar, windowsOS.Environment);
 
             var storageDirPath = cfg.TestStorageDirPath;
             var patEnvVar      = cfg.AdoPatEnvVar;

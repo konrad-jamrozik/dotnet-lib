@@ -24,7 +24,7 @@ namespace Wikitools.Tests
             ITimeline        timeline   = new Timeline();
             IOperatingSystem os         = new WindowsOS();
             WikitoolsConfig  cfg        = WikitoolsConfig.From(os.FileSystem, "wikitools_config.json");
-            IAdoWikiApi      adoWikiApi = new AdoWikiApi(new AdoWikiUri(cfg.AdoWikiUri), cfg.AdoPatEnvVar, os.Environment);
+            IAdoWikiApi      adoWikiApi = new AdoWikiApi(cfg.AdoWikiUri, cfg.AdoPatEnvVar, os.Environment);
 
 
             var wiki = Wiki(adoWikiApi);
