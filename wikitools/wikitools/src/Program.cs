@@ -15,12 +15,12 @@ namespace Wikitools
     {
         public static async Task Main(string[] args)
         {
-            ITimeline        timeline   = new Timeline();
-            IOperatingSystem os         = new WindowsOS();
-            WikitoolsConfig  cfg        = WikitoolsConfig.From(os.FileSystem, "wikitools_config.json");
-            IAdoWikiApi      adoWikiApi = new AdoWikiApi(cfg.AdoWikiUri, cfg.AdoPatEnvVar, os.Environment);
+            ITimeline        timeline = new Timeline();
+            IOperatingSystem os       = new WindowsOS();
+            WikitoolsConfig  cfg      = WikitoolsConfig.From(os.FileSystem, "wikitools_config.json");
+            IAdoWiki         adoWiki  = new AdoWiki(cfg.AdoWikiUri, cfg.AdoPatEnvVar, os.Environment);
 
-            var docsToWrite = DocsToWrite(timeline, os, adoWikiApi, cfg);
+            var docsToWrite = DocsToWrite(timeline, os, adoWiki, cfg);
             var outputSink  = Console.Out;
 
             await WriteAll(docsToWrite, outputSink);
@@ -29,12 +29,12 @@ namespace Wikitools
         private static MarkdownDocument[] DocsToWrite(
             ITimeline timeline,
             IOperatingSystem os,
-            IAdoWikiApi adoWikiApi,
+            IAdoWiki adoWiki,
             WikitoolsConfig cfg)
         {
             var gitLog = GitLog(os, cfg.GitRepoClonePath, cfg.GitExecutablePath);
             var wiki = WikiWithStorage(
-                adoWikiApi,
+                adoWiki,
                 os.FileSystem,
                 cfg.StorageDirPath,
                 timeline.UtcNow);
