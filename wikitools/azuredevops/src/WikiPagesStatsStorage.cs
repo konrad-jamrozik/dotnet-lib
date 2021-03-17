@@ -7,7 +7,7 @@ namespace Wikitools.AzureDevOps
 {
     public record WikiPagesStatsStorage(MonthlyJsonFilesStorage Storage, DateTime CurrentDate)
     {
-        public async Task<WikiPagesStatsStorage> Update(IAdoWiki wiki, int pageViewsForDays)
+        public async Task<WikiPagesStatsStorage> Update(IAdoWikiApi wiki, int pageViewsForDays)
         {
             var pageStats = await wiki.PagesStats(pageViewsForDays);
 

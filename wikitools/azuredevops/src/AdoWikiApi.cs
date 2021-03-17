@@ -20,7 +20,7 @@ namespace Wikitools.AzureDevOps
         // Confirmed empirically.
         private const int MaxPageViewsForDays = 30;
 
-        public async Task<ValidWikiPagesStats> WikiPagesStats(
+        public async Task<ValidWikiPagesStats> PagesStats(
             int pageViewsForDays)
         {
             Contract.Assert(pageViewsForDays, nameof(pageViewsForDays), new Range(1, MaxPageViewsForDays), upperBoundReason: "ADO API limit");

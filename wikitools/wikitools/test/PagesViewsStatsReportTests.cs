@@ -20,12 +20,11 @@ namespace Wikitools.Tests
             var pageViewsForDays = 30;
 
             // Arrange simulations
-            var timeline = new SimulatedTimeline();
-            var adoApi   = new SimulatedAdoWikiApi(pagesStatsData);
+            var timeline   = new SimulatedTimeline();
+            var adoWikiApi = new SimulatedAdoWikiApi(pagesStatsData);
 
             // Arrange SUT declaration
-            var wiki       = Wiki(adoApi);
-            var pagesStats = wiki.PagesStats(pageViewsForDays);
+            var pagesStats = adoWikiApi.PagesStats(pageViewsForDays);
             var sut        = new PagesViewsStatsReport(timeline, pagesStats, pageViewsForDays);
 
             var expected = new MarkdownDocument(Task.FromResult(new object[]

@@ -7,7 +7,6 @@ using Wikitools.Lib.OS;
 using Wikitools.Lib.Primitives;
 using Wikitools.Lib.Storage;
 using Xunit;
-using static Wikitools.Declare;
 
 namespace Wikitools.Tests
 {
@@ -26,9 +25,7 @@ namespace Wikitools.Tests
             WikitoolsConfig  cfg        = WikitoolsConfig.From(os.FileSystem, "wikitools_config.json");
             IAdoWikiApi      adoWikiApi = new AdoWikiApi(cfg.AdoWikiUri, cfg.AdoPatEnvVar, os.Environment);
 
-
-            var wiki = Wiki(adoWikiApi);
-            var pagesViewsStats = wiki.PagesStats(cfg.AdoWikiPageViewsForDays);
+            var pagesViewsStats = adoWikiApi.PagesStats(cfg.AdoWikiPageViewsForDays);
 
             var storage = new MonthlyJsonFilesStorage(os.FileSystem, cfg.StorageDirPath);
 

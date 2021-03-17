@@ -2,9 +2,9 @@
 
 namespace Wikitools.AzureDevOps
 {
-    public record SimulatedAdoWikiApi(WikiPageStats[] PagesStats) : IAdoWikiApi
+    public record SimulatedAdoWikiApi(WikiPageStats[] PagesStatsData) : IAdoWikiApi
     {
-        public Task<ValidWikiPagesStats> WikiPagesStats(int pageViewsForDays) =>
-            Task.FromResult(new ValidWikiPagesStats(PagesStats));
+        public Task<ValidWikiPagesStats> PagesStats(int pageViewsForDays) =>
+            Task.FromResult(new ValidWikiPagesStats(PagesStatsData));
     }
 }

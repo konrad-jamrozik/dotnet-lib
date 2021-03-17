@@ -35,7 +35,6 @@ namespace Wikitools
             var gitLog = GitLog(os, cfg.GitRepoClonePath, cfg.GitExecutablePath);
             var wiki = WikiWithStorage(
                 adoWikiApi,
-                cfg.AdoPatEnvVar,
                 os.FileSystem,
                 cfg.StorageDirPath,
                 timeline.UtcNow);

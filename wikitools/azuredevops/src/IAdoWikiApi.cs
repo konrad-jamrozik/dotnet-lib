@@ -4,6 +4,6 @@ namespace Wikitools.AzureDevOps
 {
     public interface IAdoWikiApi
     {
-        Task<ValidWikiPagesStats> WikiPagesStats(int pageViewsForDays);
+        Task<ValidWikiPagesStats> PagesStats(int pageViewsForDays);
     }
 }

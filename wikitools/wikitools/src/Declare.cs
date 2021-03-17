@@ -18,18 +18,14 @@ namespace Wikitools
             return gitLog;
         }
 
-        public static IAdoWiki Wiki(IAdoWikiApi adoWikiApi) 
-            => new AdoWiki(adoWikiApi);
-
-        public static IAdoWiki WikiWithStorage(
+        public static IAdoWikiApi WikiWithStorage(
             IAdoWikiApi adoWikiApi,
-            string patEnvVar,
             IFileSystem filesystem,
             string storageDirPath,
             DateTime now)
         {
             var storage = new WikiPagesStatsStorage(new MonthlyJsonFilesStorage(filesystem, storageDirPath), now);
-            var wikiWithStorage = new AdoWikiWithStorage(Wiki(adoWikiApi), storage);
+            var wikiWithStorage = new AdoWikiWithStorage(adoWikiApi, storage);
             return wikiWithStorage;
         }
     }

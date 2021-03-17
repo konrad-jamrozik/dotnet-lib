@@ -4,9 +4,9 @@ using Wikitools.Lib.Primitives;
 namespace Wikitools.AzureDevOps
 {
     public record AdoWikiWithStorage(
-        IAdoWiki Wiki,
+        IAdoWikiApi Wiki,
         WikiPagesStatsStorage Storage,
-        int? PageViewsForDaysWikiLimit = null) : IAdoWiki
+        int? PageViewsForDaysWikiLimit = null) : IAdoWikiApi
     {
         public Task<ValidWikiPagesStats> PagesStats(int pageViewsForDays)
         {
