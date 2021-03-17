@@ -152,7 +152,6 @@ namespace Wikitools.AzureDevOps
             new DateDay(startDate),
             new DateDay(endDate));
 
-        // kja have to redo my data with Wikitools.Tests.Tools.ToolMerge, after I introduced DateDay
         private static ValidWikiPagesStats Trim(ValidWikiPagesStats stats, DateDay startDay, DateDay endDay) =>
             new(stats.Select(ps =>
                     ps with { DayStats = ps.DayStats.Where(s => s.Day >= startDay && s.Day <= endDay).ToArray() })

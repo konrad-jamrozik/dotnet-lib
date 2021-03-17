@@ -49,8 +49,12 @@ namespace Wikitools.Tests
             var stats3Path = cfg.StorageDirPath + "/wiki_stats_2021_02_19_30days.json";
             var stats4Path = cfg.StorageDirPath + "/wiki_stats_2021_02_27_30days.json";
             var stats5Path = cfg.StorageDirPath + "/wiki_stats_2021_03_03_30days.json";
+            var stats6Path = cfg.StorageDirPath + "/wiki_stats_2021_03_17_30days.json";
 
-            await Merge(os.FileSystem, cfg, new[] { stats1Path, stats2Path, stats3Path, stats4Path, stats5Path});
+            await Merge(
+                os.FileSystem,
+                cfg,
+                new[] { stats1Path, stats2Path, stats3Path, stats4Path, stats5Path, stats6Path });
         }
 
         private static async Task Merge(IFileSystem fs, WikitoolsConfig cfg, string[] statsPaths)
@@ -58,6 +62,7 @@ namespace Wikitools.Tests
             var storage      = new MonthlyJsonFilesStorage(fs, cfg.StorageDirPath);
             var januaryDate  = new DateTime(2021, 1, 1).Utc();
             var februaryDate = new DateTime(2021, 2, 1).Utc();
+            var marchDate    = new DateTime(2021, 3, 1).Utc();
 
             var mergedStats = statsPaths.Select(s => DeserializeStats(fs, s))
                 // This is O(n^2) while it could be O(n), but for now this is good enough.
@@ -73,6 +78,10 @@ namespace Wikitools.Tests
                 mergedStats.Trim(februaryDate),
                 februaryDate,
                 "date_2021_02_toolmerged.json");
+            await storage.Write(
+                mergedStats.Trim(marchDate),
+                marchDate,
+                "date_2021_03_toolmerged.json");
         }
 
         private static ValidWikiPagesStats DeserializeStats(IFileSystem fs, string stats) =>
