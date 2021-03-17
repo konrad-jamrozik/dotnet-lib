@@ -21,6 +21,7 @@ namespace Wikitools.AzureDevOps.Tests
 
             var pageViewsForDays = 30;
 
+            // kja next: introduce IStorageDir and simulate it instead of IFileSystem. See to do comment on MonthlyJsonFilesStorage
             var storageDirPath = "S:/simulatedStorageDir";
 
             var fileSystem = new SimulatedOS().FileSystem;
