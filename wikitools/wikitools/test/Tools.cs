@@ -13,6 +13,11 @@ namespace Wikitools.Tests
 {
     public class Tools
     {
+        [Fact(Skip = "For one-off experiments")]
+        public void Scratchpad()
+        {
+        }
+
         [Fact(Skip = "Tool to be used manually")]
         public async Task ToolGetWikiStats()
         {
