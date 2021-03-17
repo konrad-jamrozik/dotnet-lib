@@ -2,10 +2,10 @@
 
 namespace Wikitools.AzureDevOps
 {
-    public record AdoWiki(IAdoApi AdoApi, AdoWikiUri AdoWikiUri, string PatEnvVar) : IAdoWiki
+    public record AdoWiki(IAdoWikiApi AdoWikiApi, AdoWikiUri AdoWikiUri, string PatEnvVar) : IAdoWiki
     {
         public Task<ValidWikiPagesStats> PagesStats(int pageViewsForDays) =>
-            // kj2 instead of passing AdiWikiUri as thi call param, rename AdoApi to AdoWikiApi and pass the uri
+            // kj2 instead of passing AdiWikiUri as thi call param, rename AdoWikiApi to AdoWikiApi and pass the uri
             // as ctor param.
             // kj2 Same story with PatEnvVar
             //
@@ -16,6 +16,6 @@ namespace Wikitools.AzureDevOps
             // completely disappear, to be replaced by AdoWikiApi, that can be simulated directly,
             // and the simulation won't need any uri or pat; it will just not have them passed
             // as param at all.
-            AdoApi.WikiPagesStats(AdoWikiUri, PatEnvVar, pageViewsForDays);
+            AdoWikiApi.WikiPagesStats(AdoWikiUri, PatEnvVar, pageViewsForDays);
     }
 }

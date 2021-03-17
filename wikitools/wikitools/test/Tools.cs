@@ -21,13 +21,13 @@ namespace Wikitools.Tests
         [Fact(Skip = "Tool to be used manually")]
         public async Task ToolGetWikiStats()
         {
-            ITimeline        timeline = new Timeline();
-            IOperatingSystem os       = new WindowsOS();
-            IAdoApi          adoApi   = new AdoApi(os.Environment);
+            ITimeline        timeline   = new Timeline();
+            IOperatingSystem os         = new WindowsOS();
+            IAdoWikiApi      adoWikiApi = new AdoWikiApi(os.Environment);
 
             var cfg = WikitoolsConfig.From(os.FileSystem, "wikitools_config.json");
 
-            var wiki = Wiki(adoApi, cfg.AdoWikiUri, cfg.AdoPatEnvVar);
+            var wiki = Wiki(adoWikiApi, cfg.AdoWikiUri, cfg.AdoPatEnvVar);
             var pagesViewsStats = wiki.PagesStats(cfg.AdoWikiPageViewsForDays);
 
             var storage = new MonthlyJsonFilesStorage(os.FileSystem, cfg.StorageDirPath);

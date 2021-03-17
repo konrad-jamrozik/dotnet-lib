@@ -102,7 +102,7 @@ namespace Wikitools.AzureDevOps.Tests
         /// behaves on data that:
         /// - had a given Foo page deleted in the most recent month, thus resulting
         /// in the Foo page stats being completely absent from data returned
-        /// from Wikitools.AzureDevOps.AdoApi.GetAllWikiPagesDetails,
+        /// from Wikitools.AzureDevOps.AdoWikiApi.GetAllWikiPagesDetails,
         /// even if there were day view stats for it in the queried days.
         /// - and had a given Bar page created in current month,
         /// but not yet present in previous month.

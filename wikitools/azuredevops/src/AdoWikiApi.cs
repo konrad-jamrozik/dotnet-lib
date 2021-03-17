@@ -11,7 +11,7 @@ using Wikitools.Lib.OS;
 
 namespace Wikitools.AzureDevOps
 {
-    public record AdoApi(IOSEnvironment Env) : IAdoApi
+    public record AdoWikiApi(IOSEnvironment Env) : IAdoWikiApi
     {
         // Max value supported by https://docs.microsoft.com/en-us/rest/api/azure/devops/wiki/pages%20batch/get?view=azure-devops-rest-6.1
         // Confirmed empirically.

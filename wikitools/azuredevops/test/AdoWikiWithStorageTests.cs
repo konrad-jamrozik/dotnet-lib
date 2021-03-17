@@ -27,7 +27,7 @@ namespace Wikitools.AzureDevOps.Tests
 
             var fileSystem = new SimulatedOS().FileSystem;
             var timeline   = new SimulatedTimeline();
-            var adoApi     = new SimulatedAdoApi(wikiPagesStats);
+            var adoApi     = new SimulatedAdoWikiApi(wikiPagesStats);
 
             var wiki = AdoWikiWithStorage(
                 AdoWiki(adoApi, adoWikiUri, patEnvVar), 
@@ -59,7 +59,7 @@ namespace Wikitools.AzureDevOps.Tests
             var windowsOS  = new WindowsOS();
             var fileSystem = windowsOS.FileSystem;
             var utcNow     = new Timeline().UtcNow;
-            var adoApi     = new AdoApi(windowsOS.Environment);
+            var adoApi     = new AdoWikiApi(windowsOS.Environment);
 
             // kja circular dependency: azuredevops-tests should not depend on wikitools
             var cfg = WikitoolsConfig.From(fileSystem, "wikitools_config.json");
@@ -103,9 +103,9 @@ namespace Wikitools.AzureDevOps.Tests
                 utcNow);
 
         private static AdoWiki AdoWiki(
-            IAdoApi adoApi,
+            IAdoWikiApi adoWikiApi,
             string adoWikiUri,
             string patEnvVar)
-            => new(adoApi, new AdoWikiUri(adoWikiUri), patEnvVar);
+            => new(adoWikiApi, new AdoWikiUri(adoWikiUri), patEnvVar);
     }
 }

@@ -23,7 +23,7 @@ namespace Wikitools.Tests
 
             // Arrange simulations
             var timeline = new SimulatedTimeline();
-            var adoApi   = new SimulatedAdoApi(pagesStatsData);
+            var adoApi   = new SimulatedAdoWikiApi(pagesStatsData);
 
             // Arrange SUT declaration
             var wiki       = Wiki(adoApi, wikiUri, patEnvVar);

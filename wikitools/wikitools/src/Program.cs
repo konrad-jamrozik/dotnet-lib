@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Wikitools.AzureDevOps;
-using Wikitools.Lib.Data;
 using Wikitools.Lib.Markdown;
 using Wikitools.Lib.OS;
 using Wikitools.Lib.Primitives;
@@ -16,13 +15,13 @@ namespace Wikitools
     {
         public static async Task Main(string[] args)
         {
-            ITimeline        timeline = new Timeline();
-            IOperatingSystem os       = new WindowsOS();
-            IAdoApi          adoApi   = new AdoApi(os.Environment);
+            ITimeline        timeline   = new Timeline();
+            IOperatingSystem os         = new WindowsOS();
+            IAdoWikiApi      adoWikiApi = new AdoWikiApi(os.Environment);
 
             var cfg = WikitoolsConfig.From(os.FileSystem, "wikitools_config.json");
 
-            var docsToWrite = DocsToWrite(timeline, os, adoApi, cfg);
+            var docsToWrite = DocsToWrite(timeline, os, adoWikiApi, cfg);
             var outputSink  = Console.Out;
 
             await WriteAll(docsToWrite, outputSink);
@@ -31,12 +30,12 @@ namespace Wikitools
         private static MarkdownDocument[] DocsToWrite(
             ITimeline timeline,
             IOperatingSystem os,
-            IAdoApi adoApi,
+            IAdoWikiApi adoWikiApi,
             WikitoolsConfig cfg)
         {
             var gitLog = GitLog(os, cfg.GitRepoClonePath, cfg.GitExecutablePath);
             var wiki = WikiWithStorage(
-                adoApi,
+                adoWikiApi,
                 cfg.AdoWikiUri,
                 cfg.AdoPatEnvVar,
                 os.FileSystem,
