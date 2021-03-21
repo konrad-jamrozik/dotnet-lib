@@ -9,38 +9,27 @@ namespace Wikitools.Lib.Storage
     // kj2 instead of passing StorageDirPath separately of FileSystem,
     // introduce IStorageDir class, that will encapsulate both.
     // This way I will need to simulate only the new IStorageDir, not IFileSystem
-    public record MonthlyJsonFilesStorage(IFileSystem FileSystem, string StorageDirPath)
+    public record MonthlyJsonFilesStorage(IFileSystem FileSystem, string StorageDirPath, Dir StorageDir)
     {
         public T Read<T>(DateTime date)
         {
             var fileToReadName = $"date_{date:yyy_MM}.json";
-            var fileToReadPath = FileSystem.JoinPath(StorageDirPath, fileToReadName);
-            return !FileSystem.FileExists(fileToReadPath)
+            // kj2 this could be made into an abstraction, like: 
+            // read json array from file or return empty array otherwise
+            return !StorageDir.FileExists(fileToReadName)
                 ? JsonSerializer.Deserialize<T>("[]")!
-                : JsonSerializer.Deserialize<T>(FileSystem.ReadAllText(fileToReadPath))!;
+                : JsonSerializer.Deserialize<T>(StorageDir.ReadAllText(fileToReadName))!;
         }
 
-        // ReSharper disable once UnusedMethodReturnValue.Global
-        // reason: Fluent interface
-        public async Task<MonthlyJsonFilesStorage> With<T>(DateTime date, Func<T, T> mergeFunc) where T : class
-        {
-            T storedData = Read<T>(date);
-            T mergedData = mergeFunc(storedData);
-            await Write(mergedData, date);
-            return this;
-        }
+        public async Task With<T>(DateTime date, Func<T, T> mergeFunc) where T : class => 
+            await Write(mergeFunc(Read<T>(date)), date);
 
-        public Task Write(object data, DateTime date, string? fileNameOverride = default) =>
-            WriteToFile(data.ToJsonIndentedUnsafe(), date, fileNameOverride);
+        public Task Write(object data, DateTime date, string? fileName = default) =>
+            WriteToFile(data.ToJsonIndentedUnsafe(), date, fileName);
 
-        private async Task WriteToFile(string dataJson, DateTime date, string? fileNameOverride)
-        {
-            fileNameOverride ??= $"date_{date:yyy_MM}.json";
-            var storageDir = new Dir(FileSystem, StorageDirPath);
-            if (!storageDir.Exists())
-                FileSystem.CreateDirectory(storageDir.Path);
-            var filePath = FileSystem.JoinPath(StorageDirPath, fileNameOverride);
-            await FileSystem.WriteAllTextAsync(filePath, dataJson);
-        }
+        private async Task WriteToFile(string dataJson, DateTime date, string? fileName) =>
+            await StorageDir
+                .CreateDirIfNotExists()
+                .WriteAllTextAsync(fileName ?? $"date_{date:yyy_MM}.json", dataJson);
     }
 }

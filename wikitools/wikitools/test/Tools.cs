@@ -27,7 +27,7 @@ namespace Wikitools.Tests
 
             var pagesViewsStats = adoWiki.PagesStats(cfg.AdoWikiPageViewsForDays);
 
-            var storage = new MonthlyJsonFilesStorage(os.FileSystem, cfg.StorageDirPath);
+            var storage = new MonthlyJsonFilesStorage(os.FileSystem, cfg.StorageDirPath, new Dir(os.FileSystem, cfg.StorageDirPath));
 
             await storage.Write(await pagesViewsStats,
                 timeline.UtcNow,
@@ -56,7 +56,7 @@ namespace Wikitools.Tests
 
         private static async Task Merge(IFileSystem fs, WikitoolsConfig cfg, string[] statsPaths)
         {
-            var storage      = new MonthlyJsonFilesStorage(fs, cfg.StorageDirPath);
+            var storage      = new MonthlyJsonFilesStorage(fs, cfg.StorageDirPath, new Dir(fs, cfg.StorageDirPath));
             var januaryDate  = new DateTime(2021, 1, 1).Utc();
             var februaryDate = new DateTime(2021, 2, 1).Utc();
             var marchDate    = new DateTime(2021, 3, 1).Utc();

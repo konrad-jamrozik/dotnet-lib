@@ -15,7 +15,7 @@ namespace Wikitools.Lib.Json
 
         private static readonly JsonSerializerOptions SerializerOptionsUnsafe = new(SerializerOptions)
         {
-            // Necessary to avoid escaping "+" and others characters.
+            // Necessary to avoid escaping "+" and other characters.
             // Reference:
             // Explanation of how to avoid escaping:
             // https://stackoverflow.com/questions/58003293/dotnet-core-system-text-json-unescape-unicode-string

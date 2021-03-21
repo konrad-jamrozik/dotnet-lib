@@ -20,11 +20,11 @@ namespace Wikitools
 
         public static IAdoWiki WikiWithStorage(
             IAdoWiki adoWiki,
-            IFileSystem filesystem,
+            IFileSystem fileSystem,
             string storageDirPath,
             DateTime now)
         {
-            var storage = new WikiPagesStatsStorage(new MonthlyJsonFilesStorage(filesystem, storageDirPath), now);
+            var storage = new WikiPagesStatsStorage(new MonthlyJsonFilesStorage(fileSystem, storageDirPath, new Dir(fileSystem, storageDirPath)), now);
             var wikiWithStorage = new AdoWikiWithStorage(adoWiki, storage);
             return wikiWithStorage;
         }

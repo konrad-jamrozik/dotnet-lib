@@ -8,10 +8,10 @@ namespace Wikitools.Lib.OS
     {
         bool DirectoryExists(string path);
         public Task WriteAllTextAsync(string path, string contents);
-        DirectoryInfo CreateDirectory(string path);
+        Dir CreateDirectory(string path);
         string JoinPath(string? path1, string? path2);
         bool FileExists(string? path);
-        DirectoryInfo CurrentDirectoryInfo { get; }
+        DirectoryInfo CurrentDirectoryInfo { get; } // kj2 IFileSystem should not depend on DirInfo
         string CombinePath(string path1, string path2);
         string ReadAllText(string path);
         byte[] ReadAllBytes(string path);

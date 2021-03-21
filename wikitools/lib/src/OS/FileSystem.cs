@@ -11,7 +11,11 @@ namespace Wikitools.Lib.OS
         public Task WriteAllTextAsync(string path, string contents) 
             => File.WriteAllTextAsync(path, contents);
 
-        public DirectoryInfo CreateDirectory(string path) => Directory.CreateDirectory(path);
+        public Dir CreateDirectory(string path)
+        {
+            var directoryInfo = Directory.CreateDirectory(path);
+            return new Dir(this, directoryInfo.FullName);
+        }
 
         public string JoinPath(string? path1, string? path2) => Path.Join(path1, path2);
 
