@@ -24,7 +24,8 @@ namespace Wikitools
             string storageDirPath,
             DateTime now)
         {
-            var storage = new WikiPagesStatsStorage(new MonthlyJsonFilesStorage(fileSystem, storageDirPath, new Dir(fileSystem, storageDirPath)), now);
+            var storage = new WikiPagesStatsStorage(new MonthlyJsonFilesStorage(new Dir(fileSystem, storageDirPath)), now);
+
             var wikiWithStorage = new AdoWikiWithStorage(adoWiki, storage);
             return wikiWithStorage;
         }

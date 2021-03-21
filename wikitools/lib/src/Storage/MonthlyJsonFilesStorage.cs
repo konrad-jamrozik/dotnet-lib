@@ -6,10 +6,7 @@ using Wikitools.Lib.OS;
 
 namespace Wikitools.Lib.Storage
 {
-    // kj2 instead of passing StorageDirPath separately of FileSystem,
-    // introduce IStorageDir class, that will encapsulate both.
-    // This way I will need to simulate only the new IStorageDir, not IFileSystem
-    public record MonthlyJsonFilesStorage(IFileSystem FileSystem, string StorageDirPath, Dir StorageDir)
+    public record MonthlyJsonFilesStorage(Dir StorageDir)
     {
         public T Read<T>(DateTime date)
         {

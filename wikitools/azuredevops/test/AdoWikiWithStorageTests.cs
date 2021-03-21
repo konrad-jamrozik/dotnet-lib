@@ -96,7 +96,7 @@ namespace Wikitools.AzureDevOps.Tests
 
         private static WikiPagesStatsStorage Storage(IFileSystem fileSystem, string storageDirPath, DateTime utcNow) 
             => new(
-                new MonthlyJsonFilesStorage(fileSystem, storageDirPath, new Dir(fileSystem, storageDirPath)),
+                new MonthlyJsonFilesStorage(new Dir(fileSystem, storageDirPath)),
                 utcNow);
     }
 }
