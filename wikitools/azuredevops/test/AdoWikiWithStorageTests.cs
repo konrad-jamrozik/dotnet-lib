@@ -17,20 +17,21 @@ namespace Wikitools.AzureDevOps.Tests
         [Fact]
         public async Task NoData()
         {
-            var wikiPagesStats = new WikiPageStats[] {};
+            var wikiPagesStats = new WikiPageStats[] { };
 
             var pageViewsForDays = 30;
 
-            // kja next: introduce IStorageDir and simulate it instead of IFileSystem. See to do comment on MonthlyJsonFilesStorage
-            var storageDirPath = "S:/simulatedStorageDir";
+            IFileSystem fileSystem          = new SimulatedOS().FileSystem;
+            // kja get rid of the param -> see todo on IFileSystem
+            var         simulatedFileSystem = new SimulatedFileSystem(fileSystem.CurrentDirectoryInfo);
+            ITimeline   timeline            = new SimulatedTimeline();
+            IAdoWiki    adoWiki             = new SimulatedAdoWiki(wikiPagesStats);
 
-            var fileSystem = new SimulatedOS().FileSystem;
-            var timeline   = new SimulatedTimeline();
-            var adoWiki    = new SimulatedAdoWiki(wikiPagesStats);
+            var storageDir = simulatedFileSystem.NextSimulatedDir();
 
             var adoWikiWithStorage = AdoWikiWithStorage(
                 adoWiki,
-                Storage(fileSystem, storageDirPath, ((ITimeline) timeline).UtcNow));
+                Storage(timeline.UtcNow, storageDir));
 
             // Act
             var pagesStats = await adoWikiWithStorage.PagesStats(pageViewsForDays);
@@ -69,13 +70,13 @@ namespace Wikitools.AzureDevOps.Tests
 
             // Act 1. Obtain 10 days of page stats from wiki (days 1 to 10)
             var statsForDays1To10 = await adoWiki.PagesStats(pageViewsForDays: 10);
-            
+
             // Act 2. Obtain 4 days of page stats from wiki (days 7 to 10)
             var statsForDays7To10 = await adoWiki.PagesStats(pageViewsForDays: 4);
 
             // Act 3. Save to storage page stats days 3 to 6
             var statsForDays3To6 = statsForDays1To10.Trim(utcNow, -7, -4);
-            var storage          = Storage(fileSystem, storageDirPath, utcNow);
+            var storage          = Storage(utcNow, new Dir(fileSystem, storageDirPath));
             var storageWithStats = await storage.DeleteExistingAndSave(statsForDays3To6, utcNow);
 
             // Act 4. Obtain last 8 days, with last 4 days of page stats from wiki
@@ -91,12 +92,12 @@ namespace Wikitools.AzureDevOps.Tests
         private static AdoWikiWithStorage AdoWikiWithStorage(
             IAdoWiki adoWiki,
             WikiPagesStatsStorage storage,
-            int? pageViewsForDaysWikiLimit = null) 
+            int? pageViewsForDaysWikiLimit = null)
             => new(adoWiki, storage, pageViewsForDaysWikiLimit);
 
-        private static WikiPagesStatsStorage Storage(IFileSystem fileSystem, string storageDirPath, DateTime utcNow) 
+        private static WikiPagesStatsStorage Storage(DateTime utcNow, Dir storageDir)
             => new(
-                new MonthlyJsonFilesStorage(new Dir(fileSystem, storageDirPath)),
+                new MonthlyJsonFilesStorage(storageDir),
                 utcNow);
     }
 }
