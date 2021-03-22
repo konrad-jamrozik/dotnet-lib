@@ -21,10 +21,10 @@ namespace Wikitools.Tests
         public async Task ToolGetWikiStats()
         {
             ITimeline        timeline = new Timeline();
-            IOperatingSystem os       = new WindowsOS();
             IFileSystem      fs       = new FileSystem();
+            IOSEnvironment   env      = new OSEnvironment();
             WikitoolsConfig  cfg      = WikitoolsConfig.From(fs, "wikitools_config.json");
-            IAdoWiki         adoWiki  = new AdoWiki(cfg.AdoWikiUri, cfg.AdoPatEnvVar, os.Environment);
+            IAdoWiki         adoWiki  = new AdoWiki(cfg.AdoWikiUri, cfg.AdoPatEnvVar, env);
 
             var pagesViewsStats = adoWiki.PagesStats(cfg.AdoWikiPageViewsForDays);
 

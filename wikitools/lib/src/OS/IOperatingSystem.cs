@@ -4,6 +4,5 @@
     public interface IOperatingSystem
     {
         IProcess Process(string executableFilePath, string workingDirPath, params string[] arguments);
-        IOSEnvironment Environment { get; }
     }
 }
