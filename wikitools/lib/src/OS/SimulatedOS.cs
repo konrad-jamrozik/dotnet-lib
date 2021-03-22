@@ -8,7 +8,7 @@ namespace Wikitools.Lib.OS
             new SimulatedProcess(ProcessesSimulationsSpecs.Single(
                 spec => spec.Matches(executableFilePath, workingDirPath, arguments)).StdOutLines);
 
-        public IFileSystem FileSystem { get; } = new FileSystem(); // kj2 this file system should be simulated
+        public IFileSystem FileSystem { get; } = new SimulatedFileSystem();
 
         public IOSEnvironment Environment { get; } = new OSEnvironment(); // kj2 this OS environment should be simulated
     }
