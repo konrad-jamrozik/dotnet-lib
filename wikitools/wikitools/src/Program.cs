@@ -17,10 +17,11 @@ namespace Wikitools
         {
             ITimeline        timeline = new Timeline();
             IOperatingSystem os       = new WindowsOS();
-            WikitoolsConfig  cfg      = WikitoolsConfig.From(os.FileSystem, "wikitools_config.json");
+            IFileSystem      fs       = new FileSystem();
+            WikitoolsConfig  cfg      = WikitoolsConfig.From(fs, "wikitools_config.json");
             IAdoWiki         adoWiki  = new AdoWiki(cfg.AdoWikiUri, cfg.AdoPatEnvVar, os.Environment);
 
-            var docsToWrite = DocsToWrite(timeline, os, adoWiki, cfg);
+            var docsToWrite = DocsToWrite(timeline, os, fs, adoWiki, cfg);
             var outputSink  = Console.Out;
 
             await WriteAll(docsToWrite, outputSink);
@@ -29,13 +30,14 @@ namespace Wikitools
         private static MarkdownDocument[] DocsToWrite(
             ITimeline timeline,
             IOperatingSystem os,
+            IFileSystem fs,
             IAdoWiki adoWiki,
             WikitoolsConfig cfg)
         {
             var gitLog = GitLog(os, cfg.GitRepoClonePath, cfg.GitExecutablePath);
             var wiki = WikiWithStorage(
                 adoWiki,
-                os.FileSystem,
+                fs,
                 cfg.StorageDirPath,
                 timeline.UtcNow);
 
@@ -55,7 +57,7 @@ namespace Wikitools
             var pagesViewsReport = new PagesViewsStatsReport(timeline, pagesViewsStats, cfg.AdoWikiPageViewsForDays);
             var monthlyReport    = new MonthlyStatsReport(pastCommits, AuthorFilter, PathFilter);
             var wikiToc          = new WikiTableOfContents(
-                os.FileSystem.FileTree(cfg.GitRepoClonePath), 
+                fs.FileTree(cfg.GitRepoClonePath), 
                 Task.FromResult((IEnumerable<WikiPageStats>) new List<WikiPageStats>()));
 
             var docsToWrite = new MarkdownDocument[]

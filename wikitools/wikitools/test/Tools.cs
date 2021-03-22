@@ -22,12 +22,13 @@ namespace Wikitools.Tests
         {
             ITimeline        timeline = new Timeline();
             IOperatingSystem os       = new WindowsOS();
-            WikitoolsConfig  cfg      = WikitoolsConfig.From(os.FileSystem, "wikitools_config.json");
+            IFileSystem      fs       = new FileSystem();
+            WikitoolsConfig  cfg      = WikitoolsConfig.From(fs, "wikitools_config.json");
             IAdoWiki         adoWiki  = new AdoWiki(cfg.AdoWikiUri, cfg.AdoPatEnvVar, os.Environment);
 
             var pagesViewsStats = adoWiki.PagesStats(cfg.AdoWikiPageViewsForDays);
 
-            var storage = new MonthlyJsonFilesStorage(new Dir(os.FileSystem, cfg.StorageDirPath));
+            var storage = new MonthlyJsonFilesStorage(new Dir(fs, cfg.StorageDirPath));
 
             await storage.Write(await pagesViewsStats,
                 timeline.UtcNow,
@@ -37,9 +38,9 @@ namespace Wikitools.Tests
         [Fact(Skip = "Tool to be used manually")]
         public async Task ToolMerge()
         {
-            IOperatingSystem os = new WindowsOS();
+            IFileSystem fs = new FileSystem();
 
-            var cfg = WikitoolsConfig.From(os.FileSystem, "wikitools_config.json");
+            var cfg = WikitoolsConfig.From(fs, "wikitools_config.json");
 
             var stats1Path = cfg.StorageDirPath + "/wiki_stats_2021_01_19_30days.json";
             var stats2Path = cfg.StorageDirPath + "/wiki_stats_2021_02_06_30days.json";
@@ -49,7 +50,7 @@ namespace Wikitools.Tests
             var stats6Path = cfg.StorageDirPath + "/wiki_stats_2021_03_17_30days.json";
 
             await Merge(
-                os.FileSystem,
+                fs,
                 cfg,
                 new[] { stats1Path, stats2Path, stats3Path, stats4Path, stats5Path, stats6Path });
         }
