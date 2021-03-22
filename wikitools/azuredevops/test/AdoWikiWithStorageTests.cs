@@ -5,6 +5,7 @@ using Wikitools.Lib.Primitives;
 using Wikitools.Lib.Storage;
 using Wikitools.Lib.Tests.Json;
 using Xunit;
+using Environment = Wikitools.Lib.OS.Environment;
 
 namespace Wikitools.AzureDevOps.Tests
 {
@@ -57,7 +58,7 @@ namespace Wikitools.AzureDevOps.Tests
         public async Task ObtainsDataFromAdoWikiApiAndStorage()
         {
             var fileSystem = new FileSystem();
-            var env        = new OSEnvironment();
+            var env        = new Environment();
             var utcNow     = new Timeline().UtcNow;
             // kja circular dependency: azuredevops-tests should not depend on wikitools
             var cfg = WikitoolsConfig.From(fileSystem, "wikitools_config.json");

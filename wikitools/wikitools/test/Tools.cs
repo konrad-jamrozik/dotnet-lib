@@ -7,6 +7,7 @@ using Wikitools.Lib.OS;
 using Wikitools.Lib.Primitives;
 using Wikitools.Lib.Storage;
 using Xunit;
+using Environment = Wikitools.Lib.OS.Environment;
 
 namespace Wikitools.Tests
 {
@@ -20,11 +21,11 @@ namespace Wikitools.Tests
         [Fact(Skip = "Tool to be used manually")]
         public async Task ToolGetWikiStats()
         {
-            ITimeline        timeline = new Timeline();
-            IFileSystem      fs       = new FileSystem();
-            IOSEnvironment   env      = new OSEnvironment();
-            WikitoolsConfig  cfg      = WikitoolsConfig.From(fs, "wikitools_config.json");
-            IAdoWiki         adoWiki  = new AdoWiki(cfg.AdoWikiUri, cfg.AdoPatEnvVar, env);
+            ITimeline       timeline = new Timeline();
+            IFileSystem     fs       = new FileSystem();
+            IEnvironment    env      = new Environment();
+            WikitoolsConfig cfg      = WikitoolsConfig.From(fs, "wikitools_config.json");
+            IAdoWiki        adoWiki  = new AdoWiki(cfg.AdoWikiUri, cfg.AdoPatEnvVar, env);
 
             var pagesViewsStats = adoWiki.PagesStats(cfg.AdoWikiPageViewsForDays);
 

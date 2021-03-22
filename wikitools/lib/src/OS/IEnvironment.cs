@@ -1,6 +1,6 @@
 ﻿namespace Wikitools.Lib.OS
 {
-    public interface IOSEnvironment
+    public interface IEnvironment
     {
         string? Value(string varName);
     }

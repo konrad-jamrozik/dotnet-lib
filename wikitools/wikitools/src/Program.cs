@@ -8,6 +8,7 @@ using Wikitools.Lib.Markdown;
 using Wikitools.Lib.OS;
 using Wikitools.Lib.Primitives;
 using static Wikitools.Declare;
+using Environment = Wikitools.Lib.OS.Environment;
 
 namespace Wikitools
 {
@@ -18,7 +19,7 @@ namespace Wikitools
             ITimeline        timeline = new Timeline();
             IOperatingSystem os       = new WindowsOS();
             IFileSystem      fs       = new FileSystem();
-            IOSEnvironment   env      = new OSEnvironment();
+            IEnvironment     env      = new Environment();
             WikitoolsConfig  cfg      = WikitoolsConfig.From(fs, "wikitools_config.json");
             IAdoWiki         adoWiki  = new AdoWiki(cfg.AdoWikiUri, cfg.AdoPatEnvVar, env);
 
