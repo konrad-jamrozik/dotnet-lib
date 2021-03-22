@@ -56,13 +56,13 @@ namespace Wikitools.AzureDevOps.Tests
         [Fact]
         public async Task ObtainsDataFromAdoWikiApiAndStorage()
         {
-            var windowsOS  = new WindowsOS();
-            var fileSystem = windowsOS.FileSystem;
+            var fileSystem = new FileSystem();
+            var env        = new OSEnvironment();
             var utcNow     = new Timeline().UtcNow;
             // kja circular dependency: azuredevops-tests should not depend on wikitools
             var cfg = WikitoolsConfig.From(fileSystem, "wikitools_config.json");
 
-            var adoWiki = new AdoWiki(cfg.AdoWikiUri, cfg.AdoPatEnvVar, windowsOS.Environment);
+            var adoWiki = new AdoWiki(cfg.AdoWikiUri, cfg.AdoPatEnvVar, env);
 
             var storageDirPath = cfg.TestStorageDirPath;
 
