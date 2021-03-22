@@ -17,12 +17,5 @@ namespace Wikitools.AzureDevOps
             ?? Array.Empty<DayStat>();
 
         public record DayStat(int Count, DateTime Day) { }
-
-        public static WikiPageStats FixNulls(WikiPageStats stats) => stats;
-            // ReSharper disable once ConstantNullCoalescingCondition
-            // reason: this method exist to fix this null, caused by System.Text.Json.JsonSerializer.Deserialize.
-            // kj2 disabled temporarily. This probably is not actually needed; it was null because I had wrong property key.
-            // Also delete From if not needed.
-            //stats with { DayStats = stats.DayStats ?? Array.Empty<DayStat>() };
     }
 }

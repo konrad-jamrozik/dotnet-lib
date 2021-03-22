@@ -84,7 +84,6 @@ namespace Wikitools.Tests
         private static ValidWikiPagesStats DeserializeStats(IFileSystem fs, string stats) =>
             new(
                 fs.ReadAllText(stats)
-                    .FromJsonTo<WikiPageStats[]>()
-                    .Select(WikiPageStats.FixNulls));
+                    .FromJsonTo<WikiPageStats[]>());
     }
 }

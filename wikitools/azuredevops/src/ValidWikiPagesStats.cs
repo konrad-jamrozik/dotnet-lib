@@ -55,9 +55,6 @@ namespace Wikitools.AzureDevOps
 
         private IEnumerable<WikiPageStats> Data { get; }
 
-        public static ValidWikiPagesStats From(IEnumerable<WikiPageStats> stats) =>
-            new(stats.Select(WikiPageStats.FixNulls));
-
         public (ValidWikiPagesStats previousMonthStats, ValidWikiPagesStats currentMonthStats) SplitByMonth(
             DateTime currentDate) =>
             SplitByMonth(this, currentDate);
