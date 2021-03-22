@@ -6,6 +6,8 @@ namespace Wikitools.Lib.OS
 {
     public class FileSystem : IFileSystem
     {
+        public Dir CurrentDir => new (this, Directory.GetCurrentDirectory());
+
         public bool DirectoryExists(string path) => Directory.Exists(path);
 
         public Task WriteAllTextAsync(string path, string contents) 
@@ -21,8 +23,6 @@ namespace Wikitools.Lib.OS
 
         public bool FileExists(string? path) => File.Exists(path);
 
-        public DirectoryInfo CurrentDirectoryInfo => new(Directory.GetCurrentDirectory());
-        
         public string CombinePath(string path1, string path2) => Path.Combine(path1, path2);
 
         public string ReadAllText(string path) => File.ReadAllText(path);
@@ -33,6 +33,12 @@ namespace Wikitools.Lib.OS
         {
             var fileTree = new FileTree(this, path);
             return fileTree.FilePathTrie();
+        }
+
+        public Dir Parent(string path)
+        {
+            var parentDirInfo = new DirectoryInfo(path).Parent;
+            return new Dir(this, parentDirInfo?.FullName ?? string.Empty);
         }
     }
 }

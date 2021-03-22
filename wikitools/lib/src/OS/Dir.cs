@@ -18,5 +18,7 @@ namespace Wikitools.Lib.OS
 
         public Task WriteAllTextAsync(string fileName, string contents) =>
             FileSystem.WriteAllTextAsync(JoinPath(fileName), contents);
+
+        public Dir Parent => FileSystem.Parent(Path);
     }
 }

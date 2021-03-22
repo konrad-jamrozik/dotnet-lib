@@ -21,13 +21,11 @@ namespace Wikitools.AzureDevOps.Tests
 
             var pageViewsForDays = 30;
 
-            IFileSystem fileSystem          = new SimulatedOS().FileSystem;
-            // kja get rid of the param -> see todo on IFileSystem
-            var         simulatedFileSystem = new SimulatedFileSystem(fileSystem.CurrentDirectoryInfo);
-            ITimeline   timeline            = new SimulatedTimeline();
-            IAdoWiki    adoWiki             = new SimulatedAdoWiki(wikiPagesStats);
+            var       fs       = new SimulatedFileSystem();
+            ITimeline timeline = new SimulatedTimeline();
+            IAdoWiki  adoWiki  = new SimulatedAdoWiki(wikiPagesStats);
 
-            var storageDir = simulatedFileSystem.NextSimulatedDir();
+            var storageDir = fs.NextSimulatedDir();
 
             var adoWikiWithStorage = AdoWikiWithStorage(
                 adoWiki,

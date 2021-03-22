@@ -9,57 +9,59 @@ namespace Wikitools.Lib.OS
     {
         private int _dirIndex;
 
-        public SimulatedFileSystem(DirectoryInfo currentDirectoryInfo)
-        {
-            CurrentDirectoryInfo = currentDirectoryInfo;
-        }
+        public Dir CurrentDir => new(this, "S:/simulatedCurrentDir");
 
         public bool DirectoryExists(string path)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public Task WriteAllTextAsync(string path, string contents)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public Dir CreateDirectory(string path)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public string JoinPath(string? path1, string? path2)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public bool FileExists(string? path)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
-        public DirectoryInfo CurrentDirectoryInfo { get; }
+
         public string CombinePath(string path1, string path2)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public string ReadAllText(string path)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public byte[] ReadAllBytes(string path)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public Task<FilePathTrie> FileTree(string path)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
-        public Dir NextSimulatedDir() => new(this, "S:/simulatedDir" + _dirIndex++);
+        public Dir Parent(string path)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Dir NextSimulatedDir() => new(this, CurrentDir.JoinPath($"simulatedDir{_dirIndex++}"));
     }
 }
