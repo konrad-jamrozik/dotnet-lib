@@ -18,24 +18,18 @@ namespace Wikitools.AzureDevOps.Tests
         [Fact]
         public async Task NoData()
         {
-            var wikiPagesStats = new WikiPageStats[] { };
-
-            var pageViewsForDays = 30;
-
-            var       fs       = new SimulatedFileSystem();
-            ITimeline timeline = new SimulatedTimeline();
-            IAdoWiki  adoWiki  = new SimulatedAdoWiki(wikiPagesStats);
-
-            var storageDir = fs.NextSimulatedDir();
-
-            var adoWikiWithStorage = AdoWikiWithStorage(
-                adoWiki,
-                Storage(timeline.UtcNow, storageDir));
+            var fs                 = new SimulatedFileSystem();
+            var timeline           = new SimulatedTimeline();
+            var adoWiki            = new SimulatedAdoWiki(new WikiPageStats[] { });
+            var storageDir         = fs.NextSimulatedDir();
+            var storage            = Storage(timeline.UtcNow, storageDir);
+            var adoWikiWithStorage = AdoWikiWithStorage(adoWiki, storage);
+            var pageViewsForDays   = 30;
 
             // Act
             var pagesStats = await adoWikiWithStorage.PagesStats(pageViewsForDays);
 
-            // kj2 assert pagesStats is empty
+            new JsonDiffAssertion(new string[0], pagesStats).Assert();
         }
 
         /// <summary>
@@ -57,11 +51,11 @@ namespace Wikitools.AzureDevOps.Tests
         [Fact]
         public async Task ObtainsDataFromAdoWikiApiAndStorage()
         {
-            var fileSystem = new FileSystem();
-            var env        = new Environment();
-            var utcNow     = new Timeline().UtcNow;
+            var fs     = new FileSystem();
+            var env    = new Environment();
+            var utcNow = new Timeline().UtcNow;
             // kja circular dependency: azuredevops-tests should not depend on wikitools
-            var cfg = WikitoolsConfig.From(fileSystem, "wikitools_config.json");
+            var cfg = WikitoolsConfig.From(fs, "wikitools_config.json");
 
             var adoWiki = new AdoWiki(cfg.AdoWikiUri, cfg.AdoPatEnvVar, env);
 
@@ -75,7 +69,7 @@ namespace Wikitools.AzureDevOps.Tests
 
             // Act 3. Save to storage page stats days 3 to 6
             var statsForDays3To6 = statsForDays1To10.Trim(utcNow, -7, -4);
-            var storage          = Storage(utcNow, new Dir(fileSystem, storageDirPath));
+            var storage          = Storage(utcNow, new Dir(fs, storageDirPath));
             var storageWithStats = await storage.DeleteExistingAndSave(statsForDays3To6, utcNow);
 
             // Act 4. Obtain last 8 days, with last 4 days of page stats from wiki
