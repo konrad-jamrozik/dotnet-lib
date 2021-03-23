@@ -21,7 +21,7 @@ namespace Wikitools
         string StorageDirPath,
         string TestStorageDirPath)
     {
-        public static WikitoolsConfig From(IFileSystem fs, string cfgFileName)
+        public static WikitoolsConfig From(IFileSystem fs, string cfgFileName = "wikitools_config.json")
         {
             var cfgFilePath = FindConfigFilePath(fs, cfgFileName);
             return cfgFilePath != null && fs.FileExists(cfgFilePath)

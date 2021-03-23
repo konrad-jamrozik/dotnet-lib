@@ -24,7 +24,7 @@ namespace Wikitools.Tests
             ITimeline       timeline = new Timeline();
             IFileSystem     fs       = new FileSystem();
             IEnvironment    env      = new Environment();
-            WikitoolsConfig cfg      = WikitoolsConfig.From(fs, "wikitools_config.json");
+            WikitoolsConfig cfg      = WikitoolsConfig.From(fs);
             IAdoWiki        adoWiki  = new AdoWiki(cfg.AdoWikiUri, cfg.AdoPatEnvVar, env);
 
             var pagesViewsStats = adoWiki.PagesStats(cfg.AdoWikiPageViewsForDays);
@@ -41,7 +41,7 @@ namespace Wikitools.Tests
         {
             IFileSystem fs = new FileSystem();
 
-            var cfg = WikitoolsConfig.From(fs, "wikitools_config.json");
+            var cfg = WikitoolsConfig.From(fs);
 
             var stats1Path = cfg.StorageDirPath + "/wiki_stats_2021_01_19_30days.json";
             var stats2Path = cfg.StorageDirPath + "/wiki_stats_2021_02_06_30days.json";

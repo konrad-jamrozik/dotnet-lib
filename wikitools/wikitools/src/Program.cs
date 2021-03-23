@@ -20,7 +20,7 @@ namespace Wikitools
             IOperatingSystem os       = new WindowsOS();
             IFileSystem      fs       = new FileSystem();
             IEnvironment     env      = new Environment();
-            WikitoolsConfig  cfg      = WikitoolsConfig.From(fs, "wikitools_config.json");
+            WikitoolsConfig  cfg      = WikitoolsConfig.From(fs);
             IAdoWiki         adoWiki  = new AdoWiki(cfg.AdoWikiUri, cfg.AdoPatEnvVar, env);
 
             var docsToWrite = DocsToWrite(timeline, os, fs, adoWiki, cfg);

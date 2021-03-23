@@ -55,7 +55,7 @@ namespace Wikitools.AzureDevOps.Tests
             var env    = new Environment();
             var utcNow = new Timeline().UtcNow;
             // kja circular dependency: azuredevops-tests should not depend on wikitools
-            var cfg = WikitoolsConfig.From(fs, "wikitools_config.json");
+            var cfg = WikitoolsConfig.From(fs);
 
             var adoWiki = new AdoWiki(cfg.AdoWikiUri, cfg.AdoPatEnvVar, env);
 
