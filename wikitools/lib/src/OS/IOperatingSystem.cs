@@ -2,6 +2,6 @@
 {
     public interface IOperatingSystem
     {
-        IProcess Process(string executableFilePath, string workingDirPath, params string[] arguments);
+        IProcess Process(string executableFilePath, Dir workingDir, params string[] arguments);
     }
 }

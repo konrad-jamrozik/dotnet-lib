@@ -10,7 +10,7 @@ namespace Wikitools.Lib.OS
 
         public CmdShell(IOperatingSystem os) => _os = os;
 
-        public Task<List<string>> GetStdOutLines(string workingDirPath, string[] arguments)
+        public Task<List<string>> GetStdOutLines(Dir workingDir, string[] arguments)
         {
             // Reference: 
             // https://ss64.com/nt/start.html
@@ -22,7 +22,7 @@ namespace Wikitools.Lib.OS
                 new QuotedString(string.Join(" ", arguments)).Value
             };
 
-            IProcess process = _os.Process(executableFilePath, workingDirPath, processArguments);
+            IProcess process = _os.Process(executableFilePath, workingDir, processArguments);
             return process.GetStdOutLines();
         }
     }

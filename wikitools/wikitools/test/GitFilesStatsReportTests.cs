@@ -19,8 +19,9 @@ namespace Wikitools.Tests
             var data              = new ReportTestsData();
             var commitsData       = data.CommitsLogs;
             var logDays           = 15;
+            var fs                = new SimulatedFileSystem();
+            var gitRepoDir        = fs.NextSimulatedDir();
             var gitExecutablePath = "unused";
-            var gitRepoDirPath    = "unused";
             var top               = 5;
 
             // Arrange simulations
@@ -28,7 +29,7 @@ namespace Wikitools.Tests
             var os       = new SimulatedOS(new SimulatedGitLogProcess(logDays, commitsData));
 
             // Arrange SUT declaration
-            var gitLog  = GitLog(os, gitRepoDirPath, gitExecutablePath);
+            var gitLog  = GitLog(os, gitRepoDir, gitExecutablePath);
             var commits = gitLog.Commits(logDays);
             var sut     = new GitFilesStatsReport(timeline, commits, logDays, top);
 

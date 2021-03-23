@@ -8,11 +8,11 @@ namespace Wikitools
 {
     public static class Declare
     {
-        public static GitLog GitLog(IOperatingSystem os, string gitRepoDirPath, string gitExecutablePath)
+        public static GitLog GitLog(IOperatingSystem os, Dir gitRepoDir, string gitExecutablePath)
         {
             var repo = new GitRepository(
                 new GitBashShell(os, gitExecutablePath),
-                gitRepoDirPath
+                gitRepoDir
             );
             var gitLog = new GitLog(repo);
             return gitLog;

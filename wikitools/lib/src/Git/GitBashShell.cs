@@ -7,7 +7,7 @@ namespace Wikitools.Lib.Git
 {
     public record GitBashShell(IOperatingSystem OS, string GitExecutablePath) : IShell
     {
-        public Task<List<string>> GetStdOutLines(string workingDirPath, string[] arguments)
+        public Task<List<string>> GetStdOutLines(Dir workingDir, string[] arguments)
         {
             var executableFilePath = GitExecutablePath.Replace(@"\", @"\\");
 
@@ -21,7 +21,7 @@ namespace Wikitools.Lib.Git
                 new QuotedString(string.Join(" ", arguments)).Value
             };
             
-            IProcess process = OS.Process(executableFilePath, workingDirPath, processArguments);
+            IProcess process = OS.Process(executableFilePath, workingDir, processArguments);
 
             return process.GetStdOutLines();
         }

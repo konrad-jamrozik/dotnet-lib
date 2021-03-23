@@ -36,7 +36,7 @@ namespace Wikitools
             IAdoWiki adoWiki,
             WikitoolsConfig cfg)
         {
-            var gitLog = GitLog(os, cfg.GitRepoClonePath, cfg.GitExecutablePath);
+            var gitLog = GitLog(os, new Dir(fs, cfg.GitRepoClonePath), cfg.GitExecutablePath);
             var wiki = WikiWithStorage(
                 adoWiki,
                 fs,
