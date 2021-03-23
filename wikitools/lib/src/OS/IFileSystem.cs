@@ -10,7 +10,7 @@ namespace Wikitools.Lib.OS
         public Task WriteAllTextAsync(string path, string contents);
         Dir CreateDirectory(string path);
         string JoinPath(string? path1, string? path2);
-        bool FileExists(string? path);
+        bool FileExists(string path);
         string CombinePath(string path1, string path2);
         string ReadAllText(string path);
         byte[] ReadAllBytes(string path);
