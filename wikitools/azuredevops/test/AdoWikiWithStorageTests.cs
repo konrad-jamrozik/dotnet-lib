@@ -14,7 +14,7 @@ namespace Wikitools.AzureDevOps.Tests
         // kja simulated tests
         // - Everything empty: no data from wiki, no data from storage
         // - Data in wiki, nothing in storage
-        // - Storage with data from 3 months
+        // - Storage with data from 3 months <- this test should fail until more than 30 pageViewsForDays is properly supported
         [Fact]
         public async Task NoData()
         {
@@ -37,8 +37,8 @@ namespace Wikitools.AzureDevOps.Tests
         /// - ADO API for Wiki can be successfully queried for data
         /// - The obtained data can be successfully stored
         /// - The stored data is then properly merged into ADO API for wiki data
-        /// when "wiki with storage" is used to obtain ADO wiki data both from
-        /// the API and from the data saved in storage.
+        ///   when "wiki with storage" is used to obtain ADO wiki data both from
+        ///   the API and from the data saved in storage.
         ///
         /// The tested scenario:
         /// 1. Obtain 10 days of page stats from wiki (days 1 to 10)
@@ -49,17 +49,14 @@ namespace Wikitools.AzureDevOps.Tests
         /// </summary>
         [Trait("category", "integration")]
         [Fact]
-        public async Task ObtainsDataFromAdoWikiApiAndStorage()
+        public async Task ObtainsAndMergesDataFromAdoWikiApiAndStorage()
         {
-            var fs     = new FileSystem();
-            var env    = new Environment();
-            var utcNow = new Timeline().UtcNow;
-            // kja circular dependency: azuredevops-tests should not depend on wikitools
-            var cfg = WikitoolsConfig.From(fs);
-
+            var fs      = new FileSystem();
+            var env     = new Environment();
+            var utcNow  = new Timeline().UtcNow;
+            var cfg     = WikitoolsConfig.From(fs); // kja circular dependency: azuredevops-tests should not depend on wikitools
             var adoWiki = new AdoWiki(cfg.AdoWikiUri, cfg.AdoPatEnvVar, env);
-
-            var storageDirPath = cfg.TestStorageDirPath;
+            var storage = Storage(utcNow, new Dir(fs, cfg.TestStorageDirPath));
 
             // Act 1. Obtain 10 days of page stats from wiki (days 1 to 10)
             var statsForDays1To10 = await adoWiki.PagesStats(pageViewsForDays: 10);
@@ -69,7 +66,6 @@ namespace Wikitools.AzureDevOps.Tests
 
             // Act 3. Save to storage page stats days 3 to 6
             var statsForDays3To6 = statsForDays1To10.Trim(utcNow, -7, -4);
-            var storage          = Storage(utcNow, new Dir(fs, storageDirPath));
             var storageWithStats = await storage.DeleteExistingAndSave(statsForDays3To6, utcNow);
 
             // Act 4. Obtain last 8 days, with last 4 days of page stats from wiki

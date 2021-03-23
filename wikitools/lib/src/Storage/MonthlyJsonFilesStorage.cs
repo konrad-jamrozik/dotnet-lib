@@ -11,8 +11,6 @@ namespace Wikitools.Lib.Storage
         public T Read<T>(DateTime date)
         {
             var fileToReadName = $"date_{date:yyy_MM}.json";
-            // kj2 this could be made into an abstraction, like: 
-            // read json array from file or return empty array otherwise
             return !StorageDir.FileExists(fileToReadName)
                 ? JsonSerializer.Deserialize<T>("[]")!
                 : JsonSerializer.Deserialize<T>(StorageDir.ReadAllText(fileToReadName))!;

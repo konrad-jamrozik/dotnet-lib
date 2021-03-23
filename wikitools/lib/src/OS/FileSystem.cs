@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 using Wikitools.Lib.Data;
 
@@ -40,5 +41,7 @@ namespace Wikitools.Lib.OS
             var parentDirInfo = new DirectoryInfo(path).Parent;
             return new Dir(this, parentDirInfo?.FullName ?? string.Empty);
         }
+
+        public static IEnumerable<string> SplitPath(string path) => path.Split(Path.DirectorySeparatorChar);
     }
 }

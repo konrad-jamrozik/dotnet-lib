@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using MoreLinq;
 using Wikitools.Lib.Data;
+using Wikitools.Lib.OS;
 using Wikitools.Lib.Primitives;
 using Xunit;
 
@@ -159,7 +160,7 @@ namespace Wikitools.Lib.Tests.Data
 
         private static void Verify(string[] pathsData, IList<string[]> expectedSegments)
         {
-            var trie = new TrieFromPaths(pathsData, FilePathTrie.SplitPath);
+            var trie = new TrieFromPaths(pathsData, FileSystem.SplitPath);
             PathPart<object?>[] expectedPaths = expectedSegments.Select(PathPart.Leaf).ToArray();
             
             // Act

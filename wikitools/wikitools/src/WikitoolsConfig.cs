@@ -29,8 +29,6 @@ namespace Wikitools
                 : throw new Exception($"Failed to find {cfgFileName}.");
         }
 
-        // kj2 the algorithm to find file with given name in all file system hierarchy should be placed on the FileSystem,
-        // not in WikitoolsConfig
         private static string? FindConfigFilePath(IFileSystem fs, string cfgFileName)
         {
             var dir = fs.CurrentDir;
