@@ -54,7 +54,7 @@ namespace Wikitools.AzureDevOps.Tests
             var fs      = new FileSystem();
             var env     = new Environment();
             var utcNow  = new Timeline().UtcNow;
-            var cfg     = WikitoolsConfig.From(fs); // kja circular dependency: azuredevops-tests should not depend on wikitools
+            var cfg     = WikitoolsConfig.From(fs); // kja forbidden dependency: azuredevops-tests should not depend on wikitools
             var adoWiki = new AdoWiki(cfg.AdoWikiUri, cfg.AdoPatEnvVar, env);
             var storage = Storage(utcNow, new Dir(fs, cfg.TestStorageDirPath));
 
