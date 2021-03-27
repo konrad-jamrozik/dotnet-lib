@@ -2,8 +2,8 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Wikitools.AzureDevOps;
-using Wikitools.Lib.Data;
 using Wikitools.Lib.Markdown;
+using Wikitools.Lib.OS;
 
 namespace Wikitools
 {
