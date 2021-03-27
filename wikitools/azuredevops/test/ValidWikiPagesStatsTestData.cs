@@ -52,7 +52,7 @@ namespace Wikitools.AzureDevOps.Tests
                 .Union(
                     !BarPageDeletedInPreviousMonth
                         ? new[] { _barPagePreviousMonth }
-                        : new WikiPageStats[] { })
+                        : WikiPageStats.EmptyArray)
                 .ToArray());
 
         // This is separate from PreviousMonthToMerge due to analogous reasoning as explained
@@ -69,7 +69,7 @@ namespace Wikitools.AzureDevOps.Tests
         public ValidWikiPagesStats CurrentMonthToMerge =>             
             new((!FooPageDeletedInCurrentMonth 
                     ? new[] { _fooPageCurrentMonth } 
-                    : new WikiPageStats[] { })
+                    : WikiPageStats.EmptyArray)
                 .Union(new [] {_barPageCurrentMonth})
                 .ToArray());
 

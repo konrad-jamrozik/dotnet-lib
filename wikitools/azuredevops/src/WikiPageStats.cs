@@ -7,6 +7,8 @@ namespace Wikitools.AzureDevOps
 {
     public record WikiPageStats(string Path, int Id, WikiPageStats.DayStat[] DayStats)
     {
+        public static readonly WikiPageStats[] EmptyArray = { };
+
         public static WikiPageStats From(WikiPageDetail pageDetail) =>
             new(pageDetail.Path, pageDetail.Id, DayStatsFrom(pageDetail));
 

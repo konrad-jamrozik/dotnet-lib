@@ -20,7 +20,25 @@ namespace Wikitools.AzureDevOps.Tests
         {
             var fs                 = new SimulatedFileSystem();
             var utcNow             = new SimulatedTimeline().UtcNow;
-            var adoWiki            = new SimulatedAdoWiki(new WikiPageStats[] { });
+            var adoWiki            = new SimulatedAdoWiki(WikiPageStats.EmptyArray);
+            var storageDir         = fs.NextSimulatedDir();
+            var storage            = Storage(utcNow, storageDir);
+            var adoWikiWithStorage = AdoWikiWithStorage(adoWiki, storage);
+            var pageViewsForDays   = 30;
+
+            // Act
+            var pagesStats = await adoWikiWithStorage.PagesStats(pageViewsForDays);
+
+            new JsonDiffAssertion(new string[0], pagesStats).Assert();
+        }
+
+        // kja curr work
+        [Fact]
+        public async Task DataInWiki()
+        {
+            var fs                 = new SimulatedFileSystem();
+            var utcNow             = new SimulatedTimeline().UtcNow;
+            var adoWiki            = new SimulatedAdoWiki(WikiPageStats.EmptyArray); // kja curr work
             var storageDir         = fs.NextSimulatedDir();
             var storage            = Storage(utcNow, storageDir);
             var adoWikiWithStorage = AdoWikiWithStorage(adoWiki, storage);
