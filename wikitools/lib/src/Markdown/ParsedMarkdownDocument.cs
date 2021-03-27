@@ -16,11 +16,11 @@ namespace Wikitools.Lib.Markdown
 
             var groups = markdownLines.GroupAdjacent(line => line.FirstOrDefault() == '|');
 
-            var content = groups.SelectMany(group =>
-            {
-                var table = Return(new MarkdownTable(group.ToArray()).Data).Cast<object>();
-                return group.Key ? table : group.ToArray();
-            }).ToArray();
+            var content = groups.SelectMany(group => 
+                @group.Key 
+                    ? Return(new MarkdownTable(@group.ToArray()).Data).Cast<object>() 
+                    : @group.ToArray())
+                .ToArray();
 
             return content;
         }

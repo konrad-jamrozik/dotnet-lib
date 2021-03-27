@@ -26,7 +26,7 @@ namespace Wikitools.AzureDevOps
     ///   - This can happen in case of page rename, as explained above.
     /// 
     /// </summary>
-    public class ValidWikiPagesStats : IEnumerable<WikiPageStats>
+    public record ValidWikiPagesStats : IEnumerable<WikiPageStats>
     {
         // Note this setup of invariant checks in ctor has some problems.
         // Details here: https://github.com/dotnet/csharplang/issues/4453#issuecomment-782807066

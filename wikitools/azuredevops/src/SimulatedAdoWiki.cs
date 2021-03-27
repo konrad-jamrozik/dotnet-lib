@@ -1,8 +1,9 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Wikitools.AzureDevOps
 {
-    public record SimulatedAdoWiki(WikiPageStats[] PagesStatsData) : IAdoWiki
+    public record SimulatedAdoWiki(IEnumerable<WikiPageStats> PagesStatsData) : IAdoWiki
     {
         public Task<ValidWikiPagesStats> PagesStats(int pageViewsForDays) =>
             Task.FromResult(new ValidWikiPagesStats(PagesStatsData));
