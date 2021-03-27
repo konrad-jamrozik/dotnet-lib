@@ -29,8 +29,8 @@ namespace Wikitools.AzureDevOps.Tests
     {
         public const string FooPagePath = "/Foo";
         public const string BarPagePath = "/Bar";
-        private static int FooPageId = 101;
-        private static int BarPageId = 202;
+        private const int FooPageId = 101;
+        private const int BarPageId = 202;
 
         // @formatter:off
         private readonly WikiPageStats _fooPagePreviousMonth = new(FooPagePath, FooPageId, FooPagePreviousMonthDayStats);
