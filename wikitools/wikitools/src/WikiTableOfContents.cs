@@ -14,16 +14,17 @@ namespace Wikitools
 
         private static async Task<object[]> GetContent(
             Task<FilePathTrie> filePathsTask,
-            Task<IEnumerable<WikiPageStats>> pageStatsTask)
+            Task<IEnumerable<WikiPageStats>> pagesStatsTask)
         {
             // kja next todos on critical path:
             // - Actually obtain pageStats passed to this method
+            //   - need to come from more than 30 days, so also from storage
             // - Correlate pageStats with filePaths
             // - Display the correlation in the format as "Example desired output" below shows
             // At this point things principally work, but then there are immediate things to fix:
             // - Instead of having to manually correlate the filePaths with pageStats, do so 
             // by a call like: filePathsTrie with { pathToValueMap: dictionary { path -> WikiPageStats for path } }
-            // this will ensure that  the value returned from the PreorderTraversal below is populated.
+            // this will ensure that the value returned from the PreorderTraversal below is populated.
             //
             // Example desired output:
             // [/foo](foo) 10 views
