@@ -19,10 +19,10 @@ namespace Wikitools.AzureDevOps.Tests
         public async Task NoData()
         {
             var fs                 = new SimulatedFileSystem();
-            var timeline           = new SimulatedTimeline();
+            var utcNow             = new SimulatedTimeline().UtcNow;
             var adoWiki            = new SimulatedAdoWiki(new WikiPageStats[] { });
             var storageDir         = fs.NextSimulatedDir();
-            var storage            = Storage(timeline.UtcNow, storageDir);
+            var storage            = Storage(utcNow, storageDir);
             var adoWikiWithStorage = AdoWikiWithStorage(adoWiki, storage);
             var pageViewsForDays   = 30;
 
@@ -51,12 +51,13 @@ namespace Wikitools.AzureDevOps.Tests
         [Fact]
         public async Task ObtainsAndMergesDataFromAdoWikiApiAndStorage()
         {
-            var fs      = new FileSystem();
-            var env     = new Environment();
-            var utcNow  = new Timeline().UtcNow;
-            var cfg     = WikitoolsConfig.From(fs); // kja forbidden dependency: azuredevops-tests should not depend on wikitools
-            var adoWiki = new AdoWiki(cfg.AdoWikiUri, cfg.AdoPatEnvVar, env);
-            var storage = Storage(utcNow, new Dir(fs, cfg.TestStorageDirPath));
+            var fs         = new FileSystem();
+            var utcNow     = new Timeline().UtcNow;
+            var env        = new Environment();
+            var cfg        = WikitoolsConfig.From(fs); // kj2 forbidden dependency: azuredevops-tests should not depend on wikitools
+            var storageDir = new Dir(fs, cfg.TestStorageDirPath);
+            var storage    = Storage(utcNow, storageDir);
+            var adoWiki    = new AdoWiki(cfg.AdoWikiUri, cfg.AdoPatEnvVar, env);
 
             // Act 1. Obtain 10 days of page stats from wiki (days 1 to 10)
             var statsForDays1To10 = await adoWiki.PagesStats(pageViewsForDays: 10);
