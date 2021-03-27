@@ -5,7 +5,6 @@ using Wikitools.Lib.Primitives;
 using Wikitools.Lib.Data;
 using Wikitools.Lib.Tests.Markdown;
 using Xunit;
-using static Wikitools.Declare;
 
 namespace Wikitools.Tests
 {

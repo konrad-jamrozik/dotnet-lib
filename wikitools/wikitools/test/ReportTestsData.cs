@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Wikitools.AzureDevOps;
+using Wikitools.AzureDevOps.Tests;
 using Wikitools.Lib.Git;
 using Wikitools.Lib.Primitives;
 
@@ -10,24 +12,23 @@ namespace Wikitools.Tests
     {
         public ReportTestsData()
         {
-            var now = new SimulatedTimeline().UtcNow;
-            CommitsLogs = GetCommitsLogs(now);
-            PagesStats = GetPagesStats(now);
+            CommitsLogs = GetCommitsLogs();
+            PagesStats = ValidWikiPagesStatsFixture.PagesStats().ToArray();
             ExpectedRows = new()
             {
-                [("GitAuthorsStatsReportTests", CommitsLogs)] = new[] {
+                [(nameof(GitAuthorsStatsReportTests), CommitsLogs)] = new[] {
                     new object[] { 1, "AuthorC", 4, 200+300+601+400, 5+82+7+13 },
                     new object[] { 2, "AuthorA", 1, 100, 10 },
                     new object[] { 3, "AuthorB", 1, 77, 7 },
                 },
-                [("GitFilesStatsReportTests", CommitsLogs)] = new[] {
+                [(nameof(GitFilesStatsReportTests), CommitsLogs)] = new[] {
                     new object[] { 1, "/Foo/bar601_7.md", 601, 7 },
                     new object[] { 2, "/Qux/Corge377_89.md", 377, 89 },
                     new object[] { 3, "/Foo/bar400_13.md", 400, 13 },
                     new object[] { 4, "/Foo/bar200_5.md", 200, 5 },
                     new object[] { 5, "/Foo/bar100_10.md", 100, 10 },
                 },
-                [("PagesViewsStatsReportTests", PagesStats)] = new[] {
+                [(nameof(PagesViewsStatsReportTests), PagesStats)] = new[] {
                     new object[] { 1, "/Foo/Baz", 180 },
                     new object[] { 2, "/Foo", 68 },
                     new object[] { 3, "/Qux/Quux/Quuz", 28 },
@@ -43,6 +44,8 @@ namespace Wikitools.Tests
 
         public readonly Dictionary<(string className, object input), object[][]> ExpectedRows;
 
+        private static GitLogCommit[] GetCommitsLogs() => GetCommitsLogs(new SimulatedTimeline().UtcNow);
+
         private static GitLogCommit[] GetCommitsLogs(DateTime date) => new GitLogCommit[] 
         {
             new("AuthorA", date, new GitLogCommit.Numstat[] { new(100, 10, "/Foo/bar100_10.md") }),
@@ -56,45 +59,6 @@ namespace Wikitools.Tests
                 new(300, 82, "/Qux/Corge377_89.md"),
                 new(601, 7, "/Foo/bar601_7.md"),
                 new(400, 13, "/Foo/bar400_13.md")
-            })
-        };
-
-        private static WikiPageStats[] GetPagesStats(DateTime date) => new WikiPageStats[]
-        {
-            new("/Home", 1, new WikiPageStats.DayStat[]
-            {
-                new(0, date.AddDays(-3)), 
-                new(0, date.AddDays(-2)), 
-                new(20, date.AddDays(-1)), 
-                new(1, date)
-            }),
-            new("/Foo", 2, new WikiPageStats.DayStat[]
-            {
-                new(0, date.AddDays(-3)), 
-                new(8, date.AddDays(-2)), 
-                new(0, date.AddDays(-1)), 
-                new(60, date)
-            }),
-            new("/Foo/Bar", 3, new WikiPageStats.DayStat[]
-            {
-                new(0, date.AddDays(-3)), 
-                new(0, date.AddDays(-2)), 
-                new(8, date.AddDays(-1)), 
-                new(6, date)
-            }),
-            new("/Foo/Baz", 4, new WikiPageStats.DayStat[]
-            {
-                new(100, date.AddDays(-3)), 
-                new(80, date.AddDays(-2)), 
-                new(0, date.AddDays(-1)), 
-                new(0, date)
-            }),
-            new("/Qux/Quux/Quuz", 5, new WikiPageStats.DayStat[]
-            {
-                new(7, date.AddDays(-3)), 
-                new(7, date.AddDays(-2)), 
-                new(7, date.AddDays(-1)), 
-                new(7, date)
             })
         };
     }
