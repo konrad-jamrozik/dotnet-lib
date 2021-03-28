@@ -13,7 +13,9 @@ namespace Wikitools.AzureDevOps
             new(pageDetail.Path, pageDetail.Id, DayStatsFrom(pageDetail));
 
         private static DayStat[] DayStatsFrom(WikiPageDetail pageDetail) =>
-            // Confirmed empirically the dayStat is for UTC view counts, not local time view counts.
+            // Confirmed empirically the dayStat counts visits in UTC days, not local time days.
+            // For example, if you visited page at 10 PM PST on day X, it will count
+            // towards the day X+1, as 10 PM PST is 6 AM UTC the next day.
             pageDetail.ViewStats?.Select(dayStat => new DayStat(dayStat.Count, dayStat.Day.Utc()))
                 .OrderBy(ds => ds.Day)
                 .ToArray()
