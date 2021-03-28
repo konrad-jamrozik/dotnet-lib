@@ -13,6 +13,7 @@ namespace Wikitools.AzureDevOps
 
             var (previousMonthStats, currentMonthStats) = pageStats.SplitByMonth(CurrentDate);
 
+            // kj3 add check here that all storedStats are in the month of CurrentDate
             await Storage.With<IEnumerable<WikiPageStats>>(CurrentDate.AddMonths(-1),
                 storedStats => storedStats.Merge(previousMonthStats));
             await Storage.With<IEnumerable<WikiPageStats>>(CurrentDate,
@@ -23,6 +24,7 @@ namespace Wikitools.AzureDevOps
 
         public async Task<WikiPagesStatsStorage> DeleteExistingAndSave(ValidWikiPagesStats stats, DateTime date)
         {
+            // kj3 add check here that the stats.month == date.month
             await Storage.With<IEnumerable<WikiPageStats>>(date, _ => stats);
             return this;
         }

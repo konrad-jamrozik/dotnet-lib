@@ -22,6 +22,7 @@ namespace Wikitools.Lib.Storage
         public Task Write(object data, DateTime date, string? fileName = default) =>
             WriteToFile(data.ToJsonIndentedUnsafe(), date, fileName);
 
+        // kj3 instead of DateTime, use DateMonth (needs introduction)
         private async Task WriteToFile(string dataJson, DateTime date, string? fileName) =>
             await StorageDir
                 .CreateDirIfNotExists()

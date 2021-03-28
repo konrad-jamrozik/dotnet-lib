@@ -14,7 +14,7 @@ namespace Wikitools.AzureDevOps.Tests
         // kja simulated tests
         // - DONE Everything empty: no data from wiki, no data from storage
         // - DONE Data in wiki, nothing in storage
-        // - TO DO Data in storage, nothing in wiki
+        // - DONE Data in storage, nothing in wiki
         // - TO DO Storage with data from 3 months <- this test should fail until more than 30 pageViewsForDays is properly supported
         [Fact]
         public async Task NoData()
@@ -42,6 +42,25 @@ namespace Wikitools.AzureDevOps.Tests
             var adoWiki            = new SimulatedAdoWiki(pagesStatsData);
             var storageDir         = fs.NextSimulatedDir();
             var storage            = Storage(utcNow, storageDir);
+            var adoWikiWithStorage = AdoWikiWithStorage(adoWiki, storage);
+            var pageViewsForDays   = 30;
+
+            // Act
+            var pagesStats = await adoWikiWithStorage.PagesStats(pageViewsForDays);
+
+            new JsonDiffAssertion(pagesStatsData, pagesStats).Assert();
+        }
+
+        [Fact] // kj2 dedup
+        public async Task DataInStorage()
+        {
+            var fs             = new SimulatedFileSystem();
+            var utcNow         = new SimulatedTimeline().UtcNow;
+            var pagesStatsData = ValidWikiPagesStatsFixture.PagesStats(new DateDay(utcNow));
+            var adoWiki        = new SimulatedAdoWiki(WikiPageStats.EmptyArray);
+            var storageDir     = fs.NextSimulatedDir();
+            var storage        = await Storage(utcNow, storageDir).DeleteExistingAndSave(pagesStatsData, utcNow);
+
             var adoWikiWithStorage = AdoWikiWithStorage(adoWiki, storage);
             var pageViewsForDays   = 30;
 
