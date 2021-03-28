@@ -17,7 +17,8 @@ namespace Wikitools.AzureDevOps.Tests
         // - DONE Data in wiki, nothing in storage
         // - DONE Data in storage, nothing in wiki
         // - DONE Data in wiki and storage, within wiki max limit of 30 days
-        // - TO DO Storage with data from 3 months <- this test should fail until more than 30 pageViewsForDays is properly supported
+        // - TO-DO wiki integration tests: see todos below
+        // - TO-DO Storage with data from 3 months <- this test should fail until more than 30 pageViewsForDays is properly supported
         [Fact]
         public async Task NoData()
         {
@@ -35,7 +36,7 @@ namespace Wikitools.AzureDevOps.Tests
             new JsonDiffAssertion(new string[0], pagesStats).Assert();
         }
 
-        [Fact] // kj2 dedup
+        [Fact]
         public async Task DataInWiki()
         {
             var fs                 = new SimulatedFileSystem();
@@ -53,7 +54,7 @@ namespace Wikitools.AzureDevOps.Tests
             new JsonDiffAssertion(pagesStatsData, pagesStats).Assert();
         }
 
-        [Fact] // kj2 dedup
+        [Fact]
         public async Task DataInStorage()
         {
             var fs             = new SimulatedFileSystem();
@@ -72,23 +73,15 @@ namespace Wikitools.AzureDevOps.Tests
             new JsonDiffAssertion(pagesStatsData, pagesStats).Assert();
         }
 
-        [Fact] // kj2 dedup
+        [Fact]
         public async Task DataInWikiAndStorageWithinSameMonth()
         {
             var fs                 = new SimulatedFileSystem();
             var utcNow             = new SimulatedTimeline().UtcNow;
             var currStats = ValidWikiPagesStatsFixture.PagesStats(new DateDay(utcNow));
-            // kja UPDATE: confirmed to be indeed wrong. See assertions in Wikitools.AzureDevOps.Tests.AdoWikiWithStorageTests.ObtainsAndStoredDataFromWiki
-            // Original TO-DO:
-            // Assuming here that the PagesStats goes up to 4 days in the past. But this seems to be off by one error.
-            // That is, -27-4 = -31, so this should fail. If I increase pageViewsForDays to 31 it works.
-            // The idea of pageViewsForDays == 30 is that it matches wiki behavior of max of 30 days.
-            // How does wiki actually work? Will 30 days do today and 30 days in the past, or today and 29 days in the past?
-            // If the first one we are good, if the second one, this test proves that adoWikiWithStorage.PagesStats(30)
-            // includes one day too many.
-            //
-            // Solve this by creating an integration test for that, with pageViewsForDays = 1, and showing the actual
-            // behavior: whether it is "today only" or "today and yesterday".
+            // kja off by one bug: this test should not pass on -27. Biggest OK value should be -26, because the underlying
+            // data fixture goes 3 days into the past, so -27-3 = -30, so 31 days in the past.
+            // For test capturing this bug, see Wikitools.AzureDevOps.Tests.AdoWikiWithStorageTests.DataInStorageOffByOneBug 
             var prevStats  = ValidWikiPagesStatsFixture.PagesStats(new DateDay(utcNow.AddDays(-27)));
             var expectedPagesStats = prevStats.Merge(currStats);
             var adoWiki            = new SimulatedAdoWiki(currStats);
@@ -102,6 +95,30 @@ namespace Wikitools.AzureDevOps.Tests
             var pagesStats = await adoWikiWithStorage.PagesStats(pageViewsForDays);
 
             new JsonDiffAssertion(expectedPagesStats, pagesStats).Assert();
+        }
+
+        [Fact]
+        public async Task DataInStorageOffByOneBug()
+        {
+            var fs               = new SimulatedFileSystem();
+            var utcNow           = new DateDay(new SimulatedTimeline().UtcNow);
+            // implicit assumption that the underlying fixture data is going back at least up to 3 days.
+            var storedStats      = ValidWikiPagesStatsFixture.PagesStats(utcNow).Trim(utcNow, -3, 0);
+            var storageDir       = fs.NextSimulatedDir();
+            var storage          = await Storage(utcNow, storageDir).DeleteExistingAndSave(storedStats, utcNow);
+
+            var readStats = storage.PagesStats(pageViewsForDays: 3);
+
+            var expectedStats = storedStats.Trim(utcNow, -2, 0);
+
+            // kja this fails because storage.PagesStats actually pulls days from range of [-3, 0] instead of [-2, 0]
+            // Before fixing that, confirm this behaves inline with behavior captured in
+            // Wikitools.AzureDevOps.Tests.AdoWikiWithStorageTests.ObtainsAndStoredDataFromWiki
+            //
+            // Looking at wiki behavior, perhaps actually the correct behavior is not [-2, 0] or even [-3, 0], but
+            // [-3, -1]. After I write wiki tests confirming that, I will have to adjust .Trim call in:
+            // Wikitools.AzureDevOps.WikiPagesStatsStorage.PagesStats
+            new JsonDiffAssertion(expectedStats, readStats).Assert();
         }
 
         // kja curr work. Finish up the body (e.g. assert against stored stats) and move all the int tests to a separate class,
@@ -127,29 +144,29 @@ namespace Wikitools.AzureDevOps.Tests
             var storage    = Storage(utcNow, storageDir);
             var adoWiki    = new AdoWiki(cfg.AdoWikiUri, cfg.AdoPatEnvVar, env);
 
-            // kja WEIRD: it doesn't work for 1 because apparently then minDay check has to be different?
-            // Does the wiki return different stats for 2 and 1??
-            // Maybe this is because it is 1:42 AM UTC and due to ingestion delays no stats for today have shown up yet.
-            // kja I need a test proving that this ALWAYS returns empty day stats
-            // And another test for exactly 2 days.
-            // kja make those tests obtain only /Home page. This will require calling different wiki API. 
-            // Have to check manually it behaves the same.
-            var pageViewsForDays = 1;
+            // kja add following tests:
+            // - show that pageViewsForDays = 1 returns empty stats.
+            //   - make the test call ADO API for /Home page only, show that page
+            //   - manually check the behavior is the same as with entire wiki list
+            // - show that pageViewsForDays = 2 always returns stats for previous day.
+            var pageViewsForDays = 2;
 
             var wikiStats   = await adoWiki.PagesStats(pageViewsForDays: pageViewsForDays);
-            var wikiStats2   = await adoWiki.PagesStats(pageViewsForDays: pageViewsForDays+1);
-            // kja use for debugging
-            // new JsonDiffAssertion(wikiStats, wikiStats2).Assert();
-            var storedStats = await storage.DeleteExistingAndSave(wikiStats, utcNow);
+            storage = await storage.DeleteExistingAndSave(wikiStats, utcNow);
 
             var minDay = wikiStats.Where(ps => ps.DayStats.Any()).Select(ps => ps.DayStats.Min(ds => ds.Day)).Min();
-            var maxDay  = wikiStats.Where(ps => ps.DayStats.Any()).Select(s => s.DayStats.Max(ds => ds.Day)).Max();
-            Assert.Equal(new DateDay(DateTime.UtcNow.AddDays(-1)), new DateDay(maxDay));
-            // kja this will fail if the resource wiki was never visited on that day
-            // kja the +1 here proves that the behavior does not match the stored stats behavior, i.e.
-            // if the storage goes into past one day too many. This is the problem described in
-            // Wikitools.AzureDevOps.Tests.AdoWikiWithStorageTests.DataInWikiAndStorageWithinSameMonth
+            var maxDay = wikiStats.Where(ps => ps.DayStats.Any()).Select(s => s.DayStats.Max(ds => ds.Day)).Max();
+            // kja these checks will fail if the resource wiki was never visited on the min/max days
             Assert.Equal(new DateDay(DateTime.UtcNow.AddDays(-pageViewsForDays+1)), new DateDay(minDay));
+            Assert.Equal(new DateDay(DateTime.UtcNow.AddDays(-1)), new DateDay(maxDay));
+            
+            var storedStats = storage.PagesStats(pageViewsForDays);
+            var storedMinDay = storedStats.Where(ps => ps.DayStats.Any()).Select(ps => ps.DayStats.Min(ds => ds.Day)).Min();
+            var storedMaxDay = storedStats.Where(ps => ps.DayStats.Any()).Select(s => s.DayStats.Max(ds => ds.Day)).Max();
+
+            Assert.Equal(new DateDay(DateTime.UtcNow.AddDays(-pageViewsForDays+1)), new DateDay(storedMinDay));
+            Assert.Equal(new DateDay(DateTime.UtcNow.AddDays(-1)),                  new DateDay(storedMaxDay));
+
         }
 
         /// <summary>
