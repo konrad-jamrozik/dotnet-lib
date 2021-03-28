@@ -132,6 +132,8 @@ namespace Wikitools.AzureDevOps.Tests
             // Maybe this is because it is 1:42 AM UTC and due to ingestion delays no stats for today have shown up yet.
             // kja I need a test proving that this ALWAYS returns empty day stats
             // And another test for exactly 2 days.
+            // kja make those tests obtain only /Home page. This will require calling different wiki API. 
+            // Have to check manually it behaves the same.
             var pageViewsForDays = 1;
 
             var wikiStats   = await adoWiki.PagesStats(pageViewsForDays: pageViewsForDays);
