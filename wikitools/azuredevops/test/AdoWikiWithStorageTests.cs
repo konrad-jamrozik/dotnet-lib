@@ -169,7 +169,36 @@ namespace Wikitools.AzureDevOps.Tests
 
             Assert.Equal(new DateDay(DateTime.UtcNow.AddDays(-pageViewsForDays+1)), new DateDay(storedMinDay));
             Assert.Equal(new DateDay(DateTime.UtcNow.AddDays(-1)),                  new DateDay(storedMaxDay));
+        }
 
+        [Trait("category", "integration")]
+        [Fact]
+        public async Task ObtainsAndStoredDataFromWiki2()
+        {
+            var fs      = new FileSystem();
+            var env     = new Environment();
+            var cfg     = WikitoolsConfig.From(fs); // kj2 forbidden dependency: azuredevops-tests should not depend on wikitools
+            var adoWiki = new AdoWiki(cfg.AdoWikiUri, cfg.AdoPatEnvVar, env);
+
+            // kja check if this behavior changes when the UTC day is the same as local time day.
+            // Last time tested on 3/27/2021 9:01 PM PST which is 3/28/2021 4:02 AM UTC.
+            var wikiStatsFor1Day   = await adoWiki.PagesStats(pageViewsForDays: 1);
+            Assert.True(wikiStatsFor1Day.All(ps => !ps.DayStats.Any()));
+
+            var utcNow = new DateDay(DateTime.UtcNow);
+
+            var wikiStatsForDays2 = await adoWiki.PagesStats(pageViewsForDays: 2);
+            var minDay2 = wikiStatsForDays2.Where(ps => ps.DayStats.Any()).Select(ps => ps.DayStats.Min(ds => ds.Day)).Min();
+            var maxDay2 = wikiStatsForDays2.Where(ps => ps.DayStats.Any()).Select(s => s.DayStats.Max(ds => ds.Day)).Max();
+            
+            Assert.Equal(utcNow.AddDays(-1), new DateDay(minDay2));
+            Assert.Equal(utcNow.AddDays(-1), new DateDay(maxDay2));
+
+            var wikiStatsForDays3 = await adoWiki.PagesStats(pageViewsForDays: 3);
+            var minDay3 = wikiStatsForDays3.Where(ps => ps.DayStats.Any()).Select(ps => ps.DayStats.Min(ds => ds.Day)).Min();
+            var maxDay3 = wikiStatsForDays3.Where(ps => ps.DayStats.Any()).Select(s => s.DayStats.Max(ds => ds.Day)).Max();
+            Assert.Equal(utcNow.AddDays(-2), new DateDay(minDay3));
+            Assert.Equal(utcNow.AddDays(-1), new DateDay(maxDay3));
         }
 
         /// <summary>
