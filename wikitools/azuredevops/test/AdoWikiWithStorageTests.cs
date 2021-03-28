@@ -213,6 +213,7 @@ namespace Wikitools.AzureDevOps.Tests
             Assert.Contains(new[] { utcYesterday, utcToday }, dd => dd.Equals(maxDay3));
         }
 
+        // kj2 move these 2 methods to ValidWikiPagesStats
         private static DateDay? MinDay(ValidWikiPagesStats stats)
         {
             var minDates = stats
