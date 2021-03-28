@@ -76,7 +76,7 @@ namespace Wikitools.AzureDevOps
                 continuationToken = wikiPagesDetailsPage.ContinuationToken;
             } while (continuationToken != null);
 
-            // kja still no view stats for kojamroz_test as of 3/28/2021 12:34 AM PDT
+            // kja still no view stats for kojamroz_test as of 3/28/2021 1:08 AM PDT
             return wikiPagesDetails;
         }
     }
