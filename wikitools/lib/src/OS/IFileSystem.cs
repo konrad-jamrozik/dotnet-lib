@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-using Wikitools.Lib.Data;
 
 namespace Wikitools.Lib.OS
 {

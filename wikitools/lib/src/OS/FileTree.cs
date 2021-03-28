@@ -1,7 +1,6 @@
 ﻿using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Wikitools.Lib.Data;
 
 namespace Wikitools.Lib.OS
 {
