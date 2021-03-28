@@ -180,25 +180,55 @@ namespace Wikitools.AzureDevOps.Tests
             var cfg     = WikitoolsConfig.From(fs); // kj2 forbidden dependency: azuredevops-tests should not depend on wikitools
             var adoWiki = new AdoWiki(cfg.AdoWikiUri, cfg.AdoPatEnvVar, env);
 
+            var utcToday = new DateDay(DateTime.UtcNow);
+            var utcYesterday = utcToday.AddDays(-1);
+
             // kja check if this behavior changes when the UTC day is the same as local time day.
             // Last time tested on 3/27/2021 9:01 PM PST which is 3/28/2021 4:02 AM UTC.
             var wikiStatsFor1Day   = await adoWiki.PagesStats(pageViewsForDays: 1);
-            Assert.True(wikiStatsFor1Day.All(ps => !ps.DayStats.Any()));
+            // kja at 3/27/2021 9:56 PM PST this is no longer true. It now shows dates for 3/28/2021 00:00:00.
+            // Perhaps it was empty before due to ingestion delay. - now it is 4:56 AM UTC, so maybe the ingestion delay is ~4-5h.
+            var minDay = MinDay(wikiStatsFor1Day);
+            var maxDay = MaxDay(wikiStatsFor1Day);
 
-            var utcNow = new DateDay(DateTime.UtcNow);
+            // minDay and maxDay being null mean there is no data for today. This might happen
+            // not only when there were no visits today, but also when there were visits but were not yet ingested.
+            // Empirical tests show ingestion may take at least 4-5 hours.
+            Assert.True(minDay == null || minDay.Equals(utcToday));
+            Assert.True(maxDay == null || maxDay.Equals(utcToday));
 
             var wikiStatsForDays2 = await adoWiki.PagesStats(pageViewsForDays: 2);
-            var minDay2 = wikiStatsForDays2.Where(ps => ps.DayStats.Any()).Select(ps => ps.DayStats.Min(ds => ds.Day)).Min();
-            var maxDay2 = wikiStatsForDays2.Where(ps => ps.DayStats.Any()).Select(s => s.DayStats.Max(ds => ds.Day)).Max();
+
+            var minDay2 = MinDay(wikiStatsForDays2);
+            var maxDay2 = MaxDay(wikiStatsForDays2);
             
-            Assert.Equal(utcNow.AddDays(-1), new DateDay(minDay2));
-            Assert.Equal(utcNow.AddDays(-1), new DateDay(maxDay2));
+            Assert.Equal(utcYesterday, minDay2);
+            Assert.Contains(new[] { utcYesterday, utcToday }, dd => dd.Equals(maxDay2));
 
             var wikiStatsForDays3 = await adoWiki.PagesStats(pageViewsForDays: 3);
-            var minDay3 = wikiStatsForDays3.Where(ps => ps.DayStats.Any()).Select(ps => ps.DayStats.Min(ds => ds.Day)).Min();
-            var maxDay3 = wikiStatsForDays3.Where(ps => ps.DayStats.Any()).Select(s => s.DayStats.Max(ds => ds.Day)).Max();
-            Assert.Equal(utcNow.AddDays(-2), new DateDay(minDay3));
-            Assert.Equal(utcNow.AddDays(-1), new DateDay(maxDay3));
+
+            var minDay3 = MinDay(wikiStatsForDays3);
+            var maxDay3 = MaxDay(wikiStatsForDays3);
+            Assert.Equal(utcToday.AddDays(-2), minDay3);
+            Assert.Contains(new[] { utcYesterday, utcToday }, dd => dd.Equals(maxDay3));
+        }
+
+        private static DateDay? MinDay(ValidWikiPagesStats stats)
+        {
+            var minDates = stats
+                .Where(ps => ps.DayStats.Any())
+                .Select(s => s.DayStats.Min(ds => ds.Day))
+                .ToList();
+            return minDates.Any() ? new DateDay(minDates.Min()) : null;
+        }
+
+        private static DateDay? MaxDay(ValidWikiPagesStats stats)
+        {
+            var maxDates = stats
+                .Where(ps => ps.DayStats.Any())
+                .Select(s => s.DayStats.Max(ds => ds.Day))
+                .ToList();
+            return maxDates.Any() ? new DateDay(maxDates.Max()) : null;
         }
 
         /// <summary>
