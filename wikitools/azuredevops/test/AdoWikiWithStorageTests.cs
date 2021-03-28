@@ -118,6 +118,9 @@ namespace Wikitools.AzureDevOps.Tests
             // Looking at wiki behavior, perhaps actually the correct behavior is not [-2, 0] or even [-3, 0], but
             // [-3, -1]. After I write wiki tests confirming that, I will have to adjust .Trim call in:
             // Wikitools.AzureDevOps.WikiPagesStatsStorage.PagesStats
+            // This is weird, because the API page:
+            // https://docs.microsoft.com/en-us/rest/api/azure/devops/wiki/pages%20batch/get?view=azure-devops-rest-6.1
+            // explicitly states: "It's inclusive of current day."
             new JsonDiffAssertion(expectedStats, readStats).Assert();
         }
 

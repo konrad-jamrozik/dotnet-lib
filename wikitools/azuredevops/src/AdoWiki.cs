@@ -19,7 +19,7 @@ namespace Wikitools.AzureDevOps
         // Max value supported by https://docs.microsoft.com/en-us/rest/api/azure/devops/wiki/pages%20batch/get?view=azure-devops-rest-6.1
         // Confirmed empirically.
         private const int MaxPageViewsForDays = 30;
-        // If 0, the call to ADO API still succeeds, but all returned WikiPageDetail have null ViewStats.
+        // If 0, the call to ADO wiki API still succeeds, but all returned WikiPageDetail have null ViewStats.
         // Confirmed empirically.
         private const int MinPageViewsForDays = 1;
 
