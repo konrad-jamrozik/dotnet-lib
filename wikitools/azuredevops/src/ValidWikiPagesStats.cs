@@ -130,7 +130,9 @@ namespace Wikitools.AzureDevOps
                 Contract.Assert(dayStats.Count(), "dayStats.Count()", new Range(1, 2),
                     upperBoundReason: "Given day stat may appear max twice: once for previous stats and once for current stats");
                 Contract.Assert(dayStats.Last().Count >= dayStats.First().Count,
-                    "Day stat count for current stats >= day stat count for previous stats");
+                    "Visit count for given day for given page cannot be lower in current stats, as compared to previous stats. " +
+                    "I.e. day stat count for current stats >= day stat count for previous stats. " +
+                    $"Instead got: {dayStats.Last().Count} >= {dayStats.First().Count}. For day: {dayStats.Key.ToShortDateString()}");
                 return dayStats.Last();
             }).ToArray();
             return mergedStats;

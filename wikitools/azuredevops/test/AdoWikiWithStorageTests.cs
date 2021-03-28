@@ -15,6 +15,7 @@ namespace Wikitools.AzureDevOps.Tests
         // - DONE Everything empty: no data from wiki, no data from storage
         // - DONE Data in wiki, nothing in storage
         // - DONE Data in storage, nothing in wiki
+        // - DONE Data in wiki and storage, within wiki max limit of 30 days
         // - TO DO Storage with data from 3 months <- this test should fail until more than 30 pageViewsForDays is properly supported
         [Fact]
         public async Task NoData()
@@ -68,6 +69,36 @@ namespace Wikitools.AzureDevOps.Tests
             var pagesStats = await adoWikiWithStorage.PagesStats(pageViewsForDays);
 
             new JsonDiffAssertion(pagesStatsData, pagesStats).Assert();
+        }
+
+        [Fact] // kj2 dedup
+        public async Task DataInWikiAndStorageWithinSameMonth()
+        {
+            var fs                 = new SimulatedFileSystem();
+            var utcNow             = new SimulatedTimeline().UtcNow;
+            var currStats = ValidWikiPagesStatsFixture.PagesStats(new DateDay(utcNow));
+            // kja Assuming here that the PagesStats goes up to 4 days in the past. But this seems to be off by one error.
+            // That is, -27-4 = -31, so this should fail. If I increase pageViewsForDays to 31 it works.
+            // The idea of pageViewsForDays == 30 is that it matches wiki behavior of max of 30 days.
+            // How does wiki actually work? Will 30 days do today and 30 days in the past, or today and 29 days in the past?
+            // If the first one we are good, if the second one, this test proves that adoWikiWithStorage.PagesStats(30)
+            // includes one day too many.
+            //
+            // Solve this by creating an integration test for that, with pageViewsForDays = 1, and showing the actual
+            // behavior: whether it is "today only" or "today and yesterday".
+            var prevStats  = ValidWikiPagesStatsFixture.PagesStats(new DateDay(utcNow.AddDays(-27)));
+            var expectedPagesStats = prevStats.Merge(currStats);
+            var adoWiki            = new SimulatedAdoWiki(currStats);
+            var storageDir         = fs.NextSimulatedDir();
+            var storage            = await Storage(utcNow, storageDir).DeleteExistingAndSave(prevStats, utcNow);
+
+            var adoWikiWithStorage = AdoWikiWithStorage(adoWiki, storage);
+            var pageViewsForDays   = 30;
+
+            // Act
+            var pagesStats = await adoWikiWithStorage.PagesStats(pageViewsForDays);
+
+            new JsonDiffAssertion(expectedPagesStats, pagesStats).Assert();
         }
 
         /// <summary>
