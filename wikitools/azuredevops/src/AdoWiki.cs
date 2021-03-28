@@ -76,7 +76,11 @@ namespace Wikitools.AzureDevOps
                 continuationToken = wikiPagesDetailsPage.ContinuationToken;
             } while (continuationToken != null);
 
-            // kja still no view stats for kojamroz_test as of 3/28/2021 1:08 AM PDT
+            // kja
+            // kojamroz_test created on 3/27/2021 9:04 PM PDT
+            // still no view stats for kojamroz_test as of 3/28/2021 1:08 AM PDT
+            // Shown up by 3/28/2021 3:07 AM PDT. For day 3/28/2021.
+            // So ingestion delay at least 4-6 hours.
             return wikiPagesDetails;
         }
     }
