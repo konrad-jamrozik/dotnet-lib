@@ -1,15 +1,16 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using NUnit.Framework;
 using Wikitools.Lib.OS;
 using Wikitools.Lib.Primitives;
 using Wikitools.Lib.Storage;
 using Wikitools.Lib.Tests.Json;
-using Xunit;
 using Environment = Wikitools.Lib.OS.Environment;
 
 namespace Wikitools.AzureDevOps.Tests
 {
+    [TestFixture]
     public class AdoWikiWithStorageTests
     {
         // kja simulated tests
@@ -19,7 +20,7 @@ namespace Wikitools.AzureDevOps.Tests
         // - DONE Data in wiki and storage, within wiki max limit of 30 days
         // - TO-DO wiki integration tests: see todos below
         // - TO-DO Storage with data from 3 months <- this test should fail until more than 30 pageViewsForDays is properly supported
-        [Fact]
+        [Test]
         public async Task NoData()
         {
             var fs                 = new SimulatedFileSystem();
@@ -36,7 +37,7 @@ namespace Wikitools.AzureDevOps.Tests
             new JsonDiffAssertion(new string[0], pagesStats).Assert();
         }
 
-        [Fact]
+        [Test]
         public async Task DataInWiki()
         {
             var fs                 = new SimulatedFileSystem();
@@ -54,7 +55,7 @@ namespace Wikitools.AzureDevOps.Tests
             new JsonDiffAssertion(pagesStatsData, pagesStats).Assert();
         }
 
-        [Fact]
+        [Test]
         public async Task DataInStorage()
         {
             var fs             = new SimulatedFileSystem();
@@ -73,7 +74,7 @@ namespace Wikitools.AzureDevOps.Tests
             new JsonDiffAssertion(pagesStatsData, pagesStats).Assert();
         }
 
-        [Fact]
+        [Test]
         public async Task DataInWikiAndStorageWithinSameMonth()
         {
             var fs                 = new SimulatedFileSystem();
@@ -97,7 +98,7 @@ namespace Wikitools.AzureDevOps.Tests
             new JsonDiffAssertion(expectedPagesStats, pagesStats).Assert();
         }
 
-        [Fact]
+        [Test]
         public async Task DataInStorageOffByOneBug()
         {
             var fs               = new SimulatedFileSystem();
@@ -135,8 +136,8 @@ namespace Wikitools.AzureDevOps.Tests
         /// External dependencies:
         /// Same as Wikitools.AzureDevOps.Tests.AdoWikiWithStorageTests.ObtainsAndMergesDataFromAdoWikiApiAndStorage
         /// </summary>
-        [Trait("category", "integration")]
-        [Fact]
+        [Category("integration2")]
+        [Test]
         public async Task ObtainsAndStoredDataFromWiki()
         {
             var fs         = new FileSystem();
@@ -160,21 +161,20 @@ namespace Wikitools.AzureDevOps.Tests
             var firstDayWithAnyVisit = wikiStats.Where(ps => ps.DayStats.Any()).Select(ps => ps.DayStats.Min(ds => ds.Day)).Min();
             var lastDayWithAnyVisit = wikiStats.Where(ps => ps.DayStats.Any()).Select(s => s.DayStats.Max(ds => ds.Day)).Max();
             // kja these checks will fail if the resource wiki was never visited on the min/max days
-            Assert.Equal(new DateDay(DateTime.UtcNow.AddDays(-pageViewsForDays+1)), new DateDay(firstDayWithAnyVisit));
-            Assert.Equal(new DateDay(DateTime.UtcNow), new DateDay(lastDayWithAnyVisit));
+            Assert.That(new DateDay(DateTime.UtcNow.AddDays(-pageViewsForDays+1)), Is.EqualTo(new DateDay(firstDayWithAnyVisit)));
+            Assert.That(new DateDay(DateTime.UtcNow.AddDays(-pageViewsForDays+1)), Is.EqualTo(new DateDay(firstDayWithAnyVisit)));
+            Assert.That(new DateDay(DateTime.UtcNow), Is.EqualTo(new DateDay(lastDayWithAnyVisit)));
             
             var storedStats = storage.PagesStats(pageViewsForDays);
             var storedFirstDayWithAnyVisit = storedStats.Where(ps => ps.DayStats.Any()).Select(ps => ps.DayStats.Min(ds => ds.Day)).Min();
             var storedLastDayWithAnyVisit = storedStats.Where(ps => ps.DayStats.Any()).Select(s => s.DayStats.Max(ds => ds.Day)).Max();
 
-            Assert.Equal(
-                new DateDay(DateTime.UtcNow.AddDays(-pageViewsForDays + 1)),
-                new DateDay(storedFirstDayWithAnyVisit));
-            Assert.Equal(new DateDay(DateTime.UtcNow), new DateDay(storedLastDayWithAnyVisit));
+            Assert.That(new DateDay(DateTime.UtcNow.AddDays(-pageViewsForDays + 1)), Is.EqualTo(new DateDay(storedFirstDayWithAnyVisit)));
+            Assert.That(new DateDay(DateTime.UtcNow), Is.EqualTo(new DateDay(storedLastDayWithAnyVisit)));
         }
 
-        [Trait("category", "integration")]
-        [Fact]
+        [Category("integration2")]
+        [Test]
         public async Task ObtainsAndStoredDataFromWiki2()
         {
             var fs      = new FileSystem();
@@ -200,15 +200,15 @@ namespace Wikitools.AzureDevOps.Tests
             var minDay2 = FirstDayWithAnyVisit(wikiStatsForDays2);
             var maxDay2 = LastDayWithAnyVisit(wikiStatsForDays2);
             
-            Assert.Equal(utcYesterday, minDay2);
-            Assert.Contains(new[] { utcYesterday, utcToday }, expected => expected.Equals(maxDay2));
+            Assert.That(utcYesterday, Is.EqualTo(minDay2));
+            Assert.That(new[] { utcYesterday, utcToday }, Contains.Item(maxDay2));
 
             var wikiStatsForDays3 = await adoWiki.PagesStats(pageViewsForDays: 3);
 
             var minDay3 = FirstDayWithAnyVisit(wikiStatsForDays3);
             var maxDay3 = LastDayWithAnyVisit(wikiStatsForDays3);
-            Assert.Equal(utcToday.AddDays(-2), minDay3);
-            Assert.Contains(new[] { utcYesterday, utcToday }, expected => expected.Equals(maxDay3));
+            Assert.That(utcToday.AddDays(-2),             Is.EqualTo(minDay3));
+            Assert.That(new[] { utcYesterday, utcToday }, Contains.Item(maxDay3));
         }
 
         // kj2 move these 2 methods to ValidWikiPagesStats
@@ -253,8 +253,8 @@ namespace Wikitools.AzureDevOps.Tests
         /// - for this test to exercise meaningful behavior, there has to be recent ongoing, daily activity on
         /// the wiki.
         /// </summary>
-        [Trait("category", "integration")]
-        [Fact]
+        [Category("integration2")]
+        [Test]
         public async Task ObtainsAndMergesDataFromAdoWikiApiAndStorage()
         {
             var fs         = new FileSystem();
