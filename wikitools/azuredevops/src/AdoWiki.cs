@@ -17,10 +17,10 @@ namespace Wikitools.AzureDevOps
             new AdoWikiUri(adoWikiUriStr), patEnvVar, env) { }
 
         // Max value supported by https://docs.microsoft.com/en-us/rest/api/azure/devops/wiki/pages%20batch/get?view=azure-devops-rest-6.1
-        // Confirmed empirically.
+        // Confirmed empirically as of 3/27/2021.
         private const int MaxPageViewsForDays = 30;
-        // If 0, the call to ADO wiki API still succeeds, but all returned WikiPageDetail have null ViewStats.
-        // Confirmed empirically.
+        // If 0, the call to ADO wiki API still succeeds, but all returned WikiPageDetail will have null ViewStats.
+        // Confirmed empirically as of 3/27/2021.
         private const int MinPageViewsForDays = 1;
 
         public async Task<ValidWikiPagesStats> PagesStats(
@@ -54,6 +54,18 @@ namespace Wikitools.AzureDevOps
             return connection.GetClient<WikiHttpClient>();
         }
 
+        /// <remarks>
+        /// Empirical tests as of 3/27/2021 show that:
+        /// - the wiki page visit ingestion delay is 4-6 hours.
+        /// - the dates are counted in UTC.
+        /// How tested:
+        /// - I created and immediately visited kojamroz_test page on 3/27/2021 9:04 PM PDT.
+        /// - The page has shown up immediately in the returned list, but with null visits.
+        /// - The visit was not being returned by this call as of 3/28/2021 1:08 AM PDT i.e. 4:04 later.
+        /// - But it appeared by 3/28/2021 3:07 AM PDT, i.e. 1:59 later.
+        /// - When it appeared, it was counted as 3/8/2021, not 3/7/2021.
+        /// Presumably because the dates are in UTC not PDT.
+        /// </remarks>
         private static async Task<List<WikiPageDetail>> GetAllWikiPagesDetails(
             AdoWikiUri adoWikiUri,
             int pageViewsForDays,
@@ -76,11 +88,6 @@ namespace Wikitools.AzureDevOps
                 continuationToken = wikiPagesDetailsPage.ContinuationToken;
             } while (continuationToken != null);
 
-            // kja
-            // kojamroz_test created on 3/27/2021 9:04 PM PDT
-            // still no view stats for kojamroz_test as of 3/28/2021 1:08 AM PDT
-            // Shown up by 3/28/2021 3:07 AM PDT. For day 3/28/2021.
-            // So ingestion delay at least 4-6 hours.
             return wikiPagesDetails;
         }
     }
