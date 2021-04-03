@@ -136,7 +136,7 @@ namespace Wikitools.AzureDevOps.Tests
         /// External dependencies:
         /// Same as Wikitools.AzureDevOps.Tests.AdoWikiWithStorageTests.ObtainsAndMergesDataFromAdoWikiApiAndStorage
         /// </summary>
-        [Category("integration2")]
+        [Category("integration")]
         [Test]
         public async Task ObtainsAndStoredDataFromWiki()
         {
@@ -173,7 +173,7 @@ namespace Wikitools.AzureDevOps.Tests
             Assert.That(new DateDay(DateTime.UtcNow), Is.EqualTo(new DateDay(storedLastDayWithAnyVisit)));
         }
 
-        [Category("integration2")]
+        [Category("integration")]
         [Test]
         public async Task ObtainsAndStoredDataFromWiki2()
         {
@@ -188,6 +188,10 @@ namespace Wikitools.AzureDevOps.Tests
             var wikiStatsFor1Day   = await adoWiki.PagesStats(pageViewsForDays: 1);
             var minDay = FirstDayWithAnyVisit(wikiStatsFor1Day);
             var maxDay = LastDayWithAnyVisit(wikiStatsFor1Day);
+
+            // kja CURR WORK
+            Assume.That(minDay, Is.Not.Null);
+            Assume.That(maxDay, Is.Not.Null);
 
             // minDay and maxDay being null mean there is no data for today. This might happen
             // not only when there were no visits today, but also when there were visits but were not yet ingested.
@@ -253,7 +257,7 @@ namespace Wikitools.AzureDevOps.Tests
         /// - for this test to exercise meaningful behavior, there has to be recent ongoing, daily activity on
         /// the wiki.
         /// </summary>
-        [Category("integration2")]
+        [Category("integration")]
         [Test]
         public async Task ObtainsAndMergesDataFromAdoWikiApiAndStorage()
         {
