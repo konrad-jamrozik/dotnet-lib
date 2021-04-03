@@ -185,17 +185,13 @@ namespace Wikitools.AzureDevOps.Tests
             var utcToday = new DateDay(DateTime.UtcNow);
             var utcYesterday = utcToday.AddDays(-1);
 
-            // kja check if this behavior changes when the UTC day is the same as local time day.
-            // Last time tested on 3/27/2021 9:01 PM PST which is 3/28/2021 4:02 AM UTC.
             var wikiStatsFor1Day   = await adoWiki.PagesStats(pageViewsForDays: 1);
-            // kja at 3/27/2021 9:56 PM PST this is no longer true. It now shows dates for 3/28/2021 00:00:00.
-            // Perhaps it was empty before due to ingestion delay. - now it is 4:56 AM UTC, so maybe the ingestion delay is ~4-5h.
             var minDay = FirstDayWithAnyVisit(wikiStatsFor1Day);
             var maxDay = LastDayWithAnyVisit(wikiStatsFor1Day);
 
             // minDay and maxDay being null mean there is no data for today. This might happen
             // not only when there were no visits today, but also when there were visits but were not yet ingested.
-            // Empirical tests show ingestion may take at least 4-5 hours.
+            // For details on the ingestion delay, please see comment on Wikitools.AzureDevOps.AdoWiki.GetAllWikiPagesDetails
             Assert.True(minDay == null || minDay.Equals(utcToday));
             Assert.True(maxDay == null || maxDay.Equals(utcToday));
 
