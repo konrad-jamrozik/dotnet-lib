@@ -24,7 +24,8 @@ namespace Wikitools.AzureDevOps.Tests
             var fixture          = new ValidWikiPagesStatsFixture();
             var stats            = fixture.PagesStats(UtcNowDay);
             var storedStats      = stats.Trim(UtcNowDay, -pageViewsForDays, 0);
-            var storage          = await AdoWikiPagesStatsStorage(new Declare(), UtcNowDay, storedStats);
+            var adoDecl          = new AzureDevOpsTestsDeclare(new Declare());
+            var storage          = await adoDecl.AdoWikiPagesStatsStorage(UtcNowDay, storedStats);
 
             Assert.That(
                 stats.FirstDayWithAnyVisit,
@@ -37,19 +38,6 @@ namespace Wikitools.AzureDevOps.Tests
 
             var expectedStats = storedStats.Trim(UtcNowDay, -pageViewsForDays+1, 0);
             new JsonDiffAssertion(expectedStats, actualStats).Assert();
-        }
-
-        public static async Task<AdoWikiPagesStatsStorage> AdoWikiPagesStatsStorage(
-            Declare decl,
-            DateDay utcNow,
-            ValidWikiPagesStats? storedStats = null)
-        {
-            var fs         = new SimulatedFileSystem();
-            var storageDir = fs.NextSimulatedDir();
-            var storage    = decl.AdoWikiPagesStatsStorage(utcNow, storageDir);
-            if (storedStats != null)
-                storage = await storage.OverwriteWith(storedStats, utcNow);
-            return storage;
         }
     }
 }
