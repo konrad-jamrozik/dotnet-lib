@@ -113,16 +113,21 @@ namespace Wikitools.AzureDevOps.Tests
         {
             var fs               = new SimulatedFileSystem();
             var utcNow           = new DateDay(new SimulatedTimeline().UtcNow);
-            // kja make this implicit assumption into Assume
-            // Implicit assumption that the underlying fixture data is going back at least up to 3 days.
-            var storedStats      = ValidWikiPagesStatsFixture.PagesStats(utcNow).Trim(utcNow, -3, 0);
-            var storageDir       = fs.NextSimulatedDir();
-            var storage          = await Storage(utcNow, storageDir).DeleteExistingAndSave(storedStats, utcNow);
+            var pageViewsForDays = 3;
+            var stats            = ValidWikiPagesStatsFixture.PagesStats(utcNow);
+            Assume.That(
+                FirstDayWithAnyVisit(stats),
+                Is.LessThanOrEqualTo(LastDayWithAnyVisit(stats)?.AddDays(-pageViewsForDays)),
+                "The off by one error won't be detected because there is no visit data in the off (first) day");
+            var storedStats = stats.Trim(utcNow, -pageViewsForDays, 0);
+            var storageDir  = fs.NextSimulatedDir();
+            var storage     = await Storage(utcNow, storageDir).DeleteExistingAndSave(storedStats, utcNow);
 
             // Act
-            var readStats = storage.PagesStats(pageViewsForDays: 3);
+            var readStats = storage.PagesStats(pageViewsForDays);
 
-            var expectedStats = storedStats.Trim(utcNow, -2, 0);
+
+            var expectedStats = storedStats.Trim(utcNow, -pageViewsForDays+1, 0);
             new JsonDiffAssertion(expectedStats, readStats).Assert();
         }
 
