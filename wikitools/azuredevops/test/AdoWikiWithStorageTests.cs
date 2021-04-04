@@ -157,8 +157,8 @@ namespace Wikitools.AzureDevOps.Tests
             var storageDir = new Dir(fs, cfg.TestStorageDirPath);
             var storage    = Storage(utcNow, storageDir);
 
-            await VerifyDayRangeOfWikiStats(utcNow, 0, adoWiki, 1, storage);
-            await VerifyDayRangeOfWikiStats(utcNow, 1, adoWiki, 2, storage);
+            await VerifyDayRangeOfWikiStats(utcNow, adoWiki, storage, pageViewsForDays: 1);
+            await VerifyDayRangeOfWikiStats(utcNow, adoWiki, storage, pageViewsForDays: 2);
         }
 
         /// <summary>
@@ -191,6 +191,7 @@ namespace Wikitools.AzureDevOps.Tests
             var storage    = Storage(utcNow, storageDir);
             var adoWiki    = new AdoWiki(cfg.AdoWikiUri, cfg.AdoPatEnvVar, env);
 
+            // ReSharper disable CommentTypo
             // Act 1. Obtain 10 days of page stats from wiki (days 1 to 10)
             // WWWWWWWWWW
             var statsForDays1To10 = await adoWiki.PagesStats(pageViewsForDays: 10);
@@ -220,6 +221,7 @@ namespace Wikitools.AzureDevOps.Tests
             // --SSSS---- (Act 3)
             // merged
             // ------WWWW (Act 2)
+            // ReSharper restore CommentTypo
             var expected = statsForDays3To6.Merge(statsForDays7To10);
             new JsonDiffAssertion(expected, statsForDays3To10).Assert();
         }
@@ -227,13 +229,12 @@ namespace Wikitools.AzureDevOps.Tests
 
         private async Task VerifyDayRangeOfWikiStats(
             DateTime utcNow,
-            int firstDayOffset,
             IAdoWiki adoWiki,
-            int pageViewsForDays,
-            WikiPagesStatsStorage statsStorage)
+            WikiPagesStatsStorage statsStorage,
+            int pageViewsForDays)
         {
             var expectedLastDay  = new DateDay(utcNow);
-            var expectedFirstDay = expectedLastDay.AddDays(-firstDayOffset);
+            var expectedFirstDay = expectedLastDay.AddDays(-pageViewsForDays+1);
 
             // Act
             var stats = await adoWiki.PagesStats(pageViewsForDays);
@@ -263,15 +264,15 @@ namespace Wikitools.AzureDevOps.Tests
             Assume.That(
                 actualFirstDay,
                 Is.EqualTo(expectedFirstDay),
-                ExactDayAssumptionViolationMessage(pageViewsForDays));
+                ExactDayAssumptionViolationMessage("Minimum first", pageViewsForDays));
             Assume.That(
                 actualLastDay,
                 Is.EqualTo(expectedLastDay),
-                ExactDayAssumptionViolationMessage(pageViewsForDays));
+                ExactDayAssumptionViolationMessage("Maximum last", pageViewsForDays));
 
-            string ExactDayAssumptionViolationMessage(int i)
+            string ExactDayAssumptionViolationMessage(string dayType, int pageViewsForDays)
             {
-                return $"Minimum possible first day for pageViewsForDays: {i}. " +
+                return $"{dayType} possible day for pageViewsForDays: {pageViewsForDays}. " +
                        $"Possible lack of visits or ingestion delay. UTC time: {DateTime.UtcNow}";
             }
         }
