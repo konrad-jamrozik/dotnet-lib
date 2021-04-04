@@ -20,7 +20,7 @@ namespace Wikitools.AzureDevOps.Tests
         // - TO-DO wiki integration tests: see todos below
         // - TO-DO Test: Storage with data from 3 months <- this test should fail until more than 30 pageViewsForDays is properly supported
         // - TO-DO Deduplicate arrange logic of all tests
-        // - TO-Do Break dependency on WikitoolsConfig.From(fs): this is forbidden dependency: azuredevops-tests should not depend on wikitools
+        // - TO-DO Break dependency on WikitoolsConfig.From(fs): this is forbidden dependency: azuredevops-tests should not depend on wikitools
         [Test]
         public async Task NoData()
         {
@@ -41,9 +41,10 @@ namespace Wikitools.AzureDevOps.Tests
         [Test]
         public async Task DataInWiki()
         {
+            var f                  = new ValidWikiPagesStatsFixture();
             var fs                 = new SimulatedFileSystem();
             var utcNow             = new SimulatedTimeline().UtcNow;
-            var pagesStatsData     = ValidWikiPagesStatsFixture.PagesStats(new DateDay(utcNow));
+            var pagesStatsData     = f.PagesStats(new DateDay(utcNow));
             var adoWiki            = new SimulatedAdoWiki(pagesStatsData);
             var storageDir         = fs.NextSimulatedDir();
             var storage            = Storage(utcNow, storageDir);
@@ -59,9 +60,10 @@ namespace Wikitools.AzureDevOps.Tests
         [Test]
         public async Task DataInStorage()
         {
+            var f              = new ValidWikiPagesStatsFixture();
             var fs             = new SimulatedFileSystem();
             var utcNow         = new SimulatedTimeline().UtcNow;
-            var pagesStatsData = ValidWikiPagesStatsFixture.PagesStats(new DateDay(utcNow));
+            var pagesStatsData = f.PagesStats(new DateDay(utcNow));
             var adoWiki        = new SimulatedAdoWiki(WikiPageStats.EmptyArray);
             var storageDir     = fs.NextSimulatedDir();
             var storage        = await Storage(utcNow, storageDir).DeleteExistingAndSave(pagesStatsData, utcNow);
@@ -78,13 +80,13 @@ namespace Wikitools.AzureDevOps.Tests
         [Test]
         public async Task DataInWikiAndStorageWithinWikiMaxPageViewsForDays()
         {
+            var f                  = new ValidWikiPagesStatsFixture();
             var fs                 = new SimulatedFileSystem();
             var utcNow             = new DateDay(new SimulatedTimeline().UtcNow);
             var pageViewsForDays   = AdoWiki.MaxPageViewsForDays;
-            var currStats          = ValidWikiPagesStatsFixture.PagesStats(utcNow);
+            var currStats          = f.PagesStats(utcNow);
             var currStatsDaySpan   = (int) currStats.VisitedDaysSpan!;
-            var prevStatsShift     = utcNow.AddDays(-pageViewsForDays + currStatsDaySpan);
-            var prevStats          = ValidWikiPagesStatsFixture.PagesStats(prevStatsShift);
+            var prevStats          = f.PagesStats(utcNow.AddDays(-pageViewsForDays + currStatsDaySpan));
             var expectedPagesStats = prevStats.Merge(currStats);
             var adoWiki            = new SimulatedAdoWiki(currStats);
             var storageDir         = fs.NextSimulatedDir();
@@ -102,7 +104,6 @@ namespace Wikitools.AzureDevOps.Tests
                 $"Precondition violation: the first day of arranged stats is so much in the past that " +
                 $"a call to PageStats won't return it.");
 
-
             // Act
             var pagesStats = await adoWikiWithStorage.PagesStats(pageViewsForDays);
 
@@ -119,10 +120,11 @@ namespace Wikitools.AzureDevOps.Tests
         [Test]
         public async Task FirstDayOfVisitsInStorageIsNotOffByOne()
         {
+            var f                = new ValidWikiPagesStatsFixture();
             var fs               = new SimulatedFileSystem();
             var utcNow           = new DateDay(new SimulatedTimeline().UtcNow);
             var pageViewsForDays = 3;
-            var stats            = ValidWikiPagesStatsFixture.PagesStats(utcNow);
+            var stats            = f.PagesStats(utcNow);
             var storedStats      = stats.Trim(utcNow, -pageViewsForDays, 0);
             var storageDir       = fs.NextSimulatedDir();
             var storage          = await Storage(utcNow, storageDir).DeleteExistingAndSave(storedStats, utcNow);

@@ -2,12 +2,12 @@ using Wikitools.Lib.Primitives;
 
 namespace Wikitools.AzureDevOps.Tests
 {
-    public static class ValidWikiPagesStatsFixture
+    public class ValidWikiPagesStatsFixture
     {
-        public static ValidWikiPagesStats PagesStats() =>
+        public ValidWikiPagesStats PagesStats() =>
             PagesStats(new DateDay(new SimulatedTimeline().UtcNow));
 
-        public static ValidWikiPagesStats PagesStats(DateDay date) => new(new WikiPageStats[]
+        public ValidWikiPagesStats PagesStats(DateDay date) => new(new WikiPageStats[]
         {
             new("/Home", 1, new WikiPageStats.DayStat[]
             {
