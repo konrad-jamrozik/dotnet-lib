@@ -13,31 +13,21 @@ namespace Wikitools.AzureDevOps.Tests
     public class AdoWikiWithStorageIntegrationTests
     {
         // kja curr work. 
-        // - move all the int tests to a separate class, to deduplicate assumptions about the external wiki.
         // - make the test call ADO API for /Home page only, show that page
         // - manually check the behavior is the same as with entire wiki list
-        // - add assume over PAT working or not (need to catch the exception)
+        // - add Warning/Precondition failure over PAT working or not (need to catch the exception)
         /// <summary>
         /// This test tests the following:
         /// - ADO API for Wiki can be successfully queried for data
         /// - Querying wiki for 1 day results in it giving data for today only.
         /// - The obtained data can be successfully stored.
-        ///
-        /// External dependencies:
-        /// Same as Wikitools.AzureDevOps.Tests.AdoWikiWithStorageTests.ObtainsAndMergesDataFromAdoWikiApiAndStorage
         /// </summary>
         [Test]
         public async Task ObtainsAndStoresDataFromAdoWiki()
         {
             var decl    = new TestDeclare();
-            var fs      = new FileSystem();
-            var env     = new Environment();
-            var cfg     = WikitoolsConfig.From(fs);
-            var adoWiki = new AdoWiki(cfg.AdoWikiUri, cfg.AdoPatEnvVar, env);
-            var utcNow  = DateTime.UtcNow;
-
-            var storageDir = new Dir(fs, cfg.TestStorageDirPath);
-            var storage    = decl.Storage(utcNow, storageDir);
+            var utcNow  = new Timeline().UtcNow;
+            var (adoWiki, storage) = ArrangeSut(decl, utcNow);
 
             await VerifyDayRangeOfWikiStats(utcNow, adoWiki, storage, pageViewsForDays: 1);
             await VerifyDayRangeOfWikiStats(utcNow, adoWiki, storage, pageViewsForDays: 2);
@@ -52,26 +42,13 @@ namespace Wikitools.AzureDevOps.Tests
         ///   the API and from the data saved in storage.
         ///
         /// The tested scenario is explained inline in the code.
-        ///
-        /// External dependencies:
-        /// This test queries whatever wiki is defined in WikitoolsConfig, using PAT read from
-        /// Env var also defined in that config.
-        /// Thus:
-        /// - for this test to work, that wiki has to be accessible by the owner of the PAT
-        /// - for this test to exercise meaningful behavior, there has to be recent ongoing, daily activity on
-        /// the wiki.
         /// </summary>
         [Test]
         public async Task ObtainsAndMergesDataFromAdoWikiApiAndStorage()
         {
             var decl       = new TestDeclare();
-            var fs         = new FileSystem();
             var utcNow     = new Timeline().UtcNow;
-            var env        = new Environment();
-            var cfg        = WikitoolsConfig.From(fs);
-            var storageDir = new Dir(fs, cfg.TestStorageDirPath);
-            var storage    = decl.Storage(utcNow, storageDir);
-            var adoWiki    = new AdoWiki(cfg.AdoWikiUri, cfg.AdoPatEnvVar, env);
+            var (adoWiki, storage) = ArrangeSut(decl, utcNow);
 
             // ReSharper disable CommentTypo
             // Act 1. Obtain 10 days of page stats from wiki (days 1 to 10)
@@ -107,6 +84,26 @@ namespace Wikitools.AzureDevOps.Tests
             var expected = statsForDays3To6.Merge(statsForDays7To10);
             new JsonDiffAssertion(expected, statsForDays3To10).Assert();
         }
+
+        /// <summary>
+        /// Provides systems under tests to the integration tests: AdoWiki and WikiPagesStatsStorage.
+        ///
+        /// The adoWiki is defined in WikitoolsConfig, using PAT read from env var also defined in that config.
+        /// Thus:
+        /// - the PAT needs to provide relevant access to the wiki;
+        /// - for the wiki to provide meaningful behavior to exercise, there has to be recent ongoing, daily activity.
+        /// </summary>
+        private static (AdoWiki adoWiki, WikiPagesStatsStorage storage) ArrangeSut(TestDeclare decl, DateTime utcNow)
+        {
+            var fs         = new FileSystem();
+            var env        = new Environment();
+            var cfg        = WikitoolsConfig.From(fs);
+            var storageDir = new Dir(fs, cfg.TestStorageDirPath);
+            var storage    = decl.Storage(utcNow, storageDir);
+            var adoWiki    = new AdoWiki(cfg.AdoWikiUri, cfg.AdoPatEnvVar, env);
+            return (adoWiki, storage);
+        }
+
         private async Task VerifyDayRangeOfWikiStats(
             DateTime utcNow,
             IAdoWiki adoWiki,
