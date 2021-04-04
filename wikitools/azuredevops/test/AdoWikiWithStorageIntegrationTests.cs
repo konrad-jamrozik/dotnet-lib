@@ -16,6 +16,10 @@ namespace Wikitools.AzureDevOps.Tests
         // - make the test call ADO API for /Home page only, show that page
         // - manually check the behavior is the same as with entire wiki list
         // - add Warning/Precondition failure over PAT working or not (need to catch the exception)
+        // - Break dependency on WikitoolsConfig.From(fs): this is forbidden dependency: azuredevops-tests should not depend on wikitools
+        // -   See my other to-do on that; search for "idea for config".
+        // - Same composability needed with Declare
+
         /// <summary>
         /// This test tests the following:
         /// - ADO API for Wiki can be successfully queried for data
@@ -23,15 +27,17 @@ namespace Wikitools.AzureDevOps.Tests
         /// - The obtained data can be successfully stored.
         /// </summary>
         [Test]
-        public async Task ObtainsAndStoresDataFromAdoWiki()
-        {
-            var decl    = new TestDeclare();
-            var utcNow  = new Timeline().UtcNow;
-            var (adoWiki, storage) = ArrangeSut(decl, utcNow);
+        public async Task ObtainsAndStoresDataFromAdoWikiForToday() =>
+            await VerifyDayRangeOfWikiStats(pageViewsForDays: 1);
 
-            await VerifyDayRangeOfWikiStats(utcNow, adoWiki, storage, pageViewsForDays: 1);
-            await VerifyDayRangeOfWikiStats(utcNow, adoWiki, storage, pageViewsForDays: 2);
-        }
+        /// <summary>
+        /// Like
+        /// Wikitools.AzureDevOps.Tests.AdoWikiWithStorageIntegrationTests.ObtainsAndStoresDataFromAdoWikiForToday
+        /// but goes two more days into the past.
+        /// </summary>
+        [Test]
+        public async Task ObtainsAndStoresDataFromAdoWikiFor3Days() =>
+            await VerifyDayRangeOfWikiStats(pageViewsForDays: 3);
 
         /// <summary>
         /// This test tests the following:
@@ -46,9 +52,7 @@ namespace Wikitools.AzureDevOps.Tests
         [Test]
         public async Task ObtainsAndMergesDataFromAdoWikiApiAndStorage()
         {
-            var decl       = new TestDeclare();
-            var utcNow     = new Timeline().UtcNow;
-            var (adoWiki, storage) = ArrangeSut(decl, utcNow);
+            var (decl, utcNow, adoWiki, storage) = ArrangeSut();
 
             // ReSharper disable CommentTypo
             // Act 1. Obtain 10 days of page stats from wiki (days 1 to 10)
@@ -86,30 +90,31 @@ namespace Wikitools.AzureDevOps.Tests
         }
 
         /// <summary>
-        /// Provides systems under tests to the integration tests: AdoWiki and WikiPagesStatsStorage.
+        /// Arranges integration tests system under tests and relevant dependencies.
         ///
+        /// External dependencies used:
         /// The adoWiki is defined in WikitoolsConfig, using PAT read from env var also defined in that config.
         /// Thus:
         /// - the PAT needs to provide relevant access to the wiki;
         /// - for the wiki to provide meaningful behavior to exercise, there has to be recent ongoing, daily activity.
         /// </summary>
-        private static (AdoWiki adoWiki, AdoWikiPagesStatsStorage storage) ArrangeSut(TestDeclare decl, DateTime utcNow)
+        private static (Declare decl, DateTime utcNow, AdoWiki adoWiki, AdoWikiPagesStatsStorage storage) ArrangeSut()
         {
+            var utcNow     = new Timeline().UtcNow;
             var fs         = new FileSystem();
             var env        = new Environment();
             var cfg        = WikitoolsConfig.From(fs);
             var storageDir = new Dir(fs, cfg.TestStorageDirPath);
-            var storage    = decl.Storage(utcNow, storageDir);
+            var decl       = new Declare();
+            var storage    = decl.AdoWikiPagesStatsStorage(utcNow, storageDir);
             var adoWiki    = new AdoWiki(cfg.AdoWikiUri, cfg.AdoPatEnvVar, env);
-            return (adoWiki, storage);
+            return (decl, utcNow, adoWiki, storage);
         }
 
-        private async Task VerifyDayRangeOfWikiStats(
-            DateTime utcNow,
-            IAdoWiki adoWiki,
-            AdoWikiPagesStatsStorage statsStorage,
-            int pageViewsForDays)
+        private async Task VerifyDayRangeOfWikiStats(int pageViewsForDays)
         {
+            var (_, utcNow, adoWiki, statsStorage) = ArrangeSut();
+
             var expectedLastDay  = new DateDay(utcNow);
             var expectedFirstDay = expectedLastDay.AddDays(-pageViewsForDays+1);
 
