@@ -20,8 +20,7 @@ namespace Wikitools.AzureDevOps.Tests
         [Test]
         public async Task NoData()
         {
-            var utcNow             = new SimulatedTimeline().UtcNow;
-            var adoWikiWithStorage = await AdoWikiWithStorage(new DateDay(utcNow));
+            var adoWikiWithStorage = await AdoWikiWithStorage(UtcNow);
 
             // Act
             var actualStats = await adoWikiWithStorage.PagesStats(AdoWiki.MaxPageViewsForDays);
@@ -32,9 +31,8 @@ namespace Wikitools.AzureDevOps.Tests
         [Test]
         public async Task DataInWiki()
         {
-            var utcNow             = new SimulatedTimeline().UtcNow;
-            var wikiStats          = new ValidWikiPagesStatsFixture().PagesStats(new DateDay(utcNow));
-            var adoWikiWithStorage = await AdoWikiWithStorage(new DateDay(utcNow), wikiStats: wikiStats);
+            var wikiStats          = new ValidWikiPagesStatsFixture().PagesStats(UtcNow);
+            var adoWikiWithStorage = await AdoWikiWithStorage(UtcNow, wikiStats: wikiStats);
 
             // Act
             var actualStats = await adoWikiWithStorage.PagesStats(AdoWiki.MaxPageViewsForDays);
@@ -45,9 +43,8 @@ namespace Wikitools.AzureDevOps.Tests
         [Test]
         public async Task DataInStorage()
         {
-            var utcNow             = new DateDay(new SimulatedTimeline().UtcNow);
-            var storedStats        = new ValidWikiPagesStatsFixture().PagesStats(new DateDay(utcNow));
-            var adoWikiWithStorage = await AdoWikiWithStorage(utcNow, storedStats);
+            var storedStats        = new ValidWikiPagesStatsFixture().PagesStats(new DateDay(UtcNow));
+            var adoWikiWithStorage = await AdoWikiWithStorage(UtcNow, storedStats);
 
             // Act
             var actualStats = await adoWikiWithStorage.PagesStats(AdoWiki.MaxPageViewsForDays);
@@ -58,14 +55,12 @@ namespace Wikitools.AzureDevOps.Tests
         [Test]
         public async Task DataInWikiAndStorageWithinWikiMaxPageViewsForDays()
         {
-            var utcNow             = new DateDay(new SimulatedTimeline().UtcNow);
             var pageViewsForDays   = AdoWiki.MaxPageViewsForDays;
-            var f                  = new ValidWikiPagesStatsFixture();
-            var currStats          = f.PagesStats(utcNow);
+            var fixture            = new ValidWikiPagesStatsFixture();
+            var currStats          = fixture.PagesStats(UtcNow);
             var currStatsDaySpan   = (int) currStats.VisitedDaysSpan!;
-            var prevStats          = f.PagesStats(utcNow.AddDays(-pageViewsForDays + currStatsDaySpan));
-            var expectedPagesStats = prevStats.Merge(currStats);
-            var adoWikiWithStorage = await AdoWikiWithStorage(utcNow, storedStats: prevStats, wikiStats: currStats);
+            var prevStats          = fixture.PagesStats(UtcNow.AddDays(-pageViewsForDays + currStatsDaySpan));
+            var adoWikiWithStorage = await AdoWikiWithStorage(UtcNow, storedStats: prevStats, wikiStats: currStats);
 
             Assert.That(
                 currStatsDaySpan,
@@ -74,14 +69,14 @@ namespace Wikitools.AzureDevOps.Tests
                 "between first and last days with any visits to provide meaningful test data");
             Assert.That(
                 prevStats.FirstDayWithAnyVisit,
-                Is.GreaterThanOrEqualTo(utcNow.AddDays(-pageViewsForDays + 1)),
+                Is.GreaterThanOrEqualTo(UtcNow.AddDays(-pageViewsForDays + 1)),
                 $"Precondition violation: the first day of arranged stats is so much in the past that " +
                 $"a call to PageStats won't return it.");
 
             // Act
-            var pagesStats = await adoWikiWithStorage.PagesStats(pageViewsForDays);
+            var actualStats = await adoWikiWithStorage.PagesStats(pageViewsForDays);
 
-            new JsonDiffAssertion(expectedPagesStats, pagesStats).Assert();
+            new JsonDiffAssertion(prevStats.Merge(currStats), actualStats).Assert();
         }
 
         /// <summary>
@@ -94,51 +89,59 @@ namespace Wikitools.AzureDevOps.Tests
         [Test]
         public async Task FirstDayOfVisitsInStorageIsNotOffByOne()
         {
-            var utcNow           = new DateDay(new SimulatedTimeline().UtcNow);
             var pageViewsForDays = 3;
-            var f                = new ValidWikiPagesStatsFixture();
-            var stats            = f.PagesStats(utcNow);
-            var storedStats      = stats.Trim(utcNow, -pageViewsForDays, 0);
-            var storage          = await WikiPagesStatsStorage(utcNow, storedStats);
+            var fixture          = new ValidWikiPagesStatsFixture();
+            var stats            = fixture.PagesStats(UtcNow);
+            var storedStats      = stats.Trim(UtcNow, -pageViewsForDays, 0);
+            var storage          = await WikiPagesStatsStorage(UtcNow, storedStats);
 
             Assert.That(
                 stats.FirstDayWithAnyVisit,
-                Is.LessThanOrEqualTo(stats.LastDayWithAnyVisit?.AddDays(-pageViewsForDays)),
+                Is.EqualTo(stats.LastDayWithAnyVisit?.AddDays(-pageViewsForDays)),
                 "Precondition violation: the off by one error won't be detected by this test as there " +
                 "are no visits in the off (== first) day in the arranged data.");
 
             // Act
-            var readStats = storage.PagesStats(pageViewsForDays);
+            var actualStats = storage.PagesStats(pageViewsForDays);
 
-            var expectedStats = storedStats.Trim(utcNow, -pageViewsForDays+1, 0);
-            new JsonDiffAssertion(expectedStats, readStats).Assert();
+            var expectedStats = storedStats.Trim(UtcNow, -pageViewsForDays+1, 0);
+            new JsonDiffAssertion(expectedStats, actualStats).Assert();
         }
 
-        private static async Task<WikiPagesStatsStorage> WikiPagesStatsStorage(
-            DateDay utcNow,
-            ValidWikiPagesStats storedStats)
-        {
-            var fs         = new SimulatedFileSystem();
-            var storageDir = fs.NextSimulatedDir();
-            var decl       = new TestDeclare();
-            var storage    = await decl.Storage(utcNow, storageDir).OverwriteWith(storedStats, utcNow);
-            return storage;
-        }
+        private static DateDay UtcNow { get; } = new(new SimulatedTimeline().UtcNow);
 
         private static async Task<AdoWikiWithStorage> AdoWikiWithStorage(
             DateDay utcNow,
             ValidWikiPagesStats? storedStats = null,
             ValidWikiPagesStats? wikiStats = null)
         {
-            var adoWiki    = new SimulatedAdoWiki(wikiStats ?? new ValidWikiPagesStats(WikiPageStats.EmptyArray));
-            var decl       = new TestDeclare();
+            var decl    = new TestDeclare();
+            var storage = await Storage(decl, utcNow, storedStats);
+            var adoWiki = new SimulatedAdoWiki(wikiStats ?? new ValidWikiPagesStats(WikiPageStats.EmptyArray));
+            var wiki    = decl.AdoWikiWithStorage(adoWiki, storage);
+            return wiki;
+        }
+
+        private static async Task<WikiPagesStatsStorage> WikiPagesStatsStorage(
+            DateDay utcNow,
+            ValidWikiPagesStats storedStats)
+        {
+            var decl    = new TestDeclare();
+            var storage = await Storage(decl, utcNow, storedStats);
+            return storage;
+        }
+
+        private static async Task<WikiPagesStatsStorage> Storage(
+            TestDeclare decl,
+            DateDay utcNow,
+            ValidWikiPagesStats? storedStats = null)
+        {
             var fs         = new SimulatedFileSystem();
             var storageDir = fs.NextSimulatedDir();
             var storage    = decl.Storage(utcNow, storageDir);
             if (storedStats != null)
                 storage = await storage.OverwriteWith(storedStats, utcNow);
-            var wiki = decl.AdoWikiWithStorage(adoWiki, storage);
-            return wiki;
+            return storage;
         }
     }
 }
