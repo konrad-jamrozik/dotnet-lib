@@ -32,5 +32,8 @@ namespace Wikitools.Lib.Primitives
         public DateDay AddMonths(int months) => new(_dateTime.AddMonths(months));
 
         public static DateDay operator +(DateDay dateDay, int days) => new(dateDay._dateTime.AddDays(days));
+
+        public static TimeSpan operator -(DateDay left, DateDay right) => left._dateTime.Subtract(right._dateTime);
+
     }
 }

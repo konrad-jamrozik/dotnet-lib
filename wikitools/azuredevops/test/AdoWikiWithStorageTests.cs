@@ -77,23 +77,32 @@ namespace Wikitools.AzureDevOps.Tests
         }
 
         [Test]
-        public async Task DataInWikiAndStorageWithinSameMonth()
+        public async Task DataInWikiAndStorageWithinWikiMaxPageViewsForDays()
         {
-            var fs        = new SimulatedFileSystem();
-            var utcNow    = new SimulatedTimeline().UtcNow;
-            var currStats = ValidWikiPagesStatsFixture.PagesStats(new DateDay(utcNow));
-            // kja make this implicit assumption into Assume. Note that if pageViewsForDays = 30 then this will work on -25 but not on -26.
-            // Implicit assumption that the underlying fixture data is going back by no more than 3 days.
-            // If it would go by more than 3, which is at least 4, then -26-4 = -31, which is more than pageViewsForDays of 30.
-            var prevStatsDateOffset = new DateDay(utcNow.AddDays(-26));
-            var prevStats          = ValidWikiPagesStatsFixture.PagesStats(prevStatsDateOffset);
+            var fs                 = new SimulatedFileSystem();
+            var utcNow             = new DateDay(new SimulatedTimeline().UtcNow);
+            var pageViewsForDays   = AdoWiki.MaxPageViewsForDays;
+            var currStats          = ValidWikiPagesStatsFixture.PagesStats(utcNow);
+            var currStatsDaySpan   = (int) currStats.VisitedDaysSpan!;
+            var prevStatsShift     = utcNow.AddDays(-pageViewsForDays + currStatsDaySpan);
+            var prevStats          = ValidWikiPagesStatsFixture.PagesStats(prevStatsShift);
             var expectedPagesStats = prevStats.Merge(currStats);
             var adoWiki            = new SimulatedAdoWiki(currStats);
             var storageDir         = fs.NextSimulatedDir();
             var storage            = await Storage(utcNow, storageDir).DeleteExistingAndSave(prevStats, utcNow);
-
             var adoWikiWithStorage = AdoWikiWithStorage(adoWiki, storage);
-            var pageViewsForDays   = 30;
+            
+            Assert.That(
+                currStatsDaySpan,
+                Is.GreaterThanOrEqualTo(2),
+                "Precondition violation: the arranged data has to have at least two days span " +
+                "between first and last days with any visits to provide meaningful test data");
+            Assert.That(
+                prevStats.FirstDayWithAnyVisit,
+                Is.GreaterThanOrEqualTo(utcNow.AddDays(-pageViewsForDays + 1)),
+                $"Precondition violation: the first day of arranged stats is so much in the past that " +
+                $"a call to PageStats won't return it.");
+
 
             // Act
             var pagesStats = await adoWikiWithStorage.PagesStats(pageViewsForDays);
@@ -115,13 +124,15 @@ namespace Wikitools.AzureDevOps.Tests
             var utcNow           = new DateDay(new SimulatedTimeline().UtcNow);
             var pageViewsForDays = 3;
             var stats            = ValidWikiPagesStatsFixture.PagesStats(utcNow);
-            Assume.That(
+            var storedStats      = stats.Trim(utcNow, -pageViewsForDays, 0);
+            var storageDir       = fs.NextSimulatedDir();
+            var storage          = await Storage(utcNow, storageDir).DeleteExistingAndSave(storedStats, utcNow);
+
+            Assert.That(
                 stats.FirstDayWithAnyVisit,
                 Is.LessThanOrEqualTo(stats.LastDayWithAnyVisit?.AddDays(-pageViewsForDays)),
-                "The off by one error won't be detected by this test if there are no visits in the off (== first) day");
-            var storedStats = stats.Trim(utcNow, -pageViewsForDays, 0);
-            var storageDir  = fs.NextSimulatedDir();
-            var storage     = await Storage(utcNow, storageDir).DeleteExistingAndSave(storedStats, utcNow);
+                "Precondition violation: the off by one error won't be detected by this test as there " +
+                "are no visits in the off (== first) day in the arranged data.");
 
             // Act
             var readStats = storage.PagesStats(pageViewsForDays);

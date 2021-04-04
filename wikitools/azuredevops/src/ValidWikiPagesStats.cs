@@ -160,6 +160,9 @@ namespace Wikitools.AzureDevOps
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
+        public bool AllDaysWithAnyVisitsAreInSameMonth =>
+            FirstDayWithAnyVisit?.Month == LastDayWithAnyVisit?.Month;
+
         public DateDay? FirstDayWithAnyVisit
         {
             get
@@ -183,5 +186,9 @@ namespace Wikitools.AzureDevOps
                 return maxDates.Any() ? new DateDay(maxDates.Max()) : null;
             }
         }
+
+        public int? VisitedDaysSpan => LastDayWithAnyVisit != null 
+            ? (int) (LastDayWithAnyVisit - FirstDayWithAnyVisit!).TotalDays + 1
+            : null;
     }
 }
