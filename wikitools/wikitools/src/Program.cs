@@ -66,9 +66,9 @@ namespace Wikitools
             {
                 // authorsReport,
                 // filesReport,
-                // pagesViewsReport,
-                // monthlyReport,
-                wikiToc
+                pagesViewsReport,
+                //monthlyReport,
+                //wikiToc
             };
             return docsToWrite;
         }

@@ -18,16 +18,28 @@ namespace Wikitools
             return gitLog;
         }
 
-        public static IAdoWiki WikiWithStorage(
+        public static AdoWikiWithStorage WikiWithStorage(
             IAdoWiki adoWiki,
             IFileSystem fileSystem,
             string storageDirPath,
-            DateTime now)
+            DateTime now,
+            int? pageViewsForDaysWikiLimit = null)
         {
-            var storage = new WikiPagesStatsStorage(new MonthlyJsonFilesStorage(new Dir(fileSystem, storageDirPath)), now);
-
-            var wikiWithStorage = new AdoWikiWithStorage(adoWiki, storage);
+            var storageDir      = new Dir(fileSystem, storageDirPath);
+            var storage         = WikiPagesStatsStorage(now, storageDir);
+            var wikiWithStorage = AdoWikiWithStorage(adoWiki, storage, pageViewsForDaysWikiLimit);
             return wikiWithStorage;
         }
+
+        public static AdoWikiWithStorage AdoWikiWithStorage(
+            IAdoWiki adoWiki,
+            WikiPagesStatsStorage storage,
+            int? pageViewsForDaysWikiLimit = null) =>
+            new(adoWiki, storage, pageViewsForDaysWikiLimit);
+
+        public static WikiPagesStatsStorage WikiPagesStatsStorage(DateTime now, Dir storageDir) =>
+            new(
+                new MonthlyJsonFilesStorage(storageDir),
+                now);
     }
 }

@@ -5,6 +5,7 @@ using Wikitools.Lib.Storage;
 
 namespace Wikitools.AzureDevOps
 {
+    // kja need "Ado" prefix
     public record WikiPagesStatsStorage(MonthlyJsonFilesStorage Storage, DateTime CurrentDate)
     {
         public async Task<WikiPagesStatsStorage> Update(IAdoWiki wiki, int pageViewsForDays)
