@@ -116,9 +116,9 @@ namespace Wikitools.AzureDevOps.Tests
             var pageViewsForDays = 3;
             var stats            = ValidWikiPagesStatsFixture.PagesStats(utcNow);
             Assume.That(
-                FirstDayWithAnyVisit(stats),
-                Is.LessThanOrEqualTo(LastDayWithAnyVisit(stats)?.AddDays(-pageViewsForDays)),
-                "The off by one error won't be detected because there is no visit data in the off (first) day");
+                stats.FirstDayWithAnyVisit,
+                Is.LessThanOrEqualTo(stats.LastDayWithAnyVisit?.AddDays(-pageViewsForDays)),
+                "The off by one error won't be detected by this test if there are no visits in the off (== first) day");
             var storedStats = stats.Trim(utcNow, -pageViewsForDays, 0);
             var storageDir  = fs.NextSimulatedDir();
             var storage     = await Storage(utcNow, storageDir).DeleteExistingAndSave(storedStats, utcNow);
@@ -135,6 +135,7 @@ namespace Wikitools.AzureDevOps.Tests
         // - move all the int tests to a separate class, to deduplicate assumptions about the external wiki.
         // - make the test call ADO API for /Home page only, show that page
         // - manually check the behavior is the same as with entire wiki list
+        // - add assume over PAT working or not (need to catch the exception)
         /// <summary>
         /// This test tests the following:
         /// - ADO API for Wiki can be successfully queried for data
@@ -226,7 +227,6 @@ namespace Wikitools.AzureDevOps.Tests
             new JsonDiffAssertion(expected, statsForDays3To10).Assert();
         }
 
-
         private async Task VerifyDayRangeOfWikiStats(
             DateTime utcNow,
             IAdoWiki adoWiki,
@@ -242,10 +242,10 @@ namespace Wikitools.AzureDevOps.Tests
             statsStorage = await statsStorage.DeleteExistingAndSave(stats, utcNow);
             var storedStats = statsStorage.PagesStats(pageViewsForDays);
 
-            var actualFirstDay = FirstDayWithAnyVisit(stats);
-            var storedFirstDay = FirstDayWithAnyVisit(storedStats);
-            var actualLastDay  = LastDayWithAnyVisit(stats);
-            var storedLastDay  = LastDayWithAnyVisit(storedStats);
+            var actualFirstDay = stats.FirstDayWithAnyVisit;
+            var storedFirstDay = storedStats.FirstDayWithAnyVisit;
+            var actualLastDay  = stats.LastDayWithAnyVisit;
+            var storedLastDay  = storedStats.LastDayWithAnyVisit;
 
             // Might be null if:
             // - there were no visits to the wiki in the used pageViewsForDays
@@ -259,7 +259,7 @@ namespace Wikitools.AzureDevOps.Tests
             Assert.That(storedLastDay,  Is.EqualTo(storedLastDay));
 
             // Assuming, not asserting, because:
-            // - the data might be null, due to reasons explained above
+            // - the data might be null, due to reasons explained above.
             // - or nobody might have visited the wiki on these specific days.
             Assume.That(
                 actualFirstDay,
@@ -277,33 +277,14 @@ namespace Wikitools.AzureDevOps.Tests
             }
         }
 
-        // kj2 move these 2 methods to ValidWikiPagesStats
-        private static DateDay? FirstDayWithAnyVisit(ValidWikiPagesStats stats)
-        {
-            var minDates = stats
-                .Where(ps => ps.DayStats.Any())
-                .Select(s => s.DayStats.Min(ds => ds.Day))
-                .ToList();
-            return minDates.Any() ? new DateDay(minDates.Min()) : null;
-        }
-
-        private static DateDay? LastDayWithAnyVisit(ValidWikiPagesStats stats)
-        {
-            var maxDates = stats
-                .Where(ps => ps.DayStats.Any())
-                .Select(s => s.DayStats.Max(ds => ds.Day))
-                .ToList();
-            return maxDates.Any() ? new DateDay(maxDates.Max()) : null;
-        }
-
         private static AdoWikiWithStorage AdoWikiWithStorage(
             IAdoWiki adoWiki,
             WikiPagesStatsStorage storage,
-            int? pageViewsForDaysWikiLimit = null)
-            => new(adoWiki, storage, pageViewsForDaysWikiLimit);
+            int? pageViewsForDaysWikiLimit = null) =>
+            new(adoWiki, storage, pageViewsForDaysWikiLimit);
 
-        private static WikiPagesStatsStorage Storage(DateTime utcNow, Dir storageDir)
-            => new(
+        private static WikiPagesStatsStorage Storage(DateTime utcNow, Dir storageDir) =>
+            new(
                 new MonthlyJsonFilesStorage(storageDir),
                 utcNow);
     }

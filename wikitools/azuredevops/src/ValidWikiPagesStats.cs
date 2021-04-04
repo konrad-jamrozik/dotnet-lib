@@ -159,5 +159,29 @@ namespace Wikitools.AzureDevOps
         public IEnumerator<WikiPageStats> GetEnumerator() => Data.GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+        public DateDay? FirstDayWithAnyVisit
+        {
+            get
+            {
+                var minDates = this
+                    .Where(ps => ps.DayStats.Any())
+                    .Select(s => s.DayStats.Min(ds => ds.Day))
+                    .ToList();
+                return minDates.Any() ? new DateDay(minDates.Min()) : null;
+            }
+        }
+
+        public DateDay? LastDayWithAnyVisit
+        {
+            get
+            {
+                var maxDates = this
+                    .Where(ps => ps.DayStats.Any())
+                    .Select(s => s.DayStats.Max(ds => ds.Day))
+                    .ToList();
+                return maxDates.Any() ? new DateDay(maxDates.Max()) : null;
+            }
+        }
     }
 }
