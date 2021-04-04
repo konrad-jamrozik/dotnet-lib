@@ -25,7 +25,7 @@ namespace Wikitools.AzureDevOps
             return this;
         }
 
-        public async Task<WikiPagesStatsStorage> DeleteExistingAndSave(ValidWikiPagesStats stats, DateTime date)
+        public async Task<WikiPagesStatsStorage> OverwriteWith(ValidWikiPagesStats stats, DateTime date)
         {
             // kja bug: doesn't delete previous month
             // kj3 add check here that the stats.month == date.month
