@@ -6,9 +6,9 @@ using Wikitools.Lib.Storage;
 
 namespace Wikitools
 {
-    public static class Declare
+    public class Declare
     {
-        public static GitLog GitLog(IOperatingSystem os, Dir gitRepoDir, string gitExecutablePath)
+        public GitLog GitLog(IOperatingSystem os, Dir gitRepoDir, string gitExecutablePath)
         {
             var repo = new GitRepository(
                 new GitBashShell(os, gitExecutablePath),
@@ -18,7 +18,7 @@ namespace Wikitools
             return gitLog;
         }
 
-        public static AdoWikiWithStorage WikiWithStorage(
+        public AdoWikiWithStorage AdoWikiWithStorage(
             IAdoWiki adoWiki,
             IFileSystem fileSystem,
             string storageDirPath,
@@ -31,13 +31,13 @@ namespace Wikitools
             return wikiWithStorage;
         }
 
-        public static AdoWikiWithStorage AdoWikiWithStorage(
+        public AdoWikiWithStorage AdoWikiWithStorage(
             IAdoWiki adoWiki,
             WikiPagesStatsStorage storage,
             int? pageViewsForDaysWikiLimit = null) =>
             new(adoWiki, storage, pageViewsForDaysWikiLimit);
 
-        public static WikiPagesStatsStorage WikiPagesStatsStorage(DateTime now, Dir storageDir) =>
+        public WikiPagesStatsStorage WikiPagesStatsStorage(DateTime now, Dir storageDir) =>
             new(
                 new MonthlyJsonFilesStorage(storageDir),
                 now);

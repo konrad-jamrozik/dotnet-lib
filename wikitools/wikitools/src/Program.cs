@@ -7,7 +7,6 @@ using Wikitools.AzureDevOps;
 using Wikitools.Lib.Markdown;
 using Wikitools.Lib.OS;
 using Wikitools.Lib.Primitives;
-using static Wikitools.Declare;
 using Environment = Wikitools.Lib.OS.Environment;
 
 namespace Wikitools
@@ -36,8 +35,9 @@ namespace Wikitools
             IAdoWiki adoWiki,
             WikitoolsConfig cfg)
         {
-            var gitLog = GitLog(os, new Dir(fs, cfg.GitRepoClonePath), cfg.GitExecutablePath);
-            var wiki = WikiWithStorage(
+            var decl   = new Declare();
+            var gitLog = decl.GitLog(os, new Dir(fs, cfg.GitRepoClonePath), cfg.GitExecutablePath);
+            var wiki = decl.AdoWikiWithStorage(
                 adoWiki,
                 fs,
                 cfg.StorageDirPath,

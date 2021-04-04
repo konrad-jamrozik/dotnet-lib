@@ -6,7 +6,6 @@ using Wikitools.Lib.Primitives;
 using Wikitools.Lib.Data;
 using Wikitools.Lib.Tests.Markdown;
 using Xunit;
-using static Wikitools.Declare;
 
 namespace Wikitools.Tests
 {
@@ -29,7 +28,7 @@ namespace Wikitools.Tests
             var os       = new SimulatedOS(new SimulatedGitLogProcess(logDays, commitsData));
 
             // Arrange SUT declaration
-            var gitLog  = GitLog(os, gitRepoDir, gitExecutablePath);
+            var gitLog  = new Declare().GitLog(os, gitRepoDir, gitExecutablePath);
             var commits = gitLog.Commits(logDays);
             var sut     = new GitFilesStatsReport(timeline, commits, logDays, top);
 
