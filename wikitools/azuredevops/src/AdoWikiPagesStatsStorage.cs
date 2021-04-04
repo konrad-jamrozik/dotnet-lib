@@ -6,9 +6,9 @@ using Wikitools.Lib.Storage;
 namespace Wikitools.AzureDevOps
 {
     // kj3 need "Ado" prefix
-    public record WikiPagesStatsStorage(MonthlyJsonFilesStorage Storage, DateTime CurrentDate)
+    public record AdoWikiPagesStatsStorage(MonthlyJsonFilesStorage Storage, DateTime CurrentDate)
     {
-        public async Task<WikiPagesStatsStorage> Update(IAdoWiki wiki, int pageViewsForDays)
+        public async Task<AdoWikiPagesStatsStorage> Update(IAdoWiki wiki, int pageViewsForDays)
         {
             var pageStats = await wiki.PagesStats(pageViewsForDays);
 
@@ -26,7 +26,7 @@ namespace Wikitools.AzureDevOps
             return this;
         }
 
-        public async Task<WikiPagesStatsStorage> OverwriteWith(ValidWikiPagesStats stats, DateTime date)
+        public async Task<AdoWikiPagesStatsStorage> OverwriteWith(ValidWikiPagesStats stats, DateTime date)
         {
             // kja bug: doesn't delete previous month
             // kj3 add check here that the stats.month == date.month

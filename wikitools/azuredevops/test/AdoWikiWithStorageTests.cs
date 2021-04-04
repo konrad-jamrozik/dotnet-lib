@@ -122,7 +122,7 @@ namespace Wikitools.AzureDevOps.Tests
             return wiki;
         }
 
-        private static async Task<WikiPagesStatsStorage> WikiPagesStatsStorage(
+        private static async Task<AdoWikiPagesStatsStorage> WikiPagesStatsStorage(
             DateDay utcNow,
             ValidWikiPagesStats storedStats)
         {
@@ -131,7 +131,7 @@ namespace Wikitools.AzureDevOps.Tests
             return storage;
         }
 
-        private static async Task<WikiPagesStatsStorage> Storage(
+        private static async Task<AdoWikiPagesStatsStorage> Storage(
             TestDeclare decl,
             DateDay utcNow,
             ValidWikiPagesStats? storedStats = null)

@@ -5,7 +5,7 @@ namespace Wikitools.AzureDevOps
 {
     public record AdoWikiWithStorage(
         IAdoWiki Wiki,
-        WikiPagesStatsStorage Storage,
+        AdoWikiPagesStatsStorage Storage,
         int? PageViewsForDaysWikiLimit = null) : IAdoWiki
     {
         public Task<ValidWikiPagesStats> PagesStats(int pageViewsForDays)

@@ -93,7 +93,7 @@ namespace Wikitools.AzureDevOps.Tests
         /// - the PAT needs to provide relevant access to the wiki;
         /// - for the wiki to provide meaningful behavior to exercise, there has to be recent ongoing, daily activity.
         /// </summary>
-        private static (AdoWiki adoWiki, WikiPagesStatsStorage storage) ArrangeSut(TestDeclare decl, DateTime utcNow)
+        private static (AdoWiki adoWiki, AdoWikiPagesStatsStorage storage) ArrangeSut(TestDeclare decl, DateTime utcNow)
         {
             var fs         = new FileSystem();
             var env        = new Environment();
@@ -107,7 +107,7 @@ namespace Wikitools.AzureDevOps.Tests
         private async Task VerifyDayRangeOfWikiStats(
             DateTime utcNow,
             IAdoWiki adoWiki,
-            WikiPagesStatsStorage statsStorage,
+            AdoWikiPagesStatsStorage statsStorage,
             int pageViewsForDays)
         {
             var expectedLastDay  = new DateDay(utcNow);

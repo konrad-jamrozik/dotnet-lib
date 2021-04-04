@@ -10,11 +10,11 @@ namespace Wikitools.AzureDevOps.Tests
 
         public AdoWikiWithStorage AdoWikiWithStorage(
             IAdoWiki adoWiki,
-            WikiPagesStatsStorage storage,
+            AdoWikiPagesStatsStorage storage,
             int? pageViewsForDaysWikiLimit = null) =>
             decl.AdoWikiWithStorage(adoWiki, storage, pageViewsForDaysWikiLimit);
 
-        public WikiPagesStatsStorage Storage(DateTime utcNow, Dir storageDir) =>
-            decl.WikiPagesStatsStorage(utcNow, storageDir);
+        public AdoWikiPagesStatsStorage Storage(DateTime utcNow, Dir storageDir) =>
+            decl.AdoWikiPagesStatsStorage(utcNow, storageDir);
     }
 }
