@@ -13,13 +13,15 @@ namespace Wikitools.AzureDevOps.Tests
     [TestFixture]
     public class AdoWikiWithStorageTests
     {
-        // kja simulated tests
+        // kja test todos:
         // - DONE Everything empty: no data from wiki, no data from storage
         // - DONE Data in wiki, nothing in storage
         // - DONE Data in storage, nothing in wiki
         // - DONE Data in wiki and storage, within wiki max limit of 30 days
         // - TO-DO wiki integration tests: see todos below
-        // - TO-DO Storage with data from 3 months <- this test should fail until more than 30 pageViewsForDays is properly supported
+        // - TO-DO Test: Storage with data from 3 months <- this test should fail until more than 30 pageViewsForDays is properly supported
+        // - TO-DO Deduplicate arrange logic of all tests
+        // - TO-Do Break dependency on WikitoolsConfig.From(fs): this is forbidden dependency: azuredevops-tests should not depend on wikitools
         [Test]
         public async Task NoData()
         {
@@ -125,8 +127,10 @@ namespace Wikitools.AzureDevOps.Tests
             new JsonDiffAssertion(expectedStats, readStats).Assert();
         }
 
-        // kja curr work. Finish up the body (e.g. assert against stored stats) and move all the int tests to a separate class,
-        // to deduplicate assumptions about the external wiki.
+        // kja curr work. 
+        // - move all the int tests to a separate class, to deduplicate assumptions about the external wiki.
+        // - make the test call ADO API for /Home page only, show that page
+        // - manually check the behavior is the same as with entire wiki list
         /// <summary>
         /// This test tests the following:
         /// - ADO API for Wiki can be successfully queried for data
@@ -138,100 +142,19 @@ namespace Wikitools.AzureDevOps.Tests
         /// </summary>
         [Category("integration")]
         [Test]
-        public async Task ObtainsAndStoredDataFromWiki()
+        public async Task ObtainsAndStoresDataFromAdoWiki()
         {
-            var fs         = new FileSystem();
-            var utcNow     = new Timeline().UtcNow;
-            var env        = new Environment();
-            var cfg        = WikitoolsConfig.From(fs); // kj2 forbidden dependency: azuredevops-tests should not depend on wikitools
+            var fs        = new FileSystem();
+            var env       = new Environment();
+            var cfg       = WikitoolsConfig.From(fs);
+            var adoWiki   = new AdoWiki(cfg.AdoWikiUri, cfg.AdoPatEnvVar, env);
+            var utcNow    = DateTime.UtcNow;
+
             var storageDir = new Dir(fs, cfg.TestStorageDirPath);
             var storage    = Storage(utcNow, storageDir);
-            var adoWiki    = new AdoWiki(cfg.AdoWikiUri, cfg.AdoPatEnvVar, env);
 
-            // kja add following tests:
-            // - show that pageViewsForDays = 1 returns empty stats. // not true for most of the day; sometimes true due to ingestion delay
-            //   - make the test call ADO API for /Home page only, show that page
-            //   - manually check the behavior is the same as with entire wiki list
-            // - show that pageViewsForDays = 2 always returns stats for previous day.
-            var pageViewsForDays = 2;
-
-            var wikiStats   = await adoWiki.PagesStats(pageViewsForDays: pageViewsForDays);
-            storage = await storage.DeleteExistingAndSave(wikiStats, utcNow);
-
-            var firstDayWithAnyVisit = wikiStats.Where(ps => ps.DayStats.Any()).Select(ps => ps.DayStats.Min(ds => ds.Day)).Min();
-            var lastDayWithAnyVisit = wikiStats.Where(ps => ps.DayStats.Any()).Select(s => s.DayStats.Max(ds => ds.Day)).Max();
-            // kja these checks will fail if the resource wiki was never visited on the min/max days
-            Assert.That(new DateDay(DateTime.UtcNow.AddDays(-pageViewsForDays+1)), Is.EqualTo(new DateDay(firstDayWithAnyVisit)));
-            Assert.That(new DateDay(DateTime.UtcNow.AddDays(-pageViewsForDays+1)), Is.EqualTo(new DateDay(firstDayWithAnyVisit)));
-            Assert.That(new DateDay(DateTime.UtcNow), Is.EqualTo(new DateDay(lastDayWithAnyVisit)));
-            
-            var storedStats = storage.PagesStats(pageViewsForDays);
-            var storedFirstDayWithAnyVisit = storedStats.Where(ps => ps.DayStats.Any()).Select(ps => ps.DayStats.Min(ds => ds.Day)).Min();
-            var storedLastDayWithAnyVisit = storedStats.Where(ps => ps.DayStats.Any()).Select(s => s.DayStats.Max(ds => ds.Day)).Max();
-
-            Assert.That(new DateDay(DateTime.UtcNow.AddDays(-pageViewsForDays + 1)), Is.EqualTo(new DateDay(storedFirstDayWithAnyVisit)));
-            Assert.That(new DateDay(DateTime.UtcNow), Is.EqualTo(new DateDay(storedLastDayWithAnyVisit)));
-        }
-
-        [Category("integration")]
-        [Test]
-        public async Task ObtainsAndStoredDataFromWiki2()
-        {
-            var fs      = new FileSystem();
-            var env     = new Environment();
-            var cfg     = WikitoolsConfig.From(fs); // kj2 forbidden dependency: azuredevops-tests should not depend on wikitools
-            var adoWiki = new AdoWiki(cfg.AdoWikiUri, cfg.AdoPatEnvVar, env);
-
-            var utcToday = new DateDay(DateTime.UtcNow);
-            var utcYesterday = utcToday.AddDays(-1);
-
-            var wikiStatsFor1Day   = await adoWiki.PagesStats(pageViewsForDays: 1);
-            var minDay = FirstDayWithAnyVisit(wikiStatsFor1Day);
-            var maxDay = LastDayWithAnyVisit(wikiStatsFor1Day);
-
-            // kja CURR WORK
-            Assume.That(minDay, Is.Not.Null);
-            Assume.That(maxDay, Is.Not.Null);
-
-            // minDay and maxDay being null mean there is no data for today. This might happen
-            // not only when there were no visits today, but also when there were visits but were not yet ingested.
-            // For details on the ingestion delay, please see comment on Wikitools.AzureDevOps.AdoWiki.GetAllWikiPagesDetails
-            Assert.True(minDay == null || minDay.Equals(utcToday));
-            Assert.True(maxDay == null || maxDay.Equals(utcToday));
-
-            var wikiStatsForDays2 = await adoWiki.PagesStats(pageViewsForDays: 2);
-
-            var minDay2 = FirstDayWithAnyVisit(wikiStatsForDays2);
-            var maxDay2 = LastDayWithAnyVisit(wikiStatsForDays2);
-            
-            Assert.That(utcYesterday, Is.EqualTo(minDay2));
-            Assert.That(new[] { utcYesterday, utcToday }, Contains.Item(maxDay2));
-
-            var wikiStatsForDays3 = await adoWiki.PagesStats(pageViewsForDays: 3);
-
-            var minDay3 = FirstDayWithAnyVisit(wikiStatsForDays3);
-            var maxDay3 = LastDayWithAnyVisit(wikiStatsForDays3);
-            Assert.That(utcToday.AddDays(-2),             Is.EqualTo(minDay3));
-            Assert.That(new[] { utcYesterday, utcToday }, Contains.Item(maxDay3));
-        }
-
-        // kj2 move these 2 methods to ValidWikiPagesStats
-        private static DateDay? FirstDayWithAnyVisit(ValidWikiPagesStats stats)
-        {
-            var minDates = stats
-                .Where(ps => ps.DayStats.Any())
-                .Select(s => s.DayStats.Min(ds => ds.Day))
-                .ToList();
-            return minDates.Any() ? new DateDay(minDates.Min()) : null;
-        }
-
-        private static DateDay? LastDayWithAnyVisit(ValidWikiPagesStats stats)
-        {
-            var maxDates = stats
-                .Where(ps => ps.DayStats.Any())
-                .Select(s => s.DayStats.Max(ds => ds.Day))
-                .ToList();
-            return maxDates.Any() ? new DateDay(maxDates.Max()) : null;
+            await VerifyDayRangeOfWikiStats(utcNow, 0, adoWiki, 1, storage);
+            await VerifyDayRangeOfWikiStats(utcNow, 1, adoWiki, 2, storage);
         }
 
         /// <summary>
@@ -287,6 +210,65 @@ namespace Wikitools.AzureDevOps.Tests
             // (data from storage for days 3 to 6 merged with data from ADO API for days 7 to 10)
             var expected = statsForDays3To6.Merge(statsForDays7To10);
             new JsonDiffAssertion(expected, statsForDays3To10).Assert();
+        }
+
+
+        private async Task VerifyDayRangeOfWikiStats(
+            DateTime utcNow,
+            int firstDayOffset,
+            IAdoWiki adoWiki,
+            int pageViewsForDays,
+            WikiPagesStatsStorage statsStorage)
+        {
+            var expectedLastDay  = new DateDay(utcNow);
+            var expectedFirstDay = expectedLastDay.AddDays(-firstDayOffset);
+
+            // Act
+            var stats = await adoWiki.PagesStats(pageViewsForDays);
+
+            statsStorage = await statsStorage.DeleteExistingAndSave(stats, utcNow);
+            var storedStats = statsStorage.PagesStats(pageViewsForDays);
+
+            var actualFirstDay = FirstDayWithAnyVisit(stats);
+            var storedFirstDay = FirstDayWithAnyVisit(storedStats);
+            var actualLastDay  = LastDayWithAnyVisit(stats);
+            var storedLastDay  = LastDayWithAnyVisit(storedStats);
+
+            // Might be null if:
+            // - there were no visits to the wiki in the used pageViewsForDays
+            // - or there were visits but they were not yet ingested.
+            // For details on the ingestion delay, please see the comment
+            // on Wikitools.AzureDevOps.AdoWiki.GetAllWikiPagesDetails
+            Assert.That(actualFirstDay, Is.Null.Or.AtLeast(expectedFirstDay));
+            Assert.That(actualLastDay,  Is.Null.Or.AtMost(expectedLastDay));
+
+            Assert.That(storedFirstDay, Is.EqualTo(actualFirstDay));
+            Assert.That(storedLastDay,  Is.EqualTo(storedLastDay));
+
+            // Assuming, not asserting, because:
+            // - the data might be null, due to reasons explained above
+            // - or nobody might have visited the wiki on these specific days.
+            Assume.That(actualFirstDay, Is.EqualTo(expectedFirstDay), $"Minimum possible first day for pageViewsForDays: {pageViewsForDays}");
+            Assume.That(actualLastDay,  Is.EqualTo(expectedLastDay), $"Maximum possible last day for pageViewsForDays: {pageViewsForDays}");
+        }
+
+        // kj2 move these 2 methods to ValidWikiPagesStats
+        private static DateDay? FirstDayWithAnyVisit(ValidWikiPagesStats stats)
+        {
+            var minDates = stats
+                .Where(ps => ps.DayStats.Any())
+                .Select(s => s.DayStats.Min(ds => ds.Day))
+                .ToList();
+            return minDates.Any() ? new DateDay(minDates.Min()) : null;
+        }
+
+        private static DateDay? LastDayWithAnyVisit(ValidWikiPagesStats stats)
+        {
+            var maxDates = stats
+                .Where(ps => ps.DayStats.Any())
+                .Select(s => s.DayStats.Max(ds => ds.Day))
+                .ToList();
+            return maxDates.Any() ? new DateDay(maxDates.Max()) : null;
         }
 
         private static AdoWikiWithStorage AdoWikiWithStorage(
