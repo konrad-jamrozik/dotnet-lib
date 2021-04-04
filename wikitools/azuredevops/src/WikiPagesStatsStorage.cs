@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Wikitools.Lib.Storage;
@@ -13,7 +14,10 @@ namespace Wikitools.AzureDevOps
 
             var (previousMonthStats, currentMonthStats) = pageStats.SplitByMonth(CurrentDate);
 
-            // kj3 add check here that all storedStats are in the month of CurrentDate
+            // kj3 add check here (or maybe inside Storage.With, need to think) that all storedStats are in the month of CurrentDate
+            // It is necessary as I cannot trust the content of the storage: somebody might have
+            // modified it.
+            // Actually, I should also do check that stats are Valid
             await Storage.With<IEnumerable<WikiPageStats>>(CurrentDate.AddMonths(-1),
                 storedStats => storedStats.Merge(previousMonthStats));
             await Storage.With<IEnumerable<WikiPageStats>>(CurrentDate,
@@ -24,6 +28,7 @@ namespace Wikitools.AzureDevOps
 
         public async Task<WikiPagesStatsStorage> DeleteExistingAndSave(ValidWikiPagesStats stats, DateTime date)
         {
+            // kja bug: doesn't delete previous month
             // kj3 add check here that the stats.month == date.month
             await Storage.With<IEnumerable<WikiPageStats>>(date, _ => stats);
             return this;
@@ -32,7 +37,7 @@ namespace Wikitools.AzureDevOps
         public ValidWikiPagesStats PagesStats(int pageViewsForDays)
         {
             var currentMonthDate = CurrentDate;
-            var previousDate     = currentMonthDate.AddDays(-pageViewsForDays);
+            var previousDate     = currentMonthDate.AddDays(-pageViewsForDays+1);
             var monthsDiffer     = previousDate.Month != currentMonthDate.Month;
 
             var currentMonthStats = new ValidWikiPagesStats(

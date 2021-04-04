@@ -79,13 +79,14 @@ namespace Wikitools.AzureDevOps.Tests
         [Test]
         public async Task DataInWikiAndStorageWithinSameMonth()
         {
-            var fs                 = new SimulatedFileSystem();
-            var utcNow             = new SimulatedTimeline().UtcNow;
+            var fs        = new SimulatedFileSystem();
+            var utcNow    = new SimulatedTimeline().UtcNow;
             var currStats = ValidWikiPagesStatsFixture.PagesStats(new DateDay(utcNow));
-            // kja off by one bug: this test should not pass on -27. Biggest OK value should be -26, because the underlying
-            // data fixture goes 3 days into the past, so -27-3 = -30, so 31 days in the past.
-            // For test capturing this bug, see Wikitools.AzureDevOps.Tests.AdoWikiWithStorageTests.DataInStorageOffByOneBug 
-            var prevStats  = ValidWikiPagesStatsFixture.PagesStats(new DateDay(utcNow.AddDays(-27)));
+            // kja make this implicit assumption into Assume. Note that if pageViewsForDays = 30 then this will work on -25 but not on -26.
+            // Implicit assumption that the underlying fixture data is going back by no more than 3 days.
+            // If it would go by more than 3, which is at least 4, then -26-4 = -31, which is more than pageViewsForDays of 30.
+            var prevStatsDateOffset = new DateDay(utcNow.AddDays(-26));
+            var prevStats          = ValidWikiPagesStatsFixture.PagesStats(prevStatsDateOffset);
             var expectedPagesStats = prevStats.Merge(currStats);
             var adoWiki            = new SimulatedAdoWiki(currStats);
             var storageDir         = fs.NextSimulatedDir();
@@ -100,30 +101,28 @@ namespace Wikitools.AzureDevOps.Tests
             new JsonDiffAssertion(expectedPagesStats, pagesStats).Assert();
         }
 
+        /// <summary>
+        /// This test ensures that for "pageViewsForDays", the storage.PagesStats()
+        /// correctly returns data for day range:
+        /// [today - pageViewsForDays + 1, today]
+        /// instead of the incorrect:
+        /// [today - pageViewsForDays    , today]
+        /// </summary>
         [Test]
-        public async Task DataInStorageOffByOneBug()
+        public async Task FirstDayOfVisitsInStorageIsNotOffByOne()
         {
             var fs               = new SimulatedFileSystem();
             var utcNow           = new DateDay(new SimulatedTimeline().UtcNow);
-            // implicit assumption that the underlying fixture data is going back at least up to 3 days.
+            // kja make this implicit assumption into Assume
+            // Implicit assumption that the underlying fixture data is going back at least up to 3 days.
             var storedStats      = ValidWikiPagesStatsFixture.PagesStats(utcNow).Trim(utcNow, -3, 0);
             var storageDir       = fs.NextSimulatedDir();
             var storage          = await Storage(utcNow, storageDir).DeleteExistingAndSave(storedStats, utcNow);
 
+            // Act
             var readStats = storage.PagesStats(pageViewsForDays: 3);
 
             var expectedStats = storedStats.Trim(utcNow, -2, 0);
-
-            // kja this fails because storage.PagesStats actually pulls days from range of [-3, 0] instead of [-2, 0]
-            // Before fixing that, confirm this behaves inline with behavior captured in
-            // Wikitools.AzureDevOps.Tests.AdoWikiWithStorageTests.ObtainsAndStoredDataFromWiki
-            //
-            // Looking at wiki behavior, perhaps actually the correct behavior is not [-2, 0] or even [-3, 0], but
-            // [-3, -1]. After I write wiki tests confirming that, I will have to adjust .Trim call in:
-            // Wikitools.AzureDevOps.WikiPagesStatsStorage.PagesStats
-            // This is weird, because the API page:
-            // https://docs.microsoft.com/en-us/rest/api/azure/devops/wiki/pages%20batch/get?view=azure-devops-rest-6.1
-            // explicitly states: "It's inclusive of current day."
             new JsonDiffAssertion(expectedStats, readStats).Assert();
         }
 
@@ -161,16 +160,11 @@ namespace Wikitools.AzureDevOps.Tests
         /// This test tests the following:
         /// - ADO API for Wiki can be successfully queried for data
         /// - The obtained data can be successfully stored
-        /// - The stored data is then properly merged into ADO API for wiki data
+        /// - The stored data is then properly merged into wiki data from ADO API,
         ///   when "wiki with storage" is used to obtain ADO wiki data both from
         ///   the API and from the data saved in storage.
         ///
-        /// The tested scenario:
-        /// 1. Obtain 10 days of page stats from wiki (days 1 to 10)
-        /// 2. Obtain 6 days of page stats from wiki (days 5 to 10)
-        /// 3. Save to storage page stats days 3 to 6
-        /// 4. Obtain 4 days of page stats from "wiki with storage" (days 7 to 10)
-        /// 4.1. Assert this corresponds to page stats days of 3 to 10 (storage 3 to 6 merged with API 7 to 10)
+        /// The tested scenario is explained inline in the code.
         ///
         /// External dependencies:
         /// This test queries whatever wiki is defined in WikitoolsConfig, using PAT read from
@@ -193,21 +187,34 @@ namespace Wikitools.AzureDevOps.Tests
             var adoWiki    = new AdoWiki(cfg.AdoWikiUri, cfg.AdoPatEnvVar, env);
 
             // Act 1. Obtain 10 days of page stats from wiki (days 1 to 10)
+            // WWWWWWWWWW
             var statsForDays1To10 = await adoWiki.PagesStats(pageViewsForDays: 10);
 
             // Act 2. Obtain 4 days of page stats from wiki (days 7 to 10)
+            // ------WWWW
             var statsForDays7To10 = await adoWiki.PagesStats(pageViewsForDays: 4);
 
-            // Act 3. Save to storage page stats days 3 to 6
+            // Act 3. Save to storage page stats for days 3 to 6
+            // WWWWWWWWWW
+            // ->
+            // --SSSS----
             var statsForDays3To6 = statsForDays1To10.Trim(utcNow, -7, -4);
             var storageWithStats = await storage.DeleteExistingAndSave(statsForDays3To6, utcNow);
 
-            // Act 4. Obtain last 8 days, with last 4 days of page stats from wiki
+            // Act 4. Obtain last 8 days (days 3 to 10), with last 4 days (days 7 to 10) of page stats from wiki
+            // --SSSS----
+            // ->
+            // --SSSSWWWW
             var adoWikiWithStorage = AdoWikiWithStorage(adoWiki, storageWithStats, pageViewsForDaysWikiLimit: 4);
             var statsForDays3To10  = await adoWikiWithStorage.PagesStats(pageViewsForDays: 8);
 
-            // Assert 4.1. Act 4 corresponds to page stats days of 3 to 10
+            // Assert 4.1. Assert data from Act 4 corresponds to page stats days of 3 to 10
             // (data from storage for days 3 to 6 merged with data from ADO API for days 7 to 10)
+            // --SSSSWWWW (Act 4)
+            // ==
+            // --SSSS---- (Act 3)
+            // merged
+            // ------WWWW (Act 2)
             var expected = statsForDays3To6.Merge(statsForDays7To10);
             new JsonDiffAssertion(expected, statsForDays3To10).Assert();
         }
@@ -248,8 +255,20 @@ namespace Wikitools.AzureDevOps.Tests
             // Assuming, not asserting, because:
             // - the data might be null, due to reasons explained above
             // - or nobody might have visited the wiki on these specific days.
-            Assume.That(actualFirstDay, Is.EqualTo(expectedFirstDay), $"Minimum possible first day for pageViewsForDays: {pageViewsForDays}");
-            Assume.That(actualLastDay,  Is.EqualTo(expectedLastDay), $"Maximum possible last day for pageViewsForDays: {pageViewsForDays}");
+            Assume.That(
+                actualFirstDay,
+                Is.EqualTo(expectedFirstDay),
+                ExactDayAssumptionViolationMessage(pageViewsForDays));
+            Assume.That(
+                actualLastDay,
+                Is.EqualTo(expectedLastDay),
+                ExactDayAssumptionViolationMessage(pageViewsForDays));
+
+            string ExactDayAssumptionViolationMessage(int i)
+            {
+                return $"Minimum possible first day for pageViewsForDays: {i}. " +
+                       $"Possible lack of visits or ingestion delay. UTC time: {DateTime.UtcNow}";
+            }
         }
 
         // kj2 move these 2 methods to ValidWikiPagesStats
