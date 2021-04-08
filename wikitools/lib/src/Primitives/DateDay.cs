@@ -2,38 +2,38 @@
 
 namespace Wikitools.Lib.Primitives
 {
-    public sealed record DateDay(int Year, int Month, int Day) : IComparable<DateDay>, IComparable<DateTime>, IEquatable<DateTime>
+    public sealed record DateDay(int Year, int Month, int Day) : 
+        IComparable<DateTime>, IEquatable<DateTime>,
+        IComparable<DateDay>,
+        IComparable<DateMonth>, IEquatable<DateMonth>
     {
-        public DateDay(DateTime dateTime) : this(dateTime.Year, dateTime.Month, dateTime.Day) { }
+        public static DateDay operator +(DateDay dateDay, int days) => new(dateDay._dateTime.AddDays(days));
 
-        public DateDay(DateTime dateTime, bool roundUpDay = false) : this(dateTime.Year, dateTime.Month, GetDay(dateTime, roundUpDay)) { }
-
-        private static int GetDay(DateTime dateTime, bool roundDayUp) => 
-            dateTime == new DateDay(dateTime)._dateTime || !roundDayUp 
-                ? dateTime.Day 
-                : dateTime.Day + 1;
-
-        private readonly DateTime _dateTime = new(Year, Month, Day);
-
-        public int CompareTo(DateTime other) => _dateTime.CompareTo(other);
-
-        public int CompareTo(DateDay? other) => _dateTime.CompareTo(other?._dateTime);
-
-        public bool Equals(DateTime other) => _dateTime.Equals(other);
-
-        public bool Equals(DateDay? other) => _dateTime.Equals(other?._dateTime);
-
-        public override int GetHashCode() => _dateTime.GetHashCode();
+        public static TimeSpan operator -(DateDay left, DateDay right) => left._dateTime.Subtract(right._dateTime);
 
         public static implicit operator DateTime(DateDay dateDay) => dateDay._dateTime;
+
+        public DateDay(DateTime dateTime) : this(dateTime.Year, dateTime.Month, dateTime.Day) { }
 
         public DateDay AddDays(int days) => new(_dateTime.AddDays(days));
 
         public DateDay AddMonths(int months) => new(_dateTime.AddMonths(months));
 
-        public static DateDay operator +(DateDay dateDay, int days) => new(dateDay._dateTime.AddDays(days));
+        public bool Equals(DateTime other) => _dateTime.Equals(other);
 
-        public static TimeSpan operator -(DateDay left, DateDay right) => left._dateTime.Subtract(right._dateTime);
+        public bool Equals(DateMonth? other) => other != null && Equals(new DateDay(other));
 
+        public bool Equals(DateDay? other) => _dateTime.Equals(other?._dateTime);
+
+        public int CompareTo(DateTime other) => _dateTime.CompareTo(other);
+
+        public int CompareTo(DateDay? other) => _dateTime.CompareTo(other?._dateTime);
+
+        // returns 1 on null to duplicate behavior of System.DateTime.CompareTo
+        public int CompareTo(DateMonth? other) => other == null ? 1 : CompareTo(other);
+
+        public override int GetHashCode() => _dateTime.GetHashCode();
+
+        private readonly DateTime _dateTime = new(Year, Month, Day);
     }
 }
