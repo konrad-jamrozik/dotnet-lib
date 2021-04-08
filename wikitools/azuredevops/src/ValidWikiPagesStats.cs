@@ -160,9 +160,6 @@ namespace Wikitools.AzureDevOps
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-        public bool AllDaysWithAnyVisitsAreInSameMonth =>
-            FirstDayWithAnyVisit?.Month == LastDayWithAnyVisit?.Month;
-
         public DateDay? FirstDayWithAnyVisit
         {
             get

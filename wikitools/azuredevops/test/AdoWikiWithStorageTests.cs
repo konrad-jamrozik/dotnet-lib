@@ -69,8 +69,8 @@ namespace Wikitools.AzureDevOps.Tests
             Assert.That(
                 prevStats.FirstDayWithAnyVisit,
                 Is.GreaterThanOrEqualTo(UtcNowDay.AddDays(-pageViewsForDays + 1)),
-                $"Precondition violation: the first day of arranged stats is so much in the past that " +
-                $"a call to PageStats won't return it.");
+                "Precondition violation: the first day of arranged stats is so much in the past that " +
+                "a call to PageStats won't return it.");
 
             // Act
             var actualStats = await adoWikiWithStorage.PagesStats(pageViewsForDays);

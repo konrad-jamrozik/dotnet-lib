@@ -5,7 +5,6 @@ using Wikitools.Lib.Storage;
 
 namespace Wikitools.AzureDevOps
 {
-    // kj3 need "Ado" prefix
     public record AdoWikiPagesStatsStorage(MonthlyJsonFilesStorage Storage, DateTime CurrentDate)
     {
         public async Task<AdoWikiPagesStatsStorage> Update(IAdoWiki wiki, int pageViewsForDays)
@@ -19,7 +18,13 @@ namespace Wikitools.AzureDevOps
             // modified it.
             // Actually, I should also do check that stats are Valid
             await Storage.With<IEnumerable<WikiPageStats>>(CurrentDate.AddMonths(-1),
-                storedStats => storedStats.Merge(previousMonthStats));
+                storedStats =>
+                {
+                    var validStoredStats = new ValidWikiPagesStats(storedStats);
+                    // kja curr work
+                    // Contract.Assert(validStoredStats.AllDaysWithAnyVisitsAreInMonth(CurrentDate.AddMonths(-1)));
+                    return storedStats.Merge(previousMonthStats);
+                });
             await Storage.With<IEnumerable<WikiPageStats>>(CurrentDate,
                 storedStats => storedStats.Merge(currentMonthStats));
 
