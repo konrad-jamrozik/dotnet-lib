@@ -49,6 +49,8 @@ namespace Wikitools
             // kj2 2 this will trigger call to ADO API. Not good. Should be deferred until WriteAll by the caller.
             // I might need to fix all Tasks to AsyncLazy to make this work, or by using new Task() and then task.Start();
             // https://docs.microsoft.com/en-us/dotnet/api/system.threading.tasks.task?view=net-5.0#separating-task-creation-and-execution
+            // Maybe source generators could help here. See [Cache] and [Memoize] use cases here:
+            // https://github.com/dotnet/roslyn/issues/16160
             var pagesViewsStats = wiki.PagesStats(cfg.AdoWikiPageViewsForDays);
 
             bool AuthorFilter(string author) => !cfg.ExcludedAuthors.Any(author.Contains);
