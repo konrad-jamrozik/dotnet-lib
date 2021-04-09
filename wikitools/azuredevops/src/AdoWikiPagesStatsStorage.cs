@@ -14,7 +14,7 @@ namespace Wikitools.AzureDevOps
         {
             var pageStats = await wiki.PagesStats(pageViewsForDays);
 
-            var (previousMonthStats, currentMonthStats) = pageStats.SplitByMonth(CurrentDate);
+            var (previousMonthStats, currentMonthStats) = pageStats.SplitByMonth(CurrentMonth);
             // kja ValidStatsForMonth simplify once SplitByMonth is well typed
             var previousMonth = CurrentMonth.AddMonths(-1);
             await MergeIntoStoredMonthStats(previousMonth, new ValidWikiPagesStatsForMonth(previousMonthStats, previousMonth));

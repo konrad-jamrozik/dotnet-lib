@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using Wikitools.Lib.Contracts;
+using Wikitools.Lib.Primitives;
 using Wikitools.Lib.Tests;
 using Wikitools.Lib.Tests.Json;
 using Xunit;
@@ -81,7 +82,7 @@ namespace Wikitools.AzureDevOps.Tests
             ValidWikiPagesStats? currentMonthExpectation)
         {
             // Act
-            var (previousMonth, currentMonth) = target.SplitByMonth(date);
+            var (previousMonth, currentMonth) = target.SplitByMonth(new DateMonth(date));
             
             AssertMonth(previousMonthExpectation, previousMonth);
             AssertMonth(currentMonthExpectation,  currentMonth);

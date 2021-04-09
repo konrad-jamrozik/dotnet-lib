@@ -57,17 +57,17 @@ namespace Wikitools.AzureDevOps
 
         private IEnumerable<WikiPageStats> Data { get; }
 
-        // kja ValidStatsForMonth change type to be "for month"
-        public (ValidWikiPagesStats previousMonthStats, ValidWikiPagesStats currentMonthStats) SplitByMonth(
-            DateTime currentDate) =>
-            SplitByMonth(this, currentDate);
+        public (ValidWikiPagesStatsForMonth previousMonthStats, ValidWikiPagesStatsForMonth currentMonthStats)
+            SplitByMonth(DateMonth currentMonth) =>
+            SplitByMonth(this, currentMonth);
 
-        private static (ValidWikiPagesStats previousMonthStats, ValidWikiPagesStats currentMonthStats) SplitByMonth(
-            ValidWikiPagesStats pagesStats,
-            DateTime currentDate) =>
+        private static (ValidWikiPagesStatsForMonth previousMonthStats, ValidWikiPagesStatsForMonth currentMonthStats)
+            SplitByMonth(
+                ValidWikiPagesStats pagesStats,
+                DateMonth currentMonth) =>
         (
-            new ValidWikiPagesStats(pagesStats.Trim(currentDate.AddMonths(-1))),
-            new ValidWikiPagesStats(pagesStats.Trim(currentDate))
+            new ValidWikiPagesStatsForMonth(pagesStats.Trim(currentMonth.PreviousMonth), currentMonth.PreviousMonth),
+            new ValidWikiPagesStatsForMonth(pagesStats.Trim(currentMonth), currentMonth)
         );
 
         public ValidWikiPagesStats Merge(ValidWikiPagesStats validCurrentStats) => Merge(this, validCurrentStats);

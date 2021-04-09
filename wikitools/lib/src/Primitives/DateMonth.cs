@@ -18,6 +18,8 @@ namespace Wikitools.Lib.Primitives
 
         public DateMonth AddMonths(int months) => new(_dateTime.AddMonths(months));
 
+        public DateMonth PreviousMonth => AddMonths(-1);
+
         public bool Equals(DateTime other) => _dateTime.Equals(other);
 
         public bool Equals(DateDay? other) => other != null && Equals(new DateMonth(other));
@@ -36,7 +38,7 @@ namespace Wikitools.Lib.Primitives
         public string ToString(string? format, IFormatProvider? formatProvider) => 
             _dateTime.ToString(format, formatProvider);
 
+        // Known limitation: this doesn't retain DateTimeKind (e.g. Utc)
         private readonly DateTime _dateTime = new(Year, Month, 1);
-
     }
 }

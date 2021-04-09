@@ -38,6 +38,7 @@ namespace Wikitools.Lib.Primitives
         public string ToString(string? format, IFormatProvider? formatProvider) => 
             _dateTime.ToString(format, formatProvider);
 
-        private readonly DateTime _dateTime = new(Year, Month, Day);
+        // Known limitation: this doesn't retain DateTimeKind (e.g. Utc)
+        private readonly DateTime _dateTime = new (Year, Month, Day);
     }
 }

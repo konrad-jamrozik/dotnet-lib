@@ -18,5 +18,7 @@ namespace Wikitools.Lib.Primitives
         public static DateDay MonthFirstDay(this DateTime date) => new(date.Year, date.Month, 1);
 
         public static DateDay MonthLastDay(this DateTime date) => date.MonthFirstDay().AddMonths(1).AddDays(-1);
+
+        public static DateMonth Month(this DateTime date) => new(date);
     }
 }
