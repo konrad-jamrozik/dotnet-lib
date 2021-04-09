@@ -26,7 +26,7 @@ namespace Wikitools
             int? pageViewsForDaysWikiLimit = null)
         {
             var storageDir      = new Dir(fileSystem, storageDirPath);
-            var storage         = AdoWikiPagesStatsStorage(now, storageDir);
+            var storage         = AdoWikiPagesStatsStorage(storageDir, now);
             var wikiWithStorage = AdoWikiWithStorage(adoWiki, storage, pageViewsForDaysWikiLimit);
             return wikiWithStorage;
         }
@@ -37,7 +37,7 @@ namespace Wikitools
             int? pageViewsForDaysWikiLimit = null) =>
             new(adoWiki, storage, pageViewsForDaysWikiLimit);
 
-        public AdoWikiPagesStatsStorage AdoWikiPagesStatsStorage(DateTime now, Dir storageDir) =>
+        public AdoWikiPagesStatsStorage AdoWikiPagesStatsStorage(Dir storageDir, DateTime now) =>
             new(
                 new MonthlyJsonFilesStorage(storageDir),
                 now);

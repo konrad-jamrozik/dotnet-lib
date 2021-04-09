@@ -80,21 +80,21 @@ namespace Wikitools
     }
 }
 
-// kja high-level todos
+// kja 1 high-level todos
 // 1. One page TOC
 // - Annotations (icons): Newly added, lots of traffic, stale.
 // 2. Instead of outputting to TextWriter, point to local wiki git clone.
 // - Output to configurable file paths, to be .md files in the git clone.
 /*
  * Work progress milestones:
- * 12/29/2020:
- * - Work start. Reused GitRepository and AsyncLazy abstractions written in 2017.
- * 1/18/2021:
- * - Markdown reports with data pulled from git.
- * - Markdown report with page view stats data pulled from ADO API.
- * - Explore from: Program, GitAuthorsStatsReport, GitFilesStatsReport, MonthlyStatsReport, PagesViewsStatsReport
  * 2/27/2021:
  * - Persisting wiki data to HDD as monthly json, allowing to report more than 30 days.
  * - Tooling for merging and splitting existing wiki data.
- * - Explore from: Program, AdoWikiWithStorage
+ * - To review these changes, explore from: Program, AdoWikiWithStorage
+ * 1/18/2021:
+ * - Markdown reports with data pulled from git.
+ * - Markdown report with page view stats data pulled from ADO API.
+ * - To review these changes, explore from: Program, GitAuthorsStatsReport, GitFilesStatsReport, MonthlyStatsReport, PagesViewsStatsReport
+ * 12/29/2020:
+ * - Work start. Reused GitRepository and AsyncLazy abstractions written in 2017.
  */

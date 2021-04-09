@@ -9,13 +9,13 @@ namespace Wikitools.AzureDevOps.Tests
     [TestFixture]
     public class AdoWikiWithStorageTests
     {
-        // kja test todos:
+        // kja 4 test todos:
         // - DONE Everything empty: no data from wiki, no data from storage
         // - DONE Data in wiki, nothing in storage
         // - DONE Data in storage, nothing in wiki
         // - DONE Data in wiki and storage, within wiki max limit of 30 days
+        // - DONE Deduplicate arrange logic of all tests
         // - TO-DO Test: Storage with data from 3 months <- this test should fail until more than 30 pageViewsForDays is properly supported
-        // - TO-DO Deduplicate arrange logic of all tests
         [Test]
         public async Task NoData()
         {

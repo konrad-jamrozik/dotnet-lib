@@ -16,7 +16,7 @@ namespace Wikitools
             Task<FilePathTrie> filePathsTask,
             Task<IEnumerable<WikiPageStats>> pagesStatsTask)
         {
-            // kja next todos on critical path:
+            // kja 2 next todos on critical path:
             // - Actually obtain pageStats passed to this method
             //   - need to come from more than 30 days, so also from storage
             // - Correlate pageStats with filePaths
