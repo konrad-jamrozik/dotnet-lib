@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Wikitools.Lib.Primitives;
 using Wikitools.Lib.Storage;
 
 namespace Wikitools.AzureDevOps
 {
     public record AdoWikiPagesStatsStorage(MonthlyJsonFilesStorage Storage, DateTime CurrentDate)
     {
+        private DateMonth CurrentMonth => new(CurrentDate);
+
         public async Task<AdoWikiPagesStatsStorage> Update(IAdoWiki wiki, int pageViewsForDays)
         {
             var pageStats = await wiki.PagesStats(pageViewsForDays);
@@ -17,7 +20,7 @@ namespace Wikitools.AzureDevOps
             // It is necessary as I cannot trust the content of the storage: somebody might have
             // modified it.
             // Actually, I should also do check that stats are Valid
-            await Storage.With<IEnumerable<WikiPageStats>>(CurrentDate.AddMonths(-1),
+            await Storage.With<IEnumerable<WikiPageStats>>(CurrentMonth.AddMonths(-1),
                 storedStats =>
                 {
                     var validStoredStats = new ValidWikiPagesStats(storedStats);
@@ -25,7 +28,7 @@ namespace Wikitools.AzureDevOps
                     // Contract.Assert(validStoredStats.AllDaysWithAnyVisitsAreInMonth(CurrentDate.AddMonths(-1)));
                     return storedStats.Merge(previousMonthStats);
                 });
-            await Storage.With<IEnumerable<WikiPageStats>>(CurrentDate,
+            await Storage.With<IEnumerable<WikiPageStats>>(CurrentMonth,
                 storedStats => storedStats.Merge(currentMonthStats));
 
             return this;
@@ -35,7 +38,7 @@ namespace Wikitools.AzureDevOps
         {
             // kja bug: doesn't delete previous month
             // kj3 add check here that the stats.month == date.month
-            await Storage.With<IEnumerable<WikiPageStats>>(date, _ => stats);
+            await Storage.With<IEnumerable<WikiPageStats>>(new DateMonth(date), _ => stats);
             return this;
         }
 

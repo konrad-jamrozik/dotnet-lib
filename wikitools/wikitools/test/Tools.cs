@@ -32,7 +32,7 @@ namespace Wikitools.Tests
             var storage = new MonthlyJsonFilesStorage(new Dir(fs, cfg.StorageDirPath));
 
             await storage.Write(await pagesViewsStats,
-                timeline.UtcNow,
+                new DateMonth(timeline.UtcNow),
                 $"wiki_stats_{timeline.UtcNow:yyy_MM_dd}_{cfg.AdoWikiPageViewsForDays}days.json");
         }
 
@@ -59,9 +59,9 @@ namespace Wikitools.Tests
         private static async Task Merge(IFileSystem fs, WikitoolsConfig cfg, string[] statsPaths)
         {
             var storage      = new MonthlyJsonFilesStorage(new Dir(fs, cfg.StorageDirPath));
-            var januaryDate  = new DateTime(2021, 1, 1).Utc();
-            var februaryDate = new DateTime(2021, 2, 1).Utc();
-            var marchDate    = new DateTime(2021, 3, 1).Utc();
+            var januaryDate  = new DateMonth(new DateTime(2021, 1, 1).Utc());
+            var februaryDate = new DateMonth(new DateTime(2021, 2, 1).Utc());
+            var marchDate    = new DateMonth(new DateTime(2021, 3, 1).Utc());
 
             var mergedStats = statsPaths.Select(s => DeserializeStats(fs, s))
                 // This is O(n^2) while it could be O(n), but for now this is good enough.

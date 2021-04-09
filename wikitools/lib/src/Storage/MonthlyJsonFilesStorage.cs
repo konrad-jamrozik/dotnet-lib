@@ -3,6 +3,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Wikitools.Lib.Json;
 using Wikitools.Lib.OS;
+using Wikitools.Lib.Primitives;
 
 namespace Wikitools.Lib.Storage
 {
@@ -16,14 +17,13 @@ namespace Wikitools.Lib.Storage
                 : JsonSerializer.Deserialize<T>(StorageDir.ReadAllText(fileToReadName))!;
         }
 
-        public async Task With<T>(DateTime date, Func<T, T> mergeFunc) where T : class => 
+        public async Task With<T>(DateMonth date, Func<T, T> mergeFunc) where T : class => 
             await Write(mergeFunc(Read<T>(date)), date);
 
-        public Task Write(object data, DateTime date, string? fileName = default) =>
+        public Task Write(object data, DateMonth date, string? fileName = default) =>
             WriteToFile(data.ToJsonIndentedUnsafe(), date, fileName);
 
-        // kj3 instead of DateTime, use DateMonth (first I need to create this class)
-        private async Task WriteToFile(string dataJson, DateTime date, string? fileName) =>
+        private async Task WriteToFile(string dataJson, DateMonth date, string? fileName) =>
             await StorageDir
                 .CreateDirIfNotExists()
                 .WriteAllTextAsync(fileName ?? $"date_{date:yyy_MM}.json", dataJson);

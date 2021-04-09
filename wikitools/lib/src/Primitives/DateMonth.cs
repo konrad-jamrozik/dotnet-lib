@@ -5,7 +5,8 @@ namespace Wikitools.Lib.Primitives
     public sealed record DateMonth(int Year, int Month) :
         IComparable<DateTime>, IEquatable<DateTime>,
         IComparable<DateDay>, IEquatable<DateDay>,    
-        IComparable<DateMonth>
+        IComparable<DateMonth>,
+        IFormattable
     {
         public static DateMonth operator +(DateMonth dateMonth, int months) => new(dateMonth._dateTime.AddMonths(months));
 
@@ -31,6 +32,9 @@ namespace Wikitools.Lib.Primitives
         public int CompareTo(DateMonth? other) => _dateTime.CompareTo(other?._dateTime);
 
         public override int GetHashCode() => _dateTime.GetHashCode();
+        
+        public string ToString(string? format, IFormatProvider? formatProvider) => 
+            _dateTime.ToString(format, formatProvider);
 
         private readonly DateTime _dateTime = new(Year, Month, 1);
 
