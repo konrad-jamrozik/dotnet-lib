@@ -59,6 +59,8 @@ namespace Wikitools.AzureDevOps.Tests
             var currStats          = fixture.PagesStats(UtcNowDay);
             var currStatsDaySpan   = (int) currStats.VisitedDaysSpan!;
             var prevStats          = fixture.PagesStats(UtcNowDay.AddDays(-pageViewsForDays + currStatsDaySpan));
+            // kja ValidStatsForMonth curr test failure: the storage is saving the stats to wrong month: it should save to utcNowDay-1 instead of utcNowDay
+            // There are other to-dos for that.
             var adoWikiWithStorage = await AdoWikiWithStorage(UtcNowDay, storedStats: prevStats, wikiStats: currStats);
 
             Assert.That(

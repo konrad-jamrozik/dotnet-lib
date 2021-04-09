@@ -15,30 +15,42 @@ namespace Wikitools.AzureDevOps
             var pageStats = await wiki.PagesStats(pageViewsForDays);
 
             var (previousMonthStats, currentMonthStats) = pageStats.SplitByMonth(CurrentDate);
-
-            // kj3 add check here (or maybe inside Storage.With, need to think) that all storedStats are in the month of CurrentDate
-            // It is necessary as I cannot trust the content of the storage: somebody might have
-            // modified it.
-            // Actually, I should also do check that stats are Valid
-            await Storage.With<IEnumerable<WikiPageStats>>(CurrentMonth.AddMonths(-1),
-                storedStats =>
-                {
-                    var validStoredStats = new ValidWikiPagesStats(storedStats);
-                    // kja curr work
-                    // Contract.Assert(validStoredStats.AllDaysWithAnyVisitsAreInMonth(CurrentDate.AddMonths(-1)));
-                    return storedStats.Merge(previousMonthStats);
-                });
-            await Storage.With<IEnumerable<WikiPageStats>>(CurrentMonth,
-                storedStats => storedStats.Merge(currentMonthStats));
+            // kja ValidStatsForMonth simplify once SplitByMonth is well typed
+            var previousMonth = CurrentMonth.AddMonths(-1);
+            await MergeIntoStoredMonthStats(previousMonth, new ValidWikiPagesStatsForMonth(previousMonthStats, previousMonth));
+            await MergeIntoStoredMonthStats(CurrentMonth, new ValidWikiPagesStatsForMonth(currentMonthStats, CurrentMonth));
 
             return this;
         }
 
+        private async Task MergeIntoStoredMonthStats(DateMonth month, ValidWikiPagesStatsForMonth stats)
+        {
+            await Storage.With<IEnumerable<WikiPageStats>>(month,
+                storedStats =>
+                {
+                    var validStoredStats = new ValidWikiPagesStatsForMonth(storedStats, month);
+                    return validStoredStats.Merge(stats);
+                });
+        }
+
+        // kja pass correct types as param instead of ctoring here
         public async Task<AdoWikiPagesStatsStorage> OverwriteWith(ValidWikiPagesStats stats, DateTime date)
         {
-            // kja bug: doesn't delete previous month
-            // kj3 add check here that the stats.month == date.month
-            await Storage.With<IEnumerable<WikiPageStats>>(new DateMonth(date), _ => stats);
+            // kja doesn't ensure that all relevant storage months are cleared up, only the current one
+            // Instead, it should clear up all months present in the stats.
+            // The current bad cleanup will influence what tests like this one test:
+            // Wikitools.AzureDevOps.Tests.AdoWikiWithStorageIntegrationTests.ObtainsAndMergesDataFromAdoWikiApiAndStorage
+            // I.e. sometimes it will work against data from previous test runs.
+
+            var month       = new DateMonth(date);
+            var statsToSave = new ValidWikiPagesStatsForMonth(stats, month);
+            await Storage.With<IEnumerable<WikiPageStats>>(month, _ => statsToSave);
+            return this;
+        }
+
+        public async Task<AdoWikiPagesStatsStorage> OverwriteWith(ValidWikiPagesStatsForMonth stats)
+        {
+            await Storage.With<IEnumerable<WikiPageStats>>(stats.Month, _ => stats);
             return this;
         }
 

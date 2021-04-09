@@ -32,6 +32,8 @@ namespace Wikitools.AzureDevOps
         // Details here: https://github.com/dotnet/csharplang/issues/4453#issuecomment-782807066
         public ValidWikiPagesStats(IEnumerable<WikiPageStats> stats) => Data = CheckInvariants(stats);
 
+        public ValidWikiPagesStats(ValidWikiPagesStats stats) => Data = stats;
+
         private static IEnumerable<WikiPageStats> CheckInvariants(IEnumerable<WikiPageStats> stats)
         {
             var statsArr = stats as WikiPageStats[] ?? stats.ToArray();
@@ -55,6 +57,7 @@ namespace Wikitools.AzureDevOps
 
         private IEnumerable<WikiPageStats> Data { get; }
 
+        // kja ValidStatsForMonth change type to be "for month"
         public (ValidWikiPagesStats previousMonthStats, ValidWikiPagesStats currentMonthStats) SplitByMonth(
             DateTime currentDate) =>
             SplitByMonth(this, currentDate);
@@ -187,5 +190,12 @@ namespace Wikitools.AzureDevOps
         public int? VisitedDaysSpan => LastDayWithAnyVisit != null 
             ? (int) (LastDayWithAnyVisit - FirstDayWithAnyVisit!).TotalDays + 1
             : null;
+
+        public bool AllVisitedDaysAreInMonth(DateMonth month)
+        {
+            var firstDay = FirstDayWithAnyVisit;
+            var lastDay = LastDayWithAnyVisit;
+            return (firstDay?.Month == lastDay?.Month) && (firstDay == null || month.Equals(firstDay));
+        }
     }
 }

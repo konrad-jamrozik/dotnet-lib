@@ -20,7 +20,7 @@ namespace Wikitools.Lib.Primitives
 
         public bool Equals(DateTime other) => _dateTime.Equals(other);
 
-        public bool Equals(DateDay? other) => other != null && Equals(other);
+        public bool Equals(DateDay? other) => other != null && Equals(new DateMonth(other));
 
         public bool Equals(DateMonth? other) => _dateTime.Equals(other?._dateTime);
 
