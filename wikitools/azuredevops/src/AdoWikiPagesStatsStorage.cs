@@ -15,36 +15,25 @@ namespace Wikitools.AzureDevOps
             var pageStats = await wiki.PagesStats(pageViewsForDays);
 
             var (previousMonthStats, currentMonthStats) = pageStats.SplitByMonth(CurrentMonth);
-            // kja ValidStatsForMonth simplify once SplitByMonth is well typed
-            var previousMonth = CurrentMonth.AddMonths(-1);
-            await MergeIntoStoredMonthStats(previousMonth, new ValidWikiPagesStatsForMonth(previousMonthStats, previousMonth));
-            await MergeIntoStoredMonthStats(CurrentMonth, new ValidWikiPagesStatsForMonth(currentMonthStats, CurrentMonth));
+            await MergeIntoStoredMonthStats(previousMonthStats);
+            await MergeIntoStoredMonthStats(currentMonthStats);
 
             return this;
         }
 
-        private async Task MergeIntoStoredMonthStats(DateMonth month, ValidWikiPagesStatsForMonth stats)
-        {
-            await Storage.With<IEnumerable<WikiPageStats>>(month,
+        private async Task MergeIntoStoredMonthStats(ValidWikiPagesStatsForMonth stats) =>
+            await Storage.With<IEnumerable<WikiPageStats>>(stats.Month,
                 storedStats =>
                 {
-                    var validStoredStats = new ValidWikiPagesStatsForMonth(storedStats, month);
-                    return new ValidWikiPagesStatsForMonth(validStoredStats.Merge(stats), month);
+                    var validStoredStats = new ValidWikiPagesStatsForMonth(storedStats, stats.Month);
+                    return new ValidWikiPagesStatsForMonth(validStoredStats.Merge(stats), stats.Month);
                 });
-        }
 
-        // kja pass correct types as param instead of ctoring here
         public async Task<AdoWikiPagesStatsStorage> OverwriteWith(ValidWikiPagesStats stats, DateTime date)
         {
-            // kja doesn't ensure that all relevant storage months are cleared up, only the current one
-            // Instead, it should clear up all months present in the stats.
-            // The current bad cleanup will influence what tests like this one test:
-            // Wikitools.AzureDevOps.Tests.AdoWikiWithStorageIntegrationTests.ObtainsAndMergesDataFromAdoWikiApiAndStorage
-            // I.e. sometimes it will work against data from previous test runs.
-
-            var month       = new DateMonth(date);
-            var statsToSave = new ValidWikiPagesStatsForMonth(stats, month);
-            await Storage.With<IEnumerable<WikiPageStats>>(month, _ => statsToSave);
+            var (previousMonthStats, currentMonthStats) = stats.SplitByMonth(new DateMonth(date));
+            await Storage.With<IEnumerable<WikiPageStats>>(previousMonthStats.Month, _ => previousMonthStats);
+            await Storage.With<IEnumerable<WikiPageStats>>(currentMonthStats.Month, _ => currentMonthStats);
             return this;
         }
 
@@ -58,13 +47,15 @@ namespace Wikitools.AzureDevOps
         {
             var currentMonthDate = CurrentDate;
             var previousDate     = currentMonthDate.AddDays(-pageViewsForDays+1);
+            // kja bug: this will return equal on difference of exactly 12 months, but should still say that months differ
+            // Note that the code below assumes it can go max in the past by one month only
             var monthsDiffer     = previousDate.Month != currentMonthDate.Month;
 
             var currentMonthStats = new ValidWikiPagesStats(
-                Storage.Read<WikiPageStats[]>(currentMonthDate));
+                Storage.Read<IEnumerable<WikiPageStats>>(currentMonthDate));
             var previousMonthStats = new ValidWikiPagesStats(
                 monthsDiffer
-                    ? Storage.Read<WikiPageStats[]>(previousDate)
+                    ? Storage.Read<IEnumerable<WikiPageStats>>(previousDate)
                     : new WikiPageStats[0]);
 
             return previousMonthStats.Merge(currentMonthStats).Trim(previousDate, CurrentDate);

@@ -55,10 +55,10 @@ namespace Wikitools.AzureDevOps.Tests
         public async Task DataInWikiAndStorageWithinWikiMaxPageViewsForDays()
         {
             var pageViewsForDays   = AdoWiki.MaxPageViewsForDays;
-            var f                  = new ValidWikiPagesStatsFixture();
-            var currStats          = f.PagesStats(UtcNowDay);
+            var fix                = new ValidWikiPagesStatsFixture();
+            var currStats          = fix.PagesStats(UtcNowDay);
             var currStatsDaySpan   = (int) currStats.VisitedDaysSpan!;
-            var prevStats          = f.PagesStatsForMonth(UtcNowDay.AddDays(-pageViewsForDays + currStatsDaySpan));
+            var prevStats          = fix.PagesStatsForMonth(UtcNowDay.AddDays(-pageViewsForDays + currStatsDaySpan));
             var adoWikiWithStorage = await AdoWikiWithStorage(UtcNowDay, storedStats: prevStats, wikiStats: currStats);
 
             Assert.That(

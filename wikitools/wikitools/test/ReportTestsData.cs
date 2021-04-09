@@ -12,9 +12,9 @@ namespace Wikitools.Tests
     {
         public ReportTestsData()
         {
-            var f = new ValidWikiPagesStatsFixture();
+            var fix = new ValidWikiPagesStatsFixture();
             CommitsLogs = GetCommitsLogs();
-            PagesStats = f.PagesStats().ToArray();
+            PagesStats = fix.PagesStats().ToArray();
             ExpectedRows = new()
             {
                 [(nameof(GitAuthorsStatsReportTests), CommitsLogs)] = new[] {

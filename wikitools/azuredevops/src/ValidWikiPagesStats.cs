@@ -58,14 +58,14 @@ namespace Wikitools.AzureDevOps
         private IEnumerable<WikiPageStats> Data { get; }
 
         public (ValidWikiPagesStatsForMonth previousMonthStats, ValidWikiPagesStatsForMonth currentMonthStats)
-            SplitByMonth(DateMonth currentMonth) =>
-            SplitByMonth(this, currentMonth);
+            SplitByMonth(DateMonth currentMonth) => SplitByMonth(this, currentMonth);
 
         private static (ValidWikiPagesStatsForMonth previousMonthStats, ValidWikiPagesStatsForMonth currentMonthStats)
             SplitByMonth(
                 ValidWikiPagesStats pagesStats,
                 DateMonth currentMonth) =>
         (
+            // kja add checks here there is no other data for months before previous month, and after current month
             new ValidWikiPagesStatsForMonth(pagesStats.Trim(currentMonth.PreviousMonth), currentMonth.PreviousMonth),
             new ValidWikiPagesStatsForMonth(pagesStats.Trim(currentMonth), currentMonth)
         );
