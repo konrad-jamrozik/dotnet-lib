@@ -22,7 +22,7 @@ namespace Wikitools.AzureDevOps.Tests
         {
             var pageViewsForDays = 3;
             var fixture          = new ValidWikiPagesStatsFixture();
-            var stats            = fixture.PagesStats(UtcNowDay);
+            var stats            = fixture.PagesStatsForMonth(UtcNowDay);
             var storedStats      = stats.Trim(UtcNowDay, -pageViewsForDays, 0);
             var adoDecl          = new AzureDevOpsTestsDeclare(new Declare());
             var storage          = await adoDecl.AdoWikiPagesStatsStorage(UtcNowDay, storedStats);

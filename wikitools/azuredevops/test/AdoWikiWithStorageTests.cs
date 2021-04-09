@@ -42,7 +42,7 @@ namespace Wikitools.AzureDevOps.Tests
         [Test]
         public async Task DataInStorage()
         {
-            var storedStats        = new ValidWikiPagesStatsFixture().PagesStats(new DateDay(UtcNowDay));
+            var storedStats        = new ValidWikiPagesStatsFixture().PagesStatsForMonth(new DateDay(UtcNowDay));
             var adoWikiWithStorage = await AdoWikiWithStorage(UtcNowDay, storedStats: storedStats);
 
             // Act
@@ -55,12 +55,10 @@ namespace Wikitools.AzureDevOps.Tests
         public async Task DataInWikiAndStorageWithinWikiMaxPageViewsForDays()
         {
             var pageViewsForDays   = AdoWiki.MaxPageViewsForDays;
-            var fixture            = new ValidWikiPagesStatsFixture();
-            var currStats          = fixture.PagesStats(UtcNowDay);
+            var f                  = new ValidWikiPagesStatsFixture();
+            var currStats          = f.PagesStats(UtcNowDay);
             var currStatsDaySpan   = (int) currStats.VisitedDaysSpan!;
-            var prevStats          = fixture.PagesStats(UtcNowDay.AddDays(-pageViewsForDays + currStatsDaySpan));
-            // kja ValidStatsForMonth curr test failure: the storage is saving the stats to wrong month: it should save to utcNowDay-1 instead of utcNowDay
-            // There are other to-dos for that.
+            var prevStats          = f.PagesStatsForMonth(UtcNowDay.AddDays(-pageViewsForDays + currStatsDaySpan));
             var adoWikiWithStorage = await AdoWikiWithStorage(UtcNowDay, storedStats: prevStats, wikiStats: currStats);
 
             Assert.That(
@@ -82,7 +80,7 @@ namespace Wikitools.AzureDevOps.Tests
 
         private static async Task<AdoWikiWithStorage> AdoWikiWithStorage(
             DateDay utcNow,
-            ValidWikiPagesStats? storedStats = null,
+            ValidWikiPagesStatsForMonth? storedStats = null,
             ValidWikiPagesStats? wikiStats = null)
         {
             var decl    = new Declare();

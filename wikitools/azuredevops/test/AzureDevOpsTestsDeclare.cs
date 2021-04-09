@@ -8,13 +8,13 @@ namespace Wikitools.AzureDevOps.Tests
     {
         public async Task<AdoWikiPagesStatsStorage> AdoWikiPagesStatsStorage(
             DateDay utcNow,
-            ValidWikiPagesStats? storedStats = null)
+            ValidWikiPagesStatsForMonth? storedStats = null)
         {
             var fs         = new SimulatedFileSystem();
             var storageDir = fs.NextSimulatedDir();
             var storage    = Decl.AdoWikiPagesStatsStorage(utcNow, storageDir);
             if (storedStats != null)
-                storage = await storage.OverwriteWith(storedStats, utcNow);
+                storage = await storage.OverwriteWith(storedStats);
             return storage;
         }
     }

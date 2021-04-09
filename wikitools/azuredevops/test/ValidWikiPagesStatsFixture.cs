@@ -7,6 +7,8 @@ namespace Wikitools.AzureDevOps.Tests
         public ValidWikiPagesStats PagesStats() =>
             PagesStats(new DateDay(new SimulatedTimeline().UtcNow));
 
+        public ValidWikiPagesStatsForMonth PagesStatsForMonth(DateDay date) => new(PagesStats(date));
+
         public ValidWikiPagesStats PagesStats(DateDay date) => new(new WikiPageStats[]
         {
             new("/Home", 1, new WikiPageStats.DayStat[]

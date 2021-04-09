@@ -191,6 +191,15 @@ namespace Wikitools.AzureDevOps
             ? (int) (LastDayWithAnyVisit - FirstDayWithAnyVisit!).TotalDays + 1
             : null;
 
+        public DateMonth MonthOfAllVisitedDays()
+        {
+            var firstDay = FirstDayWithAnyVisit;
+            var lastDay  = LastDayWithAnyVisit;
+            Contract.Assert(firstDay != null);
+            Contract.Assert(firstDay!.Month == lastDay!.Month);
+            return new DateMonth(firstDay);
+        }
+
         public bool AllVisitedDaysAreInMonth(DateMonth month)
         {
             var firstDay = FirstDayWithAnyVisit;
