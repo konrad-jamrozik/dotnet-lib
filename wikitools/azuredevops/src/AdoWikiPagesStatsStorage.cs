@@ -29,7 +29,7 @@ namespace Wikitools.AzureDevOps
                 storedStats =>
                 {
                     var validStoredStats = new ValidWikiPagesStatsForMonth(storedStats, month);
-                    return validStoredStats.Merge(stats);
+                    return new ValidWikiPagesStatsForMonth(validStoredStats.Merge(stats), month);
                 });
         }
 

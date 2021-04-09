@@ -15,7 +15,7 @@ namespace Wikitools.AzureDevOps
             new(
                 Trim(
                     currentDate.AddDays(daysFrom),
-                    currentDate.AddDays(daysTo))); 
+                    currentDate.AddDays(daysTo)));
 
         private static ValidWikiPagesStats CheckInvariants(IEnumerable<WikiPageStats> stats, DateMonth month)
         {
