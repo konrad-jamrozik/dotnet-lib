@@ -16,9 +16,11 @@ namespace Wikitools.Lib.Primitives
 
         public DateMonth(DateTime dateTime) : this(dateTime.Year, dateTime.Month) { }
 
-        public DateMonth AddMonths(int months) => new(_dateTime.AddMonths(months));
-
         public DateMonth PreviousMonth => AddMonths(-1);
+
+        public DateMonth NextMonth => AddMonths(1);
+
+        public DateMonth AddMonths(int months) => new(_dateTime.AddMonths(months));
 
         public bool Equals(DateTime other) => _dateTime.Equals(other);
 
@@ -35,8 +37,10 @@ namespace Wikitools.Lib.Primitives
 
         public override int GetHashCode() => _dateTime.GetHashCode();
         
-        public string ToString(string? format, IFormatProvider? formatProvider) => 
-            _dateTime.ToString(format, formatProvider);
+        public string ToString(string? format, IFormatProvider? formatProvider) =>
+            format == null && formatProvider == null
+                ? $"{_dateTime:yyyy/MM}"
+                : _dateTime.ToString(format, formatProvider);
 
         // Known limitation: this doesn't retain DateTimeKind (e.g. Utc)
         private readonly DateTime _dateTime = new(Year, Month, 1);

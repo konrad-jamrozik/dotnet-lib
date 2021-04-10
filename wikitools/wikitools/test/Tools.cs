@@ -33,7 +33,7 @@ namespace Wikitools.Tests
 
             await storage.Write(await pagesViewsStats,
                 new DateMonth(timeline.UtcNow),
-                $"wiki_stats_{timeline.UtcNow:yyy_MM_dd}_{cfg.AdoWikiPageViewsForDays}days.json");
+                $"wiki_stats_{timeline.UtcNow:yyyy_MM_dd}_{cfg.AdoWikiPageViewsForDays}days.json");
         }
 
         [Fact(Skip = "Tool to be used manually")]

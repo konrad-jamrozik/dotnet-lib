@@ -63,12 +63,23 @@ namespace Wikitools.AzureDevOps
         private static (ValidWikiPagesStatsForMonth previousMonthStats, ValidWikiPagesStatsForMonth currentMonthStats)
             SplitByMonth(
                 ValidWikiPagesStats pagesStats,
-                DateMonth currentMonth) =>
-        (
-            // kja add checks here there is no other data for months before previous month, and after current month
-            new ValidWikiPagesStatsForMonth(pagesStats.Trim(currentMonth.PreviousMonth), currentMonth.PreviousMonth),
-            new ValidWikiPagesStatsForMonth(pagesStats.Trim(currentMonth), currentMonth)
-        );
+                DateMonth currentMonth)
+        {
+            Contract.Assert(
+                pagesStats.TrimUntil(currentMonth.PreviousMonth.PreviousMonth).VisitedDaysSpan == null,
+                "The split stats have visits from before a month ago, which would be lost. " +
+                $"I.e. from before month {currentMonth.PreviousMonth}.");
+            Contract.Assert(
+                pagesStats.TrimFrom(currentMonth.NextMonth).VisitedDaysSpan == null,
+                "The split stats have visits from after current month, which would be lost. " +
+                $"I.e. from after month {currentMonth}.");
+            return (
+                new ValidWikiPagesStatsForMonth(
+                    pagesStats.Trim(currentMonth.PreviousMonth),
+                    currentMonth.PreviousMonth),
+                new ValidWikiPagesStatsForMonth(pagesStats.Trim(currentMonth), currentMonth)
+            );
+        }
 
         public ValidWikiPagesStats Merge(ValidWikiPagesStats validCurrentStats) => Merge(this, validCurrentStats);
 
@@ -141,9 +152,20 @@ namespace Wikitools.AzureDevOps
             return mergedStats;
         }
 
+        // kja should take DateMonth
         public ValidWikiPagesStats Trim(DateTime monthDate) => Trim(
             monthDate.MonthFirstDay(),
             monthDate.MonthLastDay());
+
+        // kja should take DateMonth
+        public ValidWikiPagesStats TrimUntil(DateTime monthDate) => Trim(
+            DateTime.MinValue,
+            monthDate.MonthLastDay());
+
+        // kja should take DateMonth
+        public ValidWikiPagesStats TrimFrom(DateTime monthDate) => Trim(
+            monthDate.MonthFirstDay(),
+            DateTime.MaxValue);
 
         public ValidWikiPagesStats Trim(DateTime currentDate, int daysFrom, int daysTo) => Trim(
             currentDate.AddDays(daysFrom),

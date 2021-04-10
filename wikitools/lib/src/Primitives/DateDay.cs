@@ -36,7 +36,9 @@ namespace Wikitools.Lib.Primitives
         public override int GetHashCode() => _dateTime.GetHashCode();
 
         public string ToString(string? format, IFormatProvider? formatProvider) => 
-            _dateTime.ToString(format, formatProvider);
+            format == null && formatProvider == null
+                ? $"{_dateTime:yyyy/MM/dd}"
+                : _dateTime.ToString(format, formatProvider);
 
         // Known limitation: this doesn't retain DateTimeKind (e.g. Utc)
         private readonly DateTime _dateTime = new (Year, Month, Day);

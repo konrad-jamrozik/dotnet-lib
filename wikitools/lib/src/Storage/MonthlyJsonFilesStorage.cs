@@ -11,7 +11,7 @@ namespace Wikitools.Lib.Storage
     {
         public T Read<T>(DateTime date)
         {
-            var fileToReadName = $"date_{date:yyy_MM}.json";
+            var fileToReadName = FileName(date);
             return !StorageDir.FileExists(fileToReadName)
                 ? JsonSerializer.Deserialize<T>("[]")!
                 : JsonSerializer.Deserialize<T>(StorageDir.ReadAllText(fileToReadName))!;
@@ -26,6 +26,8 @@ namespace Wikitools.Lib.Storage
         private async Task WriteToFile(string dataJson, DateMonth date, string? fileName) =>
             await StorageDir
                 .CreateDirIfNotExists()
-                .WriteAllTextAsync(fileName ?? $"date_{date:yyy_MM}.json", dataJson);
+                .WriteAllTextAsync(fileName ?? FileName(date), dataJson);
+
+        private static string FileName(DateTime date) => $"date_{date:yyyy_MM}.json";
     }
 }
