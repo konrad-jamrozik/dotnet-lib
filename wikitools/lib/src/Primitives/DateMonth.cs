@@ -22,6 +22,10 @@ namespace Wikitools.Lib.Primitives
 
         public DateMonth AddMonths(int months) => new(_dateTime.AddMonths(months));
 
+        public DateDay FirstDay => new(_dateTime);
+
+        public DateDay LastDay => new (_dateTime.AddMonths(1).AddDays(-1));
+
         public bool Equals(DateTime other) => _dateTime.Equals(other);
 
         public bool Equals(DateDay? other) => other != null && Equals(new DateMonth(other));

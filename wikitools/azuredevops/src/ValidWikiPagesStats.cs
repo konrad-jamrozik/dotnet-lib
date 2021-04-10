@@ -152,20 +152,11 @@ namespace Wikitools.AzureDevOps
             return mergedStats;
         }
 
-        // kja should take DateMonth
-        public ValidWikiPagesStats Trim(DateTime monthDate) => Trim(
-            monthDate.MonthFirstDay(),
-            monthDate.MonthLastDay());
+        public ValidWikiPagesStats Trim(DateMonth month) => Trim(month.FirstDay, month.LastDay);
 
-        // kja should take DateMonth
-        public ValidWikiPagesStats TrimUntil(DateTime monthDate) => Trim(
-            DateTime.MinValue,
-            monthDate.MonthLastDay());
+        public ValidWikiPagesStats TrimUntil(DateMonth month) => Trim(DateTime.MinValue, month.LastDay);
 
-        // kja should take DateMonth
-        public ValidWikiPagesStats TrimFrom(DateTime monthDate) => Trim(
-            monthDate.MonthFirstDay(),
-            DateTime.MaxValue);
+        public ValidWikiPagesStats TrimFrom(DateMonth month) => Trim(month.FirstDay, DateTime.MaxValue);
 
         public ValidWikiPagesStats Trim(DateTime currentDate, int daysFrom, int daysTo) => Trim(
             currentDate.AddDays(daysFrom),
