@@ -12,7 +12,7 @@ namespace Wikitools.AzureDevOps.Tests
     [TestFixture]
     public class AdoWikiWithStorageIntegrationTests
     {
-        // kja 3 curr integration tests work. 
+        // kja 4 curr integration tests work. 
         // - make the test call ADO API for /Home page only, show that page
         // - manually check the behavior is the same as with entire wiki list
         // - add Warning/Precondition failure over PAT working or not (need to catch the exception)

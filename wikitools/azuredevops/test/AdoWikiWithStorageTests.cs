@@ -9,7 +9,7 @@ namespace Wikitools.AzureDevOps.Tests
     [TestFixture]
     public class AdoWikiWithStorageTests
     {
-        // kja 4 test todos:
+        // kja 3 test todos:
         // - DONE Everything empty: no data from wiki, no data from storage
         // - DONE Data in wiki, nothing in storage
         // - DONE Data in storage, nothing in wiki
