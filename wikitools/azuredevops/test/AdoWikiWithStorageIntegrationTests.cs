@@ -90,10 +90,18 @@ namespace Wikitools.AzureDevOps.Tests
             // merged
             // ------WWWW (Act 2)
             // ReSharper restore CommentTypo
-            var expected = statsForDays3To6.Merge(statsForDays7To10);
-            new JsonDiffAssertion(expected, statsForDays3To10).Assert();
-            expected = statsForDays3To10For1Page.Merge(statsForDays7To10For1Page);
-            new JsonDiffAssertion(expected, statsForDays3To10For1Page).Assert();
+            var data = new[]
+            {
+                (
+                    expected: statsForDays3To10For1Page.Merge(statsForDays7To10For1Page),
+                    actual: statsForDays3To10For1Page
+                ),
+                (
+                    expected: statsForDays3To6.Merge(statsForDays7To10),
+                    actual: statsForDays3To10
+                )
+            };
+            data.ForEach(test => new JsonDiffAssertion(test.expected, test.actual).Assert());
         }
 
         /// <summary>

@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using Wikitools.Lib.Primitives;
 
 namespace Wikitools.AzureDevOps
@@ -15,11 +16,11 @@ namespace Wikitools.AzureDevOps
             return pagesViewsStats;
         }
 
-        // kja dedup
         public Task<ValidWikiPagesStats> PageStats(int pageViewsForDays, int pageId)
         {
             var updatedStorage  = Storage.Update(AdoWiki, pageViewsForDays.MinWith(PageViewsForDaysWikiLimit), pageId);
-            var pagesViewsStats = updatedStorage.Select(s => s.PagesStats(pageViewsForDays)); // kja pageStats
+            var pagesViewsStats = updatedStorage.Select(
+                s => new ValidWikiPagesStats(s.PagesStats(pageViewsForDays).Where(page => page.Id == pageId)));
             return pagesViewsStats;
         }
     }

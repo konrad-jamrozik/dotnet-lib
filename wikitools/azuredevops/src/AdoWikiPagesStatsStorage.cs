@@ -54,14 +54,14 @@ namespace Wikitools.AzureDevOps
 
         public ValidWikiPagesStats PagesStats(int pageViewsForDays)
         {
-            var currentMonthDate = CurrentDate;
-            var previousDate     = currentMonthDate.AddDays(-pageViewsForDays+1);
+            var currentDay   = new DateDay(CurrentDate);
+            var previousDate = currentDay.AddDays(-pageViewsForDays + 1);
             // kja bug: this will return equal on difference of exactly 12 months, but should still say that months differ
             // Note that the code below assumes it can go max in the past by one month only
-            var monthsDiffer     = previousDate.Month != currentMonthDate.Month;
+            var monthsDiffer = previousDate.Month != currentDay.Month;
 
             var currentMonthStats = new ValidWikiPagesStats(
-                Storage.Read<IEnumerable<WikiPageStats>>(currentMonthDate));
+                Storage.Read<IEnumerable<WikiPageStats>>(currentDay));
             var previousMonthStats = new ValidWikiPagesStats(
                 monthsDiffer
                     ? Storage.Read<IEnumerable<WikiPageStats>>(previousDate)

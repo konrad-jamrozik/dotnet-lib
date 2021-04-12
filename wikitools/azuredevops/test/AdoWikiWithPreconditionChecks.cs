@@ -5,6 +5,7 @@ namespace Wikitools.AzureDevOps.Tests
 {
     public record AdoWikiWithPreconditionChecks(IAdoWiki AdoWiki) : IAdoWiki
     {
+        // kja wip; this is here to do proper test precondition checks for busted PAT token and wrong pageId
         public Task<ValidWikiPagesStats> PagesStats(int pageViewsForDays)
         {
             try
