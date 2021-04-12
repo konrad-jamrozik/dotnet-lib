@@ -24,23 +24,15 @@ namespace Wikitools.AzureDevOps
         // Confirmed empirically as of 3/27/2021.
         private const int MinPageViewsForDays = 1;
 
-        public async Task<ValidWikiPagesStats> PagesStats(
-            int pageViewsForDays)
-        {
-            Contract.Assert(
+        public Task<ValidWikiPagesStats> PagesStats(int pageViewsForDays) => PagesStats(pageViewsForDays, GetWikiPagesDetails);
+
+        public Task<ValidWikiPagesStats> PageStats(int pageViewsForDays, int pageId) =>
+            PagesStats(
                 pageViewsForDays,
-                nameof(pageViewsForDays),
-                new Range(MinPageViewsForDays, MaxPageViewsForDays),
-                upperBoundReason: "ADO API limit");
+                (wikiHttpClient, pageViewsForDays) => GetWikiPagesDetails(wikiHttpClient, pageViewsForDays, pageId));
 
-            var wikiHttpClient   = WikiHttpClient(AdoWikiUri, PatEnvVar);
-            var wikiPagesDetails = await GetAllWikiPagesDetails(AdoWikiUri, pageViewsForDays, wikiHttpClient);
-            var wikiPagesStats   = wikiPagesDetails.Select(WikiPageStats.From);
-            return new ValidWikiPagesStats(wikiPagesStats);
-        }
-
-        public async Task<ValidWikiPagesStats> PageStats(
-            int pageViewsForDays, int pageId)
+        private async Task<ValidWikiPagesStats> PagesStats(int pageViewsForDays,
+            Func<WikiHttpClient, int, Task<IEnumerable<WikiPageDetail>>> getWikiPagesDetails)
         {
             Contract.Assert(
                 pageViewsForDays,
@@ -49,21 +41,30 @@ namespace Wikitools.AzureDevOps
                 upperBoundReason: "ADO API limit");
 
             var wikiHttpClient = WikiHttpClient(AdoWikiUri, PatEnvVar);
-            var wikiPageDetail = await GetWikiPageDetail(AdoWikiUri, pageViewsForDays, wikiHttpClient, pageId);
-            var wikiPageStats  = WikiPageStats.From(wikiPageDetail);
-            return new ValidWikiPagesStats(wikiPageStats.WrapInList());
+            var wikiPagesDetails = await getWikiPagesDetails(wikiHttpClient, pageViewsForDays);
+            var wikiPagesStats = wikiPagesDetails.Select(WikiPageStats.From);
+            return new ValidWikiPagesStats(wikiPagesStats);
         }
+
+        private Task<IEnumerable<WikiPageDetail>> GetWikiPagesDetails(
+            WikiHttpClient wikiHttpClient,
+            int pageViewsForDays)
+            => GetAllWikiPagesDetails(AdoWikiUri, pageViewsForDays, wikiHttpClient);
+
+        private async Task<IEnumerable<WikiPageDetail>> GetWikiPagesDetails(
+            WikiHttpClient wikiHttpClient,
+            int pageViewsForDays,
+            int pageId)
+            => (await GetWikiPageDetail(AdoWikiUri, pageViewsForDays, wikiHttpClient, pageId)).List();
 
         private WikiHttpClient WikiHttpClient(AdoWikiUri adoWikiUri, string patEnvVar)
         {
-            var pat = Env.Value(patEnvVar);
-
             // Construction of VssConnection with PAT based on
             // https://docs.microsoft.com/en-us/azure/devops/integrate/get-started/client-libraries/samples?view=azure-devops#personal-access-token-authentication-for-rest-services
             // Linked from https://docs.microsoft.com/en-us/azure/devops/integrate/concepts/dotnet-client-libraries?view=azure-devops#samples
             VssConnection connection = new(
                 new Uri(adoWikiUri.CollectionUri),
-                new VssBasicCredential(string.Empty, password: pat));
+                new VssBasicCredential(string.Empty, password: Env.Value(patEnvVar)));
 
             // Microsoft.TeamFoundation.Wiki.WebApi Namespace doc:
             // https://docs.microsoft.com/en-us/dotnet/api/?term=Wiki
@@ -74,15 +75,15 @@ namespace Wikitools.AzureDevOps
         /// Empirical tests as of 3/27/2021 show that:
         /// - the wiki page visit ingestion delay is 4-6 hours.
         /// - the dates are counted in UTC.
-        /// How tested:
+        /// How I conducted the empirical tests:
         /// - I created and immediately visited kojamroz_test page on 3/27/2021 9:04 PM PDT.
         /// - The page has shown up immediately in the returned list, but with null visits.
-        /// - The visit was not being returned by this call as of 3/28/2021 1:08 AM PDT i.e. 4:04 later.
-        /// - But it appeared by 3/28/2021 3:07 AM PDT, i.e. 1:59 later.
+        /// - The visit was not being returned by this call as of 3/28/2021 1:08 AM PDT i.e. 4h 4m later.
+        /// - It appeared by 3/28/2021 3:07 AM PDT, i.e. 1h 59m more later.
         /// - When it appeared, it was counted as 3/8/2021, not 3/7/2021.
-        /// Presumably because the dates are in UTC not PDT.
+        ///   - Presumably because the dates are in UTC, not PDT.
         /// </remarks>
-        private static async Task<List<WikiPageDetail>> GetAllWikiPagesDetails(
+        private static async Task<IEnumerable<WikiPageDetail>> GetAllWikiPagesDetails(
             AdoWikiUri adoWikiUri,
             int pageViewsForDays,
             WikiHttpClient wikiHttpClient)
@@ -107,7 +108,6 @@ namespace Wikitools.AzureDevOps
             return wikiPagesDetails;
         }
 
-        // kja dedup with method above
         private static async Task<WikiPageDetail> GetWikiPageDetail(
             AdoWikiUri adoWikiUri,
             int pageViewsForDays,
