@@ -25,6 +25,7 @@ namespace Wikitools
         string GitRepoClonePath,
         int GitLogDays,
         string AdoWikiUri,
+        // Assumed to contain a PAT token of a user that has access to the wiki with url AdoWikiUri
         string AdoPatEnvVar,
         int AdoWikiPageViewsForDays,
         string[] ExcludedAuthors,
@@ -33,7 +34,9 @@ namespace Wikitools
         DateTime MonthlyReportEndDate,
         int Top,
         string StorageDirPath,
-        string TestStorageDirPath)
+        string TestStorageDirPath,
+        // Assumed to point to valid page in the ADO wiki with url AdoWikiUrl
+        int TestAdoWikiPageId)
     {
         public static WikitoolsConfig From(IFileSystem fs, string cfgFileName = "wikitools_config.json")
         {

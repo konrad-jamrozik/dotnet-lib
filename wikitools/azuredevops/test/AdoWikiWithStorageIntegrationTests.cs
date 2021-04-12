@@ -13,18 +13,19 @@ namespace Wikitools.AzureDevOps.Tests
     public class AdoWikiWithStorageIntegrationTests
     {
         // kja 4 curr integration tests work. 
-        // - make the test call ADO API for /Home page only, show that page
-        // - manually check the behavior is the same as with entire wiki list
+        // - DONE make the test call ADO API for /Home page only, show that page
+        // - DONE manually check the behavior is the same as with entire wiki list
         // - add Warning/Precondition failure over PAT working or not (need to catch the exception)
+        // - same for wiki page not existing
         // - Break dependency on WikitoolsConfig.From(fs): this is forbidden dependency: azuredevops-tests should not depend on wikitools
         // -   See my other to-do on that; search for "idea for config".
         // - Same composability needed with Declare
 
         /// <summary>
         /// This test tests the following:
-        /// - ADO API for Wiki can be successfully queried for data
+        /// - ADO API for Wiki can be successfully queried for single page data
         /// - Querying wiki for 1 day results in it giving data for today only.
-        /// - The obtained data can be successfully stored.
+        /// - The obtained data can be successfully stored and retrieved.
         /// </summary>
         [Test]
         public async Task ObtainsAndStoresDataFromAdoWikiForToday() =>
@@ -33,18 +34,18 @@ namespace Wikitools.AzureDevOps.Tests
         /// <summary>
         /// Like
         /// Wikitools.AzureDevOps.Tests.AdoWikiWithStorageIntegrationTests.ObtainsAndStoresDataFromAdoWikiForToday
-        /// but goes two more days into the past.
+        /// but goes four more days into the past.
         /// </summary>
         [Test]
-        public async Task ObtainsAndStoresDataFromAdoWikiFor3Days() =>
-            await VerifyDayRangeOfWikiStats(pageViewsForDays: 3);
+        public async Task ObtainsAndStoresDataFromAdoWikiFor5Days() =>
+            await VerifyDayRangeOfWikiStats(pageViewsForDays: 5);
 
         /// <summary>
         /// This test tests the following:
-        /// - ADO API for Wiki can be successfully queried for data
+        /// - ADO API for Wiki can be successfully queried for all pages data
         /// - The obtained data can be successfully stored
         /// - The stored data is then properly merged into wiki data from ADO API,
-        ///   when "wiki with storage" is used to obtain ADO wiki data both from
+        ///   when "wiki with storage" is used to retrieve ADO wiki data both from
         ///   the API and from the data saved in storage.
         ///
         /// The tested scenario is explained inline in the code.
@@ -52,7 +53,7 @@ namespace Wikitools.AzureDevOps.Tests
         [Test]
         public async Task ObtainsAndMergesDataFromAdoWikiApiAndStorage()
         {
-            var (decl, utcNow, adoWiki, storage) = ArrangeSut();
+            var (decl, _, utcNow, adoWiki, storage) = ArrangeSut();
 
             // ReSharper disable CommentTypo
             // Act 1. Obtain 10 days of page stats from wiki (days 1 to 10)
@@ -92,13 +93,11 @@ namespace Wikitools.AzureDevOps.Tests
         /// <summary>
         /// Arranges integration tests system under tests and relevant dependencies.
         ///
-        /// External dependencies used:
-        /// The adoWiki is defined in WikitoolsConfig, using PAT read from env var also defined in that config.
-        /// Thus:
-        /// - the PAT needs to provide relevant access to the wiki;
-        /// - for the wiki to provide meaningful behavior to exercise, there has to be recent ongoing, daily activity.
+        /// Notes on the external dependencies used:
+        /// - For the adoWiki the wiki to provide meaningful behavior to exercise, there has to be recent ongoing, daily activity.
+        /// - For other assumptions, see comments on WikitoolsConfig members.
         /// </summary>
-        private static (Declare decl, DateTime utcNow, AdoWiki adoWiki, AdoWikiPagesStatsStorage storage) ArrangeSut()
+        private static (Declare decl, int pageId, DateTime utcNow, AdoWiki adoWiki, AdoWikiPagesStatsStorage storage) ArrangeSut()
         {
             var utcNow     = new Timeline().UtcNow;
             var fs         = new FileSystem();
@@ -108,18 +107,18 @@ namespace Wikitools.AzureDevOps.Tests
             var decl       = new Declare();
             var storage    = decl.AdoWikiPagesStatsStorage(storageDir, utcNow);
             var adoWiki    = new AdoWiki(cfg.AdoWikiUri, cfg.AdoPatEnvVar, env);
-            return (decl, utcNow, adoWiki, storage);
+            return (decl, cfg.TestAdoWikiPageId, utcNow, adoWiki, storage);
         }
 
         private async Task VerifyDayRangeOfWikiStats(int pageViewsForDays)
         {
-            var (_, utcNow, adoWiki, statsStorage) = ArrangeSut();
+            var (_, pageId, utcNow, adoWiki, statsStorage) = ArrangeSut();
 
             var expectedLastDay  = new DateDay(utcNow);
             var expectedFirstDay = expectedLastDay.AddDays(-pageViewsForDays+1);
 
             // Act
-            var stats = await adoWiki.PagesStats(pageViewsForDays);
+            var stats = await adoWiki.PageStats(pageViewsForDays, pageId);
 
             statsStorage = await statsStorage.OverwriteWith(stats, utcNow);
             var storedStats = statsStorage.PagesStats(pageViewsForDays);
@@ -155,7 +154,7 @@ namespace Wikitools.AzureDevOps.Tests
             string ExactDayAssumptionViolationMessage(string dayType, int pageViewsForDays)
             {
                 return $"{dayType} possible day for pageViewsForDays: {pageViewsForDays}. " +
-                       $"Possible lack of visits or ingestion delay. UTC time: {DateTime.UtcNow}";
+                       $"Possible lack of visits (null) or ingestion delay. UTC time: {DateTime.UtcNow}";
             }
         }
     }

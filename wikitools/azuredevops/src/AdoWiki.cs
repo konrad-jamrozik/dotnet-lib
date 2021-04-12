@@ -8,6 +8,7 @@ using Microsoft.VisualStudio.Services.Common;
 using Microsoft.VisualStudio.Services.WebApi;
 using Wikitools.Lib.Contracts;
 using Wikitools.Lib.OS;
+using Wikitools.Lib.Primitives;
 
 namespace Wikitools.AzureDevOps
 {
@@ -36,6 +37,21 @@ namespace Wikitools.AzureDevOps
             var wikiPagesDetails = await GetAllWikiPagesDetails(AdoWikiUri, pageViewsForDays, wikiHttpClient);
             var wikiPagesStats   = wikiPagesDetails.Select(WikiPageStats.From);
             return new ValidWikiPagesStats(wikiPagesStats);
+        }
+
+        public async Task<ValidWikiPagesStats> PageStats(
+            int pageViewsForDays, int pageId)
+        {
+            Contract.Assert(
+                pageViewsForDays,
+                nameof(pageViewsForDays),
+                new Range(MinPageViewsForDays, MaxPageViewsForDays),
+                upperBoundReason: "ADO API limit");
+
+            var wikiHttpClient = WikiHttpClient(AdoWikiUri, PatEnvVar);
+            var wikiPageDetail = await GetWikiPageDetail(AdoWikiUri, pageViewsForDays, wikiHttpClient, pageId);
+            var wikiPageStats  = WikiPageStats.From(wikiPageDetail);
+            return new ValidWikiPagesStats(wikiPageStats.WrapInList());
         }
 
         private WikiHttpClient WikiHttpClient(AdoWikiUri adoWikiUri, string patEnvVar)
@@ -89,6 +105,23 @@ namespace Wikitools.AzureDevOps
             } while (continuationToken != null);
 
             return wikiPagesDetails;
+        }
+
+        // kja dedup with method above
+        private static async Task<WikiPageDetail> GetWikiPageDetail(
+            AdoWikiUri adoWikiUri,
+            int pageViewsForDays,
+            WikiHttpClient wikiHttpClient,
+            int pageId)
+        {
+            // API reference:
+            // https://docs.microsoft.com/en-us/rest/api/azure/devops/wiki/page%20stats/get?view=azure-devops-rest-6.0
+            var wikiPageDetail = await wikiHttpClient.GetPageDataAsync(
+                adoWikiUri.ProjectName,
+                adoWikiUri.WikiName,
+                pageId,
+                pageViewsForDays);
+            return wikiPageDetail;
         }
     }
 }
