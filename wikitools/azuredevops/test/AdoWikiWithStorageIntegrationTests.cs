@@ -17,8 +17,9 @@ namespace Wikitools.AzureDevOps.Tests
         // - DONE manually check the behavior is the same as with entire wiki list
         // - add Warning/Precondition failure over PAT working or not (need to catch the exception)
         // - same for wiki page not existing
-        // - Break dependency on WikitoolsConfig.From(fs): this is forbidden dependency: azuredevops-tests should not depend on wikitools
-        // -   See my other to-do on that; search for "idea for config".
+        // - Break dependency on WikitoolsConfig.From(fs): this is forbidden dependency:
+        //   azuredevops-tests should not depend on wikitools
+        //   - See my other to-do on that; search for "idea for config".
         // - Same composability needed with Declare
 
         /// <summary>
@@ -42,7 +43,7 @@ namespace Wikitools.AzureDevOps.Tests
 
         /// <summary>
         /// This test tests the following:
-        /// - ADO API for Wiki can be successfully queried for all pages data
+        /// - ADO API for Wiki can be successfully queried for single and also all pages data
         /// - The obtained data can be successfully stored
         /// - The stored data is then properly merged into wiki data from ADO API,
         ///   when "wiki with storage" is used to retrieve ADO wiki data both from
@@ -53,16 +54,18 @@ namespace Wikitools.AzureDevOps.Tests
         [Test]
         public async Task ObtainsAndMergesDataFromAdoWikiApiAndStorage()
         {
-            var (decl, _, utcNow, adoWiki, storage) = ArrangeSut();
+            var (decl, pageId, utcNow, adoWiki, storage) = ArrangeSut();
 
             // ReSharper disable CommentTypo
             // Act 1. Obtain 10 days of page stats from wiki (days 1 to 10)
             // WWWWWWWWWW
-            var statsForDays1To10 = await adoWiki.PagesStats(pageViewsForDays: 10);
+            var statsForDays1To10         = await adoWiki.PagesStats(pageViewsForDays: 10);
+            var statsForDays1To10For1Page = await adoWiki.PageStats(pageViewsForDays: 10, pageId);
 
             // Act 2. Obtain 4 days of page stats from wiki (days 7 to 10)
             // ------WWWW
-            var statsForDays7To10 = await adoWiki.PagesStats(pageViewsForDays: 4);
+            var statsForDays7To10         = await adoWiki.PagesStats(pageViewsForDays: 4);
+            var statsForDays7To10For1Page = await adoWiki.PageStats(pageViewsForDays: 4, pageId);
 
             // Act 3. Save to storage page stats for days 3 to 6
             // WWWWWWWWWW
@@ -76,7 +79,8 @@ namespace Wikitools.AzureDevOps.Tests
             // ->
             // --SSSSWWWW
             var adoWikiWithStorage = decl.AdoWikiWithStorage(adoWiki, storageWithStats, pageViewsForDaysWikiLimit: 4);
-            var statsForDays3To10  = await adoWikiWithStorage.PagesStats(pageViewsForDays: 8);
+            var statsForDays3To10 = await adoWikiWithStorage.PagesStats(pageViewsForDays: 8);
+            var statsForDays3To10For1Page = await adoWikiWithStorage.PageStats(pageViewsForDays: 8, pageId);
 
             // Assert 4.1. Assert data from Act 4 corresponds to page stats days of 3 to 10
             // (data from storage for days 3 to 6 merged with data from ADO API for days 7 to 10)
@@ -88,16 +92,20 @@ namespace Wikitools.AzureDevOps.Tests
             // ReSharper restore CommentTypo
             var expected = statsForDays3To6.Merge(statsForDays7To10);
             new JsonDiffAssertion(expected, statsForDays3To10).Assert();
+            expected = statsForDays3To10For1Page.Merge(statsForDays7To10For1Page);
+            new JsonDiffAssertion(expected, statsForDays3To10For1Page).Assert();
         }
 
         /// <summary>
         /// Arranges integration tests system under tests and relevant dependencies.
         ///
         /// Notes on the external dependencies used:
-        /// - For the adoWiki the wiki to provide meaningful behavior to exercise, there has to be recent ongoing, daily activity.
+        /// - For the adoWiki the wiki to provide meaningful behavior to exercise,
+        ///   there has to be recent ongoing, daily activity.
         /// - For other assumptions, see comments on WikitoolsConfig members.
         /// </summary>
-        private static (Declare decl, int pageId, DateTime utcNow, AdoWiki adoWiki, AdoWikiPagesStatsStorage storage) ArrangeSut()
+        private static (Declare decl, int pageId, DateTime utcNow, IAdoWiki adoWiki, AdoWikiPagesStatsStorage storage)
+            ArrangeSut()
         {
             var utcNow     = new Timeline().UtcNow;
             var fs         = new FileSystem();
@@ -106,7 +114,10 @@ namespace Wikitools.AzureDevOps.Tests
             var storageDir = new Dir(fs, cfg.TestStorageDirPath);
             var decl       = new Declare();
             var storage    = decl.AdoWikiPagesStatsStorage(storageDir, utcNow);
-            var adoWiki    = new AdoWiki(cfg.AdoWikiUri, cfg.AdoPatEnvVar, env);
+
+            IAdoWiki adoWiki = new AdoWiki(cfg.AdoWikiUri, cfg.AdoPatEnvVar, env);
+            adoWiki = new AdoWikiWithPreconditionChecks(adoWiki);
+
             return (decl, cfg.TestAdoWikiPageId, utcNow, adoWiki, storage);
         }
 

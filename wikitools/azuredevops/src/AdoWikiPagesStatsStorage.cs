@@ -10,9 +10,18 @@ namespace Wikitools.AzureDevOps
     {
         private DateMonth CurrentMonth => new(CurrentDate);
 
-        public async Task<AdoWikiPagesStatsStorage> Update(IAdoWiki wiki, int pageViewsForDays)
+        public Task<AdoWikiPagesStatsStorage> Update(IAdoWiki wiki, int pageViewsForDays) =>
+            Update(pageViewsForDays, wiki.PagesStats);
+
+        public Task<AdoWikiPagesStatsStorage> Update(IAdoWiki wiki, int pageViewsForDays, int pageId) => Update(
+            pageViewsForDays,
+            pageViewsForDays => wiki.PageStats(pageViewsForDays, pageId));
+
+        private async Task<AdoWikiPagesStatsStorage> Update(
+            int pageViewsForDays,
+            Func<int, Task<ValidWikiPagesStats>> wikiPageStatsFunc)
         {
-            var pageStats = await wiki.PagesStats(pageViewsForDays);
+            var pageStats = await wikiPageStatsFunc(pageViewsForDays);
 
             var (previousMonthStats, currentMonthStats) = pageStats.SplitByMonth(CurrentMonth);
             await MergeIntoStoredMonthStats(previousMonthStats);
