@@ -60,7 +60,6 @@ namespace Wikitools.AzureDevOps.Tests
             // Act 1. Obtain 10 days of page stats from wiki (days 1 to 10)
             // WWWWWWWWWW
             var statsForDays1To10         = await adoWiki.PagesStats(pageViewsForDays: 10);
-            var statsForDays1To10For1Page = await adoWiki.PageStats(pageViewsForDays: 10, pageId);
 
             // Act 2. Obtain 4 days of page stats from wiki (days 7 to 10)
             // ------WWWW
