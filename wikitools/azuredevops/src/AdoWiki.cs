@@ -46,22 +46,19 @@ namespace Wikitools.AzureDevOps
                 GetWikiPagesDetails(wikiHttpClient, pageViewsForDays, pageId));
 
         private async Task<ValidWikiPagesStats> PagesStats(int pageViewsForDays,
-            Func<WikiHttpClient, int, Task<IEnumerable<WikiPageDetail>>> getWikiPagesDetails)
+            Func<WikiHttpClientAdapter, int, Task<IEnumerable<WikiPageDetail>>> getWikiPagesDetails)
         {
-            Contract.Assert(
-                pageViewsForDays,
-                nameof(pageViewsForDays),
-                new Range(MinPageViewsForDays, MaxPageViewsForDays),
-                upperBoundReason: "ADO API limit");
+            Contract.Assert(pageViewsForDays, nameof(pageViewsForDays),
+                new Range(MinPageViewsForDays, MaxPageViewsForDays), upperBoundReason: "ADO API limit");
 
-            var wikiHttpClient = WikiHttpClient(AdoWikiUri, PatEnvVar);
+            var wikiHttpClient   = WikiHttpClient(AdoWikiUri, PatEnvVar);
             var wikiPagesDetails = await getWikiPagesDetails(wikiHttpClient, pageViewsForDays);
-            var wikiPagesStats = wikiPagesDetails.Select(WikiPageStats.From);
+            var wikiPagesStats   = wikiPagesDetails.Select(WikiPageStats.From);
             return new ValidWikiPagesStats(wikiPagesStats);
         }
 
         private async Task<IEnumerable<WikiPageDetail>> GetWikiPagesDetails(
-            WikiHttpClient wikiHttpClient,
+            WikiHttpClientAdapter wikiHttpClient,
             int pageViewsForDays)
         {
             // The Top value is max on which the API doesn't throw. Determined empirically.
@@ -71,8 +68,7 @@ namespace Wikitools.AzureDevOps
             do
             {
                 wikiPagesBatchRequest.ContinuationToken = continuationToken;
-                // API reference:
-                // https://docs.microsoft.com/en-us/rest/api/azure/devops/wiki/pages%20batch/get?view=azure-devops-rest-6.0
+                
                 var wikiPagesDetailsPage = await wikiHttpClient.GetPagesBatchAsync(
                     wikiPagesBatchRequest,
                     AdoWikiUri.ProjectName,
@@ -85,18 +81,16 @@ namespace Wikitools.AzureDevOps
         }
 
         private async Task<IEnumerable<WikiPageDetail>> GetWikiPagesDetails(
-            WikiHttpClient wikiHttpClient,
+            WikiHttpClientAdapter wikiHttpClient,
             int pageViewsForDays,
             int pageId) =>
-            // API reference:
-            // https://docs.microsoft.com/en-us/rest/api/azure/devops/wiki/page%20stats/get?view=azure-devops-rest-6.0
             (await wikiHttpClient.GetPageDataAsync(
                 AdoWikiUri.ProjectName,
                 AdoWikiUri.WikiName,
                 pageId,
                 pageViewsForDays)).List();
 
-        private WikiHttpClient WikiHttpClient(AdoWikiUri adoWikiUri, string patEnvVar)
+        private WikiHttpClientAdapter WikiHttpClient(AdoWikiUri adoWikiUri, string patEnvVar)
         {
             // Construction of VssConnection with PAT based on
             // https://docs.microsoft.com/en-us/azure/devops/integrate/get-started/client-libraries/samples?view=azure-devops#personal-access-token-authentication-for-rest-services
@@ -107,7 +101,7 @@ namespace Wikitools.AzureDevOps
 
             // Microsoft.TeamFoundation.Wiki.WebApi Namespace doc:
             // https://docs.microsoft.com/en-us/dotnet/api/?term=Wiki
-            return connection.GetClient<WikiHttpClient>();
+            return new WikiHttpClientAdapter(connection.GetClient<WikiHttpClient>());
         }
     }
 }
