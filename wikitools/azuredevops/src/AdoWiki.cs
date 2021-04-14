@@ -42,9 +42,8 @@ namespace Wikitools.AzureDevOps
             PagesStats(pageViewsForDays, GetWikiPagesDetails);
 
         public Task<ValidWikiPagesStats> PageStats(int pageViewsForDays, int pageId) =>
-            PagesStats(
-                pageViewsForDays,
-                (wikiHttpClient, pageViewsForDays) => GetWikiPagesDetails(wikiHttpClient, pageViewsForDays, pageId));
+            PagesStats(pageViewsForDays, (wikiHttpClient, pageViewsForDays) =>
+                GetWikiPagesDetails(wikiHttpClient, pageViewsForDays, pageId));
 
         private async Task<ValidWikiPagesStats> PagesStats(int pageViewsForDays,
             Func<WikiHttpClient, int, Task<IEnumerable<WikiPageDetail>>> getWikiPagesDetails)
@@ -85,12 +84,12 @@ namespace Wikitools.AzureDevOps
             return wikiPagesDetails;
         }
 
-        // API reference:
-        // https://docs.microsoft.com/en-us/rest/api/azure/devops/wiki/page%20stats/get?view=azure-devops-rest-6.0
         private async Task<IEnumerable<WikiPageDetail>> GetWikiPagesDetails(
             WikiHttpClient wikiHttpClient,
             int pageViewsForDays,
             int pageId) =>
+            // API reference:
+            // https://docs.microsoft.com/en-us/rest/api/azure/devops/wiki/page%20stats/get?view=azure-devops-rest-6.0
             (await wikiHttpClient.GetPageDataAsync(
                 AdoWikiUri.ProjectName,
                 AdoWikiUri.WikiName,
