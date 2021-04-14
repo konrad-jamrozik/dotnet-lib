@@ -24,13 +24,13 @@ namespace Wikitools.AzureDevOps
                 // https://docs.microsoft.com/en-us/rest/api/azure/devops/wiki/page%20stats/get?view=azure-devops-rest-6.0
                 return Client.GetPageDataAsync(projectName, wikiName, pageId, pageViewsForDays);
             }
-            catch (VssUnauthorizedException e) when (e.Message.Contains(
-                "VS30063: You are not authorized to access https://dev.azure.com"))
+            catch (VssUnauthorizedException e) when
+                (e.Message.Contains("VS30063: You are not authorized to access https://dev.azure.com"))
             {
                 throw new ResourceException(ExceptionCode.Unauthorized, e);
             }
-            catch (VssServiceException e) when (Regex.Match(e.Message, 
-                "The wiki page id '.*' does not exist\\.").Success)
+            catch (VssServiceException e) when
+                (Regex.Match(e.Message, "The wiki page id '.*' does not exist\\.").Success)
             {
                 throw new ResourceException(ExceptionCode.NotFound, e);
             }
