@@ -15,8 +15,8 @@ namespace Wikitools.AzureDevOps.Tests
         // kja 4 curr integration tests work. 
         // - DONE make the test call ADO API for /Home page only, show that page
         // - DONE manually check the behavior is the same as with entire wiki list
-        // - add Warning/Precondition failure over PAT working or not (need to catch the exception)
-        // - same for wiki page not existing
+        // - DONE add precondition failure over PAT working or not (need to catch the exception)
+        // - DONE same for wiki page not existing
         // - Break dependency on WikitoolsConfig.From(fs): this is forbidden dependency:
         //   azuredevops-tests should not depend on wikitools
         //   - See my other to-do on that; search for "idea for config".
