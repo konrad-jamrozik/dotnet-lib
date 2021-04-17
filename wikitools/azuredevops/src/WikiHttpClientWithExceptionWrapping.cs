@@ -14,22 +14,18 @@ namespace Wikitools.AzureDevOps
             string projectName,
             string wikiName,
             int pageId,
-            int pageViewsForDays)
-        {
+            int pageViewsForDays) =>
             // API reference:
             // https://docs.microsoft.com/en-us/rest/api/azure/devops/wiki/page%20stats/get?view=azure-devops-rest-6.0
-            return TryInvoke(() => Client.GetPageDataAsync(projectName, wikiName, pageId, pageViewsForDays));
-        }
+            TryInvoke(() => Client.GetPageDataAsync(projectName, wikiName, pageId, pageViewsForDays));
 
         public Task<PagedList<WikiPageDetail>> GetPagesBatchAsync(
             WikiPagesBatchRequest request,
             string projectName,
-            string wikiName)
-        {
+            string wikiName) =>
             // API reference:
             // https://docs.microsoft.com/en-us/rest/api/azure/devops/wiki/pages%20batch/get?view=azure-devops-rest-6.0
-            return TryInvoke(() => Client.GetPagesBatchAsync(request, projectName, wikiName));
-        }
+            TryInvoke(() => Client.GetPagesBatchAsync(request, projectName, wikiName));
 
         private Task<T> TryInvoke<T>(Func<Task<T>> func)
         {
