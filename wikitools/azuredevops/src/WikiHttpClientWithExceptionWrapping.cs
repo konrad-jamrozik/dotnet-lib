@@ -27,11 +27,11 @@ namespace Wikitools.AzureDevOps
             // https://docs.microsoft.com/en-us/rest/api/azure/devops/wiki/pages%20batch/get?view=azure-devops-rest-6.0
             TryInvoke(() => Client.GetPagesBatchAsync(request, projectName, wikiName));
 
-        private Task<T> TryInvoke<T>(Func<Task<T>> func)
+        private async Task<T> TryInvoke<T>(Func<Task<T>> func)
         {
             try
             {
-                return func();
+                return await func();
             }
             catch (VssUnauthorizedException e) when
                 (e.Message.Contains("VS30063: You are not authorized to access https://dev.azure.com"))

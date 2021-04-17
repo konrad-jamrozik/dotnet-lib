@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using NUnit.Framework;
 
 namespace Wikitools.AzureDevOps.Tests
 {
@@ -24,25 +25,13 @@ namespace Wikitools.AzureDevOps.Tests
             {
                 return await AdoWiki.PageStats(pageViewsForDays, pageId);
             }
-            catch (Exception e)
+            catch (ResourceException e)
             {
-                // kja use here exception filters to catch exceptions of types that I will have to introduce:
-                // exception for busted PAT token, e.g.:
-                //   Microsoft.VisualStudio.Services.Common.VssUnauthorizedException : VS30063: You are not authorized to access https://dev.azure.com.
-                //   Data:
-                //   CredentialsType: Basic
-                // exception for page with given ID not existing, e.g.:
-                //   Microsoft.VisualStudio.Services.Common.VssServiceException : The wiki page id '13393000' does not exist.
-                // To do this properly I will have to modify AdoWiki type.
-                // I will have to inject a new type that will wrap around ADO WikiHttpClient
-                // and intercept ADO exceptions and rethrow appropriate type of my own exceptions
-                // Observe that currently in Wikitools.AzureDevOps.AdoWiki.PagesStats and PageStats
-                // the client is created in Wikitools.AzureDevOps.AdoWiki.WikiHttpClient
-                // Now instead of that it will have to be injected (to be precise - its exception-handling wrapper).
-                //
-                // Need to do the same update for PagesStats method above.
-                Console.WriteLine(e);
-                throw;
+                // kja test both on busted pat token and missing page id
+                Assert.Fail("Test precondition failure. " +
+                            "The test cannot exercise the relevant logic as at least one " +
+                            $"of the prerequisites for the test run is not met.\n{e}");
+                throw; // Throw to make the compiler happy. Should be unreachable.
             }
         }
     }
