@@ -46,19 +46,19 @@ namespace Wikitools.AzureDevOps
                 GetWikiPagesDetails(wikiHttpClient, pageViewsForDays, pageId));
 
         private async Task<ValidWikiPagesStats> PagesStats(int pageViewsForDays,
-            Func<WikiHttpClientAdapter, int, Task<IEnumerable<WikiPageDetail>>> getWikiPagesDetails)
+            Func<IWikiHttpClient, int, Task<IEnumerable<WikiPageDetail>>> wikiPagesDetailsFunc)
         {
             Contract.Assert(pageViewsForDays, nameof(pageViewsForDays),
                 new Range(MinPageViewsForDays, MaxPageViewsForDays), upperBoundReason: "ADO API limit");
 
             var wikiHttpClient   = WikiHttpClient(AdoWikiUri, PatEnvVar);
-            var wikiPagesDetails = await getWikiPagesDetails(wikiHttpClient, pageViewsForDays);
+            var wikiPagesDetails = await wikiPagesDetailsFunc(wikiHttpClient, pageViewsForDays);
             var wikiPagesStats   = wikiPagesDetails.Select(WikiPageStats.From);
             return new ValidWikiPagesStats(wikiPagesStats);
         }
 
         private async Task<IEnumerable<WikiPageDetail>> GetWikiPagesDetails(
-            WikiHttpClientAdapter wikiHttpClient,
+            IWikiHttpClient wikiHttpClient,
             int pageViewsForDays)
         {
             // The Top value is max on which the API doesn't throw. Determined empirically.
@@ -81,7 +81,7 @@ namespace Wikitools.AzureDevOps
         }
 
         private async Task<IEnumerable<WikiPageDetail>> GetWikiPagesDetails(
-            WikiHttpClientAdapter wikiHttpClient,
+            IWikiHttpClient wikiHttpClient,
             int pageViewsForDays,
             int pageId) =>
             (await wikiHttpClient.GetPageDataAsync(
@@ -90,7 +90,7 @@ namespace Wikitools.AzureDevOps
                 pageId,
                 pageViewsForDays)).List();
 
-        private WikiHttpClientAdapter WikiHttpClient(AdoWikiUri adoWikiUri, string patEnvVar)
+        private WikiHttpClientWithExceptionWrapping WikiHttpClient(AdoWikiUri adoWikiUri, string patEnvVar)
         {
             // Construction of VssConnection with PAT based on
             // https://docs.microsoft.com/en-us/azure/devops/integrate/get-started/client-libraries/samples?view=azure-devops#personal-access-token-authentication-for-rest-services
@@ -101,7 +101,9 @@ namespace Wikitools.AzureDevOps
 
             // Microsoft.TeamFoundation.Wiki.WebApi Namespace doc:
             // https://docs.microsoft.com/en-us/dotnet/api/?term=Wiki
-            return new WikiHttpClientAdapter(connection.GetClient<WikiHttpClient>());
+            var wikiHttpClient = connection.GetClient<WikiHttpClient>();
+
+            return new WikiHttpClientWithExceptionWrapping(wikiHttpClient);
         }
     }
 }

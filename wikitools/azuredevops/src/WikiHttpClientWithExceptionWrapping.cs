@@ -8,8 +8,7 @@ using Microsoft.VisualStudio.Services.WebApi;
 
 namespace Wikitools.AzureDevOps
 {
-    // kja curr work
-    public record WikiHttpClientAdapter(WikiHttpClient Client) : IWikiHttpClient
+    public record WikiHttpClientWithExceptionWrapping(WikiHttpClient Client) : IWikiHttpClient
     {
         public Task<WikiPageDetail> GetPageDataAsync(
             string projectName,
@@ -17,12 +16,26 @@ namespace Wikitools.AzureDevOps
             int pageId,
             int pageViewsForDays)
         {
+            // API reference:
+            // https://docs.microsoft.com/en-us/rest/api/azure/devops/wiki/page%20stats/get?view=azure-devops-rest-6.0
+            return TryInvoke(() => Client.GetPageDataAsync(projectName, wikiName, pageId, pageViewsForDays));
+        }
 
-            try // kja abstract away this try in its own method and also wrap it around GetPagesBatchAsync (minus the NotFound).
+        public Task<PagedList<WikiPageDetail>> GetPagesBatchAsync(
+            WikiPagesBatchRequest request,
+            string projectName,
+            string wikiName)
+        {
+            // API reference:
+            // https://docs.microsoft.com/en-us/rest/api/azure/devops/wiki/pages%20batch/get?view=azure-devops-rest-6.0
+            return TryInvoke(() => Client.GetPagesBatchAsync(request, projectName, wikiName));
+        }
+
+        private Task<T> TryInvoke<T>(Func<Task<T>> func)
+        {
+            try
             {
-                // API reference:
-                // https://docs.microsoft.com/en-us/rest/api/azure/devops/wiki/page%20stats/get?view=azure-devops-rest-6.0
-                return Client.GetPageDataAsync(projectName, wikiName, pageId, pageViewsForDays);
+                return func();
             }
             catch (VssUnauthorizedException e) when
                 (e.Message.Contains("VS30063: You are not authorized to access https://dev.azure.com"))
@@ -37,24 +50,6 @@ namespace Wikitools.AzureDevOps
             catch (Exception e)
             {
                 throw new ResourceException(ExceptionCode.Unknown, e);
-            }
-        }
-
-        public Task<PagedList<WikiPageDetail>> GetPagesBatchAsync(
-            WikiPagesBatchRequest request,
-            string projectName,
-            string wikiName)
-        {
-            try
-            {
-                // API reference:
-                // https://docs.microsoft.com/en-us/rest/api/azure/devops/wiki/pages%20batch/get?view=azure-devops-rest-6.0
-                return Client.GetPagesBatchAsync(request, projectName, wikiName);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
             }
         }
     }
