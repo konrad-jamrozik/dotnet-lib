@@ -61,13 +61,13 @@ namespace Wikitools
             var pagesViewsReport = new PagesViewsStatsReport(timeline, pagesViewsStats, cfg.AdoWikiPageViewsForDays);
             var monthlyReport    = new MonthlyStatsReport(pastCommits, AuthorFilter, PathFilter);
             var wikiToc          = new WikiTableOfContents(
-                fs.FileTree(cfg.GitRepoClonePath), 
+                fs.FileTree(cfg.GitRepoClonePath), // kj3 need to also exclude .git .attachments, etc.
                 Task.FromResult((IEnumerable<WikiPageStats>) new List<WikiPageStats>()));
 
             var docsToWrite = new MarkdownDocument[]
             {
                 // authorsReport,
-                // filesReport,
+                //filesReport,
                 pagesViewsReport,
                 //monthlyReport,
                 //wikiToc
