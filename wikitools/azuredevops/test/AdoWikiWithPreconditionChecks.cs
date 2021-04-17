@@ -27,7 +27,6 @@ namespace Wikitools.AzureDevOps.Tests
             }
             catch (ResourceException e)
             {
-                // kja test both on busted pat token and missing page id
                 Assert.Fail("Test precondition failure. " +
                             "The test cannot exercise the relevant logic as at least one " +
                             $"of the prerequisites for the test run is not met.\n{e}");

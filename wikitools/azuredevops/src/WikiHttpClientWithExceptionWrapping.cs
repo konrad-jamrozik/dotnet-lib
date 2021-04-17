@@ -45,7 +45,7 @@ namespace Wikitools.AzureDevOps
             }
             catch (Exception e)
             {
-                throw new ResourceException(ExceptionCode.Unknown, e);
+                throw new ResourceException(ExceptionCode.Other, e);
             }
         }
     }
