@@ -6,24 +6,17 @@ namespace Wikitools.AzureDevOps.Tests
 {
     public record AdoWikiWithPreconditionChecks(IAdoWiki AdoWiki) : IAdoWiki
     {
-        public async Task<ValidWikiPagesStats> PagesStats(int pageViewsForDays)
-        {
-            try
-            {
-                return await AdoWiki.PagesStats(pageViewsForDays);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
-        }
+        public Task<ValidWikiPagesStats> PagesStats(int pageViewsForDays) => 
+            TryInvoke(() => AdoWiki.PagesStats(pageViewsForDays));
 
-        public async Task<ValidWikiPagesStats> PageStats(int pageViewsForDays, int pageId)
+        public Task<ValidWikiPagesStats> PageStats(int pageViewsForDays, int pageId) => 
+            TryInvoke(() => AdoWiki.PageStats(pageViewsForDays, pageId));
+
+        private async Task<T> TryInvoke<T>(Func<Task<T>> func)
         {
             try
             {
-                return await AdoWiki.PageStats(pageViewsForDays, pageId);
+                return await func();
             }
             catch (ResourceException e)
             {
