@@ -117,7 +117,19 @@ namespace Wikitools.AzureDevOps.Tests
             var utcNow     = new Timeline().UtcNow;
             var fs         = new FileSystem();
             var env        = new Environment();
-            var cfg        = WikitoolsConfig.From(fs);
+            // kja this line currently causes the INT tests to fail, as it tries to read AdoConfig from wikitools_config.json
+            // but the information is actually in wikitools_config.json AdoConfig section, not root.
+            // Two problems.
+            // 1. It should not know about wikitools_config.json at all; we are here in scope of
+            // azuredevops-tests, not wikitools-tests
+            // 2. Even if it would know about it, it should query into AdoConfig key, not top-level root
+            // Proposed solution:
+            // Instead of nesting AdoConfig in wikitools_config.json, keep corresponding .json
+            // files in the project dirs: azuredevops.json and azuredevops_tests.json
+            // Then:
+            // - this code can access azuredevops_tests.json directly without knowing anything about wikitools
+            // - and wikitools can compose all the subconfig files from the projects at runtime.
+            var cfg        = AdoConfig.From(fs);
             var storageDir = new Dir(fs, cfg.TestStorageDirPath);
             var decl       = new Declare();
             var storage    = decl.AdoWikiPagesStatsStorage(storageDir, utcNow);

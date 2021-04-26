@@ -1,4 +1,5 @@
 ﻿using System;
+using Wikitools.AzureDevOps;
 using Wikitools.Lib.Json;
 using Wikitools.Lib.OS;
 
@@ -9,7 +10,7 @@ namespace Wikitools
     // - Have a composite record, nesting all the sub-records
     // - Have a Configuration class, that uses reflection to crawl the composite record
     // and hydrate it from .json files. Probably something like:
-    // WikitoolsConfig cfg = new ConfigurationFromJsonFiles<WikitoolsConfig>().Read();
+    // WikitoolsConfig cfg = new Configuration(rootDir).ReadFromJsonFiles<WikitoolsConfig>();
     //
     // alternatively: make WikitoolsConfig implement IConfiguration and provide an extension method that hydrates it:
     // cfg.From(dir);
@@ -21,22 +22,17 @@ namespace Wikitools
     // ReSharper disable once ClassNeverInstantiated.Global
     // - Reason: hydrated by a call to FromJsonTo<WikitoolsConfig>() in Wikitools.WikitoolsConfig.From
     public record WikitoolsConfig(
+        AdoConfig AdoConfig,
         string GitExecutablePath,
         string GitRepoClonePath,
         int GitLogDays,
-        string AdoWikiUri,
-        // Assumed to contain a PAT token of a user that has access to the wiki with url AdoWikiUri
-        string AdoPatEnvVar,
         int AdoWikiPageViewsForDays,
         string[] ExcludedAuthors,
         string[] ExcludedPaths,
         DateTime MonthlyReportStartDate,
         DateTime MonthlyReportEndDate,
         int Top,
-        string StorageDirPath,
-        string TestStorageDirPath,
-        // Assumed to point to valid page in the ADO wiki with url AdoWikiUrl
-        int TestAdoWikiPageId)
+        string StorageDirPath)
     {
         public static WikitoolsConfig From(IFileSystem fs, string cfgFileName = "wikitools_config.json")
         {

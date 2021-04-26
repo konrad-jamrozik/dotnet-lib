@@ -25,7 +25,7 @@ namespace Wikitools.Tests
             IFileSystem     fs       = new FileSystem();
             IEnvironment    env      = new Environment();
             WikitoolsConfig cfg      = WikitoolsConfig.From(fs);
-            IAdoWiki        adoWiki  = new AdoWiki(cfg.AdoWikiUri, cfg.AdoPatEnvVar, env);
+            IAdoWiki        adoWiki  = new AdoWiki(cfg.AdoConfig.AdoWikiUri, cfg.AdoConfig.AdoPatEnvVar, env);
 
             var pagesViewsStats = adoWiki.PagesStats(cfg.AdoWikiPageViewsForDays);
 
