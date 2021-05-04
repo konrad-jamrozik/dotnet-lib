@@ -24,7 +24,7 @@ namespace Wikitools
     // ReSharper disable once ClassNeverInstantiated.Global
     // - Reason: hydrated by a call to FromJsonTo<WikitoolsConfig>() in Wikitools.WikitoolsConfig.From
     public record WikitoolsConfig(
-        AdoConfig AdoConfig,
+        AzureDevOpsTestsCfg AzureDevOpsTestsCfg,
         string GitExecutablePath,
         string GitRepoClonePath,
         int GitLogDays,

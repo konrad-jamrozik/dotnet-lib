@@ -6,7 +6,7 @@ using Wikitools.Lib.OS;
 namespace Wikitools.AzureDevOps
 {
     // kja dedup with WikitoolsConfig
-    public record AdoConfig(
+    public record AzureDevOpsTestsCfg(
         string AdoWikiUri,
         // Assumed to contain a PAT token of a user that has access to the wiki with url AdoWikiUri
         string AdoPatEnvVar,
@@ -15,11 +15,11 @@ namespace Wikitools.AzureDevOps
         // Assumed to point to valid page in the ADO wiki with url AdoWikiUrl
         int TestAdoWikiPageId) : IConfiguration
     {
-        public static AdoConfig From(IFileSystem fs, string cfgFileName = "config.json")
+        public static AzureDevOpsTestsCfg From(IFileSystem fs, string cfgFileName = "config.json")
         {
             var cfgFilePath = FindConfigFilePath(fs, cfgFileName);
             return cfgFilePath != null && fs.FileExists(cfgFilePath)
-                ? fs.ReadAllBytes(cfgFilePath).FromJsonTo<AdoConfig>()
+                ? fs.ReadAllBytes(cfgFilePath).FromJsonTo<AzureDevOpsTestsCfg>()
                 : throw new Exception($"Failed to find {cfgFileName}.");
         }
 
