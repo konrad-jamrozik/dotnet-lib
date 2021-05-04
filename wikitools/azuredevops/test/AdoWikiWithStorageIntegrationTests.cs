@@ -117,18 +117,30 @@ namespace Wikitools.AzureDevOps.Tests
             var utcNow     = new Timeline().UtcNow;
             var fs         = new FileSystem();
             var env        = new Environment();
-            // kja this line currently causes the INT tests to fail, as it tries to read AdoConfig from wikitools_config.json
-            // but the information is actually in wikitools_config.json AdoConfig section, not root.
+            // kja curr work on tests:
             // Two problems.
-            // 1. It should not know about wikitools_config.json at all; we are here in scope of
-            // azuredevops-tests, not wikitools-tests
-            // 2. Even if it would know about it, it should query into AdoConfig key, not top-level root
-            // Proposed solution:
-            // Instead of nesting AdoConfig in wikitools_config.json, keep corresponding .json
-            // files in the project dirs: azuredevops.json and azuredevops_tests.json
-            // Then:
-            // - this code can access azuredevops_tests.json directly without knowing anything about wikitools
-            // - and wikitools can compose all the subconfig files from the projects at runtime.
+            // Desired properties:
+            // - This logic should not know about config.json of wikitools or its tests at all; we are here in scope of
+            // azuredevops-tests, not wikitools-tests.
+            // - But the wikitools-tests should have config of azuredevops-tests in its config.json, attached to a
+            // json key recognizable by convention.
+
+            // Action items, in order:
+            // - use this pattern to compose all config.json files:
+            //   WikitoolsConfig cfg = new Configuration(rootDir).ReadFromJsonFiles<WikitoolsConfig>();
+            //   - When composing the new json, the configs of subprojects will have to be properly nested in it.
+            //     For example: the "config.json" of azuredevops-tests project will need to be attached 
+            //     into "AzureDevOpsTests" json key in the resulting wikitools-tests json config. This is necessary
+            //     so that call to ReadFromJsonFiles<WikitoolsTestsConfig>(), where it internally has property of
+            //     AzureDevOpsTests, is able to properly read the data. 
+            //     Note that here we assume that the author of WikitoolsTestsConfig properly defined the name of
+            //     AzureDevOpsTests node, so it matches the logic transforming the project name to the config section
+            //     of the json, that lives in the config composing component.
+            // - rename all config files to config.json
+            // - split current config.json in azuredevps_tests to one in azuredevops and one in azuredevops
+            // - ensure that reading won't pick up files from source dirs, only /bin/debug deploy dirs (to avoid surprises)
+            // 
+
             var cfg        = AdoConfig.From(fs);
             var storageDir = new Dir(fs, cfg.TestStorageDirPath);
             var decl       = new Declare();

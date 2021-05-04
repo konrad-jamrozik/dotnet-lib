@@ -13,7 +13,9 @@ namespace Wikitools
     // WikitoolsConfig cfg = new Configuration(rootDir).ReadFromJsonFiles<WikitoolsConfig>();
     //
     // alternatively: make WikitoolsConfig implement IConfiguration and provide an extension method that hydrates it:
-    // cfg.From(dir);
+    // cfg.From(dir)
+    // - This will likely not work as such extension method would have to be over generic type IConfiguration,
+    //   which will not know how to exactly hydrate.
     //
     // Note that here the file names are implicitly deduced from the type names.
     // See also:

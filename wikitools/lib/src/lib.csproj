@@ -13,7 +13,6 @@
 
   <ItemGroup>
     <Folder Include="Storage\" />
-    <Folder Include="Tables\" />
   </ItemGroup>
 
 </Project>

@@ -14,7 +14,7 @@ namespace Wikitools.AzureDevOps
         // Assumed to point to valid page in the ADO wiki with url AdoWikiUrl
         int TestAdoWikiPageId)
     {
-        public static AdoConfig From(IFileSystem fs, string cfgFileName = "wikitools_config.json")
+        public static AdoConfig From(IFileSystem fs, string cfgFileName = "config.json")
         {
             var cfgFilePath = FindConfigFilePath(fs, cfgFileName);
             return cfgFilePath != null && fs.FileExists(cfgFilePath)
