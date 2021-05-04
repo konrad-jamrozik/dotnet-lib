@@ -24,7 +24,7 @@ namespace Wikitools.Tests
             ITimeline       timeline = new Timeline();
             IFileSystem     fs       = new FileSystem();
             IEnvironment    env      = new Environment();
-            WikitoolsConfig cfg      = WikitoolsConfig.From(fs);
+            WikitoolsCfg cfg      = WikitoolsCfg.From(fs);
             IAdoWiki        adoWiki  = new AdoWiki(cfg.AzureDevOpsTestsCfg.AdoWikiUri, cfg.AzureDevOpsTestsCfg.AdoPatEnvVar, env);
 
             var pagesViewsStats = adoWiki.PagesStats(cfg.AdoWikiPageViewsForDays);
@@ -41,7 +41,7 @@ namespace Wikitools.Tests
         {
             IFileSystem fs = new FileSystem();
 
-            var cfg = WikitoolsConfig.From(fs);
+            var cfg = WikitoolsCfg.From(fs);
 
             var stats1Path = cfg.StorageDirPath + "/wiki_stats_2021_01_19_30days.json";
             var stats2Path = cfg.StorageDirPath + "/wiki_stats_2021_02_06_30days.json";
@@ -56,7 +56,7 @@ namespace Wikitools.Tests
                 new[] { stats1Path, stats2Path, stats3Path, stats4Path, stats5Path, stats6Path });
         }
 
-        private static async Task Merge(IFileSystem fs, WikitoolsConfig cfg, string[] statsPaths)
+        private static async Task Merge(IFileSystem fs, WikitoolsCfg cfg, string[] statsPaths)
         {
             var storage      = new MonthlyJsonFilesStorage(new Dir(fs, cfg.StorageDirPath));
             var januaryDate  = new DateMonth(2021, 1);

@@ -23,7 +23,7 @@ namespace Wikitools
 
     // ReSharper disable once ClassNeverInstantiated.Global
     // - Reason: hydrated by a call to FromJsonTo<WikitoolsConfig>() in Wikitools.WikitoolsConfig.From
-    public record WikitoolsConfig(
+    public record WikitoolsCfg(
         AzureDevOpsTestsCfg AzureDevOpsTestsCfg,
         string GitExecutablePath,
         string GitRepoClonePath,
@@ -36,11 +36,11 @@ namespace Wikitools
         int Top,
         string StorageDirPath)
     {
-        public static WikitoolsConfig From(IFileSystem fs, string cfgFileName = "wikitools_config.json")
+        public static WikitoolsCfg From(IFileSystem fs, string cfgFileName = "wikitools_config.json")
         {
             var cfgFilePath = FindConfigFilePath(fs, cfgFileName);
             return cfgFilePath != null && fs.FileExists(cfgFilePath)
-                ? fs.ReadAllBytes(cfgFilePath).FromJsonTo<WikitoolsConfig>()
+                ? fs.ReadAllBytes(cfgFilePath).FromJsonTo<WikitoolsCfg>()
                 : throw new Exception($"Failed to find {cfgFileName}.");
         }
 

@@ -19,7 +19,7 @@ namespace Wikitools
             IOperatingSystem os       = new WindowsOS();
             IFileSystem      fs       = new FileSystem();
             IEnvironment     env      = new Environment();
-            WikitoolsConfig  cfg      = WikitoolsConfig.From(fs);
+            WikitoolsCfg  cfg      = WikitoolsCfg.From(fs);
             IAdoWiki         adoWiki  = new AdoWiki(cfg.AzureDevOpsTestsCfg.AdoWikiUri, cfg.AzureDevOpsTestsCfg.AdoPatEnvVar, env);
 
             var docsToWrite = DocsToWrite(timeline, os, fs, adoWiki, cfg);
@@ -33,7 +33,7 @@ namespace Wikitools
             IOperatingSystem os,
             IFileSystem fs,
             IAdoWiki adoWiki,
-            WikitoolsConfig cfg)
+            WikitoolsCfg cfg)
         {
             var decl   = new Declare();
             var gitLog = decl.GitLog(os, new Dir(fs, cfg.GitRepoClonePath), cfg.GitExecutablePath);
