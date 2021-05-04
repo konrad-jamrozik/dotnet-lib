@@ -118,7 +118,7 @@ namespace Wikitools.AzureDevOps.Tests
             var utcNow     = new Timeline().UtcNow;
             var fs         = new FileSystem();
             var env        = new Environment();
-            // kja curr work on tests:
+            // kja 5 ArrangeSut curr work
             // Two problems.
             // Desired properties:
             // - This logic should not know about config.json of wikitools or its tests at all; we are here in scope of
@@ -138,7 +138,7 @@ namespace Wikitools.AzureDevOps.Tests
             //     AzureDevOpsTests node, so it matches the logic transforming the project name to the config section
             //     of the json, that lives in the config composing component.
             // - rename all config files to config.json
-            // - split current config.json in azuredevps_tests to one in azuredevops and one in azuredevops
+            // - split current config.json in azuredevops_tests to one in azuredevops and one in azuredevops
             // - ensure that reading won't pick up files from source dirs, only /bin/debug deploy dirs (to avoid surprises)
             // 
 

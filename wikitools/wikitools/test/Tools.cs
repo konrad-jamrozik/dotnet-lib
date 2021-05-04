@@ -26,7 +26,7 @@ namespace Wikitools.Tests
             IFileSystem     fs       = new FileSystem();
             IEnvironment    env      = new Environment();
             WikitoolsCfg cfg = WikitoolsCfg.From(fs);
-            // kja curr work
+            // kja 6 ToolGetWikiStats curr work
             WikitoolsCfg cfg2 = new Configuration(fs).Read<WikitoolsCfg>("wikitools2_config.json");
             IAdoWiki        adoWiki  = new AdoWiki(cfg.AzureDevOpsTestsCfg.AdoWikiUri, cfg.AzureDevOpsTestsCfg.AdoPatEnvVar, env);
 

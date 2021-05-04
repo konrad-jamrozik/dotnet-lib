@@ -46,7 +46,7 @@ namespace Wikitools
             var recentCommits = gitLog.Commits(cfg.GitLogDays);
             var pastCommits   = gitLog.Commits(cfg.MonthlyReportStartDate, cfg.MonthlyReportEndDate);
 
-            // kj2 2 this will trigger call to ADO API. Not good. Should be deferred until WriteAll by the caller.
+            // kj2 this will trigger call to ADO API. Not good. Should be deferred until WriteAll by the caller.
             // I might need to fix all Tasks to AsyncLazy to make this work, or by using new Task() and then task.Start();
             // https://docs.microsoft.com/en-us/dotnet/api/system.threading.tasks.task?view=net-5.0#separating-task-creation-and-execution
             // Maybe source generators could help here. See [Cache] and [Memoize] use cases here:
@@ -61,7 +61,7 @@ namespace Wikitools
             var pagesViewsReport = new PagesViewsStatsReport(timeline, pagesViewsStats, cfg.AdoWikiPageViewsForDays);
             var monthlyReport    = new MonthlyStatsReport(pastCommits, AuthorFilter, PathFilter);
             var wikiToc          = new WikiTableOfContents(
-                fs.FileTree(cfg.GitRepoClonePath), // kj3 need to also exclude .git .attachments, etc.
+                fs.FileTree(cfg.GitRepoClonePath), // kj2 need to also exclude .git .attachments, etc.
                 Task.FromResult((IEnumerable<WikiPageStats>) new List<WikiPageStats>()));
 
             var docsToWrite = new MarkdownDocument[]

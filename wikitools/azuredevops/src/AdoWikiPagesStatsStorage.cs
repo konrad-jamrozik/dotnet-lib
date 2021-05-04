@@ -56,7 +56,7 @@ namespace Wikitools.AzureDevOps
         {
             var currentDay   = new DateDay(CurrentDate);
             var previousDate = currentDay.AddDays(-pageViewsForDays + 1);
-            // kja bug: this will return equal on difference of exactly 12 months, but should still say that months differ
+            // kj2 bug: this will return equal on difference of exactly 12 months, but should still say that months differ
             // Note that the code below assumes it can go max in the past by one month only
             var monthsDiffer = previousDate.Month != currentDay.Month;
 
