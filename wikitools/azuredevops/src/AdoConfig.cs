@@ -1,4 +1,5 @@
 using System;
+using Wikitools.Lib.Configuration;
 using Wikitools.Lib.Json;
 using Wikitools.Lib.OS;
 
@@ -9,10 +10,10 @@ namespace Wikitools.AzureDevOps
         string AdoWikiUri,
         // Assumed to contain a PAT token of a user that has access to the wiki with url AdoWikiUri
         string AdoPatEnvVar,
-        // kja move these test items to to test config class.
+        // kja move these test items to a test config class.
         string TestStorageDirPath,
         // Assumed to point to valid page in the ADO wiki with url AdoWikiUrl
-        int TestAdoWikiPageId)
+        int TestAdoWikiPageId) : IConfiguration
     {
         public static AdoConfig From(IFileSystem fs, string cfgFileName = "config.json")
         {

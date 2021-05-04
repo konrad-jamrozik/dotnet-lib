@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using NUnit.Framework;
+using Wikitools.Lib.Configuration;
 using Wikitools.Lib.OS;
 using Wikitools.Lib.Primitives;
 using Wikitools.Lib.Tests.Json;
@@ -141,7 +142,7 @@ namespace Wikitools.AzureDevOps.Tests
             // - ensure that reading won't pick up files from source dirs, only /bin/debug deploy dirs (to avoid surprises)
             // 
 
-            var cfg        = AdoConfig.From(fs);
+            var cfg        = new Configuration(fs).Read<AdoConfig>();
             var storageDir = new Dir(fs, cfg.TestStorageDirPath);
             var decl       = new Declare();
             var storage    = decl.AdoWikiPagesStatsStorage(storageDir, utcNow);
