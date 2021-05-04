@@ -31,7 +31,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="config.json">
+    <None Update="azuredevops-tests_config.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

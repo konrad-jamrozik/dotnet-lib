@@ -1,5 +1,6 @@
 ﻿using System;
 using Wikitools.AzureDevOps;
+using Wikitools.Lib.Configuration;
 using Wikitools.Lib.Json;
 using Wikitools.Lib.OS;
 
@@ -34,7 +35,7 @@ namespace Wikitools
         DateTime MonthlyReportStartDate,
         DateTime MonthlyReportEndDate,
         int Top,
-        string StorageDirPath)
+        string StorageDirPath) : IConfiguration
     {
         public static WikitoolsCfg From(IFileSystem fs, string cfgFileName = "wikitools_config.json")
         {

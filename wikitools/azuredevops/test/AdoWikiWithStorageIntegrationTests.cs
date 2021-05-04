@@ -142,7 +142,7 @@ namespace Wikitools.AzureDevOps.Tests
             // - ensure that reading won't pick up files from source dirs, only /bin/debug deploy dirs (to avoid surprises)
             // 
 
-            var cfg        = new Configuration(fs).Read<AzureDevOpsTestsCfg>();
+            var cfg        = new Configuration(fs).Read<AzureDevOpsTestsCfg>("azuredevops-tests_config.json");
             var storageDir = new Dir(fs, cfg.TestStorageDirPath);
             var decl       = new Declare();
             var storage    = decl.AdoWikiPagesStatsStorage(storageDir, utcNow);

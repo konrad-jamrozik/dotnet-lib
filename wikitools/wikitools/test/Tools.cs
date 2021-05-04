@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Wikitools.AzureDevOps;
+using Wikitools.Lib.Configuration;
 using Wikitools.Lib.Json;
 using Wikitools.Lib.OS;
 using Wikitools.Lib.Primitives;
@@ -24,7 +25,9 @@ namespace Wikitools.Tests
             ITimeline       timeline = new Timeline();
             IFileSystem     fs       = new FileSystem();
             IEnvironment    env      = new Environment();
-            WikitoolsCfg cfg      = WikitoolsCfg.From(fs);
+            WikitoolsCfg cfg = WikitoolsCfg.From(fs);
+            // kja curr work
+            WikitoolsCfg cfg2 = new Configuration(fs).Read<WikitoolsCfg>("wikitools2_config.json");
             IAdoWiki        adoWiki  = new AdoWiki(cfg.AzureDevOpsTestsCfg.AdoWikiUri, cfg.AzureDevOpsTestsCfg.AdoPatEnvVar, env);
 
             var pagesViewsStats = adoWiki.PagesStats(cfg.AdoWikiPageViewsForDays);

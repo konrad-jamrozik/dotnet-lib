@@ -6,14 +6,12 @@ namespace Wikitools.Lib.Configuration
 {
     public record Configuration(IFileSystem FS)
     {
-        public const string ConfigFileName = "config.json";
-
-        public T Read<T>() where T : IConfiguration
+        public T Read<T>(string cfgFileName) where T : IConfiguration
         {
-            var cfgFilePath = FindConfigFilePath(FS, ConfigFileName);
+            var cfgFilePath = FindConfigFilePath(FS, cfgFileName);
             return cfgFilePath != null && FS.FileExists(cfgFilePath)
                 ? FS.ReadAllBytes(cfgFilePath).FromJsonTo<T>()
-                : throw new Exception($"Failed to find {ConfigFileName}.");
+                : throw new Exception($"Failed to find {cfgFileName}.");
         }
 
         private static string? FindConfigFilePath(IFileSystem fs, string cfgFileName)
