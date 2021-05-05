@@ -1,6 +1,5 @@
 ﻿using System;
 using Wikitools.AzureDevOps;
-using Wikitools.Lib.Configuration;
 using Wikitools.Lib.Json;
 using Wikitools.Lib.OS;
 

@@ -1,4 +1,4 @@
-namespace Wikitools.Lib.Configuration
+namespace Wikitools.Lib.Json
 {
     public interface IConfiguration
     {

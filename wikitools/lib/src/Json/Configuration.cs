@@ -1,8 +1,7 @@
 using System;
-using Wikitools.Lib.Json;
 using Wikitools.Lib.OS;
 
-namespace Wikitools.Lib.Configuration
+namespace Wikitools.Lib.Json
 {
     public record Configuration(IFileSystem FS)
     {
