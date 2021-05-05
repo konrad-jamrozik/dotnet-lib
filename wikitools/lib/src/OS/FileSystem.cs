@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
+using Wikitools.Lib.Contracts;
 
 namespace Wikitools.Lib.OS
 {
@@ -35,10 +36,13 @@ namespace Wikitools.Lib.OS
             return fileTree.FilePathTrie();
         }
 
-        public Dir Parent(string path)
+        public Dir Parent(string path) => Parent(this, path);
+
+        public static Dir Parent(IFileSystem fs, string path)
         {
+            Contract.Assert(!string.IsNullOrWhiteSpace(path), path);
             var parentDirInfo = new DirectoryInfo(path).Parent;
-            return new Dir(this, parentDirInfo?.FullName ?? string.Empty);
+            return new Dir(fs, parentDirInfo?.FullName ?? string.Empty);
         }
 
         public static IEnumerable<string> SplitPath(string path) => path.Split(Path.DirectorySeparatorChar);

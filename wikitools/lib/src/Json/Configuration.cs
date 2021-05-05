@@ -30,7 +30,7 @@ namespace Wikitools.Lib.Json
 
             var cfgFilePath = dir.JoinPath(cfgFileName);
 
-            while (!fs.FileExists(cfgFilePath) && dir.Parent != null)
+            while (!fs.FileExists(cfgFilePath) && !string.IsNullOrWhiteSpace(dir.Parent.Path))
             {
                 dir = dir.Parent;
                 cfgFilePath = dir.JoinPath(cfgFileName);
