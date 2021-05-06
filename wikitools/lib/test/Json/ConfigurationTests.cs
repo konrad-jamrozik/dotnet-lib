@@ -11,7 +11,7 @@ namespace Wikitools.Lib.Tests.Json
 
         private record SimpleCfg(string Foo, int[] BarArr) : IConfiguration;
 
-        private record CompositeCfg(string Qux, SimpleCfg SimpleCfg) : IConfiguration;
+        private record NestedCfg(string Qux, SimpleCfg SimpleCfg) : IConfiguration;
 
         [Test]
         public void ReadsEmptyConfig() => Verify(new EmptyCfg());
@@ -19,9 +19,14 @@ namespace Wikitools.Lib.Tests.Json
         [Test]
         public void ReadsSimpleConfig() => Verify(new SimpleCfg("fooVal", new[] { 1, 2 }));
 
+        [Test]
+        public void ReadsNestedConfig() =>
+            Verify(new NestedCfg("fooVal", new SimpleCfg("quxVal", new[] { 1, 2 })));
+
         // kja 8 curr TDD for 7 The composite config shall be composed from two files
         [Test]
-        public void ReadsCompositeConfig() => Verify(new CompositeCfg("fooVal", new SimpleCfg("quxVal", new[] { 1, 2 })));
+        public void ReadsCompositeConfig() =>
+            Verify(new NestedCfg("fooVal", new SimpleCfg("quxVal", new[] { 1, 2 })));
 
         private void Verify<TConfig>(TConfig cfg) where TConfig : IConfiguration
         {
