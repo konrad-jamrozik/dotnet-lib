@@ -7,15 +7,26 @@ namespace Wikitools.Lib.Tests.Json
     [TestFixture]
     public class ConfigurationTests
     {
-        private class TestCfg : IConfiguration
+        private class EmptyTestCfg : IConfiguration
         { }
 
         [Test]
         public void ReadsEmptyConfig()
         {
+            var fs = new SimulatedFileSystem();
+            fs.CurrentDir.WriteAllTextAsync("config.json", Lib.Json.Json.Empty);
+
+            // Act
+            new Configuration(fs).Read<EmptyTestCfg>("config.json");
+        }
+
+        [Test]
+        public void ReadsSimpleConfig()
+        {
             // kja 8 curr TDD for 7
-            var fs  = new SimulatedFileSystem();
-            var obj = new Configuration(fs).Read<TestCfg>("config.json");
+            var fs = new SimulatedFileSystem();
+            fs.CurrentDir.WriteAllTextAsync("config.json", Lib.Json.Json.Empty);
+            var obj = new Configuration(fs).Read<EmptyTestCfg>("config.json");
         }
     }
 }

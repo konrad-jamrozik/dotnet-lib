@@ -16,7 +16,7 @@ namespace Wikitools.Lib.Json
     //   https://github.com/dotnet/runtime/issues/1519#issuecomment-572751931
     public class JsonDiff
     {
-        private static readonly JsonElement EmptyDiff = JsonSerializer.Deserialize<JsonElement>("{}");
+        private static readonly JsonElement EmptyDiff = JsonSerializer.Deserialize<JsonElement>(Json.Empty);
 
         private readonly Lazy<string> _string;
         private readonly Lazy<string> _rawString;

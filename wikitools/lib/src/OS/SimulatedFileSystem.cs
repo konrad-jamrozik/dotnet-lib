@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Wikitools.Lib.OS
@@ -66,10 +67,7 @@ namespace Wikitools.Lib.OS
                 ? throw new FileNotFoundException(path)
                 : _fileContents[path];
 
-        public byte[] ReadAllBytes(string path)
-        {
-            throw new NotImplementedException();
-        }
+        public byte[] ReadAllBytes(string path) => Encoding.UTF8.GetBytes(ReadAllText(path));
 
         public Task<FilePathTrie> FileTree(string path)
         {
