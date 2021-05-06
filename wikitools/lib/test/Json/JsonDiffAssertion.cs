@@ -11,7 +11,7 @@ namespace Wikitools.Lib.Tests.Json
         public void Assert()
         {
             Xunit.Assert.True(Diff.IsEmpty,
-                $"The expected baseline is different than actual target. Diff:{Environment.NewLine}{Diff}");
+                $"The expected baseline is different than the actual target. Diff:{Environment.NewLine}{Diff}");
         }
     }
 }
