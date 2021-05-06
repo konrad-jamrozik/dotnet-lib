@@ -24,6 +24,11 @@ namespace Wikitools.Lib.Json
             Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
         };
 
+        private static readonly JsonSerializerOptions SerializerOptionsUnsafeIgnoreNulls = new(SerializerOptionsUnsafe)
+        {
+            IgnoreNullValues = true
+        };
+
         private static readonly JsonSerializerOptions SerializerOptionsIndentedUnsafe =
             new(SerializerOptionsUnsafe) { WriteIndented = true };
 
@@ -36,8 +41,9 @@ namespace Wikitools.Lib.Json
         public static T FromJsonToUnsafe<T>(this string json) =>
             JsonSerializer.Deserialize<T>(json, SerializerOptionsUnsafe)!;
 
-        public static string ToJsonUnsafe(this object data) => 
-            JsonSerializer.Serialize(data, SerializerOptionsUnsafe);
+        public static string ToJsonUnsafe(this object data, bool ignoreNulls = false) => 
+            JsonSerializer.Serialize(data, ignoreNulls ? SerializerOptionsUnsafeIgnoreNulls : SerializerOptionsUnsafe);
+
 
         public static string ToJsonIndentedUnsafe(this object data) =>
             JsonSerializer.Serialize(data, SerializerOptionsIndentedUnsafe);
