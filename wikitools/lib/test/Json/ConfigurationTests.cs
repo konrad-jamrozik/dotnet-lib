@@ -23,16 +23,17 @@ namespace Wikitools.Lib.Tests.Json
         [Test]
         public void ReadsCompositeConfig() => Verify(new CompositeCfg("fooVal", new SimpleCfg("quxVal", new[] { 1, 2 })));
 
-        private void Verify<T>(T cfg) where T : IConfiguration
+        private void Verify<TConfig>(TConfig cfg) where TConfig : IConfiguration
         {
             var fs = new SimulatedFileSystem();
-            fs.CurrentDir.WriteAllTextAsync("config.json", cfg.ToJsonIndentedUnsafe());
+            var cfgFileName = "config.json";
+
+            fs.CurrentDir.WriteAllTextAsync(cfgFileName, cfg.ToJsonIndentedUnsafe());
 
             // Act
-            T obj = new Configuration(fs).Read<T>("config.json");
+            TConfig actualCfg = new Configuration(fs).Read<TConfig>(cfgFileName);
 
-            new JsonDiffAssertion(cfg, obj).Assert();
-
+            new JsonDiffAssertion(cfg, actualCfg).Assert();
         }
     }
 }
