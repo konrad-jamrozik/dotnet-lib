@@ -1,3 +1,4 @@
+using System;
 using Wikitools.Lib.Contracts;
 
 namespace Wikitools.Lib.Json
@@ -5,6 +6,8 @@ namespace Wikitools.Lib.Json
     public interface IConfiguration
     {
         public const string ConfigSuffix = "Cfg";
+
+        public static string FileName(Type cfg) => FileName(cfg.Name);
 
         public static string FileName(string cfgName)
         {
