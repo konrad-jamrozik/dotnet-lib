@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using NUnit.Framework;
 using Wikitools.Lib.Json;
 using Wikitools.Lib.OS;
@@ -9,43 +10,50 @@ namespace Wikitools.Lib.Tests.Json
     {
         private record EmptyCfg : IConfiguration;
 
-        private record SimpleCfg(string Foo, int[] BarArr) : IConfiguration;
+        private record LeafCfg(string Foo, int[] BarArr) : IConfiguration;
 
-        private record NestedCfg(string Qux, SimpleCfg? SimpleCfg) : IConfiguration;
+        private record CompositeCfg(string Qux, LeafCfg? LeafCfg) : IConfiguration;
 
         [Test]
         public void ReadsEmptyConfig() => Verify(new EmptyCfg());
 
         [Test]
-        public void ReadsSimpleConfig() => Verify(new SimpleCfg("fooVal", new[] { 1, 2 }));
+        public void ReadsLeafConfig() => Verify(new LeafCfg("fooVal", new[] { 1, 2 }));
 
         [Test]
-        public void ReadsNestedConfig() =>
-            Verify(new NestedCfg("fooVal", new SimpleCfg("quxVal", new[] { 1, 2 })));
+        public void ReadsCompositeConfig() =>
+            Verify(new CompositeCfg("fooVal", new LeafCfg("quxVal", new[] { 1, 2 })));
 
         [Test]
-        public void ReadsCompositeConfig()
+        public void ComposesAndReadsCompositeConfig()
         {
-            var simpleCfg            = new SimpleCfg("quxVal", new[] { 1, 2 });
-            var compositeCfg         = new NestedCfg("fooVal", simpleCfg);
-            var compositeCfgTemplate = new NestedCfg("fooVal", null);
-
+            var leafCfg           = new LeafCfg("fooVal", new[] { 1, 2 });
+            var compositeCfg      = new CompositeCfg("quxVal", leafCfg);
+            var compositeCfgShell = new CompositeCfg("quxVal", null);
+            
             // kja 8 curr TDD for 7 The composite config shall be composed from two files
             // Pass key value pairs denoting the two config files with simpleCfg and compositeCfg. Their names and contents.
-            Verify(compositeCfg);
+            var cfgs = new Dictionary<string, IConfiguration>
+            {
+                [IConfiguration.FileName(nameof(LeafCfg))] = leafCfg,
+                [IConfiguration.FileName(nameof(CompositeCfg))] = compositeCfgShell
+            };
+            Verify2(cfgs, compositeCfg);
         }
 
-        private void Verify2<TConfig>(TConfig cfg) where TConfig : IConfiguration
+        private void Verify2<TConfig>(Dictionary<string, IConfiguration> cfgs, TConfig expectedCfg) where TConfig : IConfiguration
         {
-            var fs          = new SimulatedFileSystem();
-            var cfgFileName = "config.json";
+            var fs = new SimulatedFileSystem();
 
-            fs.CurrentDir.WriteAllTextAsync(cfgFileName, cfg.ToJsonIndentedUnsafe());
+            foreach (var (cfgFileName, cfgVal) in cfgs)
+            {
+                fs.CurrentDir.WriteAllTextAsync(cfgFileName, cfgVal.ToJsonIndentedUnsafe());    
+            }
 
             // Act
-            TConfig actualCfg = new Configuration(fs).Read<TConfig>(cfgFileName);
+            TConfig actualCfg = new Configuration(fs).Read<TConfig>();
 
-            new JsonDiffAssertion(cfg, actualCfg).Assert();
+            new JsonDiffAssertion(expectedCfg, actualCfg).Assert();
         }
 
         private void Verify<TConfig>(TConfig cfg) where TConfig : IConfiguration

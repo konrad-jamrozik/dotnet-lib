@@ -121,9 +121,9 @@ namespace Wikitools.AzureDevOps.Tests
             // kja 5 ArrangeSut curr work
             // Two problems.
             // Desired properties:
-            // - This logic should not know about config.json of wikitools or its tests at all; we are here in scope of
+            // - This logic should not know about wikitools-tests_config.json of wikitools or its tests at all; we are here in scope of
             // azuredevops-tests, not wikitools-tests.
-            // - But the wikitools-tests should have config of azuredevops-tests in its config.json, attached to a
+            // - But the wikitools-tests should have config of azuredevops-tests in its *_config.json, attached to a
             // json key recognizable by convention.
 
             // Action items, in order:
