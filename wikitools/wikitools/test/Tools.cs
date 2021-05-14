@@ -25,13 +25,8 @@ namespace Wikitools.Tests
             IFileSystem     fs       = new FileSystem();
             IEnvironment    env      = new Environment();
             WikitoolsCfg cfg = WikitoolsCfg.From(fs);
-            // kja 6 ToolGetWikiStats curr work. Currently AzureDevOpsTestsCfg is empty.
-            // The file is in dotnet-lib\wikitools\wikitools\src\wikitools2_config.json
-            // Going forward, this should work as follows:
-            // - wikitools2_config.json should be renamed to wikitools-tests_config.json and retain the contents
-            // - all such <project-name>_config.json files should be output to the bin dir
-            // - the Read<FooCfg> should populate relevant nested configs based on the match-by-convention between NestedCfg and <Nested>_config.json project
-            // For more, see action items in to-do 5.
+            // kja 6 ToolGetWikiStats curr work. Currently AzureDevOpsTestsCfg is empty. Switch to Read<WikitoolsCfg>()
+            // The wikitools2_config.json file is in dotnet-lib\wikitools\wikitools\src\wikitools2_config.json
             WikitoolsCfg cfg2 = new Configuration(fs).Read<WikitoolsCfg>("wikitools2_config.json");
             IAdoWiki        adoWiki  = new AdoWiki(cfg.AzureDevOpsTestsCfg.AdoWikiUri, cfg.AzureDevOpsTestsCfg.AdoPatEnvVar, env);
 

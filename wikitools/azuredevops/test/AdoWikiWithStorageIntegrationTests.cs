@@ -118,30 +118,7 @@ namespace Wikitools.AzureDevOps.Tests
             var utcNow     = new Timeline().UtcNow;
             var fs         = new FileSystem();
             var env        = new Environment();
-            // kja 5 ArrangeSut curr work
-            // Two problems.
-            // Desired properties:
-            // - This logic should not know about wikitools-tests_config.json of wikitools or its tests at all; we are here in scope of
-            // azuredevops-tests, not wikitools-tests.
-            // - But the wikitools-tests should have config of azuredevops-tests in its *_config.json, attached to a
-            // json key recognizable by convention.
-
-            // Action items, in order:
-            // - use this pattern to compose all config.json files:
-            //   WikitoolsConfig cfg = new Configuration(rootDir).ReadFromJsonFiles<WikitoolsConfig>();
-            //   - When composing the new json, the configs of subprojects will have to be properly nested in it.
-            //     For example: the "config.json" of azuredevops-tests project will need to be attached 
-            //     into "AzureDevOpsTests" json key in the resulting wikitools-tests json config. This is necessary
-            //     so that call to ReadFromJsonFiles<WikitoolsTestsConfig>(), where it internally has property of
-            //     AzureDevOpsTests, is able to properly read the data. 
-            //     Note that here we assume that the author of WikitoolsTestsConfig properly defined the name of
-            //     AzureDevOpsTests node, so it matches the logic transforming the project name to the config section
-            //     of the json, that lives in the config composing component.
-            // - rename all config files to config.json
-            // - split current config.json in azuredevops_tests to one in azuredevops and one in azuredevops
-            // - ensure that reading won't pick up files from source dirs, only /bin/debug deploy dirs (to avoid surprises)
-            // 
-
+            // kja 5 switch to using new Configuration(fs).Read<AzureDevOpsTestsCfg>();
             var cfg        = new Configuration(fs).Read<AzureDevOpsTestsCfg>("azuredevops-tests_config.json");
             var storageDir = new Dir(fs, cfg.TestStorageDirPath);
             var decl       = new Declare();
