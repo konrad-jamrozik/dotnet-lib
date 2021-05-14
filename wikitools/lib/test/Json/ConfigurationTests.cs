@@ -46,7 +46,7 @@ namespace Wikitools.Lib.Tests.Json
         {
             var fs = new SimulatedFileSystem();
 
-            cfgs.ForEach(kvp => fs.CurrentDir.WriteAllTextAsync(kvp.Key, kvp.Value.ToJsonIndentedUnsafe()));
+            cfgs.ForEach(async kvp => await fs.CurrentDir.WriteAllTextAsync(kvp.Key, kvp.Value.ToJsonIndentedUnsafe()));
 
             // Act
             TConfig actualCfg = new Configuration(fs).Read<TConfig>();
