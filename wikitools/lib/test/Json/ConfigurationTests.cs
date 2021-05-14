@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using MoreLinq;
 using NUnit.Framework;
 using Wikitools.Lib.Json;
 using Wikitools.Lib.OS;
@@ -45,10 +46,7 @@ namespace Wikitools.Lib.Tests.Json
         {
             var fs = new SimulatedFileSystem();
 
-            foreach (var (cfgFileName, cfgVal) in cfgs)
-            {
-                fs.CurrentDir.WriteAllTextAsync(cfgFileName, cfgVal.ToJsonIndentedUnsafe());    
-            }
+            cfgs.ForEach(kvp => fs.CurrentDir.WriteAllTextAsync(kvp.Key, kvp.Value.ToJsonIndentedUnsafe()));
 
             // Act
             TConfig actualCfg = new Configuration(fs).Read<TConfig>();
