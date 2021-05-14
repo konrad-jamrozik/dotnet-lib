@@ -47,7 +47,7 @@ namespace Wikitools.Lib.Tests.Json
         {
             var fs = new SimulatedFileSystem();
 
-            cfgs.ForEach(async kvp => await fs.CurrentDir.WriteAllTextAsync(kvp.Key, kvp.Value.ToJsonIndentedUnsafe()));
+            cfgs.ForEach(kvp => fs.CurrentDir.WriteAllTextAsync(kvp.Key, kvp.Value.ToJsonIndentedUnsafe()));
 
             // Act
             TConfig actualCfg = new Configuration(fs).Read<TConfig>();
@@ -55,12 +55,12 @@ namespace Wikitools.Lib.Tests.Json
             new JsonDiffAssertion(expectedCfg, actualCfg).Assert();
         }
 
-        private async Task Verify<TConfig>(TConfig cfg) where TConfig : IConfiguration
+        private void Verify<TConfig>(TConfig cfg) where TConfig : IConfiguration
         {
             var fs = new SimulatedFileSystem();
             var cfgFileName = "config.json";
 
-            await fs.CurrentDir.WriteAllTextAsync(cfgFileName, cfg.ToJsonUnsafe(ignoreNulls: true));
+            fs.CurrentDir.WriteAllTextAsync(cfgFileName, cfg.ToJsonUnsafe(ignoreNulls: true));
 
             // Act
             TConfig actualCfg = new Configuration(fs).Read<TConfig>(cfgFileName);
