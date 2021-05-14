@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using MoreLinq;
 using NUnit.Framework;
 using Wikitools.Lib.Json;
@@ -54,12 +55,12 @@ namespace Wikitools.Lib.Tests.Json
             new JsonDiffAssertion(expectedCfg, actualCfg).Assert();
         }
 
-        private void Verify<TConfig>(TConfig cfg) where TConfig : IConfiguration
+        private async Task Verify<TConfig>(TConfig cfg) where TConfig : IConfiguration
         {
             var fs = new SimulatedFileSystem();
             var cfgFileName = "config.json";
 
-            fs.CurrentDir.WriteAllTextAsync(cfgFileName, cfg.ToJsonUnsafe(ignoreNulls: true));
+            await fs.CurrentDir.WriteAllTextAsync(cfgFileName, cfg.ToJsonUnsafe(ignoreNulls: true));
 
             // Act
             TConfig actualCfg = new Configuration(fs).Read<TConfig>(cfgFileName);
