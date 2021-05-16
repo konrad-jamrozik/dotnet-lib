@@ -44,7 +44,6 @@ namespace Wikitools.Lib.Json
         public static string ToJsonUnsafe(this object data, bool ignoreNulls = false) => 
             JsonSerializer.Serialize(data, ignoreNulls ? SerializerOptionsUnsafeIgnoreNulls : SerializerOptionsUnsafe);
 
-
         public static string ToJsonIndentedUnsafe(this object data) =>
             JsonSerializer.Serialize(data, SerializerOptionsIndentedUnsafe);
     }

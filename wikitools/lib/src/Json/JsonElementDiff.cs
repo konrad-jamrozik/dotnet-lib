@@ -47,7 +47,7 @@ namespace Wikitools.Lib.Json
 
         /// <summary>
         /// An object representing the diff between the input baseline and target.
-        /// This object can be serialized with JsonSerializer.Serialize, retaining all the diff information.
+        /// This object can be serialized to json with JsonSerializer.Serialize, retaining all the diff information.
         ///
         /// If there are no differences between baseline and target then the value is null.
         /// </summary>
@@ -60,7 +60,7 @@ namespace Wikitools.Lib.Json
         /// It is recursive because the difference between two JsonElements might be in fact a set
         /// of differences in their children properties. The same logic applies recursively to these children.
         ///
-        /// To actually obtain JsonElement from this Value, cf. Wikitools.Lib.Json.JsonDiff.JsonElement
+        /// To actually obtain JsonElement from this Value, see Wikitools.Lib.Json.JsonDiff.JsonElement
         /// </remarks>
         public DiffObject? Value => _diff.Value;
 

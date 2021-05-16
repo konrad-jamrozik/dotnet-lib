@@ -39,6 +39,11 @@ namespace Wikitools.Lib.Json
             // kja 7 implement the algorithm described in Read doc.
             // It will likely look something like:
             // - Read the top-level config .json.
+
+            var cfgFileName = IConfiguration.FileName(typeof(TCfg));
+            var cfgFilePath = FindConfigFilePath(FS, cfgFileName);
+            Console.Out.WriteLine("path " + cfgFilePath);
+
             // - Read all the keys in it.
             // - Figure out which keys are leafs and which are configs to be composed (ending with Cfg)
             // - For each leaf, read the key-value pair into dynamic object.

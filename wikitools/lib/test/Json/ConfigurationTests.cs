@@ -1,4 +1,7 @@
+using System;
 using System.Collections.Generic;
+using System.Dynamic;
+using System.Text.Json;
 using MoreLinq;
 using NUnit.Framework;
 using Wikitools.Lib.Json;
@@ -15,6 +18,37 @@ namespace Wikitools.Lib.Tests.Json
         private record LeafCfg(string Foo, int[] BarArr) : IConfiguration;
 
         private record CompositeCfg(string Qux, LeafCfg? LeafCfg) : IConfiguration;
+
+        // kja 9 curr proof of concept showing how to merge. See also:
+        // https://github.com/dotnet/docs/issues/24252
+        [Test] 
+        public void JsonScratchpad()
+        {
+            JsonElement el1 = @"{""key1"":""FooVal""}".FromJsonToUnsafe<JsonElement>();
+            JsonElement el2 = @"{""key2"":""BarVal""}".FromJsonToUnsafe<JsonElement>();
+
+            Console.Out.WriteLine(el1.GetProperty("key1"));
+            Console.Out.WriteLine(el2.GetProperty("key2"));
+
+            dynamic dyn = new ExpandoObject();
+            dyn.key1 = el1.GetProperty("key1");
+            dyn.key2 = el2.GetProperty("key2");
+            dyn.key3 = el1;
+
+            Console.Out.WriteLine("dyn");
+            Console.Out.WriteLine(dyn.key1);
+            Console.Out.WriteLine(dyn.key2);
+
+            JsonDocument el3 = JsonDocument.Parse(JsonSerializer.SerializeToUtf8Bytes(dyn));
+            JsonElement el4 = JsonSerializer.Deserialize<JsonElement>(JsonSerializer.SerializeToUtf8Bytes(dyn));
+
+            Console.Out.WriteLine("el3");
+            Console.Out.WriteLine(el3.RootElement.GetProperty("key1"));
+
+            Console.Out.WriteLine("el4");
+            Console.Out.WriteLine(el4.ToJsonIndentedUnsafe());
+
+        }
 
         [Test] public void ReadsEmptyConfigNew() => VerifyNewReadSingle(new EmptyCfg());
 
