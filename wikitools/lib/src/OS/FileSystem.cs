@@ -36,13 +36,13 @@ namespace Wikitools.Lib.OS
             return fileTree.FilePathTrie();
         }
 
-        public Dir Parent(string path) => Parent(this, path);
+        public Dir? Parent(string path) => Parent(this, path);
 
-        public static Dir Parent(IFileSystem fs, string path)
+        public static Dir? Parent(IFileSystem fs, string path)
         {
             Contract.Assert(!string.IsNullOrWhiteSpace(path), path);
             var parentDirInfo = new DirectoryInfo(path).Parent;
-            return new Dir(fs, parentDirInfo?.FullName ?? string.Empty);
+            return parentDirInfo != null ? new Dir(fs, parentDirInfo.FullName) : null;
         }
 
         public static IEnumerable<string> SplitPath(string path) => path.Split(Path.DirectorySeparatorChar);

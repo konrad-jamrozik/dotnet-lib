@@ -14,6 +14,6 @@ namespace Wikitools.Lib.OS
         string ReadAllText(string path);
         byte[] ReadAllBytes(string path);
         Task<FilePathTrie> FileTree(string path);
-        Dir Parent(string path);
+        Dir? Parent(string path);
     }
 }

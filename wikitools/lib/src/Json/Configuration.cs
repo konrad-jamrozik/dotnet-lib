@@ -1,4 +1,6 @@
 using System;
+using System.Linq;
+using System.Reflection;
 using Wikitools.Lib.OS;
 
 namespace Wikitools.Lib.Json
@@ -44,6 +46,15 @@ namespace Wikitools.Lib.Json
             var cfgFilePath = FindConfigFilePath(FS, cfgFileName);
             Console.Out.WriteLine("path " + cfgFilePath);
 
+            var cfgProps = typeof(TCfg).GetProperties().Where(prop => prop.Name.EndsWith(IConfiguration.ConfigSuffix));
+            foreach (PropertyInfo cfgProp in cfgProps)
+            {
+                var propCfgFileName = IConfiguration.FileName(cfgProp.PropertyType);
+                var propCfgFilePath = FindConfigFilePath(FS, propCfgFileName);
+                Console.Out.WriteLine("path " + propCfgFilePath);
+            }
+
+
             // - Read all the keys in it.
             // - Figure out which keys are leafs and which are configs to be composed (ending with Cfg)
             // - For each leaf, read the key-value pair into dynamic object.
@@ -68,11 +79,20 @@ namespace Wikitools.Lib.Json
 
             var cfgFilePath = dir.JoinPath(cfgFileName);
 
-            while (!fs.FileExists(cfgFilePath) && !string.IsNullOrWhiteSpace(dir.Parent.Path))
+            do
             {
-                dir = dir.Parent;
-                cfgFilePath = dir.JoinPath(cfgFileName);
-            }
+                if (fs.FileExists(cfgFilePath))
+                    return cfgFilePath;
+
+                if (dir.Parent != null)
+                {
+                    dir = dir.Parent;
+                    cfgFilePath = dir.JoinPath(cfgFileName);
+                }
+                else
+                    break;
+
+            } while (true);
 
             return dir.Parent != null ? cfgFilePath : null;
         }

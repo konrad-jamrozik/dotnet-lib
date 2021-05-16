@@ -74,7 +74,7 @@ namespace Wikitools.Lib.OS
             throw new NotImplementedException();
         }
 
-        public Dir Parent(string path) => FileSystem.Parent(this, path);
+        public Dir? Parent(string path) => FileSystem.Parent(this, path);
 
         public Dir NextSimulatedDir() => new(this, CurrentDir.JoinPath($"simulatedDir{_dirIndex++}"));
     }
