@@ -50,6 +50,10 @@ namespace Wikitools.Lib.Json
                 Console.Out.WriteLine("path: " + configFilePath);
             }
 
+            // Read each path into JsonElement
+            // Merge all JsonElements into one
+            // Convert to TCfg
+
             // - Read all the keys in it.
             // - Figure out which keys are leafs and which are configs to be composed (ending with Cfg)
             // - For each leaf, read the key-value pair into dynamic object.
