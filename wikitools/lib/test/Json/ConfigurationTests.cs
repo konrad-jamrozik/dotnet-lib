@@ -59,7 +59,11 @@ namespace Wikitools.Lib.Tests.Json
         {
             foreach (var info in typeof(TCfg).GetProperties())
             {
-                Console.Out.WriteLine($"{info.Name} {info.MemberType}");
+                if (info.Name.EndsWith(IConfiguration.ConfigSuffix))
+                {
+                    Console.Out.WriteLine(
+                        $"{info.Name} {info.MemberType} {info.PropertyType} {IConfiguration.FileName(info.PropertyType)}");
+                }
             }
         }
 
