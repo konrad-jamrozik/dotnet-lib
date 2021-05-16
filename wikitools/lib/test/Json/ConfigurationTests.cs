@@ -47,7 +47,20 @@ namespace Wikitools.Lib.Tests.Json
 
             Console.Out.WriteLine("el4");
             Console.Out.WriteLine(el4.ToJsonIndentedUnsafe());
+        }
 
+        [Test]
+        public void TypeReflectionScratchpad()
+        {
+            ReflectionTest<CompositeCfg>();
+        }
+
+        public void ReflectionTest<TCfg>() where TCfg : IConfiguration
+        {
+            foreach (var info in typeof(TCfg).GetProperties())
+            {
+                Console.Out.WriteLine($"{info.Name} {info.MemberType}");
+            }
         }
 
         [Test] public void ReadsEmptyConfigNew() => VerifyNewReadSingle(new EmptyCfg());
