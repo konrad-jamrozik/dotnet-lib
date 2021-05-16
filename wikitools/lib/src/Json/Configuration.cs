@@ -1,7 +1,9 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Wikitools.Lib.OS;
+using Wikitools.Lib.Primitives;
 
 namespace Wikitools.Lib.Json
 {
@@ -42,18 +44,11 @@ namespace Wikitools.Lib.Json
             // It will likely look something like:
             // - Read the top-level config .json.
 
-            var cfgFileName = IConfiguration.FileName(typeof(TCfg));
-            var cfgFilePath = FindConfigFilePath(FS, cfgFileName);
-            Console.Out.WriteLine("path " + cfgFilePath);
-
-            var cfgProps = typeof(TCfg).GetProperties().Where(prop => prop.Name.EndsWith(IConfiguration.ConfigSuffix));
-            foreach (PropertyInfo cfgProp in cfgProps)
+            var configFilePaths = ConfigFilePaths<TCfg>();
+            foreach (var configFilePath in configFilePaths)
             {
-                var propCfgFileName = IConfiguration.FileName(cfgProp.PropertyType);
-                var propCfgFilePath = FindConfigFilePath(FS, propCfgFileName);
-                Console.Out.WriteLine("path " + propCfgFilePath);
+                Console.Out.WriteLine("path: " + configFilePath);
             }
-
 
             // - Read all the keys in it.
             // - Figure out which keys are leafs and which are configs to be composed (ending with Cfg)
@@ -62,6 +57,21 @@ namespace Wikitools.Lib.Json
             // - Once the recursion returns the dynamic object, attach it under the Cfg node.
             // - Finally, at the end, convert the entire dynamic object to T.
             throw new NotImplementedException();
+        }
+
+        private List<string> ConfigFilePaths<TCfg>() where TCfg : IConfiguration
+        {
+            var cfgFileName = IConfiguration.FileName(typeof(TCfg));
+            var cfgFilePath = FindConfigFilePath(FS, cfgFileName);
+
+            var cfgProps = typeof(TCfg).GetProperties().Where(prop => prop.Name.EndsWith(IConfiguration.ConfigSuffix));
+            var propCfgFilePaths = cfgProps.Select(cfgProp =>
+            {
+                var propCfgFileName = IConfiguration.FileName(cfgProp.PropertyType);
+                return FindConfigFilePath(FS, propCfgFileName);
+            });
+
+            return cfgFilePath.List().Concat(propCfgFilePaths).Where(path => path != null).Cast<string>().ToList();
         }
 
         public T Read<T>(string cfgFileName) where T : IConfiguration
