@@ -156,7 +156,7 @@ namespace Wikitools.Lib.Tests.Data
 
 
         private static void Verify(string[] pathsData, string[] expectedSegment)
-            => Verify(pathsData, expectedSegment.List());
+            => Verify(pathsData, expectedSegment.AsList());
 
         private static void Verify(string[] pathsData, IList<string[]> expectedSegments)
         {

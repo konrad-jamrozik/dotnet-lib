@@ -4,7 +4,7 @@ namespace Wikitools.Lib.Primitives
 {
     public static class ListExtensions
     {
-        public static IList<TValue> List<TValue>(this TValue source) => 
+        public static IList<TValue> AsList<TValue>(this TValue source) => 
             new List<TValue> { source };
     }
 }

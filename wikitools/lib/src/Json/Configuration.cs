@@ -43,6 +43,7 @@ namespace Wikitools.Lib.Json
             // kja 7 implement the algorithm described in Read doc.
             // It will likely look something like:
             // - Read the top-level config .json.
+            // (continued below)
 
             var configFilePaths = ConfigFilePaths<TCfg>();
             foreach (var configFilePath in configFilePaths)
@@ -50,10 +51,11 @@ namespace Wikitools.Lib.Json
                 Console.Out.WriteLine("path: " + configFilePath);
             }
 
-            // Read each path into JsonElement
-            // Merge all JsonElements into one
-            // Convert to TCfg
+            // - Read each path into JsonElement
+            // - Merge all JsonElements into one
+            // - Convert to TCfg
 
+            // old algorithm below
             // - Read all the keys in it.
             // - Figure out which keys are leafs and which are configs to be composed (ending with Cfg)
             // - For each leaf, read the key-value pair into dynamic object.
@@ -75,7 +77,7 @@ namespace Wikitools.Lib.Json
                 return FindConfigFilePath(FS, propCfgFileName);
             });
 
-            return cfgFilePath.List().Concat(propCfgFilePaths).Where(path => path != null).Cast<string>().ToList();
+            return cfgFilePath.AsList().Concat(propCfgFilePaths).Where(path => path != null).Cast<string>().ToList();
         }
 
         public T Read<T>(string cfgFileName) where T : IConfiguration

@@ -26,7 +26,7 @@ namespace Wikitools.Lib.Data
             // This variable contains the segments providing property (a).
             // Note that currentPathPart.Suffixes is nonempty, but redundant, as all suffixes
             // will be returned as other elements of the return enumerable, thanks to property (d).
-            var currentPathPart = pathPart.List();
+            var currentPathPart = pathPart.AsList();
             // The .Select(pathPart.Concat) provides property (b)
             var suffixes = PreorderTraversal(pathPart.Suffixes).Select(pathPart.Concat);
             // Excluding currentPathPart if there are no suffixes would negate property (c)
