@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace Wikitools.Lib.OS
 {
@@ -12,6 +13,8 @@ namespace Wikitools.Lib.OS
         bool FileExists(string path);
         string CombinePath(string path1, string path2);
         string ReadAllText(string path);
+        JsonElement ReadAllJson(string path);
+        T ReadAllJsonTo<T>(string path);
         byte[] ReadAllBytes(string path);
         Task<FilePathTrie> FileTree(string path);
         Dir? Parent(string path);

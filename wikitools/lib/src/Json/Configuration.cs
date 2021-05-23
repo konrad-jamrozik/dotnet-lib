@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using Wikitools.Lib.OS;
 using Wikitools.Lib.Primitives;
 
@@ -42,34 +41,26 @@ namespace Wikitools.Lib.Json
         {
             // kja 7 implement the algorithm described in Read doc.
             // It will likely look something like:
-            // - Read the top-level config .json.
-            // (continued below)
-
+            // - Inspect the TCfg type to find all the *Cfg properties.
+            // - Use the reed props to deduce the paths (POCO already done, see ConfigFilePaths)
+            // - Read each config into JsonElement
+            // - Merge all JsonElements into one; for POCO see Wikitools.Lib.Tests.Json.ConfigurationTests.JsonScratchpad
+            // - Load the merged Json into TCfg.
             var configFilePaths = ConfigFilePaths<TCfg>();
             foreach (var configFilePath in configFilePaths)
             {
                 Console.Out.WriteLine("path: " + configFilePath);
-                // kja 10 attack plan, in no particular order:
-                // - Review the POCO test in ConfigurationTests showing how to merge JSON (Wikitools.Lib.Tests.Json.ConfigurationTests.JsonScratchpad)
-                // - Read JSON from file like seen here: Wikitools.Tests.Tools.DeserializeStats
-                // - Make these two tests pass:
-                //  - Wikitools.Lib.Tests.Json.ConfigurationTests.ReadsEmptyConfigNew
-                //  - Wikitools.Lib.Tests.Json.ConfigurationTests.ReadsLeafConfigNew
-                //  - Part of it is ensuring they have the right test fixtures in the simulated file system
+                // kja 9 besides the paths, I also need reference to all the Cfg types read from TCfg properties, to know how to read the jeson with ReadAllJsonTo.
+                // Currently it assumes there are no nested configs, just TCfg.
+                // In other words:
+                // - make this test pass: Wikitools.Lib.Tests.Json.ConfigurationTests.ComposesAndReadsCompositeConfig
+                //   - Part of it is ensuring they have the right test fixtures in the simulated file system
+                //   - Review the POCO test in ConfigurationTests showing how to merge JSON ()
+                TCfg cfgJson = FS.ReadAllJsonTo<TCfg>(configFilePath);
+                return cfgJson;
             }
 
-            // - Read each path into JsonElement
-            // - Merge all JsonElements into one
-            // - Convert to TCfg
-
-            // old algorithm below
-            // - Read all the keys in it.
-            // - Figure out which keys are leafs and which are configs to be composed (ending with Cfg)
-            // - For each leaf, read the key-value pair into dynamic object.
-            // - For each Cfg, recursively apply the same logic, with appropriately changed top-level config.json
-            // - Once the recursion returns the dynamic object, attach it under the Cfg node.
-            // - Finally, at the end, convert the entire dynamic object to T.
-            throw new NotImplementedException();
+            throw new InvalidOperationException();
         }
 
         private List<string> ConfigFilePaths<TCfg>() where TCfg : IConfiguration
@@ -92,7 +83,7 @@ namespace Wikitools.Lib.Json
             var cfgFilePath = FindConfigFilePath(FS, cfgFileName);
 
             return cfgFilePath != null && FS.FileExists(cfgFilePath)
-                ? FS.ReadAllBytes(cfgFilePath).FromJsonTo<T>()
+                ? FS.ReadAllJsonTo<T>(cfgFilePath)
                 : throw new Exception($"Failed to find {cfgFileName}.");
         }
 

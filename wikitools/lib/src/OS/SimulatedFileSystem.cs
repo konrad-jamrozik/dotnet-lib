@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
+using Wikitools.Lib.Json;
 
 namespace Wikitools.Lib.OS
 {
@@ -66,6 +68,10 @@ namespace Wikitools.Lib.OS
             !_existingFiles.Contains(path)
                 ? throw new FileNotFoundException(path)
                 : _fileContents[path];
+
+        public JsonElement ReadAllJson(string path) => ReadAllBytes(path).FromJsonTo<JsonElement>();
+
+        public T ReadAllJsonTo<T>(string path) => ReadAllBytes(path).FromJsonTo<T>();
 
         public byte[] ReadAllBytes(string path) => Encoding.UTF8.GetBytes(ReadAllText(path));
 

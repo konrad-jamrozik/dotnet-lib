@@ -19,7 +19,7 @@ namespace Wikitools.Lib.Tests.Json
 
         private record CompositeCfg(string Qux, LeafCfg? LeafCfg) : IConfiguration;
 
-        // kja 9 curr proof of concept showing how to merge. See also:
+        // See also:
         // https://github.com/dotnet/docs/issues/24252
         [Test] 
         public void JsonScratchpad()
@@ -91,7 +91,6 @@ namespace Wikitools.Lib.Tests.Json
         }
 
         [Test] public void ReadsEmptyConfig() => VerifyOldRead(new EmptyCfg());
-
 
         [Test] public void ReadsLeafConfig() => VerifyOldRead(new LeafCfg("fooVal", new[] { 1, 2 }));
 
