@@ -18,7 +18,7 @@ namespace Wikitools
         {
             // kja 2 next todos on critical path:
             // - Actually obtain pageStats passed to this method
-            //   - need to come from more than 30 days, so also from storage
+            //   - need to come from more than 30 days, so also from storage -> see my to-do numbered "3" and deeper.
             // - Correlate pageStats with filePaths
             // - Display the correlation in the format as "Example desired output" below shows
             // At this point things principally work, but then there are immediate things to fix:

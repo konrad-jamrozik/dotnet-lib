@@ -49,6 +49,13 @@ namespace Wikitools.Lib.Json
             foreach (var configFilePath in configFilePaths)
             {
                 Console.Out.WriteLine("path: " + configFilePath);
+                // kja 10 attack plan, in no particular order:
+                // - Review the POCO test in ConfigurationTests showing how to merge JSON (Wikitools.Lib.Tests.Json.ConfigurationTests.JsonScratchpad)
+                // - Read JSON from file like seen here: Wikitools.Tests.Tools.DeserializeStats
+                // - Make these two tests pass:
+                //  - Wikitools.Lib.Tests.Json.ConfigurationTests.ReadsEmptyConfigNew
+                //  - Wikitools.Lib.Tests.Json.ConfigurationTests.ReadsLeafConfigNew
+                //  - Part of it is ensuring they have the right test fixtures in the simulated file system
             }
 
             // - Read each path into JsonElement
