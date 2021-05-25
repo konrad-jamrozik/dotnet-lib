@@ -3,13 +3,15 @@ using System.Collections.Generic;
 using System.Dynamic;
 using System.Text.Json;
 using MoreLinq;
+using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 using Wikitools.Lib.Json;
 using Wikitools.Lib.OS;
 
 namespace Wikitools.Lib.Tests.Json
 {
-    // kja 8 curr TDD for 7: tests for Read() without params, including reading multiple configs.
+    // kja 7 curr TDD for 8: tests for Read() without params, including reading multiple configs.
+    // Remove obsolete logic and tests for it ("Old") when done with the new one.
     [TestFixture]
     public class ConfigurationTests
     {
@@ -49,6 +51,18 @@ namespace Wikitools.Lib.Tests.Json
             Console.Out.WriteLine(el4.ToJsonIndentedUnsafe());
         }
 
+        [Test] 
+        public void JsonScratchpad2()
+        {
+            JsonElement el1 = @"{""key1"":""FooVal""}".FromJsonToUnsafe<JsonElement>();
+            JsonElement el2 = @"{""key2"":""BarVal""}".FromJsonToUnsafe<JsonElement>();
+
+            var el1newton = JObject.Parse(el1.ToJsonIndentedUnsafe());
+            var el2newton = JObject.Parse(el2.ToJsonIndentedUnsafe());
+            el1newton.Merge(el2newton);
+        }
+
+
         [Test]
         public void TypeReflectionScratchpad()
         {
@@ -71,6 +85,7 @@ namespace Wikitools.Lib.Tests.Json
 
         [Test] public void ReadsLeafConfigNew() => VerifyNewReadSingle(new LeafCfg("fooVal", new[] { 1, 2 }));
 
+        // kja 8 make this test pass
         [Test]
         public void ReadsCompositeConfigNew() =>
             VerifyNewReadSingle(new CompositeCfg("fooVal", new LeafCfg("quxVal", new[] { 1, 2 })));
@@ -80,6 +95,7 @@ namespace Wikitools.Lib.Tests.Json
         {
             var leafCfg           = new LeafCfg("fooVal", new[] { 1, 2 });
             var compositeCfg      = new CompositeCfg("quxVal", leafCfg);
+            // The composite config, but with no *Cfg properties yet populated.
             var compositeCfgShell = new CompositeCfg("quxVal", null);
 
             var cfgs = new Dictionary<string, IConfiguration>

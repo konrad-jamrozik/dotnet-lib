@@ -9,7 +9,7 @@ namespace Wikitools.Lib.Json
 
         public static string FileName(Type cfg) => FileName(cfg.Name);
 
-        public static string FileName(string cfgName)
+        private static string FileName(string cfgName)
         {
             Contract.Assert(cfgName.EndsWith(ConfigSuffix));
             return $"{cfgName[..^ConfigSuffix.Length]}_config.json";

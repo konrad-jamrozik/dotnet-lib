@@ -46,5 +46,30 @@ namespace Wikitools.Lib.Json
 
         public static string ToJsonIndentedUnsafe(this object data) =>
             JsonSerializer.Serialize(data, SerializerOptionsIndentedUnsafe);
+
+        /// <remarks>
+        /// Based on https://stackoverflow.com/a/58193164/986533
+        /// Issue for native support of converting DOM (JsonElement) to a typed object:
+        /// https://github.com/dotnet/runtime/issues/31274
+        /// </remarks>
+        public static T? ToObject<T>(this JsonElement element)
+        {
+            string json = element.GetRawText();
+            return JsonSerializer.Deserialize<T>(json);
+        }
+
+        public static T? ToObject<T>(this JsonDocument document) => ToObject<T>(document.RootElement);
+
+        /// <remarks>
+        /// Issue for native support of JSON merging:
+        /// https://stackoverflow.com/questions/58694837/system-text-json-merge-two-objects
+        /// </remarks>
+        public static JsonElement Append(this JsonElement target, string propertyName, JsonElement appended)
+        {
+            // kja 9 implement based on:
+            // Wikitools.Lib.Tests.Json.ConfigurationTests.JsonScratchpad
+            // Wikitools.Lib.Tests.Json.ConfigurationTests.JsonScratchpad2
+            return target;
+        }
     }
 }
