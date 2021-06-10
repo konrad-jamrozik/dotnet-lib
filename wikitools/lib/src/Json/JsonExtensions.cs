@@ -69,6 +69,7 @@ namespace Wikitools.Lib.Json
             // kja 9 implement based on:
             // Wikitools.Lib.Tests.Json.ConfigurationTests.JsonScratchpad
             // Wikitools.Lib.Tests.Json.ConfigurationTests.JsonScratchpad2
+            // But observe that first I need to update the test to put the right files in the dir. Also, see to-do 10.
             return target;
         }
     }

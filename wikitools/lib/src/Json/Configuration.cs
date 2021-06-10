@@ -8,10 +8,17 @@ namespace Wikitools.Lib.Json
 {
     public record Configuration(IFileSystem FS)
     {
+        // kja 10 this is too unintuitive. Rewrite this to be as follows:
+        // - The Read<TCfg>() method behaves differently depending on which interface TCfg implements:
+        //   - a) TCfg implements ILeafConfig, which implements IConfig:
+        //     Reads the config file directly from a file found by convention, matching the TCfg name.
+        //   - b) TCfg implements ICompositeConfig, which implements IConfig:
+        //     Reads and interprets every single one of the member properties of TCfg as ILeafConfig, and hydrates each
+        //     such member property from corresponding LeafCfg file, using step "a)", where you need to set the variable TCfg to value of LeafConfig.
         /// <summary>
         /// Reads configuration TCfg from the file system FS.
         ///
-        /// The contents of TCfg are populated from multiple files.
+        /// The contents of TCfg are composed from config data read from multiple files.
         /// The file names from which the configuration data is read are deduced
         /// based on naming convention, where the input is the names of the data properties of the type TCfg.
         /// 
@@ -31,10 +38,10 @@ namespace Wikitools.Lib.Json
         /// As a result of the algorithm listed above, each project that requires configuration
         /// is expected to copy to output dir its configuration file,
         /// so it can be read into composite property of the parent project.
-        /// Moreover, its configuration file name needs to match to the naming convention.
+        /// Moreover, its configuration file name needs to match  the naming convention.
         /// For example, if a parent project is reading TCfg, and it has property named "FooCfg",
-        /// expected to contain configuration for project Foo, then the project Foo configuration file name
-        /// has to be IConfiguration.FileName(typeof(FooCfg)).
+        /// then this means a project Foo is expected to copy its configuration file,
+        /// named IConfiguration.FileName(typeof(FooCfg)), to the parent object output dir.
         /// 
         /// </summary>
         public TCfg Read<TCfg>() where TCfg : IConfiguration

@@ -114,7 +114,6 @@ namespace Wikitools.Lib.Tests.Json
         public void ReadsCompositeConfig() =>
             VerifyOldRead(new CompositeCfg("fooVal", new LeafCfg("quxVal", new[] { 1, 2 })));
 
-
         private void VerifyNewReadSingle<TConfig>(TConfig expectedCfg) where TConfig : IConfiguration
         {
             var fs = new SimulatedFileSystem();
