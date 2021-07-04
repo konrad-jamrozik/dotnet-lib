@@ -123,7 +123,7 @@ namespace Wikitools.Lib.Tests.Json
                 [IConfiguration.FileName(typeof(TConfig))] = expectedCfg
             };
 
-            cfgs.ForEach(kvp => fs.CurrentDir.WriteAllTextAsync(kvp.Key, kvp.Value.ToJsonUnsafe(ignoreNulls: true)));
+            cfgs.ForEach(cfg => fs.CurrentDir.WriteAllTextAsync(cfg.Key, cfg.Value.ToJsonUnsafe(ignoreNulls: true)));
 
             // Act
             TConfig actualCfg = new Configuration(fs).Read<TConfig>();
