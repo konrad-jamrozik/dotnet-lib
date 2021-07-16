@@ -90,15 +90,6 @@ namespace Wikitools.Lib.Json
             return (cfgFilePath, propCfgs);
         }
 
-        public T Read<T>(string cfgFileName) where T : IConfiguration
-        {
-            var cfgFilePath = FindConfigFilePath(FS, cfgFileName);
-
-            return cfgFilePath != null && FS.FileExists(cfgFilePath)
-                ? FS.ReadAllJsonTo<T>(cfgFilePath)
-                : throw new Exception($"Failed to find {cfgFileName}.");
-        }
-
         private static string? FindConfigFilePath(IFileSystem fs, string cfgFileName)
         {
             var dir = fs.CurrentDir;

@@ -56,14 +56,6 @@ namespace Wikitools.Lib.Tests.Json
             VerifyNewRead(cfgs, compositeCfg);
         }
 
-        [Test] public void ReadsEmptyConfig() => VerifyOldRead(new EmptyCfg());
-
-        [Test] public void ReadsLeafConfig() => VerifyOldRead(new LeafCfg("fooVal", new[] { 1, 2 }));
-
-        [Test]
-        public void ReadsCompositeConfig() =>
-            VerifyOldRead(new CompositeCfg("fooVal", new LeafCfg("quxVal", new[] { 1, 2 })));
-
         private void VerifyNewReadSingle<TConfig>(TConfig expectedCfg) where TConfig : IConfiguration
         {
             var fs = new SimulatedFileSystem();
@@ -92,19 +84,6 @@ namespace Wikitools.Lib.Tests.Json
             TConfig actualCfg = new Configuration(fs).ReadNew<TConfig>();
 
             new JsonDiffAssertion(expectedCfg, actualCfg).Assert();
-        }
-
-        private void VerifyOldRead<TConfig>(TConfig cfg) where TConfig : IConfiguration
-        {
-            var fs          = new SimulatedFileSystem();
-            var cfgFileName = "config.json";
-
-            fs.CurrentDir.WriteAllTextAsync(cfgFileName, cfg.ToJsonUnsafe(ignoreNulls: true));
-
-            // Act
-            TConfig actualCfg = new Configuration(fs).Read<TConfig>(cfgFileName);
-
-            new JsonDiffAssertion(cfg, actualCfg).Assert();
         }
     }
 }
