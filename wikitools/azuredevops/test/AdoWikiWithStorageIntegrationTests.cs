@@ -18,9 +18,8 @@ namespace Wikitools.AzureDevOps.Tests
         // - DONE manually check the behavior is the same as with entire wiki list
         // - DONE add precondition failure over PAT working or not (need to catch the exception)
         // - DONE same for wiki page not existing
-        // - Break dependency on WikitoolsConfig.From(fs): this is forbidden dependency:
+        // - DONE Break dependency on WikitoolsConfig.From(fs): this is forbidden dependency:
         //   azuredevops-tests should not depend on wikitools
-        //   - See my other to-do on that; search for "idea for config".
         // - Same composability needed with Declare
 
         /// <summary>
@@ -151,7 +150,7 @@ namespace Wikitools.AzureDevOps.Tests
             // - there were no visits to the wiki in the used pageViewsForDays
             // - or there were visits but they were not yet ingested.
             // For details on the ingestion delay, please see the comment
-            // on Wikitools.AzureDevOps.AdoWiki.GetAllWikiPagesDetails
+            // on Wikitools.AzureDevOps.AdoWiki
             Assert.That(actualFirstDay, Is.Null.Or.AtLeast(expectedFirstDay));
             Assert.That(actualLastDay,  Is.Null.Or.AtMost(expectedLastDay));
 
