@@ -8,58 +8,59 @@ namespace Wikitools.Lib.Json
 {
     public record Configuration(IFileSystem FS)
     {
-        public TCfg ReadNew<TCfg>() where TCfg : IConfiguration
-        {
-            var (cfgFilePath, propCfgs) = ConfigFilePaths<TCfg>();
-            JsonElement mergedJson = FS.ReadAllJson(cfgFilePath);
-            foreach (var (propName, propCfgFilePath) in propCfgs)
-            {
-                JsonElement propCfgJsonElement = FS.ReadAllJson(propCfgFilePath);
-                mergedJson = mergedJson.Append(propName, propCfgJsonElement);
-            }
-            return mergedJson.ToObject<TCfg>()!;
-        }
-
-        // kja 10 this is too unintuitive. Rewrite this in "ReadNew" to be as follows:
-        // - The Read<TCfg>() method behaves differently depending on which interface TCfg implements:
-        //   - a) TCfg implements ILeafConfig, which implements IConfig:
-        //     Reads the config file directly from a file found by convention, matching the TCfg name.
-        //   - b) TCfg implements ICompositeConfig, which implements IConfig:
-        //     Reads and interprets every single one of the member properties of TCfg as ILeafConfig, and hydrates each
-        //     such member property from corresponding LeafCfg file, using step "a)", where you need to set the variable TCfg to value of LeafConfig.
         /// <summary>
         /// Reads configuration TCfg from the file system FS.
         ///
-        /// The contents of TCfg are composed from config data read from multiple files.
-        /// The file names from which the configuration data is read are deduced
-        /// based on naming convention, where the input is the names of the data properties of the type TCfg.
+        /// ----------------------------------------
+        /// Algorithm
         /// 
-        /// Type T data properties are interpreted as two kinds: leaf and composite.
+        /// The TCfg is deserialized from a series of .json configuration files.
         ///
-        ///   Property is a leaf property if its name does not end with IConfiguration.ConfigSuffix.
-        ///   Leaf properties will be deserialized from json directly.
-        ///   Examples include: string, array of integers.
-        ///   These properties will be read from a file named IConfiguration.FileName(typeof(T)).
+        /// The root config file is returned by invocation of:
+        /// 
+        /// var rootCfgFilePath
+        ///   = FindConfigFilePath(FS, cfgFileName: IConfiguration.FileName(typeof(TCfg));
         ///
-        ///   Property is a composite property if its name ends with IConfiguration.ConfigSuffix.
-        ///   Composite properties will be interpreted recursively by this algorithm
-        ///   before being deserialized from json.
-        ///   To read data for such composite property, the algorithm descends into file named 
-        ///   IConfiguration.FileName(typeof(TCfg.CompositeProperty)).
+        /// All TCfg properties are read directly from rootCfgFilePath into TCfg,
+        /// except TCfg properties that end with Cfg.
+        /// 
+        /// For them, a "property config" file is found and read. The algorithm used for the
+        /// "property config" file doesn't allow further nesting of configs.
         ///
-        /// As a result of the algorithm listed above, each project that requires configuration
-        /// is expected to copy to output dir its configuration file,
-        /// so it can be read into composite property of the parent project.
-        /// Moreover, its configuration file name needs to match  the naming convention.
-        /// For example, if a parent project is reading TCfg, and it has property named "FooCfg",
-        /// then this means a project Foo is expected to copy its configuration file,
-        /// named IConfiguration.FileName(typeof(FooCfg)), to the parent object output dir.
+        /// ----------------------------------------
+        /// Rationale
+        /// 
+        /// The algorithm listed above is designed to facilitate config encapsulation per project.
+        /// That is, if given project Root configuration also leverages configuration
+        /// of projects Dep1 and Dep2, then RootCfg is expected to have Dep1Cfg and Dep2Cfg
+        /// properties, and the build step is expected to copy relevant config files from the Dep1
+        /// and Dep2 projects into dir that will make it discoverable.
+        ///
+        /// ----------------------------------------
+        /// Example
+        /// 
+        /// Consider TCfg named RootCfg with two properties:
+        /// - string foo
+        /// - ChildProjectCfg
+        ///
+        /// In such case two config files are expected to be found:
+        /// Root_config.json
+        /// ChildProject_config.json
+        ///
+        /// where "foo" is property in Root_config.json and where
+        /// RootCfg.ChildProjectCfg value will be deserialized from
+        /// ChildProject_config.json.
+        ///
+        /// ----------------------------------------
+        /// See also
+        /// 
+        /// For more executable examples, please see tests of this method.
         /// 
         /// </summary>
-        public TCfg Read<TCfg>() where TCfg : IConfiguration
+        public TCfg ReadNew<TCfg>() where TCfg : IConfiguration
         {
-            var (cfgFilePath, propCfgs) = ConfigFilePaths<TCfg>();
-            JsonElement mergedJson = FS.ReadAllJson(cfgFilePath);
+            var (rootCfgFilePath, propCfgs) = ConfigFilePaths<TCfg>();
+            JsonElement mergedJson = FS.ReadAllJson(rootCfgFilePath);
             foreach (var (propName, propCfgFilePath) in propCfgs)
             {
                 JsonElement propCfgJsonElement = FS.ReadAllJson(propCfgFilePath);
