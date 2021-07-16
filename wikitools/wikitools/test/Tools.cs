@@ -24,7 +24,7 @@ namespace Wikitools.Tests
             ITimeline    timeline = new Timeline();
             IFileSystem  fs       = new FileSystem();
             IEnvironment env      = new Environment();
-            WikitoolsCfg cfg = new Configuration(fs).ReadNew<WikitoolsCfg>();
+            WikitoolsCfg cfg = new Configuration(fs).Read<WikitoolsCfg>();
             IAdoWiki adoWiki = new AdoWiki(
                 cfg.AzureDevOpsTestsCfg.AdoWikiUri,
                 cfg.AzureDevOpsTestsCfg.AdoPatEnvVar,

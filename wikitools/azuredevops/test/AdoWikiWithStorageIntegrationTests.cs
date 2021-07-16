@@ -118,7 +118,7 @@ namespace Wikitools.AzureDevOps.Tests
             var utcNow     = new Timeline().UtcNow;
             var fs         = new FileSystem();
             var env        = new Environment();
-            var cfg        = new Configuration(fs).ReadNew<AzureDevOpsTestsCfg>();
+            var cfg        = new Configuration(fs).Read<AzureDevOpsTestsCfg>();
             var storageDir = new Dir(fs, cfg.TestStorageDirPath);
             var decl       = new Declare();
             var storage    = decl.AdoWikiPagesStatsStorage(storageDir, utcNow);

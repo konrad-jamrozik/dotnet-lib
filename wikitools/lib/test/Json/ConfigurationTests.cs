@@ -68,7 +68,7 @@ namespace Wikitools.Lib.Tests.Json
             cfgs.ForEach(cfg => fs.CurrentDir.WriteAllTextAsync(cfg.Key, cfg.Value.ToJsonUnsafe(ignoreNulls: true)));
 
             // Act
-            TConfig actualCfg = new Configuration(fs).ReadNew<TConfig>();
+            TConfig actualCfg = new Configuration(fs).Read<TConfig>();
 
             new JsonDiffAssertion(expectedCfg, actualCfg).Assert();
         }
@@ -81,7 +81,7 @@ namespace Wikitools.Lib.Tests.Json
             cfgs.ForEach(kvp => fs.CurrentDir.WriteAllTextAsync(kvp.Key, kvp.Value.ToJsonUnsafe(ignoreNulls: true)));
 
             // Act
-            TConfig actualCfg = new Configuration(fs).ReadNew<TConfig>();
+            TConfig actualCfg = new Configuration(fs).Read<TConfig>();
 
             new JsonDiffAssertion(expectedCfg, actualCfg).Assert();
         }

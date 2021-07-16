@@ -57,7 +57,7 @@ namespace Wikitools.Lib.Json
         /// For more executable examples, please see tests of this method.
         /// 
         /// </summary>
-        public TCfg ReadNew<TCfg>() where TCfg : IConfiguration
+        public TCfg Read<TCfg>() where TCfg : IConfiguration
         {
             var (rootCfgFilePath, propCfgs) = ConfigFilePaths<TCfg>();
             JsonElement mergedJson = FS.ReadAllJson(rootCfgFilePath);
