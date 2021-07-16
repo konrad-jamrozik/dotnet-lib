@@ -7,15 +7,36 @@ using Wikitools.Lib.OS;
 using Wikitools.Lib.Primitives;
 using Wikitools.Lib.Storage;
 using Xunit;
+using Xunit.Abstractions;
 using Environment = Wikitools.Lib.OS.Environment;
 
 namespace Wikitools.Tests
 {
     public class Tools
     {
+        private readonly ITestOutputHelper _testOut;
+
+        public Tools(ITestOutputHelper testOut)
+        {
+            _testOut = testOut;
+        }
+
         [Fact(Skip = "For one-off experiments")]
         public void Scratchpad()
         {
+        }
+
+        [Fact(Skip = "Scratchpad test")]
+        public void TypeReflectionScratchpad()
+        {
+            foreach (var info in typeof(WikitoolsCfg).GetProperties())
+            {
+                if (info.Name.EndsWith(IConfiguration.ConfigSuffix))
+                {
+                    _testOut.WriteLine(
+                        $"{info.Name} {info.MemberType} {info.PropertyType} {IConfiguration.FileName(info.PropertyType)}");
+                }
+            }
         }
 
         [Fact(Skip = "Tool to be used manually")]
