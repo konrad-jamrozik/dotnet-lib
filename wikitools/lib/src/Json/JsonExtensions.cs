@@ -50,13 +50,6 @@ namespace Wikitools.Lib.Json
         public static JsonElement FromObjectToJsonElement(this object obj) =>
             FromJsonTo<JsonElement>(JsonSerializer.SerializeToUtf8Bytes(obj));
 
-        /// <remarks>
-        /// Related issue
-        /// https://github.com/dotnet/docs/issues/24251
-        /// </remarks>
-        public static JsonElement FromJsonToJsonElementUnsafe(this string json) =>
-            FromJsonToUnsafe<JsonElement>(json);
-
         public static string ToJsonUnsafe(this object data, bool ignoreNulls = false) => 
             JsonSerializer.Serialize(data, ignoreNulls ? SerializerOptionsUnsafeIgnoreNulls : SerializerOptionsUnsafe);
 
@@ -77,8 +70,30 @@ namespace Wikitools.Lib.Json
         public static T? ToObject<T>(this JsonDocument document) => ToObject<T>(document.RootElement);
 
         /// <remarks>
+        /// Using Newtonsoft.Json's JObject to do the merging as System.Text.Json doesn't support it as of
+        /// 7/15/2021.
         /// Issue for native support of JSON merging:
+        /// https://github.com/dotnet/docs/issues/24252
+        /// and relevant SOQ linked from it:
         /// https://stackoverflow.com/questions/58694837/system-text-json-merge-two-objects
+        ///
+        /// Note there is a way of doing it without Newtonsoft, but way too cumbersome.
+        /// It would go like that:
+        /// Input: strings of jsons to merge
+        /// 
+        /// 1. Deserialize the inputs strings to JsonElements
+        /// e.g. jsonStr.FromJsonToUnsafe{JsonElement}()
+        /// 
+        /// 2. Create dynamic ExpandoObject()
+        /// e.g. dynamic expandoObj = new ExpandoObject();
+        /// 
+        /// 3. Build it up from the JsonElements. This is where the merging is done.
+        /// 
+        /// 4. Deserialize the ExpandoObject to JsonElement.
+        /// e.g. JsonSerializer.Deserialize{JsonElement}(JsonSerializer.SerializeToUtf8Bytes(expandoObj));
+        ///
+        /// 5. Serialize it to string
+        /// e.g. jsonElem.ToJsonIndentedUnsafe()
         /// </remarks>
         public static JsonElement Append(this JsonElement target, string propertyName, JsonElement appended)
         {
@@ -93,12 +108,8 @@ namespace Wikitools.Lib.Json
                 MergeNullValueHandling = MergeNullValueHandling.Merge,
                 PropertyNameComparison = StringComparison.InvariantCultureIgnoreCase
             });
-            var mergedTarget = targetObject.ToString().FromJsonToJsonElementUnsafe();
+            var mergedTarget = FromJsonToUnsafe<JsonElement>(targetObject.ToString());
             return mergedTarget;
-            // kja 9 clean this up, now that Append works:
-            // Wikitools.Lib.Tests.Json.ConfigurationTests.JsonScratchpad
-            // Wikitools.Lib.Tests.Json.ConfigurationTests.JsonScratchpad2
-            // But observe that first I need to update the test to put the right files in the dir. Also, see to-do 10.
         }
     }
 }
