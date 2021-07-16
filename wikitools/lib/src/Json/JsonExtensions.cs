@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using Newtonsoft.Json.Linq;
@@ -64,7 +65,10 @@ namespace Wikitools.Lib.Json
         public static T? ToObject<T>(this JsonElement element)
         {
             string json = element.GetRawText();
-            return JsonSerializer.Deserialize<T>(json);
+            // kj2 make it into reusable OO logic.
+            string jsonWithoutComments = string.Join(Environment.NewLine,
+                json.Split(Environment.NewLine).Where(line => !line.TrimStart().StartsWith("//")));
+            return JsonSerializer.Deserialize<T>(jsonWithoutComments);
         }
 
         public static T? ToObject<T>(this JsonDocument document) => ToObject<T>(document.RootElement);

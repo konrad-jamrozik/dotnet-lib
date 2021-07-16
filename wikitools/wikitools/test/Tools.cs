@@ -21,14 +21,14 @@ namespace Wikitools.Tests
         [Fact(Skip = "Tool to be used manually")]
         public async Task ToolGetWikiStats()
         {
-            ITimeline       timeline = new Timeline();
-            IFileSystem     fs       = new FileSystem();
-            IEnvironment    env      = new Environment();
-            WikitoolsCfg cfg = WikitoolsCfg.From(fs);
-            // kja 6 ToolGetWikiStats curr work. Currently AzureDevOpsTestsCfg is empty. Switch to Read<WikitoolsCfg>()
-            // The wikitools2_config.json file is in dotnet-lib\wikitools\wikitools\src\wikitools2_config.json
-            WikitoolsCfg cfg2 = new Configuration(fs).Read<WikitoolsCfg>("wikitools2_config.json");
-            IAdoWiki        adoWiki  = new AdoWiki(cfg.AzureDevOpsTestsCfg.AdoWikiUri, cfg.AzureDevOpsTestsCfg.AdoPatEnvVar, env);
+            ITimeline    timeline = new Timeline();
+            IFileSystem  fs       = new FileSystem();
+            IEnvironment env      = new Environment();
+            WikitoolsCfg cfg = new Configuration(fs).ReadNew<WikitoolsCfg>();
+            IAdoWiki adoWiki = new AdoWiki(
+                cfg.AzureDevOpsTestsCfg.AdoWikiUri,
+                cfg.AzureDevOpsTestsCfg.AdoPatEnvVar,
+                env);
 
             var pagesViewsStats = adoWiki.PagesStats(cfg.AdoWikiPageViewsForDays);
 
