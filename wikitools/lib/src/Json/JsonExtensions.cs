@@ -1,5 +1,7 @@
-﻿using System.Text.Encodings.Web;
+﻿using System;
+using System.Text.Encodings.Web;
 using System.Text.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Wikitools.Lib.Json
 {
@@ -41,6 +43,20 @@ namespace Wikitools.Lib.Json
         public static T FromJsonToUnsafe<T>(this string json) =>
             JsonSerializer.Deserialize<T>(json, SerializerOptionsUnsafe)!;
 
+        /// <remarks>
+        /// Related issue
+        /// https://github.com/dotnet/docs/issues/24251
+        /// </remarks>
+        public static JsonElement FromObjectToJsonElement(this object obj) =>
+            FromJsonTo<JsonElement>(JsonSerializer.SerializeToUtf8Bytes(obj));
+
+        /// <remarks>
+        /// Related issue
+        /// https://github.com/dotnet/docs/issues/24251
+        /// </remarks>
+        public static JsonElement FromJsonToJsonElementUnsafe(this string json) =>
+            FromJsonToUnsafe<JsonElement>(json);
+
         public static string ToJsonUnsafe(this object data, bool ignoreNulls = false) => 
             JsonSerializer.Serialize(data, ignoreNulls ? SerializerOptionsUnsafeIgnoreNulls : SerializerOptionsUnsafe);
 
@@ -66,6 +82,16 @@ namespace Wikitools.Lib.Json
         /// </remarks>
         public static JsonElement Append(this JsonElement target, string propertyName, JsonElement appended)
         {
+            string targetJson = target.ToJsonUnsafe();
+            string appendedJson = appended.ToJsonUnsafe();
+            var targetObject = JObject.Parse(targetJson);
+            targetObject.Merge(JObject.Parse(appendedJson), new JsonMergeSettings
+            {
+                MergeArrayHandling = MergeArrayHandling.Merge,
+                MergeNullValueHandling = MergeNullValueHandling.Merge,
+                PropertyNameComparison = StringComparison.InvariantCultureIgnoreCase
+            });
+            targetObject.ToString().FromJsonToUnsafe<JsonElement>();
             // kja 9 implement based on:
             // Wikitools.Lib.Tests.Json.ConfigurationTests.JsonScratchpad
             // Wikitools.Lib.Tests.Json.ConfigurationTests.JsonScratchpad2

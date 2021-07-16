@@ -41,10 +41,6 @@ namespace Wikitools.Lib.OS
 
         public byte[] ReadAllBytes(string path) => File.ReadAllBytes(path);
 
-        /// <remarks>
-        /// Related issue:
-        /// https://github.com/dotnet/docs/issues/24251
-        /// </remarks>
         public JsonElement ReadAllJson(string path) => ReadAllBytes(path).FromJsonTo<JsonElement>();
 
         public T ReadAllJsonTo<T>(string path) => ReadAllBytes(path).FromJsonTo<T>();

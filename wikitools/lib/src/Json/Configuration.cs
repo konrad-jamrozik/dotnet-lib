@@ -8,7 +8,19 @@ namespace Wikitools.Lib.Json
 {
     public record Configuration(IFileSystem FS)
     {
-        // kja 10 this is too unintuitive. Rewrite this to be as follows:
+        public TCfg ReadNew<TCfg>() where TCfg : IConfiguration
+        {
+            var (cfgFilePath, propCfgs) = ConfigFilePaths<TCfg>();
+            JsonElement mergedJson = FS.ReadAllJson(cfgFilePath);
+            foreach (var (propName, propCfgFilePath) in propCfgs)
+            {
+                JsonElement propCfgJsonElement = FS.ReadAllJson(propCfgFilePath);
+                mergedJson = mergedJson.Append(propName, propCfgJsonElement);
+            }
+            return mergedJson.ToObject<TCfg>()!;
+        }
+
+        // kja 10 this is too unintuitive. Rewrite this in "ReadNew" to be as follows:
         // - The Read<TCfg>() method behaves differently depending on which interface TCfg implements:
         //   - a) TCfg implements ILeafConfig, which implements IConfig:
         //     Reads the config file directly from a file found by convention, matching the TCfg name.

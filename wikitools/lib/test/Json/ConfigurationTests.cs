@@ -87,11 +87,7 @@ namespace Wikitools.Lib.Tests.Json
 
         // kja 8 make this test pass
         [Test]
-        public void ReadsCompositeConfigNew() =>
-            VerifyNewReadSingle(new CompositeCfg("fooVal", new LeafCfg("quxVal", new[] { 1, 2 })));
-
-        [Test]
-        public void ComposesAndReadsCompositeConfig()
+        public void ComposesAndReadsCompositeConfigNew()
         {
             var leafCfg           = new LeafCfg("fooVal", new[] { 1, 2 });
             var compositeCfg      = new CompositeCfg("quxVal", leafCfg);
@@ -126,7 +122,7 @@ namespace Wikitools.Lib.Tests.Json
             cfgs.ForEach(cfg => fs.CurrentDir.WriteAllTextAsync(cfg.Key, cfg.Value.ToJsonUnsafe(ignoreNulls: true)));
 
             // Act
-            TConfig actualCfg = new Configuration(fs).Read<TConfig>();
+            TConfig actualCfg = new Configuration(fs).ReadNew<TConfig>();
 
             new JsonDiffAssertion(expectedCfg, actualCfg).Assert();
         }
@@ -139,7 +135,7 @@ namespace Wikitools.Lib.Tests.Json
             cfgs.ForEach(kvp => fs.CurrentDir.WriteAllTextAsync(kvp.Key, kvp.Value.ToJsonUnsafe(ignoreNulls: true)));
 
             // Act
-            TConfig actualCfg = new Configuration(fs).Read<TConfig>();
+            TConfig actualCfg = new Configuration(fs).ReadNew<TConfig>();
 
             new JsonDiffAssertion(expectedCfg, actualCfg).Assert();
         }

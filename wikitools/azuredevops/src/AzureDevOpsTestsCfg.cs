@@ -2,7 +2,7 @@ using Wikitools.Lib.Json;
 
 namespace Wikitools.AzureDevOps
 {
-    // kja 5.1 split off AzureDevOpsTestsCfg, fix naming, and dedup with WikitoolsConfig
+    // kja 5.1 split off AzureDevOpsTestsCfg into prod config and test project config, fix naming, and dedup props with WikitoolsConfig
     public record AzureDevOpsTestsCfg(
         string AdoWikiUri,
         // Assumed to contain a PAT token of a user that has access to the wiki with url AdoWikiUri

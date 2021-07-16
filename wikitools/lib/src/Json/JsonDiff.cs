@@ -28,6 +28,7 @@ namespace Wikitools.Lib.Json
             {
                 // kj2 could possibly be simplified to
                 // JsonElement baselineJson = JsonSerializer.Deserialize<JsonElement>(JsonSerializer.SerializeToUtf8Bytes(baseline));
+                // kj2 use instead Wikitools.Lib.Json.JsonExtensions.FromObjectToJsonElement
                 JsonDocument baselineJson = JsonDocument.Parse(JsonSerializer.SerializeToUtf8Bytes(baseline));
                 JsonDocument targetJson   = JsonDocument.Parse(JsonSerializer.SerializeToUtf8Bytes(target));
                 DiffObject?  elementDiff  = new JsonElementDiff(baselineJson, targetJson).Value;
