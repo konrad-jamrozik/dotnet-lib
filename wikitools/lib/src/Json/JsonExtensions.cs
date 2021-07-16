@@ -85,18 +85,20 @@ namespace Wikitools.Lib.Json
             string targetJson = target.ToJsonUnsafe();
             string appendedJson = appended.ToJsonUnsafe();
             var targetObject = JObject.Parse(targetJson);
-            targetObject.Merge(JObject.Parse(appendedJson), new JsonMergeSettings
+            var appendedObject = JObject.Parse(appendedJson);
+            appendedObject = new JObject(new JProperty(propertyName, appendedObject));
+            targetObject.Merge(appendedObject, new JsonMergeSettings
             {
                 MergeArrayHandling = MergeArrayHandling.Merge,
                 MergeNullValueHandling = MergeNullValueHandling.Merge,
                 PropertyNameComparison = StringComparison.InvariantCultureIgnoreCase
             });
-            targetObject.ToString().FromJsonToUnsafe<JsonElement>();
-            // kja 9 implement based on:
+            var mergedTarget = targetObject.ToString().FromJsonToJsonElementUnsafe();
+            return mergedTarget;
+            // kja 9 clean this up, now that Append works:
             // Wikitools.Lib.Tests.Json.ConfigurationTests.JsonScratchpad
             // Wikitools.Lib.Tests.Json.ConfigurationTests.JsonScratchpad2
             // But observe that first I need to update the test to put the right files in the dir. Also, see to-do 10.
-            return target;
         }
     }
 }

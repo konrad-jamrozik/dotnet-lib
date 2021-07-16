@@ -85,7 +85,6 @@ namespace Wikitools.Lib.Tests.Json
 
         [Test] public void ReadsLeafConfigNew() => VerifyNewReadSingle(new LeafCfg("fooVal", new[] { 1, 2 }));
 
-        // kja 8 make this test pass
         [Test]
         public void ComposesAndReadsCompositeConfigNew()
         {
