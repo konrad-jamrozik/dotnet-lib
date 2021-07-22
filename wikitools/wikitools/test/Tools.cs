@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Wikitools.AzureDevOps;
@@ -65,7 +64,7 @@ namespace Wikitools.Tests
         {
             IFileSystem fs = new FileSystem();
 
-            var cfg = WikitoolsCfg.From(fs);
+            var cfg = new Configuration(fs).Read<WikitoolsCfg>();
 
             var stats1Path = cfg.StorageDirPath + "/wiki_stats_2021_01_19_30days.json";
             var stats2Path = cfg.StorageDirPath + "/wiki_stats_2021_02_06_30days.json";
