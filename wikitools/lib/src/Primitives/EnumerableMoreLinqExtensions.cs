@@ -25,9 +25,11 @@ namespace Wikitools.Lib.Primitives
             Func<TSource, TKey> selectKey)
         {
             var sourceArray = source as TSource[] ?? source.ToArray();
-            if (MoreEnumerable.DistinctBy(sourceArray, selectKey).Count() != sourceArray.Length)
+            var distinctValues = MoreEnumerable.DistinctBy(sourceArray, selectKey).ToList();
+            if (distinctValues.Count != sourceArray.Length)
             {
-                throw new InvariantException();
+                var duplicates = sourceArray.Except(distinctValues);
+                throw new InvariantException(string.Join(Environment.NewLine, duplicates.Select(d => d?.ToString())));
             }
         }
 
