@@ -20,7 +20,7 @@ namespace Wikitools.AzureDevOps.Tests
         // - DONE same for wiki page not existing
         // - DONE Break dependency on WikitoolsConfig.From(fs): this is forbidden dependency:
         //   azuredevops-tests should not depend on wikitools
-        // - Same composability needed with Declare
+        // - DONE Same composability needed with Declare
 
         /// <summary>
         /// This test tests the following:

@@ -1,10 +1,9 @@
 ﻿using System;
-using Wikitools.AzureDevOps;
 using Wikitools.Lib.Git;
 using Wikitools.Lib.OS;
 using Wikitools.Lib.Storage;
 
-namespace Wikitools
+namespace Wikitools.AzureDevOps
 {
     public class Declare
     {
