@@ -13,15 +13,6 @@ namespace Wikitools.AzureDevOps.Tests
     [TestFixture]
     public class AdoWikiWithStorageIntegrationTests
     {
-        // kja 4 curr integration tests work. 
-        // - DONE make the test call ADO API for /Home page only, show that page
-        // - DONE manually check the behavior is the same as with entire wiki list
-        // - DONE add precondition failure over PAT working or not (need to catch the exception)
-        // - DONE same for wiki page not existing
-        // - DONE Break dependency on WikitoolsConfig.From(fs): this is forbidden dependency:
-        //   azuredevops-tests should not depend on wikitools
-        // - DONE Same composability needed with Declare
-
         /// <summary>
         /// This test tests the following:
         /// - ADO API for Wiki can be successfully queried for single page data

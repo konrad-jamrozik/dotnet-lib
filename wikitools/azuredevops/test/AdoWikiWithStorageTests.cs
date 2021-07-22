@@ -43,7 +43,7 @@ namespace Wikitools.AzureDevOps.Tests
         public async Task DataInStorage()
         {
             var storedStats        = new ValidWikiPagesStatsFixture().PagesStatsForMonth(new DateDay(UtcNowDay));
-            var adoWikiWithStorage = await AdoWikiWithStorage(UtcNowDay, storedStats: storedStats);
+            var adoWikiWithStorage = await AdoWikiWithStorage(UtcNowDay, storedStats);
 
             // Act
             var actualStats = await adoWikiWithStorage.PagesStats(AdoWiki.MaxPageViewsForDays);
@@ -83,11 +83,11 @@ namespace Wikitools.AzureDevOps.Tests
             ValidWikiPagesStatsForMonth? storedStats = null,
             ValidWikiPagesStats? wikiStats = null)
         {
-            var decl    = new Declare();
-            var adoDecl = new AzureDevOpsTestsDeclare(decl);
-            var storage = await adoDecl.AdoWikiPagesStatsStorage(utcNow, storedStats);
-            var adoWiki = new SimulatedAdoWiki(wikiStats ?? new ValidWikiPagesStats(WikiPageStats.EmptyArray));
-            var wiki    = decl.AdoWikiWithStorage(adoWiki, storage);
+            var decl      = new Declare();
+            var testsDecl = new AzureDevOpsTestsDeclare(decl);
+            var storage   = await testsDecl.AdoWikiPagesStatsStorage(utcNow, storedStats);
+            var adoWiki   = new SimulatedAdoWiki(wikiStats ?? new ValidWikiPagesStats(WikiPageStats.EmptyArray));
+            var wiki      = decl.AdoWikiWithStorage(adoWiki, storage);
             return wiki;
         }
     }
