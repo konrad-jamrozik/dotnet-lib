@@ -47,8 +47,8 @@ namespace Wikitools.Tests
             IEnvironment env      = new Environment();
             WikitoolsCfg cfg = new Configuration(fs).Read<WikitoolsCfg>();
             IAdoWiki adoWiki = new AdoWiki(
-                cfg.AzureDevOpsTestsCfg.AdoWikiUri,
-                cfg.AzureDevOpsTestsCfg.AdoPatEnvVar,
+                cfg.AzureDevOpsCfg.AdoWikiUri,
+                cfg.AzureDevOpsCfg.AdoPatEnvVar,
                 env);
 
             var pagesViewsStats = adoWiki.PagesStats(cfg.AdoWikiPageViewsForDays);

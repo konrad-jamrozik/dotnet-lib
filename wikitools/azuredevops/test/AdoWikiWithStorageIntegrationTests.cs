@@ -114,18 +114,20 @@ namespace Wikitools.AzureDevOps.Tests
         private static (Declare decl, int pageId, DateTime utcNow, IAdoWiki adoWiki, AdoWikiPagesStatsStorage storage)
             ArrangeSut()
         {
-            var utcNow     = new Timeline().UtcNow;
-            var fs         = new FileSystem();
-            var env        = new Environment();
-            var cfg        = new Configuration(fs).Read<AzureDevOpsTestsCfg>();
-            var storageDir = new Dir(fs, cfg.TestStorageDirPath);
-            var decl       = new Declare();
-            var storage    = decl.AdoWikiPagesStatsStorage(storageDir, utcNow);
+            var utcNow      = new Timeline().UtcNow;
+            var fs          = new FileSystem();
+            var env         = new Environment();
+            var cfg         = new Configuration(fs);
+            var adoCfg      = cfg.Read<AzureDevOpsCfg>();
+            var adoTestsCfg = cfg.Read<AzureDevOpsTestsCfg>();
+            var storageDir  = new Dir(fs, adoTestsCfg.TestStorageDirPath);
+            var decl        = new Declare();
+            var storage     = decl.AdoWikiPagesStatsStorage(storageDir, utcNow);
 
-            IAdoWiki adoWiki = new AdoWiki(cfg.AdoWikiUri, cfg.AdoPatEnvVar, env);
+            IAdoWiki adoWiki = new AdoWiki(adoCfg.AdoWikiUri, adoCfg.AdoPatEnvVar, env);
             adoWiki = new AdoWikiWithPreconditionChecks(adoWiki);
 
-            return (decl, cfg.TestAdoWikiPageId, utcNow, adoWiki, storage);
+            return (decl, adoTestsCfg.TestAdoWikiPageId, utcNow, adoWiki, storage);
         }
 
         private async Task VerifyDayRangeOfWikiStats(int pageViewsForDays)

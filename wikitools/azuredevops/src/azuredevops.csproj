@@ -15,4 +15,10 @@
     <ProjectReference Include="..\..\lib\src\lib.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="AzureDevOps_config.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
