@@ -51,12 +51,22 @@ namespace Wikitools.AzureDevOps.Tests
             new JsonDiffAssertion(storedStats, actualStats).Assert();
         }
 
+        /// <summary>
+        /// Given
+        /// - wiki page stats for current month coming from wiki
+        /// - and wiki page stats for previous month coming from storage, starting from earliest
+        /// day in scope of AdoWiki.MaxPageViewsForDays window
+        /// When
+        /// - querying AdoWikiWithStorage for maximum page stats time window of AdoWiki.MaxPageViewsForDays
+        /// Then
+        /// - return the union of both previous stats and current stats.
+        /// </summary>
         [Test]
         public async Task DataInWikiAndStorageWithinWikiMaxPageViewsForDays()
         {
             var pageViewsForDays   = AdoWiki.MaxPageViewsForDays;
             var fix                = new ValidWikiPagesStatsFixture();
-            var currStats          = fix.PagesStats(UtcNowDay);
+            var currStats          = fix.PagesStatsForMonth(UtcNowDay);
             var currStatsDaySpan   = (int) currStats.VisitedDaysSpan!;
             var prevStats          = fix.PagesStatsForMonth(UtcNowDay.AddDays(-pageViewsForDays + currStatsDaySpan));
             var adoWikiWithStorage = await AdoWikiWithStorage(UtcNowDay, storedStats: prevStats, wikiStats: currStats);
@@ -71,6 +81,10 @@ namespace Wikitools.AzureDevOps.Tests
                 Is.GreaterThanOrEqualTo(UtcNowDay.AddDays(-pageViewsForDays + 1)),
                 "Precondition violation: the first day of arranged stats is so much in the past that " +
                 "a call to PageStats won't return it.");
+            Assert.That(
+                prevStats.Month,
+                Is.Not.EqualTo(currStats.Month),
+                "Precondition violation: previous month (stored) is different from current month (from wiki)");
 
             // Act
             var actualStats = await adoWikiWithStorage.PagesStats(pageViewsForDays);
