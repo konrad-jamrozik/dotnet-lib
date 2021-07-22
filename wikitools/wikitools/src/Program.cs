@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Wikitools.AzureDevOps;
+using Wikitools.Lib.Json;
 using Wikitools.Lib.Markdown;
 using Wikitools.Lib.OS;
 using Wikitools.Lib.Primitives;
@@ -19,7 +20,7 @@ namespace Wikitools
             IOperatingSystem os       = new WindowsOS();
             IFileSystem      fs       = new FileSystem();
             IEnvironment     env      = new Environment();
-            WikitoolsCfg cfg = WikitoolsCfg.From(fs);
+            WikitoolsCfg cfg = new Configuration(fs).Read<WikitoolsCfg>();
             IAdoWiki adoWiki = new AdoWiki(cfg.AzureDevOpsCfg.AdoWikiUri, cfg.AzureDevOpsCfg.AdoPatEnvVar, env);
 
             var docsToWrite = DocsToWrite(timeline, os, fs, adoWiki, cfg);
@@ -66,11 +67,11 @@ namespace Wikitools
 
             var docsToWrite = new MarkdownDocument[]
             {
-                // authorsReport,
-                //filesReport,
-                pagesViewsReport,
-                //monthlyReport,
-                //wikiToc
+                authorsReport,
+                filesReport,
+                //pagesViewsReport, // kj2 getting invariant exception on statsArr.AssertDistinctBy(ps => ps.Path);
+                monthlyReport,
+                wikiToc
             };
             return docsToWrite;
         }
