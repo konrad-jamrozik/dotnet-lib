@@ -21,5 +21,23 @@ namespace Wikitools.Lib.Contracts
                 throw message != null ? new InvariantException(message!) : new InvariantException();
         }
 
+        /// <summary>
+        /// Use this method to make assertions that cannot be easily asserted in code.
+        /// Describe them assertions in natural language in "comment" parameter.
+        ///
+        /// Note that for some simple assertions you could instead use
+        /// tautological asserts and quench the ReSharper warning E.g:
+        ///
+        /// "Values might not be distinct":
+        ///   // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+        ///   Contract.Assert(values.Distinct().Count() LEQ values.Length);
+        ///
+        /// "Length might be any positive value":
+        ///   // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+        ///   Contract.Assert(values.Length GEQ 0);
+        /// </summary>
+        // ReSharper disable once UnusedParameter.Global
+        public static void Assert(string comment) {}
+
     }
 }

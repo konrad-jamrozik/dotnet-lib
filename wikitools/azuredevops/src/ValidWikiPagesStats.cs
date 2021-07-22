@@ -37,8 +37,12 @@ namespace Wikitools.AzureDevOps
         private static IEnumerable<WikiPageStats> CheckInvariants(IEnumerable<WikiPageStats> stats)
         {
             var statsArr = stats as WikiPageStats[] ?? stats.ToArray();
-            statsArr.AssertDistinctBy(ps => ps.Id);
-            statsArr.AssertDistinctBy(ps => ps.Path);
+            statsArr.AssertDistinctBy(ps => ps.Id); 
+            // Pages are expected to generally have unique paths, except the special case of when
+            // a page was deleted and then new page was created with the same path.
+            // In such case two pages with different IDs will have the same path.
+            // kj2 test for this; write a test that would fail if statsArr.AssertDistinctBy(ps => ps.Path); would be present.
+            Contract.Assert(statsArr.DistinctBy(ps => ps.Path).Count() <= statsArr.Length);
             statsArr.AssertOrderedBy(ps => ps.Id);
             statsArr.ForEach(ps =>
             {
@@ -90,8 +94,9 @@ namespace Wikitools.AzureDevOps
         /// - The arguments obey ValidWikiPagesStats invariants, as evidenced by the argument types.
         /// - However, the union of arguments doesn't necessarily obey these invariants.
         /// Specifically:
-        ///   - Page with the same ID might appear twice: once in each argument.
-        ///   - Page with the same ID might appear under different paths.
+        ///   - A page with the same ID might appear twice: once in each argument.
+        ///   - A page with the same ID might appear under different paths.
+        ///     - This happens when the page was renamed.
         ///   - A day views stat for a page with given ID and Day date
         ///   can appear twice: once in each argument.
         /// 
@@ -127,7 +132,8 @@ namespace Wikitools.AzureDevOps
         {
             Contract.Assert(previousPageStats.Id == currentPageStats.Id);
             return new WikiPageStats(
-                // You don't see previousPageStats.Path here as currentPageStats.Path takes precedence over it,
+                // Passing currentPageStats.Path and ignoring previousPageStats.Path.
+                // This is because currentPageStats.Path takes precedence,
                 // to reflect any page Path changes that happened since previousPageStats were obtained.
                 currentPageStats.Path, 
                 previousPageStats.Id,

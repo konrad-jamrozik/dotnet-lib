@@ -69,7 +69,7 @@ namespace Wikitools
             {
                 authorsReport,
                 filesReport,
-                //pagesViewsReport, // kj2 getting invariant exception on statsArr.AssertDistinctBy(ps => ps.Path);
+                pagesViewsReport,
                 monthlyReport,
                 wikiToc
             };
