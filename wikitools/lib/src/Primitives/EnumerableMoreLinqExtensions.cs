@@ -39,6 +39,10 @@ namespace Wikitools.Lib.Primitives
         {
             try
             {
+                // kja 6 BUG! Missing .Consume(). Once done:
+                // - rerun all tests, observe failures
+                // - fix Wikitools.AzureDevOps.Tests.ValidWikiPagesStatsFixture.PagesStats
+                //   as it has day stats with counts = 0
                 MoreEnumerable.Assert(source, predicate);
             }
             catch (Exception e)
