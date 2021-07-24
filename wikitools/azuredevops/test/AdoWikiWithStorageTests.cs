@@ -93,6 +93,20 @@ namespace Wikitools.AzureDevOps.Tests
             new JsonDiffAssertion(prevStats.Merge(currStats), actualStats).Assert();
         }
 
+        // kja 4 WIP test with 3 months data: DataFromStorageOfMoreThanMaxPageViewForDays
+        [Test]
+        public async Task DataFromStorageOfMoreThanMaxPageViewForDays()
+        {
+            var pageViewsForDays   = AdoWiki.MaxPageViewsForDays;
+            var fix                = new ValidWikiPagesStatsFixture();
+            var currMonthStats = fix.PagesStatsForMonth(UtcNowDay);
+            var prevMonthStats = fix.PagesStatsForMonth(UtcNowDay.AddMonths(-1));
+            var prevPrevMonthStats = fix.PagesStatsForMonth(UtcNowDay.AddMonths(-2));
+            var allStats = prevPrevMonthStats.Merge(prevMonthStats).Merge(currMonthStats);
+            // kja 5 need the ctor to support stats from multiple months
+            // var adoWikiWithStorage = await AdoWikiWithStorage(UtcNowDay, storedStats: allStats);
+        }
+
         private static async Task<AdoWikiWithStorage> AdoWikiWithStorage(
             DateDay utcNow,
             ValidWikiPagesStatsForMonth? storedStats = null,
