@@ -33,8 +33,8 @@ namespace Wikitools.AzureDevOps
         public AdoWikiWithStorage AdoWikiWithStorage(
             IAdoWiki adoWiki,
             AdoWikiPagesStatsStorage storage,
-            int? pageViewsForDaysWikiLimit = null) =>
-            new(adoWiki, storage, pageViewsForDaysWikiLimit);
+            int? pageViewsForDaysWikiLimit = null) 
+            => new AdoWikiWithStorage(adoWiki, storage, pageViewsForDaysWikiLimit);
 
         public AdoWikiPagesStatsStorage AdoWikiPagesStatsStorage(Dir storageDir, DateTime now) =>
             new(

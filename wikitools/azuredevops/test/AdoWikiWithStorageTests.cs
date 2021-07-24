@@ -53,11 +53,12 @@ namespace Wikitools.AzureDevOps.Tests
 
         /// <summary>
         /// Given
-        /// - wiki page stats for current month coming from wiki
-        /// - and wiki page stats for previous month coming from storage, starting from earliest
-        /// day in scope of AdoWiki.MaxPageViewsForDays window
+        /// - wiki page stats for current month coming from wiki via API
+        /// - and wiki page stats for previous month coming from storage,
+        ///   starting from the earliest available day in the AdoWiki.MaxPageViewsForDays window
         /// When
-        /// - querying AdoWikiWithStorage for maximum page stats time window of AdoWiki.MaxPageViewsForDays
+        /// - querying AdoWikiWithStorage for page stats for the entire time window
+        ///   of AdoWiki.MaxPageViewsForDays
         /// Then
         /// - return the union of both previous stats and current stats.
         /// </summary>
