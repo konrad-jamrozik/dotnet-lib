@@ -186,11 +186,11 @@ namespace Wikitools.AzureDevOps
         {
             get
             {
-                var minDates = this
+                var minDatePerPage = this
                     .Where(ps => ps.DayStats.Any())
-                    .Select(s => s.DayStats.Min(ds => ds.Day))
+                    .Select(ps => ps.DayStats.Min(ds => ds.Day))
                     .ToList();
-                return minDates.Any() ? new DateDay(minDates.Min()) : null;
+                return minDatePerPage.Any() ? new DateDay(minDatePerPage.Min()) : null;
             }
         }
 
@@ -198,11 +198,11 @@ namespace Wikitools.AzureDevOps
         {
             get
             {
-                var maxDates = this
+                var maxDatePerPage = this
                     .Where(ps => ps.DayStats.Any())
-                    .Select(s => s.DayStats.Max(ds => ds.Day))
+                    .Select(ps => ps.DayStats.Max(ds => ds.Day))
                     .ToList();
-                return maxDates.Any() ? new DateDay(maxDates.Max()) : null;
+                return maxDatePerPage.Any() ? new DateDay(maxDatePerPage.Max()) : null;
             }
         }
 

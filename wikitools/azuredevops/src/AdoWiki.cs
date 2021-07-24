@@ -14,8 +14,7 @@ namespace Wikitools.AzureDevOps
 {
     /// <remarks>
     /// Empirical tests as of 3/27/2021 show that when obtaining wiki page stats with calls to
-    /// Wikitools.AzureDevOps.AdoWiki.PagesStats
-    /// or Wikitools.AzureDevOps.AdoWiki.PageStats:
+    /// Wikitools.AzureDevOps.AdoWiki.PagesStats or PageStats:
     /// - the wiki page visit ingestion delay is 4-6 hours.
     /// - the dates are counted in UTC.
     /// How I conducted the empirical tests:
