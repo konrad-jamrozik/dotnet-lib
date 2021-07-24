@@ -5,7 +5,7 @@ using Wikitools.Lib.Storage;
 
 namespace Wikitools.AzureDevOps
 {
-    public class Declare
+    public class AzureDevOpsDeclare
     {
         public GitLog GitLog(IOperatingSystem os, Dir gitRepoDir, string gitExecutablePath)
         {

@@ -4,7 +4,7 @@ using Wikitools.Lib.Primitives;
 
 namespace Wikitools.AzureDevOps.Tests
 {
-    public record AzureDevOpsTestsDeclare(Declare Decl)
+    public record AzureDevOpsTestsDeclare(AzureDevOpsDeclare Decl)
     {
         public async Task<AdoWikiPagesStatsStorage> AdoWikiPagesStatsStorage(
             DateDay utcNow,

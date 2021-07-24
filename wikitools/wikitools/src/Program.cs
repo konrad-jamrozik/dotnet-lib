@@ -36,7 +36,7 @@ namespace Wikitools
             IAdoWiki adoWiki,
             WikitoolsCfg cfg)
         {
-            var decl   = new Declare();
+            var decl   = new AzureDevOpsDeclare();
             var gitLog = decl.GitLog(os, new Dir(fs, cfg.GitRepoClonePath), cfg.GitExecutablePath);
             var wiki = decl.AdoWikiWithStorage(
                 adoWiki,

@@ -102,7 +102,7 @@ namespace Wikitools.AzureDevOps.Tests
         ///   there has to be recent ongoing, daily activity.
         /// - For other assumptions, see comments on WikitoolsConfig members.
         /// </summary>
-        private static (Declare decl, int pageId, DateTime utcNow, IAdoWiki adoWiki, AdoWikiPagesStatsStorage storage)
+        private static (AzureDevOpsDeclare decl, int pageId, DateTime utcNow, IAdoWiki adoWiki, AdoWikiPagesStatsStorage storage)
             ArrangeSut()
         {
             var utcNow      = new Timeline().UtcNow;
@@ -112,7 +112,7 @@ namespace Wikitools.AzureDevOps.Tests
             var adoCfg      = cfg.Read<AzureDevOpsCfg>();
             var adoTestsCfg = cfg.Read<AzureDevOpsTestsCfg>();
             var storageDir  = new Dir(fs, adoTestsCfg.TestStorageDirPath);
-            var decl        = new Declare();
+            var decl        = new AzureDevOpsDeclare();
             var storage     = decl.AdoWikiPagesStatsStorage(storageDir, utcNow);
 
             IAdoWiki adoWiki = new AdoWiki(adoCfg.AdoWikiUri, adoCfg.AdoPatEnvVar, env);

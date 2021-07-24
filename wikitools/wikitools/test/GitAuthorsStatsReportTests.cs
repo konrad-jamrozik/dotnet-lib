@@ -29,7 +29,7 @@ namespace Wikitools.Tests
             var os       = new SimulatedOS(new SimulatedGitLogProcess(logDays, commitsData));
 
             // Arrange SUT declaration
-            var gitLog  = new Declare().GitLog(os, gitRepoDir, gitExecutablePath);
+            var gitLog  = new AzureDevOpsDeclare().GitLog(os, gitRepoDir, gitExecutablePath);
             var commits = gitLog.Commits(logDays);
             var sut     = new GitAuthorsStatsReport(timeline, commits, logDays, top);
 
