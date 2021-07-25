@@ -2,7 +2,7 @@
 
 namespace Wikitools.Lib.Primitives
 {
-    public sealed record DateDay(int Year, int Month, int Day) : 
+    public sealed record DateDay(int Year, int Month, int Day, DateTimeKind Kind) : 
         IComparable<DateTime>, IEquatable<DateTime>,
         IComparable<DateDay>,
         IComparable<DateMonth>, IEquatable<DateMonth>,
@@ -14,7 +14,7 @@ namespace Wikitools.Lib.Primitives
 
         public static implicit operator DateTime(DateDay dateDay) => dateDay._dateTime;
 
-        public DateDay(DateTime dateTime) : this(dateTime.Year, dateTime.Month, dateTime.Day) { }
+        public DateDay(DateTime dateTime) : this(dateTime.Year, dateTime.Month, dateTime.Day, dateTime.Kind) { }
 
         public DateDay AddDays(int days) => new(_dateTime.AddDays(days));
 
@@ -40,7 +40,6 @@ namespace Wikitools.Lib.Primitives
                 ? $"{_dateTime:yyyy/MM/dd}"
                 : _dateTime.ToString(format, formatProvider);
 
-        // Known limitation: this doesn't retain DateTimeKind (e.g. Utc)
-        private readonly DateTime _dateTime = new (Year, Month, Day);
+        private readonly DateTime _dateTime = DateTime.SpecifyKind(new DateTime(Year, Month, Day), Kind);
     }
 }
