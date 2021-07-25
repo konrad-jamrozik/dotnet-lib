@@ -15,7 +15,7 @@ namespace Wikitools.Tests
             var fix = new ValidWikiPagesStatsFixture();
             CommitsLogs = GetCommitsLogs();
             PagesStats = fix.PagesStats().ToArray();
-            ExpectedRows = new()
+            ExpectedRows = new Dictionary<(string className, object input), object[][]>()
             {
                 [(nameof(GitAuthorsStatsReportTests), CommitsLogs)] = new[] {
                     new object[] { 1, "AuthorC", 4, 200+300+601+400, 5+82+7+13 },
@@ -30,11 +30,11 @@ namespace Wikitools.Tests
                     new object[] { 5, "/Foo/bar100_10.md", 100, 10 },
                 },
                 [(nameof(PagesViewsStatsReportTests), PagesStats)] = new[] {
-                    new object[] { 1, "/Foo/Baz", 180 },
-                    new object[] { 2, "/Foo", 68 },
+                    new object[] { 1, "/Foo/Baz", 182 },
+                    new object[] { 2, "/Foo", 70 },
                     new object[] { 3, "/Qux/Quux/Quuz", 28 },
-                    new object[] { 4, "/Home", 21 },
-                    new object[] { 5, "/Foo/Bar", 14 }
+                    new object[] { 4, "/Home", 24 },
+                    new object[] { 5, "/Foo/Bar", 16 }
                 }
             };
         }

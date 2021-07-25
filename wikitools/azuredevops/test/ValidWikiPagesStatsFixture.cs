@@ -15,22 +15,22 @@ namespace Wikitools.AzureDevOps.Tests
             {
                 new("/Home", 1, new WikiPageStats.DayStat[]
                 {
-                    new(0, date.AddDays(-3)),
-                    new(0, date.AddDays(-2)),
+                    new(1, date.AddDays(-3)),
+                    new(1, date.AddDays(-2)),
                     new(20, date.AddDays(-1)),
-                    new(1, date)
+                    new(2, date)
                 }),
                 new("/Foo", 2, new WikiPageStats.DayStat[]
                 {
-                    new(0, date.AddDays(-3)),
+                    new(1, date.AddDays(-3)),
                     new(8, date.AddDays(-2)),
-                    new(0, date.AddDays(-1)),
+                    new(1, date.AddDays(-1)),
                     new(60, date)
                 }),
                 new("/Foo/Bar", 3, new WikiPageStats.DayStat[]
                 {
-                    new(0, date.AddDays(-3)),
-                    new(0, date.AddDays(-2)),
+                    new(1, date.AddDays(-3)),
+                    new(1, date.AddDays(-2)),
                     new(8, date.AddDays(-1)),
                     new(6, date)
                 }),
@@ -38,8 +38,8 @@ namespace Wikitools.AzureDevOps.Tests
                 {
                     new(100, date.AddDays(-3)),
                     new(80, date.AddDays(-2)),
-                    new(0, date.AddDays(-1)),
-                    new(0, date)
+                    new(1, date.AddDays(-1)),
+                    new(1, date)
                 }),
                 new("/Qux/Quux/Quuz", 5, new WikiPageStats.DayStat[]
                 {

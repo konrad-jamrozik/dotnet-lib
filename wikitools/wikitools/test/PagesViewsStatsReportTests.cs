@@ -38,6 +38,7 @@ namespace Wikitools.Tests
                     Rows: data.ExpectedRows[(nameof(PagesViewsStatsReportTests), pagesStatsData)])
             }));
 
+            // Act
             await new MarkdownDocumentDiff(expected, sut).Verify();
         }
     }
