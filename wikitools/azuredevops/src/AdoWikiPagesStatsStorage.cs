@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Wikitools.Lib.Primitives;
 using Wikitools.Lib.Storage;
@@ -10,20 +11,21 @@ namespace Wikitools.AzureDevOps
     {
         private DateMonth CurrentMonth => new(CurrentDate);
 
-        public Task<AdoWikiPagesStatsStorage> Update(IAdoWiki wiki, int pageViewsForDays) =>
-            Update(pageViewsForDays, wiki.PagesStats);
+        public Task<AdoWikiPagesStatsStorage> Update(IAdoWiki wiki, int pageViewsForDays) 
+            => Update(pageViewsForDays, wiki.PagesStats);
 
-        public Task<AdoWikiPagesStatsStorage> Update(IAdoWiki wiki, int pageViewsForDays, int pageId) => Update(
-            pageViewsForDays,
-            pageViewsForDays => wiki.PageStats(pageViewsForDays, pageId));
+        public Task<AdoWikiPagesStatsStorage> Update(IAdoWiki wiki, int pageViewsForDays, int pageId)
+            => Update(
+                pageViewsForDays,
+                pageViewsForDays => wiki.PageStats(pageViewsForDays, pageId));
 
         private async Task<AdoWikiPagesStatsStorage> Update(
             int pageViewsForDays,
             Func<int, Task<ValidWikiPagesStats>> wikiPagesStatsFunc)
         {
-            var pageStats = await wikiPagesStatsFunc(pageViewsForDays);
+            var pagesStats = await wikiPagesStatsFunc(pageViewsForDays);
 
-            var (previousMonthStats, currentMonthStats) = pageStats.SplitByMonth(CurrentMonth);
+            var (previousMonthStats, currentMonthStats) = pagesStats.SplitByMonth(CurrentMonth);
             await MergeIntoStoredMonthStats(previousMonthStats);
             await MergeIntoStoredMonthStats(currentMonthStats);
 
@@ -37,6 +39,25 @@ namespace Wikitools.AzureDevOps
                     var validStoredStats = new ValidWikiPagesStatsForMonth(storedStats, stats.Month);
                     return new ValidWikiPagesStatsForMonth(validStoredStats.Merge(stats), stats.Month);
                 });
+
+        public async Task<AdoWikiPagesStatsStorage> OverwriteWith(ValidWikiPagesStats stats)
+        {
+            if (stats is ValidWikiPagesStatsForMonth statsForMonth)
+            {
+                return await OverwriteWith(statsForMonth);
+            }
+
+            IEnumerable<ValidWikiPagesStatsForMonth> statsByMonth = stats.SplitByMonth();
+
+            var writeTasks = statsByMonth
+                .Select(async statsForMonth
+                    => await Storage.With<IEnumerable<WikiPageStats>>(
+                        statsForMonth.Month, _ => stats));
+
+            await Task.WhenAll(writeTasks);
+
+            return this;
+        }
 
         public async Task<AdoWikiPagesStatsStorage> OverwriteWith(ValidWikiPagesStats stats, DateTime date)
         {

@@ -93,23 +93,42 @@ namespace Wikitools.AzureDevOps.Tests
             new JsonDiffAssertion(prevStats.Merge(currStats), actualStats).Assert();
         }
 
-        // kja 4 WIP test with 3 months data: DataFromStorageOfMoreThanMaxPageViewForDays
+        // kja 4 WIP test to exercise 3 months of data
         [Test]
         public async Task DataFromStorageOfMoreThanMaxPageViewForDays()
         {
-            var pageViewsForDays   = AdoWiki.MaxPageViewsForDays;
-            var fix                = new ValidWikiPagesStatsFixture();
+            var fix = new ValidWikiPagesStatsFixture();
+
             var currMonthStats = fix.PagesStatsForMonth(UtcNowDay);
             var prevMonthStats = fix.PagesStatsForMonth(UtcNowDay.AddMonths(-1));
             var prevPrevMonthStats = fix.PagesStatsForMonth(UtcNowDay.AddMonths(-2));
+
             var allStats = prevPrevMonthStats.Merge(prevMonthStats).Merge(currMonthStats);
-            // kja 5 need the ctor to support stats from multiple months
-            // var adoWikiWithStorage = await AdoWikiWithStorage(UtcNowDay, storedStats: allStats);
+
+            // kja 5 call tree of this needs implementation of to-do 6.
+            var adoWikiWithStorage = await AdoWikiWithStorage(UtcNowDay, storedStats: allStats);
+
+            // kja 7 this is like Wikitools.AzureDevOps.ValidWikiPagesStats.VisitedDaysSpan but for multiple months
+            // Similarly, Merge below should be done for Month range. And also SplitByMonth from to-do 6.
+            // Probably introduce some extension method on IEnumerable<ValidWikiPagesStats> for the day span
+            // and for merges.
+            int daySpan = (int) (currMonthStats.LastDayWithAnyVisit! - prevPrevMonthStats.FirstDayWithAnyVisit!).TotalDays + 1;
+
+            // Act
+            var actualStats = await adoWikiWithStorage.PagesStats(daySpan);
+
+            new JsonDiffAssertion(prevPrevMonthStats.Merge(prevMonthStats).Merge(currMonthStats), actualStats).Assert();
         }
+
+        private static Task<AdoWikiWithStorage> AdoWikiWithStorage(
+            DateDay utcNow,
+            ValidWikiPagesStatsForMonth storedStats,
+            ValidWikiPagesStats? wikiStats = null)
+            => AdoWikiWithStorage(utcNow, (ValidWikiPagesStats) storedStats, wikiStats);
 
         private static async Task<AdoWikiWithStorage> AdoWikiWithStorage(
             DateDay utcNow,
-            ValidWikiPagesStatsForMonth? storedStats = null,
+            ValidWikiPagesStats? storedStats = null,
             ValidWikiPagesStats? wikiStats = null)
         {
             var decl      = new AzureDevOpsDeclare();

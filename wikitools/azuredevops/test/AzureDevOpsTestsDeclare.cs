@@ -6,9 +6,14 @@ namespace Wikitools.AzureDevOps.Tests
 {
     public record AzureDevOpsTestsDeclare(AzureDevOpsDeclare Decl)
     {
-        public async Task<AdoWikiPagesStatsStorage> AdoWikiPagesStatsStorage(
+        public Task<AdoWikiPagesStatsStorage> AdoWikiPagesStatsStorage(
             DateDay utcNow,
             ValidWikiPagesStatsForMonth? storedStats = null)
+            => AdoWikiPagesStatsStorage(utcNow, (ValidWikiPagesStats?) storedStats);
+
+        public async Task<AdoWikiPagesStatsStorage> AdoWikiPagesStatsStorage(
+            DateDay utcNow,
+            ValidWikiPagesStats? storedStats = null)
         {
             var fs         = new SimulatedFileSystem();
             var storageDir = fs.NextSimulatedDir();

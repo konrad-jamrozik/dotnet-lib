@@ -1,5 +1,9 @@
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MoreLinq;
+using MoreLinq.Experimental;
 using Wikitools.AzureDevOps;
 using Wikitools.Lib.Json;
 using Wikitools.Lib.OS;
