@@ -25,7 +25,8 @@ namespace Wikitools.AzureDevOps.Tests
         /// e.g for pageViewsForDays = 3 it would be [today - 3, today].
         ///
         /// This is achieved by arranging in storage stats from day "today-pageViewsForDays"
-        /// and then showing that the returned stats will start from "today-pageViewsForDays+1"
+        /// and then showing that when calling storage.PagesStats(pageViewsForDays)
+        /// the returned stats will start from "today-pageViewsForDays+1"
         /// instead of "today-pageViewsForDays".
         /// </summary>
         [Test]
