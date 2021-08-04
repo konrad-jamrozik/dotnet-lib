@@ -25,7 +25,7 @@ namespace Wikitools.AzureDevOps
         {
             var pagesStats = await wikiPagesStatsFunc(pageViewsForDays);
 
-            var (previousMonthStats, currentMonthStats) = pagesStats.SplitByMonth(CurrentMonth);
+            var (previousMonthStats, currentMonthStats) = pagesStats.SplitIntoTwoMonths(CurrentMonth);
             await MergeIntoStoredMonthStats(previousMonthStats);
             await MergeIntoStoredMonthStats(currentMonthStats);
 
@@ -61,7 +61,7 @@ namespace Wikitools.AzureDevOps
 
         public async Task<AdoWikiPagesStatsStorage> OverwriteWith(ValidWikiPagesStats stats, DateTime date)
         {
-            var (previousMonthStats, currentMonthStats) = stats.SplitByMonth(new DateMonth(date));
+            var (previousMonthStats, currentMonthStats) = stats.SplitIntoTwoMonths(new DateMonth(date));
             await Storage.With<IEnumerable<WikiPageStats>>(previousMonthStats.Month, _ => previousMonthStats);
             await Storage.With<IEnumerable<WikiPageStats>>(currentMonthStats.Month, _ => currentMonthStats);
             return this;

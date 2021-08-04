@@ -82,7 +82,7 @@ namespace Wikitools.AzureDevOps.Tests
             ValidWikiPagesStats? currentMonthExpectation)
         {
             // Act
-            var (previousMonth, currentMonth) = target.SplitByMonth(new DateMonth(date));
+            var (previousMonth, currentMonth) = target.SplitIntoTwoMonths(new DateMonth(date));
             
             AssertMonth(previousMonthExpectation, previousMonth);
             AssertMonth(currentMonthExpectation,  currentMonth);

@@ -89,10 +89,10 @@ namespace Wikitools.AzureDevOps
         }
 
         public (ValidWikiPagesStatsForMonth previousMonthStats, ValidWikiPagesStatsForMonth currentMonthStats)
-            SplitByMonth(DateMonth currentMonth) => SplitByMonth(this, currentMonth);
+            SplitIntoTwoMonths(DateMonth currentMonth) => SplitIntoTwoMonths(this, currentMonth);
 
         private static (ValidWikiPagesStatsForMonth previousMonthStats, ValidWikiPagesStatsForMonth currentMonthStats)
-            SplitByMonth(
+            SplitIntoTwoMonths(
                 ValidWikiPagesStats pagesStats,
                 DateMonth currentMonth)
         {
