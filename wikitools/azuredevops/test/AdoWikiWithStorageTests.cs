@@ -94,6 +94,8 @@ namespace Wikitools.AzureDevOps.Tests
         }
 
         // kja 4 WIP test to exercise 3 months of data
+        // kja 4.1. Another test:
+        // Stores 7 months, but 1st, 2nd, 4rd, 6th and 7th months have no day stats (7th == current)
         [Test]
         public async Task DataFromStorageOfMoreThanMaxPageViewForDays()
         {
@@ -109,7 +111,7 @@ namespace Wikitools.AzureDevOps.Tests
             var adoWikiWithStorage = await AdoWikiWithStorage(UtcNowDay, storedStats: allStats);
 
             // kja 7 this is like Wikitools.AzureDevOps.ValidWikiPagesStats.VisitedDaysSpan but for multiple months
-            // Similarly, Merge below should be done for Month range. And also SplitByMonth from to-do 6.
+            // Similarly, Merge making "allStats" should be done for Month range. And also SplitByMonth from to-do 6.
             // Probably introduce some extension method on IEnumerable<ValidWikiPagesStats> for the day span
             // and for merges.
             int daySpan = (int) (currMonthStats.LastDayWithAnyVisit! - prevPrevMonthStats.FirstDayWithAnyVisit!).TotalDays + 1;
@@ -117,7 +119,7 @@ namespace Wikitools.AzureDevOps.Tests
             // Act
             var actualStats = await adoWikiWithStorage.PagesStats(daySpan);
 
-            new JsonDiffAssertion(prevPrevMonthStats.Merge(prevMonthStats).Merge(currMonthStats), actualStats).Assert();
+            new JsonDiffAssertion(allStats, actualStats).Assert();
         }
 
         private static Task<AdoWikiWithStorage> AdoWikiWithStorage(
