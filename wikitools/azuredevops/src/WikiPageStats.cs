@@ -5,6 +5,13 @@ using Wikitools.Lib.Primitives;
 
 namespace Wikitools.AzureDevOps
 {
+    /// <summary>
+    /// Assumed invariants about the underlying ADO API behavior, confirmed by manual tests:
+    /// - DayStats array might be empty, but never null.
+    /// - A DayStat entry has a Count of at least 1.
+    /// - More invariants checked here: Wikitools.AzureDevOps.ValidWikiPagesStats.CheckInvariants
+    /// 
+    /// </summary>
     public record WikiPageStats(string Path, int Id, WikiPageStats.DayStat[] DayStats)
     {
         public static readonly WikiPageStats[] EmptyArray = { };

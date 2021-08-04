@@ -17,7 +17,7 @@ namespace Wikitools.AzureDevOps
     ///   Consider a page with (ID, Path) of (42, "/Foo") and some set XDayViews of daily view counts.
     ///   Consider following sequence of events:
     ///   1. make first call to this method;
-    ///   2. rename the page to /Bar;
+    ///   2. rename the page, in the wiki, to /Bar;
     ///   3. make second call to this method.
     ///   In such case, we assume that:
     ///   - the result of the first call will show the page (42, "/Foo") with XDayViews
@@ -44,6 +44,9 @@ namespace Wikitools.AzureDevOps
             // kj2 test for this; write a test that would fail if statsArr.AssertDistinctBy(ps => ps.Path); would be present.
             Contract.Assert(statsArr.DistinctBy(ps => ps.Path).Count() <= statsArr.Length);
             statsArr.AssertOrderedBy(ps => ps.Id);
+
+            // kj2 move these invariants to WikiPageStats itself.
+            // Don't forget to update comment on that class!
             statsArr.ForEach(ps =>
             {
                 var (_, _, dayStats) = ps;
@@ -53,7 +56,7 @@ namespace Wikitools.AzureDevOps
                 Contract.Assert(dayStats.Length >= 0);
                 dayStats.AssertDistinctBy(ds => ds.Day);
                 dayStats.AssertOrderedBy(ds => ds.Day);
-                dayStats.Assert(ds => ds.Count >= 1);
+                dayStats.Assert(ds => ds.Count >= 1); 
                 dayStats.Assert(ds => ds.Day.Kind == DateTimeKind.Utc);
             });
             return statsArr;
@@ -63,7 +66,7 @@ namespace Wikitools.AzureDevOps
 
         public IEnumerable<ValidWikiPagesStatsForMonth> SplitByMonth() 
         {
-            // kja 6 to implement;
+            // kja 6 to implement
             //
             // Once done, don't forget to remove the IF check at the beginning of
             // Wikitools.AzureDevOps.AdoWikiPagesStatsStorage.OverwriteWith
@@ -76,6 +79,12 @@ namespace Wikitools.AzureDevOps
             // And then also rewrite the 2-month SplitByMonth to call this SplitByMonth,
             // but just with additional month checks for 2 months (these checks are there
             // to confirm data coming from wiki is indeed only from max 2 months).
+            //
+            // Also: ensure I have a test showing current month *has* to be passed.
+            // If it wouldn't then we won't correctly handle situation in which current month
+            // has no visits whatsoever. There is no way to conclude from the stats there is 
+            // "extra empty month after the last month having any visits".
+            // Also, if there are stats with no page visits at all, what would be the current month?
             return new List<ValidWikiPagesStatsForMonth>();
         }
 
