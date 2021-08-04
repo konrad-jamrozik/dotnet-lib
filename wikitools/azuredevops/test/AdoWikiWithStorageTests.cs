@@ -60,7 +60,7 @@ namespace Wikitools.AzureDevOps.Tests
         /// - querying AdoWikiWithStorage for page stats for the entire time window
         ///   of AdoWiki.MaxPageViewsForDays
         /// Then
-        /// - return the union of both previous stats and current stats.
+        /// - return the union of both previous stats (coming from storage) and current stats (coming from wiki).
         /// </summary>
         [Test]
         public async Task DataInWikiAndStorageWithinWikiMaxPageViewsForDays()
