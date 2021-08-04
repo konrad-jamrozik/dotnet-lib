@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 
 namespace Wikitools.Lib.Primitives
 {
@@ -13,6 +14,8 @@ namespace Wikitools.Lib.Primitives
         public static TimeSpan operator -(DateDay left, DateDay right) => left._dateTime.Subtract(right._dateTime);
 
         public static implicit operator DateTime(DateDay dateDay) => dateDay._dateTime;
+
+        public DateMonth AsDateMonth() => new DateMonth(_dateTime);
 
         public DateDay(DateTime dateTime) : this(dateTime.Year, dateTime.Month, dateTime.Day, dateTime.Kind) { }
 
@@ -34,6 +37,8 @@ namespace Wikitools.Lib.Primitives
         public int CompareTo(DateMonth? other) => other == null ? 1 : CompareTo(other);
 
         public override int GetHashCode() => _dateTime.GetHashCode();
+
+        public override string ToString() => _dateTime.ToString(CultureInfo.InvariantCulture);
 
         public string ToString(string? format, IFormatProvider? formatProvider) => 
             format == null && formatProvider == null

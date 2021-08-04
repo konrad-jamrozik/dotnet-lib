@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 
 namespace Wikitools.Lib.Primitives
 {
@@ -40,13 +41,15 @@ namespace Wikitools.Lib.Primitives
         public int CompareTo(DateMonth? other) => _dateTime.CompareTo(other?._dateTime);
 
         public override int GetHashCode() => _dateTime.GetHashCode();
-        
+
+        public override string ToString() => _dateTime.ToString(CultureInfo.InvariantCulture);
+
         public string ToString(string? format, IFormatProvider? formatProvider) =>
             format == null && formatProvider == null
                 ? $"{_dateTime:yyyy/MM}"
                 : _dateTime.ToString(format, formatProvider);
 
-        // Known limitation: this doesn't retain DateTimeKind (e.g. Utc)
+        // kj2 fix as in DateDay Known limitation: this doesn't retain DateTimeKind (e.g. Utc)
         private readonly DateTime _dateTime = new(Year, Month, 1);
     }
 }
