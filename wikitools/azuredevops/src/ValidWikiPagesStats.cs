@@ -80,11 +80,13 @@ namespace Wikitools.AzureDevOps
             // but just with additional month checks for 2 months (these checks are there
             // to confirm data coming from wiki is indeed only from max 2 months).
             //
-            // Also: ensure I have a test showing current month *has* to be passed.
+            // kja 6.1 Also: ensure I have a test showing current month *has* to be passed.
             // If it wouldn't then we won't correctly handle situation in which current month
             // has no visits whatsoever. There is no way to conclude from the stats there is 
             // "extra empty month after the last month having any visits".
             // Also, if there are stats with no page visits at all, what would be the current month?
+            // kja 6.2 What about first month? Can we deduce it? Is it a problem if not?
+            // Devise some tests for it.
             return new List<ValidWikiPagesStatsForMonth>();
         }
 
