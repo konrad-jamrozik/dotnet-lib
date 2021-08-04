@@ -110,7 +110,7 @@ namespace Wikitools.AzureDevOps.Tests
             // kja 5 call tree of this needs implementation of to-do 6.
             var adoWikiWithStorage = await AdoWikiWithStorage(UtcNowDay, storedStats: allStats);
 
-            // kja 7 this is like Wikitools.AzureDevOps.ValidWikiPagesStats.VisitedDaysSpan but for multiple months
+            // kja 5.1 this is like Wikitools.AzureDevOps.ValidWikiPagesStats.VisitedDaysSpan but for multiple months
             // Similarly, Merge making "allStats" should be done for Month range. And also SplitByMonth from to-do 6.
             // Probably introduce some extension method on IEnumerable<ValidWikiPagesStats> for the day span
             // and for merges.

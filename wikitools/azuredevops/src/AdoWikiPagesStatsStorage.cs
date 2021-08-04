@@ -47,7 +47,7 @@ namespace Wikitools.AzureDevOps
                 return await OverwriteWith(statsForMonth);
             }
 
-            IEnumerable<ValidWikiPagesStatsForMonth> statsByMonth = stats.SplitByMonth();
+            IEnumerable<ValidWikiPagesStatsForMonth> statsByMonth = stats.SplitByMonth(CurrentMonth);
 
             var writeTasks = statsByMonth
                 .Select(async statsForMonth

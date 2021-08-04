@@ -64,7 +64,7 @@ namespace Wikitools.AzureDevOps
 
         private IEnumerable<WikiPageStats> Data { get; }
 
-        public IEnumerable<ValidWikiPagesStatsForMonth> SplitByMonth() 
+        public IEnumerable<ValidWikiPagesStatsForMonth> SplitByMonth(DateMonth currentMonth) 
         {
             // kja 6 to implement
             //
@@ -79,15 +79,27 @@ namespace Wikitools.AzureDevOps
             // And then also rewrite the 2-month SplitByMonth to call this SplitByMonth,
             // but just with additional month checks for 2 months (these checks are there
             // to confirm data coming from wiki is indeed only from max 2 months).
-            //
+            
             // kja 6.1 Also: ensure I have a test showing current month *has* to be passed.
             // If it wouldn't then we won't correctly handle situation in which current month
             // has no visits whatsoever. There is no way to conclude from the stats there is 
             // "extra empty month after the last month having any visits".
             // Also, if there are stats with no page visits at all, what would be the current month?
+            
             // kja 6.2 What about first month? Can we deduce it? Is it a problem if not?
             // Devise some tests for it.
-            return new List<ValidWikiPagesStatsForMonth>();
+            // This assignment will throw NPE if the stats have no visits:
+            DateDay? currDate = FirstDayWithAnyVisit!;
+
+            DateMonth iteratedMonth = currDate.AsDateMonth();
+            var output = new List<ValidWikiPagesStatsForMonth>();
+            while (iteratedMonth.CompareTo(currentMonth) <= 0)
+            {
+                output.Add(new ValidWikiPagesStatsForMonth(Trim(iteratedMonth)));
+                iteratedMonth = iteratedMonth.NextMonth;
+            }
+
+            return output;
         }
 
         public (ValidWikiPagesStatsForMonth previousMonthStats, ValidWikiPagesStatsForMonth currentMonthStats)
