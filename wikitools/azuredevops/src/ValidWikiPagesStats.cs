@@ -66,7 +66,7 @@ namespace Wikitools.AzureDevOps
 
         public IEnumerable<ValidWikiPagesStatsForMonth> SplitByMonth(DateMonth currentMonth) 
         {
-            // kja 6 to implement
+            // kja 6 to implement and test
             //
             // Once done, don't forget to remove the IF check at the beginning of
             // Wikitools.AzureDevOps.AdoWikiPagesStatsStorage.OverwriteWith

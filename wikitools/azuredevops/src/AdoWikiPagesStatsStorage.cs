@@ -52,7 +52,7 @@ namespace Wikitools.AzureDevOps
             var writeTasks = statsByMonth
                 .Select(async statsForMonth
                     => await Storage.With<IEnumerable<WikiPageStats>>(
-                        statsForMonth.Month, _ => stats));
+                        statsForMonth.Month, _ => statsForMonth));
 
             await Task.WhenAll(writeTasks);
 
@@ -77,10 +77,13 @@ namespace Wikitools.AzureDevOps
         {
             var currentDay   = new DateDay(CurrentDate);
             var previousDate = currentDay.AddDays(-pageViewsForDays + 1);
-            // kj2 bug: this will return equal on difference of exactly 12 months, but should still say that months differ
+            
             // Note that the code below assumes it can go max in the past by one month only
+            // kj2 bug: this will return equal on difference of exactly 12 months, but should still say that months differ
             var monthsDiffer = previousDate.Month != currentDay.Month;
 
+            // kja 7 current WIP test (4) fails as this doesn't include data from all the months.
+            // It gives 11/2020 and 1/2021, but not the month in the middle.
             var currentMonthStats = new ValidWikiPagesStats(
                 Storage.Read<IEnumerable<WikiPageStats>>(currentDay));
             var previousMonthStats = new ValidWikiPagesStats(

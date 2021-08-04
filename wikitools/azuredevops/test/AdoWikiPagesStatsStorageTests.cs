@@ -13,9 +13,20 @@ namespace Wikitools.AzureDevOps.Tests
         /// <summary>
         /// This test ensures that for "pageViewsForDays", the storage.PagesStats()
         /// correctly returns data for day range:
-        /// [today - pageViewsForDays + 1, today]
+        ///
+        ///   [today - pageViewsForDays + 1, today]
+        /// 
+        /// e.g. for pageViewsForDays = 3 it will return [today - 2, today]
+        /// 
         /// instead of the incorrect:
-        /// [today - pageViewsForDays, today]
+        /// 
+        ///   [today - pageViewsForDays, today]
+        /// 
+        /// e.g for pageViewsForDays = 3 it would be [today - 3, today].
+        ///
+        /// This is achieved by arranging in storage stats from day "today-pageViewsForDays"
+        /// and then showing that the returned stats will start from "today-pageViewsForDays+1"
+        /// instead of "today-pageViewsForDays".
         /// </summary>
         [Test]
         public async Task FirstDayOfVisitsInStorageIsNotOffByOne()
@@ -29,7 +40,7 @@ namespace Wikitools.AzureDevOps.Tests
 
             Assert.That(
                 stats.FirstDayWithAnyVisit,
-                Is.EqualTo(stats.LastDayWithAnyVisit?.AddDays(-pageViewsForDays)),
+                Is.LessThanOrEqualTo(stats.LastDayWithAnyVisit?.AddDays(-pageViewsForDays)),
                 "Precondition violation: the off by one error won't be detected by this test as there " +
                 "are no visits in the off (== first) day in the arranged data.");
 
