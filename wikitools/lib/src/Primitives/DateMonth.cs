@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 
 namespace Wikitools.Lib.Primitives
@@ -14,6 +15,18 @@ namespace Wikitools.Lib.Primitives
         public static TimeSpan operator -(DateMonth left, DateMonth right) => left._dateTime.Subtract(right._dateTime);
 
         public static implicit operator DateTime(DateMonth dateDay) => dateDay._dateTime;
+
+        public static DateMonth[] Range(DateDay startDay, DateDay endDay)
+        {
+            DateMonth iteratedMonth = startDay.AsDateMonth();
+            var output = new List<DateMonth>();
+            while (iteratedMonth.CompareTo(endDay) <= 0)
+            {
+                output.Add(iteratedMonth);
+                iteratedMonth = iteratedMonth.NextMonth;
+            }
+            return output.ToArray();
+        }
 
         public DateMonth(DateTime dateTime) : this(dateTime.Year, dateTime.Month) { }
 
@@ -36,7 +49,7 @@ namespace Wikitools.Lib.Primitives
         public int CompareTo(DateTime other) => _dateTime.CompareTo(other);
 
         // returns 1 on null to duplicate behavior of System.DateTime.CompareTo
-        public int CompareTo(DateDay? other) => other == null ? 1 : CompareTo(other);
+        public int CompareTo(DateDay? other) => other == null ? 1 : CompareTo(new DateMonth(other));
 
         public int CompareTo(DateMonth? other) => _dateTime.CompareTo(other?._dateTime);
 

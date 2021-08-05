@@ -34,7 +34,7 @@ namespace Wikitools.Lib.Primitives
         public int CompareTo(DateDay? other) => _dateTime.CompareTo(other?._dateTime);
 
         // returns 1 on null to duplicate behavior of System.DateTime.CompareTo
-        public int CompareTo(DateMonth? other) => other == null ? 1 : CompareTo(other);
+        public int CompareTo(DateMonth? other) => other == null ? 1 : CompareTo(new DateDay(other));
 
         public override int GetHashCode() => _dateTime.GetHashCode();
 
