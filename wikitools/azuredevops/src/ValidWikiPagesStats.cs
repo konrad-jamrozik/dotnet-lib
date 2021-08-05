@@ -98,15 +98,8 @@ namespace Wikitools.AzureDevOps
             // This assignment will throw NPE if the stats have no visits:
             DateDay startDate = FirstDayWithAnyVisit!;
 
-            DateMonth iteratedMonth = startDate.AsDateMonth();
-            var output = new List<ValidWikiPagesStatsForMonth>();
-            while (iteratedMonth.CompareTo(currentMonth) <= 0)
-            {
-                output.Add(new ValidWikiPagesStatsForMonth(Trim(iteratedMonth)));
-                iteratedMonth = iteratedMonth.NextMonth;
-            }
-
-            return output;
+            return DateMonth.Range(startDate, new DateDay(currentMonth))
+                .Select(month => new ValidWikiPagesStatsForMonth(Trim(month)));
         }
 
         public (ValidWikiPagesStatsForMonth previousMonthStats, ValidWikiPagesStatsForMonth currentMonthStats)

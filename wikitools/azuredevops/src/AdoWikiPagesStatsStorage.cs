@@ -75,10 +75,9 @@ namespace Wikitools.AzureDevOps
 
         public ValidWikiPagesStats PagesStats(int pageViewsForDays)
         {
-            var currentDay   = new DateDay(CurrentDate);
+            var currentDay = new DateDay(CurrentDate);
             var startDay = currentDay.AddDays(-pageViewsForDays + 1);
             
-            // kja 8 apply month-range op in Wikitools.AzureDevOps.AdoWikiPagesStatsStorage.PagesStats and Wikitools.AzureDevOps.ValidWikiPagesStats.SplitByMonth
             IEnumerable<ValidWikiPagesStatsForMonth> statsByMonth = DateMonth
                 .Range(startDay, currentDay)
                 .Select(month =>
