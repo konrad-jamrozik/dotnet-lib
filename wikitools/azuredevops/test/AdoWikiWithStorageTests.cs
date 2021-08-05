@@ -105,7 +105,7 @@ namespace Wikitools.AzureDevOps.Tests
             var prevMonthStats = fix.PagesStatsForMonth(UtcNowDay.AddMonths(-1));
             var prevPrevMonthStats = fix.PagesStatsForMonth(UtcNowDay.AddMonths(-2));
 
-            var allStats = prevPrevMonthStats.Merge(prevMonthStats).Merge(currMonthStats);
+            var allStats = ValidWikiPagesStats.Merge(prevPrevMonthStats, prevMonthStats, currMonthStats);
 
             // kja 5 call tree of this needs implementation of to-do 6.
             var adoWikiWithStorage = await AdoWikiWithStorage(UtcNowDay, storedStats: allStats);

@@ -90,9 +90,7 @@ namespace Wikitools.Tests
             var februaryDate = new DateMonth(2021, 2);
             var marchDate    = new DateMonth(2021, 3);
 
-            var mergedStats = statsPaths.Select(s => DeserializeStats(fs, s))
-                // This is O(n^2) while it could be O(n), but for now this is good enough.
-                .Aggregate((prevStats, currentStats) => prevStats.Merge(currentStats));
+            var mergedStats = ValidWikiPagesStats.Merge(statsPaths.Select(s => DeserializeStats(fs, s)));
 
             await storage.Write(mergedStats, januaryDate, "merged_stats.json");
 

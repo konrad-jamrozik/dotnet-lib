@@ -28,6 +28,13 @@ namespace Wikitools.AzureDevOps
     /// </summary>
     public record ValidWikiPagesStats : IEnumerable<WikiPageStats>
     {
+        public static ValidWikiPagesStats Merge(params ValidWikiPagesStats[] stats)
+            => Merge((IEnumerable<ValidWikiPagesStats>) stats);
+
+        public static ValidWikiPagesStats Merge(IEnumerable<ValidWikiPagesStats> stats) 
+            // kj2 This Merge is O(n^2) while it could be O(n).
+            => stats.Aggregate((merged, next) => merged.Merge(next));
+
         // Note this setup of invariant checks in ctor has some problems.
         // Details here: https://github.com/dotnet/csharplang/issues/4453#issuecomment-782807066
         public ValidWikiPagesStats(IEnumerable<WikiPageStats> stats) => Data = CheckInvariants(stats);
@@ -89,7 +96,7 @@ namespace Wikitools.AzureDevOps
             // kja 6.2 What about first month? Can we deduce it? Is it a problem if not?
             // Devise some tests for it.
             // This assignment will throw NPE if the stats have no visits:
-            DateDay? currDate = FirstDayWithAnyVisit!;
+            DateDay currDate = FirstDayWithAnyVisit!;
 
             DateMonth iteratedMonth = currDate.AsDateMonth();
             var output = new List<ValidWikiPagesStatsForMonth>();
@@ -160,6 +167,8 @@ namespace Wikitools.AzureDevOps
         ///   are equal or more recent than all day view stats
         ///   for a page with the same ID in previousStats.
         /// </summary>
+        // kj2 add tests showing this is associative but not commutative (not comm due to ignoring previousPageStats.Path)
+        // Maybe also add some invariant check if a merge like next.merge(prev) is done instead of prev.merge(next)
         private static ValidWikiPagesStats Merge(ValidWikiPagesStats previousStats, ValidWikiPagesStats currentStats)
         {
             IEnumerable<WikiPageStats> merged = previousStats.UnionMerge(currentStats, ps => ps.Id, Merge);
