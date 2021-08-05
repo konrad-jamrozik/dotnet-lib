@@ -76,22 +76,18 @@ namespace Wikitools.AzureDevOps
         public ValidWikiPagesStats PagesStats(int pageViewsForDays)
         {
             var currentDay   = new DateDay(CurrentDate);
-            var previousDate = currentDay.AddDays(-pageViewsForDays + 1);
+            var startDay = currentDay.AddDays(-pageViewsForDays + 1);
             
-            // Note that the code below assumes it can go max in the past by one month only
-            // kj2 bug: this will return equal on difference of exactly 12 months, but should still say that months differ
-            var monthsDiffer = previousDate.Month != currentDay.Month;
+            // kja 8 apply month-range op in Wikitools.AzureDevOps.AdoWikiPagesStatsStorage.PagesStats and Wikitools.AzureDevOps.ValidWikiPagesStats.SplitByMonth
+            IEnumerable<ValidWikiPagesStatsForMonth> statsByMonth = DateMonth
+                .Range(startDay, currentDay)
+                .Select(month =>
+                {
+                    var pageStats = Storage.Read<IEnumerable<WikiPageStats>>(month);
+                    return new ValidWikiPagesStatsForMonth(pageStats, month);
+                });
 
-            // kja 7 current WIP test (4) fails as this doesn't include data from all the months.
-            // It gives 11/2020 and 1/2021, but not the month in the middle.
-            var currentMonthStats = new ValidWikiPagesStats(
-                Storage.Read<IEnumerable<WikiPageStats>>(currentDay));
-            var previousMonthStats = new ValidWikiPagesStats(
-                monthsDiffer
-                    ? Storage.Read<IEnumerable<WikiPageStats>>(previousDate)
-                    : new WikiPageStats[0]);
-
-            return previousMonthStats.Merge(currentMonthStats).Trim(previousDate, CurrentDate);
+            return ValidWikiPagesStats.Merge(statsByMonth).Trim(startDay, CurrentDate);
         }
     }
 }

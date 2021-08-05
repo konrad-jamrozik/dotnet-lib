@@ -96,9 +96,9 @@ namespace Wikitools.AzureDevOps
             // kja 6.2 What about first month? Can we deduce it? Is it a problem if not?
             // Devise some tests for it.
             // This assignment will throw NPE if the stats have no visits:
-            DateDay currDate = FirstDayWithAnyVisit!;
+            DateDay startDate = FirstDayWithAnyVisit!;
 
-            DateMonth iteratedMonth = currDate.AsDateMonth();
+            DateMonth iteratedMonth = startDate.AsDateMonth();
             var output = new List<ValidWikiPagesStatsForMonth>();
             while (iteratedMonth.CompareTo(currentMonth) <= 0)
             {
