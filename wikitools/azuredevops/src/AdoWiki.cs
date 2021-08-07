@@ -19,10 +19,10 @@ namespace Wikitools.AzureDevOps
     /// - the dates are counted in UTC.
     /// How I conducted the empirical tests:
     /// - I created and immediately visited kojamroz_test page on 3/27/2021 9:04 PM PDT.
-    /// - The page has shown up immediately in the returned list, but with null visits.
+    /// - The page has shown up immediately in the list returned from ADO REST API call, but with null visits.
     /// - The visit was not being returned by this call as of 3/28/2021 1:08 AM PDT i.e. 4h 4m later.
-    /// - It appeared by 3/28/2021 3:07 AM PDT, i.e. 1h 59m more later.
-    /// - When it appeared, it was counted as 3/8/2021, not 3/7/2021.
+    /// - It appeared by 3/28/2021 3:07 AM PDT, i.e. additional 1h 59m later.
+    /// - When it appeared, it was counted as 3/28/2021, not 3/27/2021.
     ///   - Presumably because the dates are in UTC, not PDT.
     /// </remarks>
     public record AdoWiki(AdoWikiUri AdoWikiUri, string PatEnvVar, IEnvironment Env) : IAdoWiki
@@ -53,6 +53,7 @@ namespace Wikitools.AzureDevOps
             var wikiHttpClient   = WikiHttpClient(AdoWikiUri, PatEnvVar);
             var wikiPagesDetails = await wikiPagesDetailsFunc(wikiHttpClient, pageViewsForDays);
             var wikiPagesStats   = wikiPagesDetails.Select(WikiPageStats.From);
+            // kja current date (end day) here is tricky. It has to match the time ADO API was called. It has to be in UTC, so I need to take into account the hour.
             return new ValidWikiPagesStats(wikiPagesStats);
         }
 
