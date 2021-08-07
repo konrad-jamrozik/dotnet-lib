@@ -19,7 +19,7 @@ namespace Wikitools.AzureDevOps
 
         private static ValidWikiPagesStats CheckInvariants(IEnumerable<WikiPageStats> stats, DateMonth month)
         {
-            var validWikiPagesStats = new ValidWikiPagesStats(stats);
+            var validWikiPagesStats = new ValidWikiPagesStats(stats, month.FirstDay, month.LastDay);
             Contract.Assert(validWikiPagesStats.AllVisitedDaysAreInMonth(month));
             return validWikiPagesStats;
         }

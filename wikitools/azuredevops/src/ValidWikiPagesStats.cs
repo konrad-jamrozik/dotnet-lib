@@ -30,9 +30,29 @@ namespace Wikitools.AzureDevOps
     {
         // Note this setup of invariant checks in ctor has some problems.
         // Details here: https://github.com/dotnet/csharplang/issues/4453#issuecomment-782807066
-        public ValidWikiPagesStats(IEnumerable<WikiPageStats> stats) => Data = CheckInvariants(stats);
+        public ValidWikiPagesStats(
+            IEnumerable<WikiPageStats> stats,
+            DateDay statsRangeStartDay,
+            DateDay statsRangeEndDay)
+        {
+            Data = CheckInvariants(stats);
+            StatsRangeStartDay = statsRangeStartDay;
+            StatsRangeEndDay = statsRangeEndDay;
+        }
 
-        public ValidWikiPagesStats(ValidWikiPagesStats stats) => Data = stats;
+        public ValidWikiPagesStats(ValidWikiPagesStats stats)
+        {
+            Data = stats;
+            // kja 7 do here invariant check if an of the actual data is outside of the day range
+            // See call to Wikitools.AzureDevOps.ValidWikiPagesStats.AllVisitedDaysAreInMonth
+            // in Wikitools.AzureDevOps.ValidWikiPagesStatsForMonth.CheckInvariants
+            // Once done here, delete that call
+            StatsRangeStartDay = stats.StatsRangeStartDay;
+            StatsRangeEndDay = stats.StatsRangeEndDay;
+        }
+
+        public DateDay StatsRangeStartDay { get; }
+        public DateDay StatsRangeEndDay { get; }
 
         private IEnumerable<WikiPageStats> Data { get; }
 
@@ -249,9 +269,9 @@ namespace Wikitools.AzureDevOps
             new DateDay(endDate));
 
         private static ValidWikiPagesStats Trim(ValidWikiPagesStats stats, DateDay startDay, DateDay endDay) =>
-            new(stats.Select(ps =>
+            new ValidWikiPagesStats(stats.Select(ps =>
                     ps with { DayStats = ps.DayStats.Where(s => s.Day >= startDay && s.Day <= endDay).ToArray() })
-                .ToArray());
+                .ToArray(), startDay, endDay);
 
         public DateMonth MonthOfAllVisitedDays()
         {
