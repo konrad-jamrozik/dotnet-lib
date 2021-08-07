@@ -28,18 +28,52 @@ namespace Wikitools.AzureDevOps
     /// </summary>
     public record ValidWikiPagesStats : IEnumerable<WikiPageStats>
     {
+        // Note this setup of invariant checks in ctor has some problems.
+        // Details here: https://github.com/dotnet/csharplang/issues/4453#issuecomment-782807066
+        public ValidWikiPagesStats(IEnumerable<WikiPageStats> stats) => Data = CheckInvariants(stats);
+
+        public ValidWikiPagesStats(ValidWikiPagesStats stats) => Data = stats;
+
+        private IEnumerable<WikiPageStats> Data { get; }
+
+        public DateDay? FirstDayWithAnyVisit
+        {
+            get
+            {
+                var minDatePerPage = this
+                    .Where(ps => ps.DayStats.Any())
+                    .Select(ps => ps.DayStats.Min(ds => ds.Day))
+                    .ToList();
+                return minDatePerPage.Any() ? new DateDay(minDatePerPage.Min()) : null;
+            }
+        }
+
+        public DateDay? LastDayWithAnyVisit
+        {
+            get
+            {
+                var maxDatePerPage = this
+                    .Where(ps => ps.DayStats.Any())
+                    .Select(ps => ps.DayStats.Max(ds => ds.Day))
+                    .ToList();
+                return maxDatePerPage.Any() ? new DateDay(maxDatePerPage.Max()) : null;
+            }
+        }
+
+        public int? VisitedDaysSpan => LastDayWithAnyVisit != null 
+            ? (int) (LastDayWithAnyVisit - FirstDayWithAnyVisit!).TotalDays + 1
+            : null;
+
+        public IEnumerator<WikiPageStats> GetEnumerator() => Data.GetEnumerator();
+
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
         public static ValidWikiPagesStats Merge(params ValidWikiPagesStats[] stats)
             => Merge((IEnumerable<ValidWikiPagesStats>) stats);
 
         public static ValidWikiPagesStats Merge(IEnumerable<ValidWikiPagesStats> stats) 
             // kj2 This Merge is O(n^2) while it could be O(n).
             => stats.Aggregate((merged, next) => merged.Merge(next));
-
-        // Note this setup of invariant checks in ctor has some problems.
-        // Details here: https://github.com/dotnet/csharplang/issues/4453#issuecomment-782807066
-        public ValidWikiPagesStats(IEnumerable<WikiPageStats> stats) => Data = CheckInvariants(stats);
-
-        public ValidWikiPagesStats(ValidWikiPagesStats stats) => Data = stats;
 
         private static IEnumerable<WikiPageStats> CheckInvariants(IEnumerable<WikiPageStats> stats)
         {
@@ -68,8 +102,6 @@ namespace Wikitools.AzureDevOps
             });
             return statsArr;
         }
-
-        private IEnumerable<WikiPageStats> Data { get; }
 
         public IEnumerable<ValidWikiPagesStatsForMonth> SplitByMonth(DateMonth currentMonth) 
         {
@@ -209,7 +241,7 @@ namespace Wikitools.AzureDevOps
 
         public ValidWikiPagesStats Trim(DateTime currentDate, int daysFrom, int daysTo) => Trim(
             currentDate.AddDays(daysFrom),
-            currentDate.AddDays(daysTo)); 
+            currentDate.AddDays(daysTo));
 
         public ValidWikiPagesStats Trim(DateTime startDate, DateTime endDate) => Trim(
             this,
@@ -220,38 +252,6 @@ namespace Wikitools.AzureDevOps
             new(stats.Select(ps =>
                     ps with { DayStats = ps.DayStats.Where(s => s.Day >= startDay && s.Day <= endDay).ToArray() })
                 .ToArray());
-
-        public IEnumerator<WikiPageStats> GetEnumerator() => Data.GetEnumerator();
-
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-
-        public DateDay? FirstDayWithAnyVisit
-        {
-            get
-            {
-                var minDatePerPage = this
-                    .Where(ps => ps.DayStats.Any())
-                    .Select(ps => ps.DayStats.Min(ds => ds.Day))
-                    .ToList();
-                return minDatePerPage.Any() ? new DateDay(minDatePerPage.Min()) : null;
-            }
-        }
-
-        public DateDay? LastDayWithAnyVisit
-        {
-            get
-            {
-                var maxDatePerPage = this
-                    .Where(ps => ps.DayStats.Any())
-                    .Select(ps => ps.DayStats.Max(ds => ds.Day))
-                    .ToList();
-                return maxDatePerPage.Any() ? new DateDay(maxDatePerPage.Max()) : null;
-            }
-        }
-
-        public int? VisitedDaysSpan => LastDayWithAnyVisit != null 
-            ? (int) (LastDayWithAnyVisit - FirstDayWithAnyVisit!).TotalDays + 1
-            : null;
 
         public DateMonth MonthOfAllVisitedDays()
         {
