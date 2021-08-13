@@ -105,7 +105,8 @@ namespace Wikitools.AzureDevOps.Tests
         private static (AzureDevOpsDeclare decl, int pageId, DateTime utcNow, IAdoWiki adoWiki, AdoWikiPagesStatsStorage storage)
             ArrangeSut()
         {
-            var utcNow      = new Timeline().UtcNow;
+            var timeline    = new Timeline();
+            var utcNow      = timeline.UtcNow;
             var fs          = new FileSystem();
             var env         = new Environment();
             var cfg         = new Configuration(fs);
@@ -115,7 +116,7 @@ namespace Wikitools.AzureDevOps.Tests
             var decl        = new AzureDevOpsDeclare();
             var storage     = decl.AdoWikiPagesStatsStorage(storageDir, utcNow);
 
-            IAdoWiki adoWiki = new AdoWiki(adoCfg.AdoWikiUri, adoCfg.AdoPatEnvVar, env);
+            IAdoWiki adoWiki = new AdoWiki(adoCfg.AdoWikiUri, adoCfg.AdoPatEnvVar, env, timeline);
             adoWiki = new AdoWikiWithPreconditionChecks(adoWiki);
 
             return (decl, adoTestsCfg.TestAdoWikiPageId, utcNow, adoWiki, storage);

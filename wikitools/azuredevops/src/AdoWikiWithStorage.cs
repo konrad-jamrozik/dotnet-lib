@@ -18,9 +18,18 @@ namespace Wikitools.AzureDevOps
 
         public Task<ValidWikiPagesStats> PageStats(int pageViewsForDays, int pageId)
         {
-            var updatedStorage  = Storage.Update(AdoWiki, pageViewsForDays.MinWith(PageViewsForDaysWikiLimit), pageId);
+            var dayRange = pageViewsForDays.MinWith(PageViewsForDaysWikiLimit);
+            var updatedStorage  = Storage.Update(AdoWiki, dayRange, pageId);
             var pagesViewsStats = updatedStorage.Select(
-                s => new ValidWikiPagesStats(s.PagesStats(pageViewsForDays).Where(page => page.Id == pageId)));
+                s =>
+                {
+                    var endDay = new DateDay(Storage.CurrentDate);
+                    var startDay = endDay.AddDays(-dayRange + 1);
+                    return new ValidWikiPagesStats(
+                        s.PagesStats(pageViewsForDays).Where(page => page.Id == pageId),
+                        startDay, 
+                        endDay);
+                });
             return pagesViewsStats;
         }
     }

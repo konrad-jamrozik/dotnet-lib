@@ -21,7 +21,7 @@ namespace Wikitools
             IFileSystem      fs       = new FileSystem();
             IEnvironment     env      = new Environment();
             WikitoolsCfg cfg = new Configuration(fs).Read<WikitoolsCfg>();
-            IAdoWiki adoWiki = new AdoWiki(cfg.AzureDevOpsCfg.AdoWikiUri, cfg.AzureDevOpsCfg.AdoPatEnvVar, env);
+            IAdoWiki adoWiki = new AdoWiki(cfg.AzureDevOpsCfg.AdoWikiUri, cfg.AzureDevOpsCfg.AdoPatEnvVar, env, timeline);
 
             var docsToWrite = DocsToWrite(timeline, os, fs, adoWiki, cfg);
             var outputSink  = Console.Out;
