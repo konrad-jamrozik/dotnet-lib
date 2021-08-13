@@ -25,10 +25,10 @@ namespace Wikitools.AzureDevOps
     /// - When it appeared, it was counted as 3/28/2021, not 3/27/2021.
     ///   - Presumably because the dates are in UTC, not PDT.
     /// </remarks>
-    public record AdoWiki(AdoWikiUri AdoWikiUri, string PatEnvVar, IEnvironment Env) : IAdoWiki
+    public record AdoWiki(AdoWikiUri AdoWikiUri, string PatEnvVar, IEnvironment Env, ITimeline Timeline) : IAdoWiki
     {
-        public AdoWiki(string adoWikiUriStr, string patEnvVar, IEnvironment env) : this(
-            new AdoWikiUri(adoWikiUriStr), patEnvVar, env) { }
+        public AdoWiki(string adoWikiUriStr, string patEnvVar, IEnvironment env, ITimeline timeline) : this(
+            new AdoWikiUri(adoWikiUriStr), patEnvVar, env, timeline) { }
 
         // Max value supported by https://docs.microsoft.com/en-us/rest/api/azure/devops/wiki/pages%20batch/get?view=azure-devops-rest-6.1
         // Confirmed empirically as of 3/27/2021.
@@ -51,10 +51,13 @@ namespace Wikitools.AzureDevOps
                 new Range(MinPageViewsForDays, MaxPageViewsForDays), upperBoundReason: "ADO API limit");
 
             var wikiHttpClient   = WikiHttpClient(AdoWikiUri, PatEnvVar);
+            var today = new DateDay(Timeline.UtcNow);
             var wikiPagesDetails = await wikiPagesDetailsFunc(wikiHttpClient, pageViewsForDays);
             var wikiPagesStats   = wikiPagesDetails.Select(WikiPageStats.From);
             // kja current date (end day) here is tricky. It has to match the time ADO API was called. It has to be in UTC, so I need to take into account the hour.
-            return new ValidWikiPagesStats(wikiPagesStats);
+            return new ValidWikiPagesStats(wikiPagesStats, 
+                statsRangeStartDay: today.AddDays(-pageViewsForDays+1), 
+                statsRangeEndDay: today);
         }
 
         private async Task<IEnumerable<WikiPageDetail>> GetWikiPagesDetails(

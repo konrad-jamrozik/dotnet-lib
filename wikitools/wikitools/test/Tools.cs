@@ -52,7 +52,8 @@ namespace Wikitools.Tests
             IAdoWiki adoWiki = new AdoWiki(
                 cfg.AzureDevOpsCfg.AdoWikiUri,
                 cfg.AzureDevOpsCfg.AdoPatEnvVar,
-                env);
+                env,
+                timeline);
 
             var pagesViewsStats = adoWiki.PagesStats(cfg.AdoWikiPageViewsForDays);
 
@@ -71,26 +72,30 @@ namespace Wikitools.Tests
             var cfg = new Configuration(fs).Read<WikitoolsCfg>();
 
             var stats1Path = cfg.StorageDirPath + "/wiki_stats_2021_01_19_30days.json";
+            var stats1endDay = new DateDay(2021, 1, 19, DateTimeKind.Utc);
+            var stats1startDay = stats1endDay.AddDays(-29);
             var stats2Path = cfg.StorageDirPath + "/wiki_stats_2021_02_06_30days.json";
-            var stats3Path = cfg.StorageDirPath + "/wiki_stats_2021_02_19_30days.json";
-            var stats4Path = cfg.StorageDirPath + "/wiki_stats_2021_02_27_30days.json";
-            var stats5Path = cfg.StorageDirPath + "/wiki_stats_2021_03_03_30days.json";
-            var stats6Path = cfg.StorageDirPath + "/wiki_stats_2021_03_17_30days.json";
+            var stats2endDay = new DateDay(2021, 2, 6, DateTimeKind.Utc);
+            var stats2startDay = stats1endDay.AddDays(-29);
+            // var stats3Path = cfg.StorageDirPath + "/wiki_stats_2021_02_19_30days.json";
+            // var stats4Path = cfg.StorageDirPath + "/wiki_stats_2021_02_27_30days.json";
+            // var stats5Path = cfg.StorageDirPath + "/wiki_stats_2021_03_03_30days.json";
+            // var stats6Path = cfg.StorageDirPath + "/wiki_stats_2021_03_17_30days.json";
 
             await Merge(
                 fs,
                 cfg,
-                new[] { stats1Path, stats2Path, stats3Path, stats4Path, stats5Path, stats6Path });
+                new[] { (stats1Path, stats1startDay, stats1endDay), (stats2Path, stats2startDay, stats2endDay) });
         }
 
-        private static async Task Merge(IFileSystem fs, WikitoolsCfg cfg, string[] statsPaths)
+        private static async Task Merge(IFileSystem fs, WikitoolsCfg cfg, (string, DateDay, DateDay)[] statsData)
         {
             var storage      = new MonthlyJsonFilesStorage(new Dir(fs, cfg.StorageDirPath));
             var januaryDate  = new DateMonth(2021, 1);
             var februaryDate = new DateMonth(2021, 2);
             var marchDate    = new DateMonth(2021, 3);
 
-            var mergedStats = ValidWikiPagesStats.Merge(statsPaths.Select(s => DeserializeStats(fs, s)));
+            var mergedStats = ValidWikiPagesStats.Merge(statsData.Select(s => DeserializeStats(fs, s)));
 
             await storage.Write(mergedStats, januaryDate, "merged_stats.json");
 
@@ -108,9 +113,9 @@ namespace Wikitools.Tests
                 "date_2021_03_toolmerged.json");
         }
 
-        private static ValidWikiPagesStats DeserializeStats(IFileSystem fs, string stats) =>
+        private static ValidWikiPagesStats DeserializeStats(IFileSystem fs, (string stats, DateDay startDay, DateDay endDay) statsData) =>
             new(
-                fs.ReadAllText(stats)
-                    .FromJsonTo<WikiPageStats[]>());
+                fs.ReadAllText(statsData.stats)
+                    .FromJsonTo<WikiPageStats[]>(), statsData.startDay, statsData.endDay);
     }
 }
