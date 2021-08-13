@@ -41,17 +41,6 @@ namespace Wikitools.AzureDevOps
             StatsRangeEndDay = statsRangeEndDay;
         }
 
-        public ValidWikiPagesStats(ValidWikiPagesStats stats)
-        {
-            Data = stats;
-            // kja 7 do here invariant check if an of the actual data is outside of the day range
-            // See call to Wikitools.AzureDevOps.ValidWikiPagesStats.AllVisitedDaysAreInMonth
-            // in Wikitools.AzureDevOps.ValidWikiPagesStatsForMonth.CheckInvariants
-            // Once done here, delete that call
-            StatsRangeStartDay = stats.StatsRangeStartDay;
-            StatsRangeEndDay = stats.StatsRangeEndDay;
-        }
-
         public DateDay StatsRangeStartDay { get; }
         public DateDay StatsRangeEndDay { get; }
 
@@ -231,11 +220,11 @@ namespace Wikitools.AzureDevOps
                 .Select(ps => ps with { DayStats = ps.DayStats.OrderBy(ds => ds.Day).ToArray() });
 
             Contract.Assert(previousStats.StatsRangeStartDay.CompareTo(currentStats.StatsRangeStartDay) <= 0,
-                "Assert: Previous stats range starts no later than current stats range");
+                "Assert: Previous stats range should start no later than current stats range");
             Contract.Assert(previousStats.StatsRangeEndDay.CompareTo(currentStats.StatsRangeEndDay) <= 0,
-                "Assert: Previous stats range ends no later than current stats range");
+                "Assert: Previous stats range should end no later than current stats range");
             Contract.Assert(previousStats.StatsRangeEndDay.AddDays(1).CompareTo(currentStats.StatsRangeStartDay) >= 0,
-                "Assert: There is no gap in the previous stats range and current stats range");
+                "Assert: There should be no gap in the previous stats range and current stats range");
             return new ValidWikiPagesStats(merged, previousStats.StatsRangeStartDay, currentStats.StatsRangeEndDay);
         }
 
@@ -291,10 +280,9 @@ namespace Wikitools.AzureDevOps
 
         public DateMonth MonthOfAllVisitedDays()
         {
-            var firstDay = FirstDayWithAnyVisit;
-            var lastDay  = LastDayWithAnyVisit;
-            Contract.Assert(firstDay != null);
-            Contract.Assert(firstDay!.Month == lastDay!.Month);
+            var firstDay = StatsRangeStartDay;
+            var lastDay = StatsRangeEndDay;
+            Contract.Assert(firstDay.Month == lastDay.Month);
             return new DateMonth(firstDay);
         }
 

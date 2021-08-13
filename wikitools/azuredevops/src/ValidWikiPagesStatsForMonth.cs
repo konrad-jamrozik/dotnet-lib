@@ -6,7 +6,7 @@ using Wikitools.Lib.Primitives;
 namespace Wikitools.AzureDevOps
 {
     public record ValidWikiPagesStatsForMonth(IEnumerable<WikiPageStats> Stats, DateMonth Month) 
-        : ValidWikiPagesStats(CheckInvariants(Stats, Month))
+        : ValidWikiPagesStats(ValidStatsForMonth(Stats, Month))
     {
         public ValidWikiPagesStatsForMonth(ValidWikiPagesStats stats) : this(stats, stats.MonthOfAllVisitedDays())
         { }
@@ -17,7 +17,7 @@ namespace Wikitools.AzureDevOps
                     currentDate.AddDays(daysFrom),
                     currentDate.AddDays(daysTo)));
 
-        private static ValidWikiPagesStats CheckInvariants(IEnumerable<WikiPageStats> stats, DateMonth month)
+        private static ValidWikiPagesStats ValidStatsForMonth(IEnumerable<WikiPageStats> stats, DateMonth month)
         {
             var validWikiPagesStats = new ValidWikiPagesStats(stats, month.FirstDay, month.LastDay);
             Contract.Assert(validWikiPagesStats.AllVisitedDaysAreInMonth(month));

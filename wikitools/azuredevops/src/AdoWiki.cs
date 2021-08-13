@@ -54,7 +54,6 @@ namespace Wikitools.AzureDevOps
             var today = new DateDay(Timeline.UtcNow);
             var wikiPagesDetails = await wikiPagesDetailsFunc(wikiHttpClient, pageViewsForDays);
             var wikiPagesStats   = wikiPagesDetails.Select(WikiPageStats.From);
-            // kja current date (end day) here is tricky. It has to match the time ADO API was called. It has to be in UTC, so I need to take into account the hour.
             return new ValidWikiPagesStats(wikiPagesStats, 
                 statsRangeStartDay: today.AddDays(-pageViewsForDays+1), 
                 statsRangeEndDay: today);

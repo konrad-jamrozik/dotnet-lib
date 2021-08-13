@@ -47,7 +47,7 @@ namespace Wikitools.AzureDevOps.Tests
 
         public readonly bool PageRenamePresent = FooPagePathInCurrentMonth != null || BarPagePathInCurrentMonth != null;
 
-        public ValidWikiPagesStats PreviousMonthToMerge
+        public ValidWikiPagesStatsForMonth PreviousMonthToMerge
         {
             get
             {
@@ -58,7 +58,7 @@ namespace Wikitools.AzureDevOps.Tests
                                 ? new[] { _barPagePreviousMonth }
                                 : WikiPageStats.EmptyArray)
                         .ToArray();
-                return ValidWikiPagesStatsFixture.Build(pageStats);
+                return ValidWikiPagesStatsFixture.BuildForMonth(pageStats);
             }
         }
 
@@ -85,7 +85,7 @@ namespace Wikitools.AzureDevOps.Tests
             }
         }
 
-        public ValidWikiPagesStats CurrentMonthToMerge
+        public ValidWikiPagesStatsForMonth CurrentMonthToMerge
         {
             get
             {
@@ -95,7 +95,7 @@ namespace Wikitools.AzureDevOps.Tests
                         : WikiPageStats.EmptyArray)
                     .Union(new[] { _barPageCurrentMonth })
                     .ToArray();
-                return ValidWikiPagesStatsFixture.Build(pageStats);
+                return ValidWikiPagesStatsFixture.BuildForMonth(pageStats);
             }
         }
 
