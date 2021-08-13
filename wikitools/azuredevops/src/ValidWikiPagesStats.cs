@@ -35,8 +35,8 @@ namespace Wikitools.AzureDevOps
             DateDay statsRangeStartDay,
             DateDay statsRangeEndDay)
         {
-            Data = CheckInvariants(stats);
-            Contract.Assert(statsRangeStartDay.CompareTo(statsRangeEndDay) <= 0);
+            CheckInvariants(stats, statsRangeStartDay, statsRangeEndDay);
+            Data = stats as WikiPageStats[] ?? stats.ToArray();
             StatsRangeStartDay = statsRangeStartDay;
             StatsRangeEndDay = statsRangeEndDay;
         }
@@ -57,28 +57,26 @@ namespace Wikitools.AzureDevOps
 
         private IEnumerable<WikiPageStats> Data { get; }
 
-        public DateDay? FirstDayWithAnyVisit
+        public DateDay? FirstDayWithAnyVisit => FirstDayWithAnyVisitStatic(this);
+
+        private static DateDay? FirstDayWithAnyVisitStatic(IEnumerable<WikiPageStats> stats)
         {
-            get
-            {
-                var minDatePerPage = this
-                    .Where(ps => ps.DayStats.Any())
-                    .Select(ps => ps.DayStats.Min(ds => ds.Day))
-                    .ToList();
-                return minDatePerPage.Any() ? new DateDay(minDatePerPage.Min()) : null;
-            }
+            var minDatePerPage = stats
+                .Where(ps => ps.DayStats.Any())
+                .Select(ps => ps.DayStats.Min(ds => ds.Day))
+                .ToList();
+            return minDatePerPage.Any() ? new DateDay(minDatePerPage.Min()) : null;
         }
 
-        public DateDay? LastDayWithAnyVisit
+        public DateDay? LastDayWithAnyVisit => LastDayWithAnyVisitStatic(this);
+
+        private static DateDay? LastDayWithAnyVisitStatic(IEnumerable<WikiPageStats> stats)
         {
-            get
-            {
-                var maxDatePerPage = this
-                    .Where(ps => ps.DayStats.Any())
-                    .Select(ps => ps.DayStats.Max(ds => ds.Day))
-                    .ToList();
-                return maxDatePerPage.Any() ? new DateDay(maxDatePerPage.Max()) : null;
-            }
+            var maxDatePerPage = stats
+                .Where(ps => ps.DayStats.Any())
+                .Select(ps => ps.DayStats.Max(ds => ds.Day))
+                .ToList();
+            return maxDatePerPage.Any() ? new DateDay(maxDatePerPage.Max()) : null;
         }
 
         public int? VisitedDaysSpan => LastDayWithAnyVisit != null 
@@ -96,7 +94,10 @@ namespace Wikitools.AzureDevOps
             // kj2 This Merge is O(n^2) while it could be O(n).
             => stats.Aggregate((merged, next) => merged.Merge(next));
 
-        private static IEnumerable<WikiPageStats> CheckInvariants(IEnumerable<WikiPageStats> stats)
+        private static void CheckInvariants(
+            IEnumerable<WikiPageStats> stats, 
+            DateDay statsRangeStartDay,
+            DateDay statsRangeEndDay)
         {
             var statsArr = stats as WikiPageStats[] ?? stats.ToArray();
             statsArr.AssertDistinctBy(ps => ps.Id); 
@@ -121,7 +122,10 @@ namespace Wikitools.AzureDevOps
                 dayStats.Assert(ds => ds.Count >= 1); 
                 dayStats.Assert(ds => ds.Day.Kind == DateTimeKind.Utc);
             });
-            return statsArr;
+
+            Contract.Assert(statsRangeStartDay.CompareTo(statsRangeEndDay) <= 0);
+            Contract.Assert(statsRangeStartDay.CompareTo(FirstDayWithAnyVisitStatic(stats)) <= 0);
+            Contract.Assert(LastDayWithAnyVisitStatic(stats)?.CompareTo(statsRangeEndDay) <= 0);
         }
 
         public IEnumerable<ValidWikiPagesStatsForMonth> SplitByMonth(DateMonth currentMonth) 
