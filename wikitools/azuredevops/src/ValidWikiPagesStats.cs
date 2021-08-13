@@ -232,11 +232,11 @@ namespace Wikitools.AzureDevOps
 
 
             Contract.Assert(previousStats.StatsRangeStartDay.CompareTo(currentStats.StatsRangeStartDay) <= 0,
-                "Previous stats range starts no later than current stats range");
+                "Assert: Previous stats range starts no later than current stats range");
             Contract.Assert(previousStats.StatsRangeEndDay.CompareTo(currentStats.StatsRangeEndDay) <= 0,
-                "Previous stats range ends no later than current stats range");
+                "Assert: Previous stats range ends no later than current stats range");
             Contract.Assert(previousStats.StatsRangeEndDay.AddDays(1).CompareTo(currentStats.StatsRangeStartDay) >= 0,
-                "There is no gap in the previous stats range and current stats range");
+                "Assert: There is no gap in the previous stats range and current stats range");
             return new ValidWikiPagesStats(merged, previousStats.StatsRangeStartDay, currentStats.StatsRangeEndDay);
         }
 

@@ -58,10 +58,7 @@ namespace Wikitools.AzureDevOps.Tests
                                 ? new[] { _barPagePreviousMonth }
                                 : WikiPageStats.EmptyArray)
                         .ToArray();
-                return new ValidWikiPagesStats(
-                    pageStats, 
-                    ValidWikiPagesStats.FirstDayWithAnyVisitStatic(pageStats)!,
-                    ValidWikiPagesStats.LastDayWithAnyVisitStatic(pageStats)!);
+                return ValidWikiPagesStatsFixture.Build(pageStats);
             }
         }
 
@@ -72,10 +69,7 @@ namespace Wikitools.AzureDevOps.Tests
             get
             {
                 WikiPageStats[] pageStats = { _fooPagePreviousMonth, _barPagePreviousMonth };
-                return new ValidWikiPagesStats(
-                    pageStats, 
-                    ValidWikiPagesStats.FirstDayWithAnyVisitStatic(pageStats)!,
-                    ValidWikiPagesStats.LastDayWithAnyVisitStatic(pageStats)!);
+                return ValidWikiPagesStatsFixture.Build(pageStats);
             }
         }
 
@@ -138,9 +132,8 @@ namespace Wikitools.AzureDevOps.Tests
         {
             get
             {
-                WikiPageStats[] pageStats = { FooPageMerged, BarPageMerged };
                 return MergedDayStats != null
-                    ? ValidWikiPagesStatsFixture.Build(pageStats)
+                    ? ValidWikiPagesStatsFixture.Build(new[] { FooPageMerged, BarPageMerged })
                     : AllPagesStats;
             }
         }
