@@ -10,6 +10,13 @@ namespace Wikitools.AzureDevOps
         DateDay StatsRangeStartDay,
         DateDay StatsRangeEndDay) : IAdoWiki
     {
+        public SimulatedAdoWiki(ValidWikiPagesStats stats) : this(
+            stats, 
+            stats.StatsRangeStartDay,
+            stats.StatsRangeEndDay)
+        {
+        }
+
         public Task<ValidWikiPagesStats> PagesStats(int pageViewsForDays) =>
             Task.FromResult(new ValidWikiPagesStats(PagesStatsData, StatsRangeStartDay, StatsRangeEndDay));
 

@@ -47,31 +47,63 @@ namespace Wikitools.AzureDevOps.Tests
 
         public readonly bool PageRenamePresent = FooPagePathInCurrentMonth != null || BarPagePathInCurrentMonth != null;
 
-        public ValidWikiPagesStats PreviousMonthToMerge =>
-            new(new[] { _fooPagePreviousMonth }
-                .Union(
-                    !BarPageDeletedInPreviousMonth
-                        ? new[] { _barPagePreviousMonth }
-                        : WikiPageStats.EmptyArray)
-                .ToArray());
+        public ValidWikiPagesStats PreviousMonthToMerge
+        {
+            get
+            {
+                WikiPageStats[] pageStats =
+                    new[] { _fooPagePreviousMonth }
+                        .Union(
+                            !BarPageDeletedInPreviousMonth
+                                ? new[] { _barPagePreviousMonth }
+                                : WikiPageStats.EmptyArray)
+                        .ToArray();
+                return new ValidWikiPagesStats(
+                    pageStats, 
+                    ValidWikiPagesStats.FirstDayWithAnyVisitStatic(pageStats)!,
+                    ValidWikiPagesStats.LastDayWithAnyVisitStatic(pageStats)!);
+            }
+        }
 
         // This is separate from PreviousMonthToMerge due to analogous reasoning as explained
         // in comment for CurrentMonthAfterSplit.
-        public ValidWikiPagesStats PreviousMonthAfterSplit =>
-            new(new[] { _fooPagePreviousMonth, _barPagePreviousMonth });
-
-        public ValidWikiPagesStats PreviousMonthWithCurrentMonthPaths => new(new[]
+        public ValidWikiPagesStats PreviousMonthAfterSplit
         {
-            _fooPagePreviousMonthWithCurrentMonthPath,
-            _barPagePreviousMonthWithCurrentMonthPath
-        });
+            get
+            {
+                WikiPageStats[] pageStats = { _fooPagePreviousMonth, _barPagePreviousMonth };
+                return new ValidWikiPagesStats(
+                    pageStats, 
+                    ValidWikiPagesStats.FirstDayWithAnyVisitStatic(pageStats)!,
+                    ValidWikiPagesStats.LastDayWithAnyVisitStatic(pageStats)!);
+            }
+        }
 
-        public ValidWikiPagesStats CurrentMonthToMerge =>             
-            new((!FooPageDeletedInCurrentMonth 
-                    ? new[] { _fooPageCurrentMonth } 
-                    : WikiPageStats.EmptyArray)
-                .Union(new [] {_barPageCurrentMonth})
-                .ToArray());
+        public ValidWikiPagesStats PreviousMonthWithCurrentMonthPaths
+        {
+            get
+            {
+                WikiPageStats[] pageStats = {
+                    _fooPagePreviousMonthWithCurrentMonthPath,
+                    _barPagePreviousMonthWithCurrentMonthPath
+                };
+                return ValidWikiPagesStatsFixture.Build(pageStats);
+            }
+        }
+
+        public ValidWikiPagesStats CurrentMonthToMerge
+        {
+            get
+            {
+                WikiPageStats[] pageStats = 
+                    (!FooPageDeletedInCurrentMonth
+                        ? new[] { _fooPageCurrentMonth }
+                        : WikiPageStats.EmptyArray)
+                    .Union(new[] { _barPageCurrentMonth })
+                    .ToArray();
+                return ValidWikiPagesStatsFixture.Build(pageStats);
+            }
+        }
 
         // This needs to be used for asserting current month after .SplitByMonth() on AllPagesStats,
         // instead of CurrentMonthToMerge. This is because AllPagesStats does not retain information about
@@ -84,13 +116,33 @@ namespace Wikitools.AzureDevOps.Tests
         //
         // For corresponding test case and comment on it, please see
         // ValidWikiPagesStatsTestDataFixture.PageStatsPagesMissing
-        public ValidWikiPagesStats CurrentMonthAfterSplit =>
-            new(new[] { _fooPageCurrentMonth, _barPageCurrentMonth });
+        public ValidWikiPagesStats CurrentMonthAfterSplit
+        {
+            get
+            {
+                WikiPageStats[] pageStats = { _fooPageCurrentMonth, _barPageCurrentMonth };
+                return ValidWikiPagesStatsFixture.Build(pageStats);
+            }
+        }
 
-        public ValidWikiPagesStats AllPagesStats => new(new[] { _fooPage, _barPage });
+        public ValidWikiPagesStats AllPagesStats
+        {
+            get
+            {
+                WikiPageStats[] pageStats = { _fooPage, _barPage };
+                return ValidWikiPagesStatsFixture.Build(pageStats);
+            }
+        }
 
-        public ValidWikiPagesStats MergedPagesStats => MergedDayStats != null
-            ? new ValidWikiPagesStats(new[] { FooPageMerged, BarPageMerged })
-            : AllPagesStats;
+        public ValidWikiPagesStats MergedPagesStats
+        {
+            get
+            {
+                WikiPageStats[] pageStats = { FooPageMerged, BarPageMerged };
+                return MergedDayStats != null
+                    ? ValidWikiPagesStatsFixture.Build(pageStats)
+                    : AllPagesStats;
+            }
+        }
     }
 }

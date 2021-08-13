@@ -136,7 +136,7 @@ namespace Wikitools.AzureDevOps.Tests
             var decl      = new AzureDevOpsDeclare();
             var testsDecl = new AzureDevOpsTestsDeclare(decl);
             var storage   = await testsDecl.AdoWikiPagesStatsStorage(utcNow, storedStats);
-            var adoWiki   = new SimulatedAdoWiki(wikiStats ?? new ValidWikiPagesStats(WikiPageStats.EmptyArray));
+            var adoWiki   = new SimulatedAdoWiki(wikiStats ?? new ValidWikiPagesStats(WikiPageStats.EmptyArray, utcNow, utcNow));
             var wiki      = decl.AdoWikiWithStorage(adoWiki, storage);
             return wiki;
         }

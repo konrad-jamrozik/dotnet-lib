@@ -59,7 +59,7 @@ namespace Wikitools.AzureDevOps
 
         public DateDay? FirstDayWithAnyVisit => FirstDayWithAnyVisitStatic(this);
 
-        private static DateDay? FirstDayWithAnyVisitStatic(IEnumerable<WikiPageStats> stats)
+        public static DateDay? FirstDayWithAnyVisitStatic(IEnumerable<WikiPageStats> stats)
         {
             var minDatePerPage = stats
                 .Where(ps => ps.DayStats.Any())
@@ -70,7 +70,7 @@ namespace Wikitools.AzureDevOps
 
         public DateDay? LastDayWithAnyVisit => LastDayWithAnyVisitStatic(this);
 
-        private static DateDay? LastDayWithAnyVisitStatic(IEnumerable<WikiPageStats> stats)
+        public static DateDay? LastDayWithAnyVisitStatic(IEnumerable<WikiPageStats> stats)
         {
             var maxDatePerPage = stats
                 .Where(ps => ps.DayStats.Any())

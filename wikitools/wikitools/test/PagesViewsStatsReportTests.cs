@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using Wikitools.AzureDevOps;
+using Wikitools.AzureDevOps.Tests;
 using Wikitools.Lib.Markdown;
 using Wikitools.Lib.Primitives;
 using Wikitools.Lib.Data;
@@ -20,7 +21,7 @@ namespace Wikitools.Tests
 
             // Arrange simulations
             var timeline = new SimulatedTimeline();
-            var adoWiki  = new SimulatedAdoWiki(pagesStatsData);
+            var adoWiki  = new SimulatedAdoWiki(ValidWikiPagesStatsFixture.Build(pagesStatsData));
 
             // Arrange SUT declaration
             var pagesStats = adoWiki.PagesStats(pageViewsForDays);

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Wikitools.Lib.Primitives;
 
 namespace Wikitools.AzureDevOps.Tests
@@ -11,7 +12,8 @@ namespace Wikitools.AzureDevOps.Tests
             => new ValidWikiPagesStatsForMonth(PagesStats(date));
 
         public ValidWikiPagesStats PagesStats(DateDay date)
-            => new ValidWikiPagesStats(new WikiPageStats[]
+        {
+            var wikiPageStats = new WikiPageStats[]
             {
                 new("/Home", 1, new WikiPageStats.DayStat[]
                 {
@@ -48,6 +50,14 @@ namespace Wikitools.AzureDevOps.Tests
                     new(7, date.AddDays(-1)),
                     new(7, date)
                 })
-            });
+            };
+            return new ValidWikiPagesStats(wikiPageStats, date.AddDays(-5), date.AddDays(2));
+        }
+
+        public static ValidWikiPagesStats Build(IEnumerable<WikiPageStats> pageStats)
+            => new ValidWikiPagesStats(
+                pageStats,
+                ValidWikiPagesStats.FirstDayWithAnyVisitStatic(pageStats)!,
+                ValidWikiPagesStats.LastDayWithAnyVisitStatic(pageStats)!);
     }
 }
