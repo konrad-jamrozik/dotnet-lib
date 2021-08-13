@@ -36,6 +36,7 @@ namespace Wikitools.AzureDevOps
             DateDay statsRangeEndDay)
         {
             Data = CheckInvariants(stats);
+            Contract.Assert(statsRangeStartDay.CompareTo(statsRangeEndDay) <= 0);
             StatsRangeStartDay = statsRangeStartDay;
             StatsRangeEndDay = statsRangeEndDay;
         }
@@ -185,7 +186,9 @@ namespace Wikitools.AzureDevOps
         ///
         /// The merge makes following assumptions about the inputs.
         /// - The arguments obey ValidWikiPagesStats invariants, as evidenced by the argument types.
-        /// - However, the union of arguments doesn't necessarily obey these invariants.
+        /// - The previous stats range is before current stats range, i.e. it starts no later and ends no later.
+        /// - There is no gap in stats ranges, i.e. previous stats range ends no later than current stats range starts.
+        /// - The union of arguments doesn't necessarily obey ValidWikiPagesStats invariants.
         /// Specifically:
         ///   - A page with the same ID might appear twice: once in each argument.
         ///   - A page with the same ID might appear under different paths.
@@ -194,6 +197,7 @@ namespace Wikitools.AzureDevOps
         ///     can appear twice: once in each argument.
         /// 
         /// The stats returned by Merge obey the following:
+        /// - All constraints of ValidWikiPagesStats, as evidenced by the returned type.
         /// - Pages with the same ID are merged into one page.
         ///   - If the Paths were different, the Path from the currentStats is taken.
         ///     The Path from previousStats is discarded.
@@ -219,8 +223,15 @@ namespace Wikitools.AzureDevOps
             IEnumerable<WikiPageStats> merged = previousStats.UnionMerge(currentStats, ps => ps.Id, Merge);
             merged = merged.OrderBy(ps => ps.Id)
                 .Select(ps => ps with { DayStats = ps.DayStats.OrderBy(ds => ds.Day).ToArray() });
-            
-            return new ValidWikiPagesStats(merged);
+
+
+            Contract.Assert(previousStats.StatsRangeStartDay.CompareTo(currentStats.StatsRangeStartDay) <= 0,
+                "Previous stats range starts no later than current stats range");
+            Contract.Assert(previousStats.StatsRangeEndDay.CompareTo(currentStats.StatsRangeEndDay) <= 0,
+                "Previous stats range ends no later than current stats range");
+            Contract.Assert(previousStats.StatsRangeEndDay.AddDays(1).CompareTo(currentStats.StatsRangeStartDay) >= 0,
+                "There is no gap in the previous stats range and current stats range");
+            return new ValidWikiPagesStats(merged, previousStats.StatsRangeStartDay, currentStats.StatsRangeEndDay);
         }
 
         private static WikiPageStats Merge(WikiPageStats previousPageStats, WikiPageStats currentPageStats)
