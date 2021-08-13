@@ -20,10 +20,6 @@ namespace Wikitools.AzureDevOps.Tests
         [Fact] public void PageStatsBeforeYearWrap()         => Verify(Data.PageStatsBeforeYearWrap);
         [Fact] public void PageStatsPreviousMonthOnly()      => Verify(Data.PageStatsPreviousMonthOnly);
         [Fact] public void PageStats()                       => Verify(Data.PageStats);
-        [Fact] public void PageStatsSameDay()                => Verify(Data.PageStatsSameDay);
-        [Fact] public void PageStatsSamePreviousDay()        => Verify(Data.PageStatsSamePreviousDay);
-        [Fact] public void PageStatsSameDayDifferentCounts() => Verify(Data.PageStatsSameDayDifferentCounts);
-        [Fact] public void PageStatsInterleavingDayStats()   => Verify(Data.PageStatsInterleavingDayStats);
         [Fact] public void PageStatsRenamedToNewPath()       => Verify(Data.PageStatsRenamedToNewPath);
         [Fact] public void PageStatsExchangedPaths()         => Verify(Data.PageStatsExchangedPaths);
         [Fact] public void PageStatsPagesMissing()           => Verify(Data.PageStatsPagesMissing);
@@ -37,33 +33,28 @@ namespace Wikitools.AzureDevOps.Tests
 
         private static void VerifySplitByMonthInvariants(ValidWikiPagesStatsTestData data)
         {
-            if (!data.SplitPreconditionsViolated)
+            // Act - Split({foo, bar})
+            var split = VerifySplitByMonth(data);
+
+            // Act - Split(Split({prev, curr})[prev]) == prev
+            VerifySplitByMonth(split.previousMonth, data.Date, split.previousMonth, null);
+
+            // Act - Split(Split({prev, curr})[curr]) == curr
+            VerifySplitByMonth(split.currentMonth, data.Date, null, split.currentMonth);
+
+            // Act - Merge(Split({prev, curr})) == Merge(prev, curr)
+            var mergedSplit = VerifyMerge(split.previousMonth, split.currentMonth, data.MergedPagesStats);
+
+            if (!data.PageRenamePresent)
             {
-                // Act - Split({foo, bar})
-                var split = VerifySplitByMonth(data);
-
-                // Act - Split(Split({prev, curr})[prev]) == prev
-                VerifySplitByMonth(split.previousMonth, data.Date, split.previousMonth, null);
-
-                // Act - Split(Split({prev, curr})[curr]) == curr
-                VerifySplitByMonth(split.currentMonth, data.Date, null, split.currentMonth);
-
-                // Act - Merge(Split({prev, curr})) == Merge(prev, curr)
-                var mergedSplit = VerifyMerge(split.previousMonth, split.currentMonth, data.MergedPagesStats);
-
-                if (!data.PageRenamePresent)
-                {
-                    // Act - Split({Merge[prev], Merge[curr]}) == {prev', curr'}
-                    // where Merge = Merge(Split({prev, curr})) 
-                    // where prev', curr' denote page stats for the corresponding months, but also
-                    // having empty page entries for pages that were not yet existing (in case of prev month) or were
-                    // since deleted (in case of curr month), instead of these pages being completely absent from the
-                    // prev and curr data. For details why is that, please see the comment on data.CurrentMonthAfterSplit.
-                    VerifySplitByMonth(mergedSplit, data.Date, data.PreviousMonthAfterSplit, data.CurrentMonthAfterSplit);
-                }
+                // Act - Split({Merge[prev], Merge[curr]}) == {prev', curr'}
+                // where Merge = Merge(Split({prev, curr})) 
+                // where prev', curr' denote page stats for the corresponding months, but also
+                // having empty page entries for pages that were not yet existing (in case of prev month) or were
+                // since deleted (in case of curr month), instead of these pages being completely absent from the
+                // prev and curr data. For details why is that, please see the comment on data.CurrentMonthAfterSplit.
+                VerifySplitByMonth(mergedSplit, data.Date, data.PreviousMonthAfterSplit, data.CurrentMonthAfterSplit);
             }
-            else
-                VerifySplitByMonthThrows(data, typeof(InvariantException));
         }
 
         private static void VerifyMergeInvariants(ValidWikiPagesStatsTestData data)
@@ -108,9 +99,6 @@ namespace Wikitools.AzureDevOps.Tests
                 data.Date,
                 data.PreviousMonthWithCurrentMonthPaths,
                 data.CurrentMonthAfterSplit);
-
-        private static void VerifySplitByMonthThrows(
-            ValidWikiPagesStatsTestData data, Type excType) => Expect.Throws(VerifySplitByMonth, data, excType);
 
         private static ValidWikiPagesStats VerifyMerge(
             ValidWikiPagesStats target,

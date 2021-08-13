@@ -20,7 +20,6 @@ namespace Wikitools.AzureDevOps.Tests
         WikiPageStats.DayStat[] FooPageCurrentMonthDayStats,
         WikiPageStats.DayStat[] BarPagePreviousMonthDayStats,
         WikiPageStats.DayStat[] BarPageCurrentMonthDayStats,
-        bool SplitPreconditionsViolated = false,
         (WikiPageStats.DayStat[] FooPage, WikiPageStats.DayStat[] BarPage)? MergedDayStats = null,
         string? FooPagePathInCurrentMonth = null,
         string? BarPagePathInCurrentMonth = null,
@@ -99,6 +98,9 @@ namespace Wikitools.AzureDevOps.Tests
             }
         }
 
+        // This comment uses data example from test
+        // Wikitools.AzureDevOps.Tests.ValidWikiPagesStatsTestDataFixture.PageStatsPagesMissing
+        //
         // This needs to be used for asserting current month after .SplitByMonth() on AllPagesStats,
         // instead of CurrentMonthToMerge. This is because AllPagesStats does not retain information about
         // the fooPage in current month. It has no stats. This can mean both:

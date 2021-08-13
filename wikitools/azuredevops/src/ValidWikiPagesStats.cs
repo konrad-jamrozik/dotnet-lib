@@ -106,8 +106,10 @@ namespace Wikitools.AzureDevOps
                 // This condition is written out here explicitly to clarify
                 // that the length can be as low as 0.
                 Contract.Assert(dayStats.Length >= 0);
+                // For each day, there is only stats entry for it.
                 dayStats.AssertDistinctBy(ds => ds.Day);
                 dayStats.AssertOrderedBy(ds => ds.Day);
+                // Given page stats needs to have stats entry for at least one day.
                 dayStats.Assert(ds => ds.Count >= 1); 
                 dayStats.Assert(ds => ds.Day.Kind == DateTimeKind.Utc);
             });

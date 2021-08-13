@@ -39,45 +39,6 @@ namespace Wikitools.AzureDevOps.Tests
                 new WikiPageStats.DayStat[] { new(1122, DecemberDate.AddMonths(-1)) },
                 new WikiPageStats.DayStat[] { new(1223, DecemberDate.AddDays(1)) });
 
-        public static ValidWikiPagesStatsTestData PageStatsSameDay =>
-            new(FebruaryDate,
-                new WikiPageStats.DayStat[] { },
-                new WikiPageStats.DayStat[] { },
-                new WikiPageStats.DayStat[] { new(215, FebruaryDate) },
-                new WikiPageStats.DayStat[] { new(215, FebruaryDate) },
-                SplitPreconditionsViolated: true,
-                MergedDayStats:
-                (
-                    new WikiPageStats.DayStat[] { },
-                    new WikiPageStats.DayStat[] { new(215, FebruaryDate) }
-                ));
-
-        public static ValidWikiPagesStatsTestData PageStatsSamePreviousDay =>
-            new(FebruaryDate,
-                new WikiPageStats.DayStat[] { },
-                new WikiPageStats.DayStat[] { },
-                new WikiPageStats.DayStat[] { new(800, JanuaryDate) },
-                new WikiPageStats.DayStat[] { new(800, JanuaryDate) },
-                MergedDayStats:
-                ( 
-                    new WikiPageStats.DayStat[] { }, 
-                    new WikiPageStats.DayStat[] { new(800, JanuaryDate)}
-                ),
-                SplitPreconditionsViolated: true);
-
-        public static ValidWikiPagesStatsTestData PageStatsSameDayDifferentCounts =>
-            new(FebruaryDate,
-                new WikiPageStats.DayStat[] { },
-                new WikiPageStats.DayStat[] { },
-                new WikiPageStats.DayStat[] { new(800, FebruaryDate) },
-                new WikiPageStats.DayStat[] { new(900, FebruaryDate) },
-                MergedDayStats:
-                ( 
-                    new WikiPageStats.DayStat[] {}, 
-                    new WikiPageStats.DayStat[] { new(900, FebruaryDate) }
-                ),
-                SplitPreconditionsViolated: true);
-
         public static ValidWikiPagesStatsTestData PageStatsRenamedToNewPath =>
             new(FebruaryDate,
                 new WikiPageStats.DayStat[] { new(103, JanuaryDate) },
@@ -105,7 +66,7 @@ namespace Wikitools.AzureDevOps.Tests
         /// from Wikitools.AzureDevOps.AdoWikiApi.GetAllWikiPagesDetails,
         /// even if there were day view stats for it in the queried days.
         /// - and had a given Bar page created in current month,
-        /// but not yet present in previous month.
+        /// but not having been present in previous month.
         ///
         /// The expected behavior is as follows:
         /// - when merging data for previous and current month, retain the day view
@@ -113,7 +74,7 @@ namespace Wikitools.AzureDevOps.Tests
         /// the view stats for that page in current month.
         /// - as a consequence, when calling .SplitByMonth() merged data, always show the pages
         /// with empty day view stats, even if they didn't exist because they were deleted
-        /// or didn't exist yet. .SplitByMonth() is unable to determine if pages
+        /// or weren't yet created. .SplitByMonth() is unable to determine if pages
         /// were nonexistent or just with no views, as merging doesn't retain this information.
         /// For details, please see comment on:
         /// ValidWikiPagesStatsTestData.CurrentMonthAfterSplit
@@ -173,51 +134,5 @@ namespace Wikitools.AzureDevOps.Tests
                     barDaysCurrentMonth);
             }
         }
-
-        public static ValidWikiPagesStatsTestData PageStatsInterleavingDayStats =>
-            new(FebruaryDate,
-                FooPagePreviousMonthDayStats: new WikiPageStats.DayStat[]
-                {
-                    new(108, JanuaryDate.AddDays(5)),
-                    new(218, FebruaryDate.AddDays(3))
-                },
-                FooPageCurrentMonthDayStats: new WikiPageStats.DayStat[]
-                {
-                    new(104, JanuaryDate.AddDays(1)),
-                    new(108, JanuaryDate.AddDays(5)),
-                    new(110, JanuaryDate.AddDays(7))
-                },
-                BarPagePreviousMonthDayStats: new WikiPageStats.DayStat[]
-                {
-                    new(103, JanuaryDate),
-                    new(215, FebruaryDate), 
-                    new(216, FebruaryDate.AddDays(1)),
-                },
-                BarPageCurrentMonthDayStats: new WikiPageStats.DayStat[]
-                {
-                    new(213, FebruaryDate.AddDays(-2)), 
-                    new(216, FebruaryDate.AddDays(1)), 
-                    new(217, FebruaryDate.AddDays(2))
-                },
-                MergedDayStats:
-                ( 
-                    new WikiPageStats.DayStat[]
-                    {
-                        new(104, JanuaryDate.AddDays(1)),
-                        new(108, JanuaryDate.AddDays(5)),
-                        new(110, JanuaryDate.AddDays(7)),
-                        new(218, FebruaryDate.AddDays(3)),
-                        
-                    }, 
-                    new WikiPageStats.DayStat[]
-                    {
-                        new(103, JanuaryDate),
-                        new(213, FebruaryDate.AddDays(-2)), 
-                        new(215, FebruaryDate), 
-                        new(216, FebruaryDate.AddDays(1)), 
-                        new(217, FebruaryDate.AddDays(2))
-                    }
-                ),
-                SplitPreconditionsViolated: true);
     }
 }
