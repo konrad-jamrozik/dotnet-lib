@@ -124,8 +124,10 @@ namespace Wikitools.AzureDevOps
             });
 
             Contract.Assert(statsRangeStartDay.CompareTo(statsRangeEndDay) <= 0);
-            Contract.Assert(statsRangeStartDay.CompareTo(FirstDayWithAnyVisitStatic(stats)) <= 0);
-            Contract.Assert(LastDayWithAnyVisitStatic(stats)?.CompareTo(statsRangeEndDay) <= 0);
+            var firstDayWithAnyVisit = FirstDayWithAnyVisitStatic(stats);
+            Contract.Assert(firstDayWithAnyVisit == null || statsRangeStartDay.CompareTo(firstDayWithAnyVisit) <= 0);
+            var lastDayWithAnyVisit = LastDayWithAnyVisitStatic(stats);
+            Contract.Assert(lastDayWithAnyVisit == null || lastDayWithAnyVisit.CompareTo(statsRangeEndDay) <= 0);
         }
 
         public IEnumerable<ValidWikiPagesStatsForMonth> SplitByMonth(DateMonth currentMonth) 

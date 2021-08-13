@@ -5,8 +5,9 @@ namespace Wikitools.AzureDevOps.Tests
 {
     public class ValidWikiPagesStatsFixture
     {
-        public ValidWikiPagesStats PagesStats() =>
-            PagesStats(new DateDay(new SimulatedTimeline().UtcNow));
+        public ValidWikiPagesStats PagesStats() => PagesStats(Today);
+
+        private static DateDay Today => new DateDay(new SimulatedTimeline().UtcNow);
 
         public ValidWikiPagesStatsForMonth PagesStatsForMonth(DateDay date) 
             => new ValidWikiPagesStatsForMonth(PagesStats(date));
@@ -57,7 +58,7 @@ namespace Wikitools.AzureDevOps.Tests
         public static ValidWikiPagesStats Build(IEnumerable<WikiPageStats> pageStats)
             => new ValidWikiPagesStats(
                 pageStats,
-                ValidWikiPagesStats.FirstDayWithAnyVisitStatic(pageStats)!,
-                ValidWikiPagesStats.LastDayWithAnyVisitStatic(pageStats)!);
+                ValidWikiPagesStats.FirstDayWithAnyVisitStatic(pageStats) ?? Today,
+                ValidWikiPagesStats.LastDayWithAnyVisitStatic(pageStats) ?? Today);
     }
 }
