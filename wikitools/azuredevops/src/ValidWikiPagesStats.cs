@@ -230,7 +230,6 @@ namespace Wikitools.AzureDevOps
             merged = merged.OrderBy(ps => ps.Id)
                 .Select(ps => ps with { DayStats = ps.DayStats.OrderBy(ds => ds.Day).ToArray() });
 
-
             Contract.Assert(previousStats.StatsRangeStartDay.CompareTo(currentStats.StatsRangeStartDay) <= 0,
                 "Assert: Previous stats range starts no later than current stats range");
             Contract.Assert(previousStats.StatsRangeEndDay.CompareTo(currentStats.StatsRangeEndDay) <= 0,

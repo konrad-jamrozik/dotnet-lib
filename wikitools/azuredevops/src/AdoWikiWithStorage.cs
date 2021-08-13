@@ -26,7 +26,7 @@ namespace Wikitools.AzureDevOps
                     var endDay = new DateDay(Storage.CurrentDate);
                     var startDay = endDay.AddDays(-dayRange + 1);
                     return new ValidWikiPagesStats(
-                        s.PagesStats(pageViewsForDays).Where(page => page.Id == pageId),
+                        s.PagesStats(dayRange).Where(page => page.Id == pageId),
                         startDay, 
                         endDay);
                 });

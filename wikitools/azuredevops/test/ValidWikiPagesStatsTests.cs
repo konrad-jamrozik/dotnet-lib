@@ -14,6 +14,9 @@ namespace Wikitools.AzureDevOps.Tests
         // @formatter:off
         [Fact] public void PageStatsEmpty()                  => Verify(Data.PageStatsEmpty);
         [Fact] public void PageStatsYearWrap()               => Verify(Data.PageStatsYearWrap);
+        // kja this and other unit test fail because Wikitools.AzureDevOps.Tests.ValidWikiPagesStatsFixture.Build 
+        // defaults to day range of Today, so the "gap" assertion fails.
+        // Some other tests fail other other assertions around s<s' and e<e'.
         [Fact] public void PageStatsBeforeYearWrap()         => Verify(Data.PageStatsBeforeYearWrap);
         [Fact] public void PageStatsPreviousMonthOnly()      => Verify(Data.PageStatsPreviousMonthOnly);
         [Fact] public void PageStats()                       => Verify(Data.PageStats);
