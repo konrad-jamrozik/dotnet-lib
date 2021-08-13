@@ -64,16 +64,16 @@ namespace Wikitools.AzureDevOps.Tests
 
         // This is separate from PreviousMonthToMerge due to analogous reasoning as explained
         // in comment for CurrentMonthAfterSplit.
-        public ValidWikiPagesStats PreviousMonthAfterSplit
+        public ValidWikiPagesStatsForMonth PreviousMonthAfterSplit
         {
             get
             {
                 WikiPageStats[] pageStats = { _fooPagePreviousMonth, _barPagePreviousMonth };
-                return ValidWikiPagesStatsFixture.Build(pageStats);
+                return ValidWikiPagesStatsFixture.BuildForMonth(pageStats);
             }
         }
 
-        public ValidWikiPagesStats PreviousMonthWithCurrentMonthPaths
+        public ValidWikiPagesStatsForMonth PreviousMonthWithCurrentMonthPaths
         {
             get
             {
@@ -81,7 +81,7 @@ namespace Wikitools.AzureDevOps.Tests
                     _fooPagePreviousMonthWithCurrentMonthPath,
                     _barPagePreviousMonthWithCurrentMonthPath
                 };
-                return ValidWikiPagesStatsFixture.Build(pageStats);
+                return ValidWikiPagesStatsFixture.BuildForMonth(pageStats);
             }
         }
 
@@ -110,12 +110,12 @@ namespace Wikitools.AzureDevOps.Tests
         //
         // For corresponding test case and comment on it, please see
         // ValidWikiPagesStatsTestDataFixture.PageStatsPagesMissing
-        public ValidWikiPagesStats CurrentMonthAfterSplit
+        public ValidWikiPagesStatsForMonth CurrentMonthAfterSplit
         {
             get
             {
                 WikiPageStats[] pageStats = { _fooPageCurrentMonth, _barPageCurrentMonth };
-                return ValidWikiPagesStatsFixture.Build(pageStats);
+                return ValidWikiPagesStatsFixture.BuildForMonth(pageStats);
             }
         }
 
