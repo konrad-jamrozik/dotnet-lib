@@ -1,8 +1,6 @@
 using System;
 using System.Linq;
-using Wikitools.Lib.Contracts;
 using Wikitools.Lib.Primitives;
-using Wikitools.Lib.Tests;
 using Wikitools.Lib.Tests.Json;
 using Xunit;
 using Data = Wikitools.AzureDevOps.Tests.ValidWikiPagesStatsTestDataFixture;
@@ -14,9 +12,6 @@ namespace Wikitools.AzureDevOps.Tests
         // @formatter:off
         [Fact] public void PageStatsEmpty()                  => Verify(Data.PageStatsEmpty);
         [Fact] public void PageStatsYearWrap()               => Verify(Data.PageStatsYearWrap);
-        // kja this and other unit test fail because Wikitools.AzureDevOps.Tests.ValidWikiPagesStatsFixture.Build 
-        // defaults to day range of Today, so the "gap" assertion fails.
-        // Some other tests fail other other assertions around s<s' and e<e'.
         [Fact] public void PageStatsBeforeYearWrap()         => Verify(Data.PageStatsBeforeYearWrap);
         [Fact] public void PageStatsPreviousMonthOnly()      => Verify(Data.PageStatsPreviousMonthOnly);
         [Fact] public void PageStats()                       => Verify(Data.PageStats);
@@ -34,7 +29,11 @@ namespace Wikitools.AzureDevOps.Tests
         private static void VerifySplitByMonthInvariants(ValidWikiPagesStatsTestData data)
         {
             // Act - Split({foo, bar})
-            var split = VerifySplitByMonth(data);
+            var split = VerifySplitByMonth(
+                data.AllPagesStats,
+                data.Date,
+                data.PreviousMonthWithCurrentMonthPaths,
+                data.CurrentMonthAfterSplit);
 
             // Act - Split(Split({prev, curr})[prev]) == prev
             VerifySplitByMonth(split.previousMonth, data.Date, split.previousMonth, null);
@@ -91,14 +90,6 @@ namespace Wikitools.AzureDevOps.Tests
                     Assert.DoesNotContain(actual, ps => ps.DayStats.Any());
             }
         }
-
-        private static (ValidWikiPagesStats previousMonth, ValidWikiPagesStats currentMonth) VerifySplitByMonth(
-                ValidWikiPagesStatsTestData data) =>
-            VerifySplitByMonth(
-                data.AllPagesStats,
-                data.Date,
-                data.PreviousMonthWithCurrentMonthPaths,
-                data.CurrentMonthAfterSplit);
 
         private static ValidWikiPagesStats VerifyMerge(
             ValidWikiPagesStats target,

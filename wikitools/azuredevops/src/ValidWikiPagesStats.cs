@@ -84,40 +84,40 @@ namespace Wikitools.AzureDevOps
             => stats.Aggregate((merged, next) => merged.Merge(next));
 
         private static void CheckInvariants(
-            IEnumerable<WikiPageStats> stats, 
+            IEnumerable<WikiPageStats> pagesStats, 
             DateDay statsRangeStartDay,
             DateDay statsRangeEndDay)
         {
-            var statsArr = stats as WikiPageStats[] ?? stats.ToArray();
-            statsArr.AssertDistinctBy(ps => ps.Id); 
+            var pagesStatsArray = pagesStats as WikiPageStats[] ?? pagesStats.ToArray();
+            pagesStatsArray.AssertDistinctBy(ps => ps.Id); 
             // Pages are expected to generally have unique paths, except the special case of when
             // a page was deleted and then new page was created with the same path.
             // In such case two pages with different IDs will have the same path.
-            // kj2 test for this; write a test that would fail if statsArr.AssertDistinctBy(ps => ps.Path); would be present.
-            Contract.Assert(statsArr.DistinctBy(ps => ps.Path).Count() <= statsArr.Length);
-            statsArr.AssertOrderedBy(ps => ps.Id);
+            // kj2 test for this; write a test that would fail if pagesStatsArray.AssertDistinctBy(ps => ps.Path); would be present.
+            Contract.Assert(pagesStatsArray.DistinctBy(ps => ps.Path).Count() <= pagesStatsArray.Length);
+            pagesStatsArray.AssertOrderedBy(ps => ps.Id);
 
             // kj2 move these invariants to WikiPageStats itself.
             // Don't forget to update comment on that class!
-            statsArr.ForEach(ps =>
+            pagesStatsArray.ForEach(ps =>
             {
                 var (_, _, dayStats) = ps;
                 // ReSharper disable once ConditionIsAlwaysTrueOrFalse
                 // This condition is written out here explicitly to clarify
                 // that the length can be as low as 0.
                 Contract.Assert(dayStats.Length >= 0);
-                // For each day, there is only stats entry for it.
+                // For each day, there is only one stats entry for it.
                 dayStats.AssertDistinctBy(ds => ds.Day);
                 dayStats.AssertOrderedBy(ds => ds.Day);
-                // Given page stats needs to have stats entry for at least one day.
+                // Given day has to be visited at least once.
                 dayStats.Assert(ds => ds.Count >= 1); 
                 dayStats.Assert(ds => ds.Day.Kind == DateTimeKind.Utc);
             });
 
             Contract.Assert(statsRangeStartDay.CompareTo(statsRangeEndDay) <= 0);
-            var firstDayWithAnyVisit = FirstDayWithAnyVisitStatic(stats);
+            var firstDayWithAnyVisit = FirstDayWithAnyVisitStatic(pagesStats);
             Contract.Assert(firstDayWithAnyVisit == null || statsRangeStartDay.CompareTo(firstDayWithAnyVisit) <= 0);
-            var lastDayWithAnyVisit = LastDayWithAnyVisitStatic(stats);
+            var lastDayWithAnyVisit = LastDayWithAnyVisitStatic(pagesStats);
             Contract.Assert(lastDayWithAnyVisit == null || lastDayWithAnyVisit.CompareTo(statsRangeEndDay) <= 0);
         }
 
