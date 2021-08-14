@@ -16,6 +16,7 @@ namespace Wikitools.Lib.Primitives
 
         public static implicit operator DateTime(DateMonth dateDay) => dateDay._dateTime;
 
+        // kja 6.3 make it use DateMonth as input instead of immediately converting it.
         public static DateMonth[] Range(DateDay startDay, DateDay endDay)
         {
             DateMonth iteratedMonth = startDay.AsDateMonth();

@@ -121,7 +121,10 @@ namespace Wikitools.AzureDevOps
             Contract.Assert(lastDayWithAnyVisit == null || lastDayWithAnyVisit.CompareTo(statsRangeEndDay) <= 0);
         }
 
-        public IEnumerable<ValidWikiPagesStatsForMonth> SplitByMonth(DateMonth currentMonth) 
+        public IEnumerable<ValidWikiPagesStatsForMonth> SplitByMonth(DateMonth currentMonth)
+            => SplitByMonth(this, currentMonth);
+
+        private static IEnumerable<ValidWikiPagesStatsForMonth> SplitByMonth(ValidWikiPagesStats stats, DateMonth currentMonth) 
         {
             // kja 6 to implement and test
             //
@@ -148,10 +151,16 @@ namespace Wikitools.AzureDevOps
             // kja 6.2 What about first month? Can we deduce it? Is it a problem if not?
             // Devise some tests for it.
             // This assignment will throw NPE if the stats have no visits!
-            DateDay startDate = FirstDayWithAnyVisit!;
+            DateDay startDay = stats.StatsRangeStartDay;
+            DateDay endDay = new DateDay(currentMonth);
 
-            return DateMonth.Range(startDate, new DateDay(currentMonth))
-                .Select(month => new ValidWikiPagesStatsForMonth(Trim(month)));
+            var splitMonths = DateMonth.Range(startDay, endDay)
+                .Select(month => new ValidWikiPagesStatsForMonth(stats.Trim(month))).ToList();
+            
+            Contract.Assert(splitMonths.First().StatsRangeStartDay == stats.StatsRangeStartDay);
+            Contract.Assert(splitMonths.Last().StatsRangeEndDay == stats.StatsRangeEndDay);
+
+            return splitMonths;
         }
 
         public (ValidWikiPagesStatsForMonth previousMonthStats, ValidWikiPagesStatsForMonth currentMonthStats)
@@ -159,23 +168,25 @@ namespace Wikitools.AzureDevOps
 
         private static (ValidWikiPagesStatsForMonth previousMonthStats, ValidWikiPagesStatsForMonth currentMonthStats)
             SplitIntoTwoMonths(
-                ValidWikiPagesStats pagesStats,
+                ValidWikiPagesStats stats,
                 DateMonth currentMonth)
         {
             Contract.Assert(
-                pagesStats.TrimUntil(currentMonth.PreviousMonth.PreviousMonth).VisitedDaysSpan == null,
+                stats.TrimUntil(currentMonth.PreviousMonth.PreviousMonth).VisitedDaysSpan == null,
                 "The split stats have visits from before a month ago, which would be lost. " +
                 $"I.e. from before month {currentMonth.PreviousMonth}.");
             Contract.Assert(
-                pagesStats.TrimFrom(currentMonth.NextMonth).VisitedDaysSpan == null,
+                stats.TrimFrom(currentMonth.NextMonth).VisitedDaysSpan == null,
                 "The split stats have visits from after current month, which would be lost. " +
                 $"I.e. from after month {currentMonth}.");
-            return (
-                new ValidWikiPagesStatsForMonth(
-                    pagesStats.Trim(currentMonth.PreviousMonth),
-                    currentMonth.PreviousMonth),
-                new ValidWikiPagesStatsForMonth(pagesStats.Trim(currentMonth), currentMonth)
-            );
+
+            var splitMonths = stats.SplitByMonth(currentMonth).ToArray();
+
+            Contract.Assert(splitMonths.Length == 2);
+            Contract.Assert(splitMonths[0].Month == currentMonth.PreviousMonth);
+            Contract.Assert(splitMonths[1].Month == currentMonth);
+
+            return (splitMonths[0], splitMonths[1]);
         }
 
         public ValidWikiPagesStats Merge(ValidWikiPagesStats validCurrentStats) => Merge(this, validCurrentStats);

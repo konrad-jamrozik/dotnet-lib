@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using Wikitools.Lib.Primitives;
 
 namespace Wikitools.AzureDevOps.Tests
 {
@@ -126,7 +127,7 @@ namespace Wikitools.AzureDevOps.Tests
             get
             {
                 WikiPageStats[] pageStats = { _fooPage, _barPage };
-                return ValidWikiPagesStatsFixture.Build(pageStats);
+                return ValidWikiPagesStatsFixture.Build(pageStats, new DateDay(Date));
             }
         }
 
