@@ -9,8 +9,6 @@ namespace Wikitools.AzureDevOps
 {
     public record AdoWikiPagesStatsStorage(MonthlyJsonFilesStorage Storage, DateTime CurrentDate)
     {
-        private DateMonth CurrentMonth => new(CurrentDate);
-
         public Task<AdoWikiPagesStatsStorage> Update(IAdoWiki wiki, int pageViewsForDays) 
             => Update(pageViewsForDays, wiki.PagesStats);
 
@@ -25,8 +23,9 @@ namespace Wikitools.AzureDevOps
         {
             var pagesStats = await wikiPagesStatsFunc(pageViewsForDays);
 
-            var (previousMonthStats, currentMonthStats) = pagesStats.SplitIntoTwoMonths(CurrentMonth);
-            await MergeIntoStoredMonthStats(previousMonthStats);
+            var (previousMonthStats, currentMonthStats) = pagesStats.SplitIntoTwoMonths();
+            if (previousMonthStats != null)
+                await MergeIntoStoredMonthStats(previousMonthStats);
             await MergeIntoStoredMonthStats(currentMonthStats);
 
             return this;
@@ -47,7 +46,7 @@ namespace Wikitools.AzureDevOps
                 return await OverwriteWith(statsForMonth);
             }
 
-            IEnumerable<ValidWikiPagesStatsForMonth> statsByMonth = stats.SplitByMonth(CurrentMonth);
+            IEnumerable<ValidWikiPagesStatsForMonth> statsByMonth = stats.SplitByMonth();
 
             var writeTasks = statsByMonth
                 .Select(async statsForMonth
@@ -61,11 +60,9 @@ namespace Wikitools.AzureDevOps
 
         public async Task<AdoWikiPagesStatsStorage> OverwriteWithTwoMonths(ValidWikiPagesStats stats)
         {
-            // kja 7 this currently fails for int tests because SplitIntoTwoMonths assumes that stats are for full months only.
-            // But the input is stats for 1 day only.
-            // Same for main Program execution.
-            var (previousMonthStats, currentMonthStats) = stats.SplitIntoTwoMonths(CurrentMonth);
-            await Storage.With<IEnumerable<WikiPageStats>>(previousMonthStats.Month, _ => previousMonthStats);
+            var (previousMonthStats, currentMonthStats) = stats.SplitIntoTwoMonths();
+            if (previousMonthStats != null) 
+                await Storage.With<IEnumerable<WikiPageStats>>(previousMonthStats.Month, _ => previousMonthStats);
             await Storage.With<IEnumerable<WikiPageStats>>(currentMonthStats.Month, _ => currentMonthStats);
             return this;
         }
