@@ -141,7 +141,9 @@ namespace Wikitools.AzureDevOps
             // If it wouldn't then we won't correctly handle situation in which current month
             // has no visits whatsoever. There is no way to conclude from the stats there is 
             // "extra empty month after the last month having any visits".
+            // - answer: now forced by ctor
             // Also, if there are stats with no page visits at all, what would be the current month?
+            // - answer: it has to be provided as input, always
             
             // kja 6.2 What about first month? Can we deduce it? Is it a problem if not?
             // Devise some tests for it.
