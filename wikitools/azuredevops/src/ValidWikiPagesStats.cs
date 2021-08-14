@@ -122,7 +122,11 @@ namespace Wikitools.AzureDevOps
         }
 
         public IEnumerable<ValidWikiPagesStatsForMonth> SplitByMonth(DateMonth currentMonth)
-            => SplitByMonth(this, currentMonth);
+        {
+            var splitMonths = SplitByMonth(this, currentMonth);
+            Contract.Assert(splitMonths.Last().StatsRangeEndDay == currentMonth.LastDay);
+            return splitMonths;
+        }
 
         private static IEnumerable<ValidWikiPagesStatsForMonth> SplitByMonth(ValidWikiPagesStats stats, DateMonth currentMonth) 
         {
@@ -152,13 +156,13 @@ namespace Wikitools.AzureDevOps
             // Devise some tests for it.
             // This assignment will throw NPE if the stats have no visits!
             DateDay startDay = stats.StatsRangeStartDay;
-            DateDay endDay = new DateDay(currentMonth);
+            DateDay endDay = currentMonth.LastDay ?? stats.StatsRangeEndDay;
 
             var splitMonths = DateMonth.Range(startDay, endDay)
                 .Select(month => new ValidWikiPagesStatsForMonth(stats.Trim(month))).ToList();
             
-            Contract.Assert(splitMonths.First().StatsRangeStartDay == stats.StatsRangeStartDay);
-            Contract.Assert(splitMonths.Last().StatsRangeEndDay == stats.StatsRangeEndDay);
+            Contract.Assert(splitMonths.First().StatsRangeStartDay == startDay);
+            Contract.Assert(splitMonths.Last().StatsRangeEndDay == endDay);
 
             return splitMonths;
         }
@@ -182,11 +186,15 @@ namespace Wikitools.AzureDevOps
 
             var splitMonths = stats.SplitByMonth(currentMonth).ToArray();
 
-            Contract.Assert(splitMonths.Length == 2);
-            Contract.Assert(splitMonths[0].Month == currentMonth.PreviousMonth);
-            Contract.Assert(splitMonths[1].Month == currentMonth);
+            Contract.Assert(Enumerable.Range(1,2).Contains(splitMonths.Length));
+            Contract.Assert(splitMonths.First().Month == (splitMonths.Length == 2 ? currentMonth.PreviousMonth : currentMonth));
+            Contract.Assert(splitMonths.Last().Month == currentMonth);
 
-            return (splitMonths[0], splitMonths[1]);
+            var previousMonthStats = splitMonths.Length == 2
+                ? splitMonths.First()
+                : new ValidWikiPagesStatsForMonth(WikiPageStats.EmptyArray, currentMonth.PreviousMonth);
+
+            return (previousMonthStats, splitMonths.Last());
         }
 
         public ValidWikiPagesStats Merge(ValidWikiPagesStats validCurrentStats) => Merge(this, validCurrentStats);

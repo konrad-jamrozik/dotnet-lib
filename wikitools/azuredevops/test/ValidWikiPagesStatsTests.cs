@@ -70,12 +70,12 @@ namespace Wikitools.AzureDevOps.Tests
 
         private static (ValidWikiPagesStats previousMonth, ValidWikiPagesStats currentMonth) VerifySplitByMonth(
             ValidWikiPagesStats target,
-            DateTime date,
+            DateTime currentDate,
             ValidWikiPagesStats? previousMonthExpectation,
             ValidWikiPagesStats? currentMonthExpectation)
         {
             // Act
-            var (previousMonth, currentMonth) = target.SplitIntoTwoMonths(new DateMonth(date));
+            var (previousMonth, currentMonth) = target.SplitIntoTwoMonths(new DateMonth(currentDate));
             
             AssertMonth(previousMonthExpectation, previousMonth);
             AssertMonth(currentMonthExpectation,  currentMonth);
