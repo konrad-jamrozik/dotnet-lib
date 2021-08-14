@@ -52,7 +52,9 @@ namespace Wikitools.AzureDevOps.Tests
                     new(7, date)
                 })
             };
-            return new ValidWikiPagesStats(wikiPageStats, date.AddDays(-5), date.AddDays(2));
+            var statsRangeStartDay = date.AsDateMonth().FirstDay;
+            var statsRangeEndDay = date.AsDateMonth().LastDay;
+            return new ValidWikiPagesStats(wikiPageStats, statsRangeStartDay, statsRangeEndDay);
         }
 
         public static ValidWikiPagesStats Build(IEnumerable<WikiPageStats> pageStats, DateDay? currentDay = null)

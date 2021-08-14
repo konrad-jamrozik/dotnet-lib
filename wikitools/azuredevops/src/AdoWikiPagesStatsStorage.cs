@@ -61,6 +61,9 @@ namespace Wikitools.AzureDevOps
 
         public async Task<AdoWikiPagesStatsStorage> OverwriteWithTwoMonths(ValidWikiPagesStats stats)
         {
+            // kja 7 this currently fails for int tests because SplitIntoTwoMonths assumes that stats are for full months only.
+            // But the input is stats for 1 day only.
+            // Same for main Program execution.
             var (previousMonthStats, currentMonthStats) = stats.SplitIntoTwoMonths(CurrentMonth);
             await Storage.With<IEnumerable<WikiPageStats>>(previousMonthStats.Month, _ => previousMonthStats);
             await Storage.With<IEnumerable<WikiPageStats>>(currentMonthStats.Month, _ => currentMonthStats);

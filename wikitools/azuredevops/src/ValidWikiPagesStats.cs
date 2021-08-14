@@ -156,7 +156,7 @@ namespace Wikitools.AzureDevOps
             // Devise some tests for it.
             // This assignment will throw NPE if the stats have no visits!
             DateDay startDay = stats.StatsRangeStartDay;
-            DateDay endDay = currentMonth.LastDay ?? stats.StatsRangeEndDay;
+            DateDay endDay = currentMonth.LastDay;
 
             var splitMonths = DateMonth.Range(startDay, endDay)
                 .Select(month => new ValidWikiPagesStatsForMonth(stats.Trim(month))).ToList();
