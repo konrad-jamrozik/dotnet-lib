@@ -127,7 +127,7 @@ namespace Wikitools.AzureDevOps.Tests
             get
             {
                 WikiPageStats[] pageStats = { _fooPage, _barPage };
-                return ValidWikiPagesStatsFixture.Build(pageStats, new DateDay(Date));
+                return ValidWikiPagesStatsFixture.Build(pageStats, currentDay: new DateDay(Date));
             }
         }
 

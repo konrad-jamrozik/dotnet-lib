@@ -36,12 +36,20 @@ namespace Wikitools.AzureDevOps.Tests
                 data.CurrentMonthAfterSplit);
 
             // Act - Split(Split({prev, curr})[curr]) == curr
-            VerifySplitByMonth(split.currentMonth, data.Date, null, split.currentMonth);
+            VerifySplitByMonth(
+                target: split.currentMonth,
+                data.Date,
+                previousMonthExpectation: null,
+                currentMonthExpectation: split.currentMonth);
 
             if (split.previousMonth != null)
             {
                 // Act - Split(Split({prev, curr})[prev]) == prev
-                VerifySplitByMonth(split.previousMonth, data.Date, split.previousMonth, null);
+                VerifySplitByMonth(
+                    target: split.previousMonth, 
+                    data.Date, 
+                    previousMonthExpectation: null, 
+                    currentMonthExpectation: split.previousMonth);
 
                 // Act - Merge(Split({prev, curr})) == Merge(prev, curr)
                 var mergedSplit = VerifyMerge(split.previousMonth, split.currentMonth, data.MergedPagesStats);

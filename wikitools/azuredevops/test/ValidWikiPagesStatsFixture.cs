@@ -57,12 +57,12 @@ namespace Wikitools.AzureDevOps.Tests
 
         public static ValidWikiPagesStats Build(IEnumerable<WikiPageStats> pageStats, DateDay? currentDay = null)
             => new ValidWikiPagesStats(
-                pageStats,
-                ValidWikiPagesStats.FirstDayWithAnyVisitStatic(pageStats) 
-                ?? Today,
-                currentDay 
-                ?? ValidWikiPagesStats.LastDayWithAnyVisitStatic(pageStats) 
-                ?? Today);
+                stats: pageStats,
+                statsRangeStartDay: ValidWikiPagesStats.FirstDayWithAnyVisitStatic(pageStats) 
+                                    ?? Today,
+                statsRangeEndDay: currentDay 
+                                  ?? ValidWikiPagesStats.LastDayWithAnyVisitStatic(pageStats) 
+                                  ?? Today);
 
         public static ValidWikiPagesStatsForMonth BuildForMonth(IEnumerable<WikiPageStats> pageStats)
             => new ValidWikiPagesStatsForMonth(Build(pageStats));
