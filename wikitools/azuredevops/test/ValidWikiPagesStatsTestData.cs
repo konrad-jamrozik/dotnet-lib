@@ -58,7 +58,20 @@ namespace Wikitools.AzureDevOps.Tests
                                 ? new[] { _barPagePreviousMonth }
                                 : WikiPageStats.EmptyArray)
                         .ToArray();
-                return ValidWikiPagesStatsFixture.BuildForMonth(pageStats);
+
+                var stats = ValidWikiPagesStatsFixture.BuildForMonth(pageStats);
+                if (stats.AnyDayVisitsPresent)
+                {
+                    // Extend the day span to last day of month to avoid violating constraint
+                    // forbidding having day span gap when
+                    // merging this (PreviousMonthToMerge) month with month CurrentMonthToMerge.
+                    var statsWithSpanExtendedToMonthEnd = new ValidWikiPagesStatsForMonth(
+                        new ValidWikiPagesStats(stats, stats.StatsRangeStartDay,
+                            stats.Month.LastDay));
+                    return statsWithSpanExtendedToMonthEnd;
+                }
+                else
+                    return stats;
             }
         }
 
@@ -73,6 +86,11 @@ namespace Wikitools.AzureDevOps.Tests
             }
         }
 
+        // This is used for asserting resulting previous month from splitting AllPagesStats.
+        // To understand why consider a situation in which Foo page path has changed
+        // between previous and current month. In AllPagesStats Foo page will show
+        // with the new path. Hence splitting it will show the new path in previous and current month,
+        // even though previous-month-only stats like _fooPagePreviousMonth would show previous path.
         public ValidWikiPagesStatsForMonth PreviousMonthWithCurrentMonthPaths
         {
             get
@@ -95,7 +113,21 @@ namespace Wikitools.AzureDevOps.Tests
                         : WikiPageStats.EmptyArray)
                     .Union(new[] { _barPageCurrentMonth })
                     .ToArray();
-                return ValidWikiPagesStatsFixture.BuildForMonth(pageStats);
+
+                var stats = ValidWikiPagesStatsFixture.BuildForMonth(pageStats);
+
+                if (stats.AnyDayVisitsPresent)
+                {
+                    // Extend the day span to last day of month to avoid violating constraint
+                    // forbidding having day span gap when
+                    // merging PreviousMonthToMerge month with this month (CurrentMonthToMerge).
+                    var statsWithSpanExtendedToMonthStart = new ValidWikiPagesStatsForMonth(
+                        new ValidWikiPagesStats(stats, stats.Month.FirstDay,
+                            stats.StatsRangeEndDay));
+                    return statsWithSpanExtendedToMonthStart;
+                }
+                else
+                    return stats;
             }
         }
 
@@ -103,13 +135,15 @@ namespace Wikitools.AzureDevOps.Tests
         // Wikitools.AzureDevOps.Tests.ValidWikiPagesStatsTestDataFixture.PageStatsPagesMissing
         //
         // This needs to be used for asserting current month after .SplitByMonth() on AllPagesStats,
-        // instead of CurrentMonthToMerge. This is because AllPagesStats does not retain information about
-        // the fooPage in current month. It has no stats. This can mean both:
+        // instead of CurrentMonthToMerge, which keeps entry for a page that has no days, as opposed to this property.
+        // The need to use this property is because the splitting of AllPagesStats does not retain information about
+        // the existence fooPage in current month if it has no stats. Having no stats can mean both:
         // "page exists but had no views this month"
         // and "page no longer exists"
         // thus the expectation here is that .SplitByMonth will retain the page entry with no day
-        // view stats, even if the page was deleted. It is assumed post-processing of the data
-        // will remove any deleted pages, if need be.
+        // view stats, even if the page was deleted.
+        // It is assumed that client code is responsible for post-processing of the data
+        // to remove any deleted pages, if need be.
         //
         // For corresponding test case and comment on it, please see
         // ValidWikiPagesStatsTestDataFixture.PageStatsPagesMissing

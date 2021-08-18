@@ -30,10 +30,10 @@ namespace Wikitools.AzureDevOps.Tests
         {
             // Act - Split({foo, bar})
             var split = VerifySplitByMonth(
-                data.AllPagesStats,
-                data.Date,
-                data.PreviousMonthWithCurrentMonthPaths,
-                data.CurrentMonthAfterSplit);
+                target: data.AllPagesStats,
+                currentDate: data.Date,
+                previousMonthExpectation: data.PreviousMonthWithCurrentMonthPaths,
+                currentMonthExpectation: data.CurrentMonthAfterSplit);
 
             // Act - Split(Split({prev, curr})[curr]) == curr
             VerifySplitByMonth(
@@ -99,9 +99,7 @@ namespace Wikitools.AzureDevOps.Tests
             void AssertMonth(ValidWikiPagesStats? expectation, ValidWikiPagesStats? actual)
             {
                 if (expectation != null)
-                {
                     new JsonDiffAssertion(expectation, actual!).Assert();
-                }
                 else
                     Assert.Null(actual);
             }

@@ -64,7 +64,9 @@ namespace Wikitools.AzureDevOps.Tests
                                   ?? currentDay 
                                   ?? Today);
 
-        public static ValidWikiPagesStatsForMonth BuildForMonth(IEnumerable<WikiPageStats> pageStats)
-            => new ValidWikiPagesStatsForMonth(Build(pageStats));
+        public static ValidWikiPagesStatsForMonth BuildForMonth(
+            IEnumerable<WikiPageStats> pageStats,
+            DateDay? dayRangeEnd = null)
+            => new ValidWikiPagesStatsForMonth(Build(pageStats, dayRangeEnd));
     }
 }

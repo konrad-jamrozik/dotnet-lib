@@ -46,6 +46,8 @@ namespace Wikitools.AzureDevOps
 
         private IEnumerable<WikiPageStats> Data { get; }
 
+        public bool AnyDayVisitsPresent => FirstDayWithAnyVisit != null;
+
         public DateDay? FirstDayWithAnyVisit => FirstDayWithAnyVisitStatic(this);
 
         public static DateDay? FirstDayWithAnyVisitStatic(IEnumerable<WikiPageStats> stats)
