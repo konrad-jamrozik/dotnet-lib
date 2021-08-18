@@ -5,23 +5,34 @@ using Wikitools.Lib.Primitives;
 
 namespace Wikitools.AzureDevOps
 {
-    public record ValidWikiPagesStatsForMonth(IEnumerable<WikiPageStats> Stats, DateMonth Month) 
-        : ValidWikiPagesStats(ValidStatsForMonth(Stats, Month))
+    public record ValidWikiPagesStatsForMonth(ValidWikiPagesStats Stats) 
+        : ValidWikiPagesStats(ValidStatsForMonth(Stats))
     {
-        public ValidWikiPagesStatsForMonth(ValidWikiPagesStats stats) : this(stats, stats.MonthOfAllVisitedDays())
-        { }
 
-        public new ValidWikiPagesStatsForMonth Trim(DateTime currentDate, int daysFrom, int daysTo) =>
-            new(
+        public ValidWikiPagesStatsForMonth(IEnumerable<WikiPageStats> stats, DateMonth month) 
+            // kj2 I need to introduce some type like DaySpan, which is a pair of (DateDay start, DateDay end)
+            // use it here (instead of passing the two days separately do month.DaySpan)
+            // in many places including computations that do things like "-pageViewsForDays+1".
+            // In fact, pageViewsForDays should be of that type itself.
+            // kj2 also: rename existing DayRange to DaySpan.
+            : this(new ValidWikiPagesStats(stats, month.FirstDay, month.LastDay)) { }
+
+        public new ValidWikiPagesStatsForMonth Trim(DateTime currentDate, int daysFrom, int daysTo)
+            => new ValidWikiPagesStatsForMonth(
                 Trim(
                     currentDate.AddDays(daysFrom),
                     currentDate.AddDays(daysTo)));
 
-        private static ValidWikiPagesStats ValidStatsForMonth(IEnumerable<WikiPageStats> stats, DateMonth month)
+        public DateMonth Month => Stats.StatsRangeStartDay.AsDateMonth();
+
+        public bool DaySpanIsForEntireMonth
+            => Stats.StatsRangeStartDay == Month.FirstDay
+               && Stats.StatsRangeEndDay == Month.LastDay;
+
+        private static ValidWikiPagesStats ValidStatsForMonth(ValidWikiPagesStats stats)
         {
-            var validWikiPagesStats = new ValidWikiPagesStats(stats, month.FirstDay, month.LastDay);
-            Contract.Assert(validWikiPagesStats.AllVisitedDaysAreInMonth(month));
-            return validWikiPagesStats;
+            Contract.Assert(stats.StatsRangeIsWithinOneMonth());
+            return stats;
         }
     }
 }

@@ -115,10 +115,13 @@ namespace Wikitools.AzureDevOps
             });
 
             Contract.Assert(statsRangeStartDay.CompareTo(statsRangeEndDay) <= 0);
-            var firstDayWithAnyVisit = FirstDayWithAnyVisitStatic(pagesStats);
-            Contract.Assert(firstDayWithAnyVisit == null || statsRangeStartDay.CompareTo(firstDayWithAnyVisit) <= 0);
-            var lastDayWithAnyVisit = LastDayWithAnyVisitStatic(pagesStats);
-            Contract.Assert(lastDayWithAnyVisit == null || lastDayWithAnyVisit.CompareTo(statsRangeEndDay) <= 0);
+            var firstDayWithAnyVisit = FirstDayWithAnyVisitStatic(pagesStatsArray);
+            var lastDayWithAnyVisit = LastDayWithAnyVisitStatic(pagesStatsArray);
+
+            // @formatter:off
+            Contract.Assert(firstDayWithAnyVisit == null || statsRangeStartDay .CompareTo(firstDayWithAnyVisit) <= 0);
+            Contract.Assert(lastDayWithAnyVisit  == null || lastDayWithAnyVisit.CompareTo(statsRangeEndDay    ) <= 0);
+            // @formatter:on
         }
 
         public IEnumerable<ValidWikiPagesStatsForMonth> SplitByMonth() => SplitByMonth(this);
@@ -156,11 +159,28 @@ namespace Wikitools.AzureDevOps
 
             Contract.Assert(startDay.CompareTo(endDay) <= 0);
 
-            // kja this needs fixing. Currently, stats for month always assume full month in day range.
-            // But going forward this should change for the first and last month. They may be partial month.
+            // kja 7 this needs fixing. Currently, stats for month always assume full month in day range.
+            // But going forward this should change for the first and last month. They may be partial months.
             // Introduce a property like statsForMonth.DayRangeSpansEntireMonth
-            var splitMonths = DateMonth.Range(startDay, endDay)
+            List<ValidWikiPagesStatsForMonth> splitMonths = DateMonth.Range(startDay, endDay)
                 .Select(month => new ValidWikiPagesStatsForMonth(stats.Trim(month))).ToList();
+
+            var processedSplitMonths = new List<ValidWikiPagesStatsForMonth>();
+            var splitMonths2 = DateMonth.Range(startDay, endDay);
+            if (splitMonths2.Length == 1)
+            {
+                processedSplitMonths.Add(new ValidWikiPagesStatsForMonth(stats.Trim(startDay, endDay)));
+            }
+            else
+            {
+                processedSplitMonths.Add(new ValidWikiPagesStatsForMonth(stats.Trim(startDay, splitMonths2.First().LastDay)));
+                var fullInternalMonths = splitMonths2.Skip(1).SkipLast(1).ToList();
+                var processedInternalMonths = fullInternalMonths.Select(month => new ValidWikiPagesStatsForMonth(stats.Trim(month))).ToList();
+                processedSplitMonths.AddRange(processedInternalMonths);
+                processedSplitMonths.Add(new ValidWikiPagesStatsForMonth(stats.Trim(splitMonths2.Last().FirstDay, endDay)));
+            }
+
+            splitMonths = processedSplitMonths;
             
             Contract.Assert(splitMonths.First().StatsRangeStartDay == startDay);
             Contract.Assert(splitMonths.Last().StatsRangeEndDay == endDay);
@@ -287,10 +307,11 @@ namespace Wikitools.AzureDevOps
             currentDate.AddDays(daysFrom),
             currentDate.AddDays(daysTo));
 
-        public ValidWikiPagesStats Trim(DateTime startDate, DateTime endDate) => Trim(
-            this,
-            new DateDay(startDate),
-            new DateDay(endDate));
+        public ValidWikiPagesStats Trim(DateTime startDate, DateTime endDate) 
+            => Trim(
+                this,
+                new DateDay(startDate),
+                new DateDay(endDate));
 
         private static ValidWikiPagesStats Trim(ValidWikiPagesStats stats, DateDay startDay, DateDay endDay) =>
             new ValidWikiPagesStats(stats.Select(ps =>
@@ -305,17 +326,7 @@ namespace Wikitools.AzureDevOps
             return new DateMonth(firstDay);
         }
 
-        // kja 6.4 some (all?) invocations of it should probably b replaced with DayRangeIsWithinOneMonth
-        public bool AllVisitedDaysAreInMonth(DateMonth month)
-        {
-            var firstDay = FirstDayWithAnyVisit;
-            var lastDay = LastDayWithAnyVisit;
-            return (firstDay?.Month == lastDay?.Month) && (firstDay == null || month.Equals(firstDay));
-        }
-
-        public bool StatsRangeIsWithinOneMonth()
-        {
-            return StatsRangeStartDay.AsDateMonth() == StatsRangeEndDay.AsDateMonth();
-        }
+        public bool StatsRangeIsWithinOneMonth() 
+            => StatsRangeStartDay.AsDateMonth() == StatsRangeEndDay.AsDateMonth();
     }
 }

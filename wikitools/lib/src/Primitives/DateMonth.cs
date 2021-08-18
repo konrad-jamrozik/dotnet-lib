@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
+using Wikitools.Lib.Contracts;
 
 namespace Wikitools.Lib.Primitives
 {
@@ -19,6 +21,7 @@ namespace Wikitools.Lib.Primitives
         // kja 6.3 make it use DateMonth as input instead of immediately converting it.
         public static DateMonth[] Range(DateDay startDay, DateDay endDay)
         {
+            Contract.Assert(startDay.CompareTo(endDay) <= 0);
             DateMonth iteratedMonth = startDay.AsDateMonth();
             var output = new List<DateMonth>();
             while (iteratedMonth.CompareTo(endDay) <= 0)
@@ -26,6 +29,7 @@ namespace Wikitools.Lib.Primitives
                 output.Add(iteratedMonth);
                 iteratedMonth = iteratedMonth.NextMonth;
             }
+            Contract.Assert(output.Any());
             return output.ToArray();
         }
 
