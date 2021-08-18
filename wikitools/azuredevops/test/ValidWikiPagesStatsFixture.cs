@@ -60,8 +60,8 @@ namespace Wikitools.AzureDevOps.Tests
                 stats: pageStats,
                 statsRangeStartDay: ValidWikiPagesStats.FirstDayWithAnyVisitStatic(pageStats) 
                                     ?? Today,
-                statsRangeEndDay: currentDay 
-                                  ?? ValidWikiPagesStats.LastDayWithAnyVisitStatic(pageStats) 
+                statsRangeEndDay: ValidWikiPagesStats.LastDayWithAnyVisitStatic(pageStats) 
+                                  ?? currentDay 
                                   ?? Today);
 
         public static ValidWikiPagesStatsForMonth BuildForMonth(IEnumerable<WikiPageStats> pageStats)
