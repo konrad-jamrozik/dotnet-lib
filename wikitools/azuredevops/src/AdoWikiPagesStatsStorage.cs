@@ -35,7 +35,15 @@ namespace Wikitools.AzureDevOps
             await Storage.With<IEnumerable<WikiPageStats>>(stats.Month,
                 storedStats =>
                 {
+                    
                     var validStoredStats = new ValidWikiPagesStatsForMonth(storedStats, stats.Month);
+                    // kja DataInWiki test fails on merge here. This is because the "stats" may come from a few days in the middle of
+                    // the month, but the validStoredStats are read from a file that represents entire month. Hence month
+                    // end may be later than current (stats) day span end, violating the merge day spans constraints.
+                    // Note this problem occurs because when we save the data to the file system, we lose the actual day span end.
+                    // We do not persist it. Then when reading we assume it was entire month. In reality, if we would persist it,
+                    // the stored day span end would be no later than "today", same as stats day span end, and the problem would
+                    // thus not occur.
                     return new ValidWikiPagesStatsForMonth(validStoredStats.Merge(stats), stats.Month);
                 });
 
