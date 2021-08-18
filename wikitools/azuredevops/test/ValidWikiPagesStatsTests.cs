@@ -32,8 +32,14 @@ namespace Wikitools.AzureDevOps.Tests
             var split = VerifySplitByMonth(
                 target: data.AllPagesStats,
                 currentDate: data.Date,
-                previousMonthExpectation: data.PreviousMonthWithCurrentMonthPaths,
-                currentMonthExpectation: data.CurrentMonthAfterSplit);
+                previousMonthExpectation: 
+                    data.AllPagesStats.StatsRangeIsWithinOneMonth() 
+                        ? null 
+                        : data.PreviousMonthWithCurrentMonthPaths,
+                currentMonthExpectation: 
+                    data.AllPagesStats.StatsRangeIsWithinOneMonth() 
+                        ? data.PreviousMonthWithCurrentMonthPaths 
+                        : data.CurrentMonthAfterSplit);
 
             // Act - Split(Split({prev, curr})[curr]) == curr
             VerifySplitByMonth(

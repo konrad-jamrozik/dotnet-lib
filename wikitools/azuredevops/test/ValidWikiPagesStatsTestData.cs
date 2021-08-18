@@ -126,8 +126,23 @@ namespace Wikitools.AzureDevOps.Tests
                             stats.StatsRangeEndDay));
                     return statsWithSpanExtendedToMonthStart;
                 }
-                else
-                    return stats;
+                else 
+                {
+                    if (PreviousMonthToMerge.AnyDayVisitsPresent)
+                    {
+                        // This case is required to make test
+                        // Wikitools.AzureDevOps.Tests.ValidWikiPagesStatsTests.PageStatsPreviousMonthOnly
+                        // pass when exercising Merge.
+                        // Without this, the current month would have day span of one day of new SimulatedTimeline().UtcNow
+                        // and that most likely violate the invariant day span rules present in previous month.
+                        var statsSpanDay = PreviousMonthToMerge.StatsRangeEndDay.AddDays(1);
+                        return new ValidWikiPagesStatsForMonth(new ValidWikiPagesStats(WikiPageStats.EmptyArray,
+                            statsSpanDay, statsSpanDay));
+                    }
+                    else
+                        return stats;    
+                    
+                }
             }
         }
 
