@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using Wikitools.Lib.Primitives;
 using Wikitools.Lib.Tests.Json;
@@ -31,7 +30,6 @@ namespace Wikitools.AzureDevOps.Tests
             // Act - Split({foo, bar})
             var split = VerifySplitByMonth(
                 target: data.AllPagesStats,
-                currentDate: data.Date,
                 previousMonthExpectation: 
                     data.AllPagesStats.StatsRangeIsWithinOneMonth() 
                         ? null 
@@ -44,7 +42,6 @@ namespace Wikitools.AzureDevOps.Tests
             // Act - Split(Split({prev, curr})[curr]) == curr
             VerifySplitByMonth(
                 target: split.currentMonth,
-                data.Date,
                 previousMonthExpectation: null,
                 currentMonthExpectation: split.currentMonth);
 
@@ -53,7 +50,6 @@ namespace Wikitools.AzureDevOps.Tests
                 // Act - Split(Split({prev, curr})[prev]) == prev
                 VerifySplitByMonth(
                     target: split.previousMonth, 
-                    data.Date, 
                     previousMonthExpectation: null, 
                     currentMonthExpectation: split.previousMonth);
 
@@ -68,7 +64,7 @@ namespace Wikitools.AzureDevOps.Tests
                     // having empty page entries for pages that were not yet existing (in case of prev month) or were
                     // since deleted (in case of curr month), instead of these pages being completely absent from the
                     // prev and curr data. For details why is that, please see the comment on data.CurrentMonthAfterSplit.
-                    VerifySplitByMonth(mergedSplit, data.Date, data.PreviousMonthAfterSplit,
+                    VerifySplitByMonth(mergedSplit, data.PreviousMonthAfterSplit,
                         data.CurrentMonthAfterSplit);
                 }
             }
@@ -88,12 +84,9 @@ namespace Wikitools.AzureDevOps.Tests
 
         private static (ValidWikiPagesStats? previousMonth, ValidWikiPagesStats currentMonth) VerifySplitByMonth(
             ValidWikiPagesStats target,
-            DateTime currentDate,
             ValidWikiPagesStats? previousMonthExpectation,
             ValidWikiPagesStats? currentMonthExpectation)
         {
-            // kja this might need fixing as I removed new DateMonth(currentDate) as param to split
-            // Now I also have unused param.
             // Act
             var (previousMonth, currentMonth) = target.SplitIntoTwoMonths();
             
