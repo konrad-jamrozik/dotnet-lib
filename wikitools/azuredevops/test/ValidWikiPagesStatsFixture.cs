@@ -9,10 +9,21 @@ namespace Wikitools.AzureDevOps.Tests
 
         private static DateDay Today => new DateDay(new SimulatedTimeline().UtcNow);
 
-        public ValidWikiPagesStatsForMonth PagesStatsForMonth(DateDay date) 
-            => new ValidWikiPagesStatsForMonth(PagesStats(date));
+        public ValidWikiPagesStatsForMonth PagesStatsForMonth(
+            DateDay date,
+            bool? expandDaySpanToMonthStart = false,
+            bool? expandDaySpanToMonthEnd = false)
+        {
+            var stats = new ValidWikiPagesStatsForMonth(PagesStats(date));
+            stats = new ValidWikiPagesStatsForMonth(
+                stats,
+                expandDaySpanToMonthStart ?? false ? stats.Month.FirstDay : stats.StatsRangeStartDay,
+                expandDaySpanToMonthEnd ?? false ? stats.Month.LastDay : stats.StatsRangeEndDay);
+            return stats;
+        }
 
-        public ValidWikiPagesStats PagesStats(DateDay date)
+        public ValidWikiPagesStats PagesStats(
+            DateDay date)
         {
             var wikiPageStats = new WikiPageStats[]
             {
@@ -52,10 +63,13 @@ namespace Wikitools.AzureDevOps.Tests
                     new(7, date)
                 })
             };
-            return Build(wikiPageStats);
+            return Build(
+                wikiPageStats);
         }
 
-        public static ValidWikiPagesStats Build(IEnumerable<WikiPageStats> pageStats, DateDay? currentDay = null)
+        public static ValidWikiPagesStats Build(
+            IEnumerable<WikiPageStats> pageStats,
+            DateDay? currentDay = null)
             => new ValidWikiPagesStats(
                 stats: pageStats,
                 statsRangeStartDay: ValidWikiPagesStats.FirstDayWithAnyVisitStatic(pageStats) 
@@ -65,8 +79,7 @@ namespace Wikitools.AzureDevOps.Tests
                                   ?? Today);
 
         public static ValidWikiPagesStatsForMonth BuildForMonth(
-            IEnumerable<WikiPageStats> pageStats,
-            DateDay? dayRangeEnd = null)
-            => new ValidWikiPagesStatsForMonth(Build(pageStats, dayRangeEnd));
+            IEnumerable<WikiPageStats> pageStats)
+            => new ValidWikiPagesStatsForMonth(Build(pageStats));
     }
 }

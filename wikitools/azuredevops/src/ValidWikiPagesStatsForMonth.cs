@@ -8,6 +8,8 @@ namespace Wikitools.AzureDevOps
     public record ValidWikiPagesStatsForMonth(ValidWikiPagesStats Stats) 
         : ValidWikiPagesStats(ValidStatsForMonth(Stats))
     {
+        public ValidWikiPagesStatsForMonth(IEnumerable<WikiPageStats> stats, DateDay startDay, DateDay endDay)
+            : this(new ValidWikiPagesStats(stats, startDay, endDay)) { }
 
         public ValidWikiPagesStatsForMonth(IEnumerable<WikiPageStats> stats, DateMonth month) 
             // kj2 I need to introduce some type like DaySpan, which is a pair of (DateDay start, DateDay end)
@@ -25,6 +27,7 @@ namespace Wikitools.AzureDevOps
 
         public DateMonth Month => Stats.StatsRangeStartDay.AsDateMonth();
 
+        // kja why is this unused? Should be used when splitting by month
         public bool DaySpanIsForEntireMonth
             => Stats.StatsRangeStartDay == Month.FirstDay
                && Stats.StatsRangeEndDay == Month.LastDay;

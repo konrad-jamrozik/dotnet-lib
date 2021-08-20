@@ -183,6 +183,8 @@ namespace Wikitools.AzureDevOps
             }
 
             splitMonths = processedSplitMonths;
+
+            // kja here there should be check that all "internal" months are full.
             
             Contract.Assert(splitMonths.First().StatsRangeStartDay == startDay);
             Contract.Assert(splitMonths.Last().StatsRangeEndDay == endDay);
