@@ -43,6 +43,7 @@ namespace Wikitools.AzureDevOps
             StatsRangeEndDay = statsRangeEndDay;
         }
 
+        // kja 6.1 rename Range to Span. Like: StatsDaySpanStart and StatsDaySpanEnd
         public DateDay StatsRangeStartDay { get; }
         public DateDay StatsRangeEndDay { get; }
 

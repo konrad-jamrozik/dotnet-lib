@@ -18,18 +18,34 @@ namespace Wikitools.Lib.Primitives
 
         public static implicit operator DateTime(DateMonth dateDay) => dateDay._dateTime;
 
-        // kja 6.3 make it use DateMonth as input instead of immediately converting it.
         public static DateMonth[] Range(DateDay startDay, DateDay endDay)
         {
             Contract.Assert(startDay.CompareTo(endDay) <= 0);
             DateMonth iteratedMonth = startDay.AsDateMonth();
             var output = new List<DateMonth>();
+            // kj2 to get rid of this while I need something like "AggregateWhile"
+            // on a lazy stream of (month, month.NextMonth, month.NextMonth.NextMonth)  
+            // Something like:
+            // startDay.AsDateMonth().AggregateWhile(
+            //   nextFunc: month => month.NextMonth
+            //   predicate: month.CompareTo(endDay) <= 0
+            //   func: (months, month) => months.Add(month)
+            // );
+            // 
+            // Maybe alternatively I could make DateMonth implement IEnumerable<DateMonth>.
+            // The implementation would use "yield return this.NextMonth" and would go
+            // ad infinitum. Then I could instead use:
+            // startDay.AsDateMonth().AggregateWhile(
+            //   predicate: month.CompareTo(endDay) <= 0
+            //   func: (months, month) => months.Add(month)
+            // );
             while (iteratedMonth.CompareTo(endDay) <= 0)
             {
                 output.Add(iteratedMonth);
                 iteratedMonth = iteratedMonth.NextMonth;
             }
             Contract.Assert(output.Any());
+
             return output.ToArray();
         }
 
