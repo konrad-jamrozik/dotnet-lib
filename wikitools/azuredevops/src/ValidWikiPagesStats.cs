@@ -164,25 +164,25 @@ namespace Wikitools.AzureDevOps
             // kja 7 this needs fixing. Currently, stats for month always assume full month in day range.
             // But going forward this should change for the first and last month. They may be partial months.
             // Introduce a property like statsForMonth.DayRangeSpansEntireMonth
-            List<ValidWikiPagesStatsForMonth> splitMonths = DateMonth.Range(startDay, endDay)
-                .Select(month => new ValidWikiPagesStatsForMonth(stats.Trim(month))).ToList();
 
-            var processedSplitMonths = new List<ValidWikiPagesStatsForMonth>();
-            var splitMonths2 = DateMonth.Range(startDay, endDay);
-            if (splitMonths2.Length == 1)
+            var monthsRange = DateMonth.Range(startDay, endDay);
+            var processedSplitMonths2 = new List<ValidWikiPagesStatsForMonth>();
+            if (monthsRange.Length == 1)
             {
-                processedSplitMonths.Add(new ValidWikiPagesStatsForMonth(stats.Trim(startDay, endDay)));
+                processedSplitMonths2.Add(new ValidWikiPagesStatsForMonth(stats.Trim(startDay, endDay)));
             }
             else
             {
-                processedSplitMonths.Add(new ValidWikiPagesStatsForMonth(stats.Trim(startDay, splitMonths2.First().LastDay)));
-                var fullInternalMonths = splitMonths2.Skip(1).SkipLast(1).ToList();
-                var processedInternalMonths = fullInternalMonths.Select(month => new ValidWikiPagesStatsForMonth(stats.Trim(month))).ToList();
-                processedSplitMonths.AddRange(processedInternalMonths);
-                processedSplitMonths.Add(new ValidWikiPagesStatsForMonth(stats.Trim(splitMonths2.Last().FirstDay, endDay)));
+                var firstMonthStats = new ValidWikiPagesStatsForMonth(stats.Trim(startDay, monthsRange.First().LastDay));
+                var lastMonthStats = new ValidWikiPagesStatsForMonth(stats.Trim(monthsRange.Last().FirstDay, endDay));
+                
+                var middleMonths = monthsRange.Skip(1).SkipLast(1).ToList();
+                var middleMonthsStats = middleMonths.Select(month => new ValidWikiPagesStatsForMonth(stats.Trim(month))).ToList();
+
+                processedSplitMonths2 = firstMonthStats.AsList().Concat(middleMonthsStats).Append(lastMonthStats).ToList();
             }
 
-            splitMonths = processedSplitMonths;
+            List<ValidWikiPagesStatsForMonth> splitMonths = processedSplitMonths2;
 
             // kja here there should be check that all "internal" months are full.
             
