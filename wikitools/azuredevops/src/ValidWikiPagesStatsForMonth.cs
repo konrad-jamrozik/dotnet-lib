@@ -27,7 +27,6 @@ namespace Wikitools.AzureDevOps
 
         public DateMonth Month => Stats.StatsRangeStartDay.AsDateMonth();
 
-        // kja why is this unused? Should be used when splitting by month
         public bool DaySpanIsForEntireMonth
             => Stats.StatsRangeStartDay == Month.FirstDay
                && Stats.StatsRangeEndDay == Month.LastDay;

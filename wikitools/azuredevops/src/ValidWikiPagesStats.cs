@@ -144,52 +144,40 @@ namespace Wikitools.AzureDevOps
             // but just with additional month checks for 2 months (these checks are there
             // to confirm data coming from wiki is indeed only from max 2 months).
             
-            // kja 6.1 Also: ensure I have a test showing current month *has* to be passed.
-            // If it wouldn't then we won't correctly handle situation in which current month
-            // has no visits whatsoever. There is no way to conclude from the stats there is 
-            // "extra empty month after the last month having any visits".
-            // - answer: now forced by ctor
-            // Also, if there are stats with no page visits at all, what would be the current month?
-            // - answer: it has to be provided as input, always
-            
-
-            // kja 6.2 What about first month? Can we deduce it? Is it a problem if not?
-            // Devise some tests for it.
-            // This assignment will throw NPE if the stats have no visits!
             DateDay startDay = stats.StatsRangeStartDay;
             DateDay endDay = stats.StatsRangeEndDay;
 
             Contract.Assert(startDay.CompareTo(endDay) <= 0);
 
-            // kja 7 this needs fixing. Currently, stats for month always assume full month in day range.
-            // But going forward this should change for the first and last month. They may be partial months.
-            // Introduce a property like statsForMonth.DayRangeSpansEntireMonth
-
             var monthsRange = DateMonth.Range(startDay, endDay);
-            var processedSplitMonths2 = new List<ValidWikiPagesStatsForMonth>();
-            if (monthsRange.Length == 1)
-            {
-                processedSplitMonths2.Add(new ValidWikiPagesStatsForMonth(stats.Trim(startDay, endDay)));
-            }
-            else
-            {
-                var firstMonthStats = new ValidWikiPagesStatsForMonth(stats.Trim(startDay, monthsRange.First().LastDay));
-                var lastMonthStats = new ValidWikiPagesStatsForMonth(stats.Trim(monthsRange.Last().FirstDay, endDay));
-                
-                var middleMonths = monthsRange.Skip(1).SkipLast(1).ToList();
-                var middleMonthsStats = middleMonths.Select(month => new ValidWikiPagesStatsForMonth(stats.Trim(month))).ToList();
-
-                processedSplitMonths2 = firstMonthStats.AsList().Concat(middleMonthsStats).Append(lastMonthStats).ToList();
-            }
-
-            List<ValidWikiPagesStatsForMonth> splitMonths = processedSplitMonths2;
-
-            // kja here there should be check that all "internal" months are full.
+            List<ValidWikiPagesStatsForMonth> monthsStats =
+                monthsRange.Length == 1
+                    ? new List<ValidWikiPagesStatsForMonth> { new(stats.Trim(startDay, endDay)) }
+                    : BuildMonthsStats(stats, monthsRange, startDay, endDay);
             
-            Contract.Assert(splitMonths.First().StatsRangeStartDay == startDay);
-            Contract.Assert(splitMonths.Last().StatsRangeEndDay == endDay);
+            Contract.Assert(monthsStats.First().StatsRangeStartDay == startDay);
+            Contract.Assert(monthsStats.Last().StatsRangeEndDay == endDay);
+            Contract.Assert(
+                monthsStats.Count == 1 ||
+                monthsStats.Skip(1).SkipLast(1).All(monthStats => monthStats.DaySpanIsForEntireMonth));
 
-            return splitMonths;
+            return monthsStats;
+        }
+
+        private static List<ValidWikiPagesStatsForMonth> BuildMonthsStats(
+            ValidWikiPagesStats stats,
+            DateMonth[] monthsRange,
+            DateDay startDay,
+            DateDay endDay)
+        {
+            var firstMonthStats = new ValidWikiPagesStatsForMonth(stats.Trim(startDay, monthsRange.First().LastDay));
+            var lastMonthStats = new ValidWikiPagesStatsForMonth(stats.Trim(monthsRange.Last().FirstDay, endDay));
+            var middleMonths = monthsRange.Skip(1).SkipLast(1).ToList();
+            var middleMonthsStats = middleMonths
+                .Select(month => new ValidWikiPagesStatsForMonth(stats.Trim(month)))
+                .ToList();
+            var monthsStats = firstMonthStats.AsList().Concat(middleMonthsStats).Append(lastMonthStats).ToList();
+            return monthsStats;
         }
 
         public (ValidWikiPagesStatsForMonth? previousMonthStats, ValidWikiPagesStatsForMonth currentMonthStats)
