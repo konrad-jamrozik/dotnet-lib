@@ -312,14 +312,6 @@ namespace Wikitools.AzureDevOps
                     ps with { DayStats = ps.DayStats.Where(s => s.Day >= startDay && s.Day <= endDay).ToArray() })
                 .ToArray(), startDay, endDay);
 
-        public DateMonth MonthOfAllVisitedDays()
-        {
-            var firstDay = StatsRangeStartDay;
-            var lastDay = StatsRangeEndDay;
-            Contract.Assert(firstDay.Month == lastDay.Month);
-            return new DateMonth(firstDay);
-        }
-
         public bool StatsRangeIsWithinOneMonth() 
             => StatsRangeStartDay.AsDateMonth() == StatsRangeEndDay.AsDateMonth();
     }
