@@ -11,7 +11,7 @@ namespace Wikitools.AzureDevOps
     /// Represents a collection of ADO wiki page stats, originally returned by "Page Stats - Get" [1]
     /// [1] https://docs.microsoft.com/en-us/rest/api/azure/devops/wiki/page%20stats/get?view=azure-devops-rest-6.0
     ///
-    /// Assumed invariants about the underlying ADO API behavior, confirmed by manual tests:
+    /// Assumed invariants about the underlying ADO API behavior, confirmed by manual tests, are as follows:
     /// - Everything evident from the CheckInvariants() method.
     /// - If a page path was changed since last call to this method, it will appear only with the new path.
     ///   Consider a page with (ID, Path) of (42, "/Foo") and some set XDayViews of daily view counts.
@@ -24,6 +24,7 @@ namespace Wikitools.AzureDevOps
     ///   - the result of the second call will show (42, "/Bar") with XDayViews, and won't show (42, /"Foo") at all.
     /// - A page with the same path may appear under different ID in consecutive calls to this method.
     ///   - This can happen in case of page rename, as explained above.
+    /// - If a page was deleted since last call to this method, it will no longer show in the stats at all.
     /// 
     /// </summary>
     public record ValidWikiPagesStats : IEnumerable<WikiPageStats>
@@ -35,8 +36,9 @@ namespace Wikitools.AzureDevOps
             DateDay statsRangeStartDay,
             DateDay statsRangeEndDay)
         {
-            CheckInvariants(stats, statsRangeStartDay, statsRangeEndDay);
-            Data = stats as WikiPageStats[] ?? stats.ToArray();
+            var statsArr = stats as WikiPageStats[] ?? stats.ToArray();
+            CheckInvariants(statsArr, statsRangeStartDay, statsRangeEndDay);
+            Data = statsArr;
             StatsRangeStartDay = statsRangeStartDay;
             StatsRangeEndDay = statsRangeEndDay;
         }
