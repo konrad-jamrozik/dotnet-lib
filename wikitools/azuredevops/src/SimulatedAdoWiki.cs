@@ -12,8 +12,8 @@ namespace Wikitools.AzureDevOps
     {
         public SimulatedAdoWiki(ValidWikiPagesStats stats) : this(
             stats, 
-            stats.StatsRangeStartDay,
-            stats.StatsRangeEndDay)
+            stats.StartDay,
+            stats.EndDay)
         {
         }
 

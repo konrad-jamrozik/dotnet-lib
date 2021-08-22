@@ -25,11 +25,11 @@ namespace Wikitools.AzureDevOps
                     currentDate.AddDays(daysFrom),
                     currentDate.AddDays(daysTo)));
 
-        public DateMonth Month => Stats.StatsRangeStartDay.AsDateMonth();
+        public DateMonth Month => Stats.StartDay.AsDateMonth();
 
         public bool DaySpanIsForEntireMonth
-            => Stats.StatsRangeStartDay == Month.FirstDay
-               && Stats.StatsRangeEndDay == Month.LastDay;
+            => Stats.StartDay == Month.FirstDay
+               && Stats.EndDay == Month.LastDay;
 
         private static ValidWikiPagesStats ValidStatsForMonth(ValidWikiPagesStats stats)
         {

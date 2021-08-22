@@ -55,8 +55,8 @@ namespace Wikitools.AzureDevOps
             var wikiPagesDetails = await wikiPagesDetailsFunc(wikiHttpClient, pageViewsForDays);
             var wikiPagesStats   = wikiPagesDetails.Select(WikiPageStats.From);
             return new ValidWikiPagesStats(wikiPagesStats, 
-                statsRangeStartDay: today.AddDays(-pageViewsForDays+1), 
-                statsRangeEndDay: today);
+                startDay: today.AddDays(-pageViewsForDays+1), 
+                endDay: today);
         }
 
         private async Task<IEnumerable<WikiPageDetail>> GetWikiPagesDetails(

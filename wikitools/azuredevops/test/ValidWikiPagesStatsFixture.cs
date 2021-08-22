@@ -17,8 +17,8 @@ namespace Wikitools.AzureDevOps.Tests
             var stats = new ValidWikiPagesStatsForMonth(PagesStats(date));
             stats = new ValidWikiPagesStatsForMonth(
                 stats,
-                expandDaySpanToMonthStart ?? false ? stats.Month.FirstDay : stats.StatsRangeStartDay,
-                expandDaySpanToMonthEnd ?? false ? stats.Month.LastDay : stats.StatsRangeEndDay);
+                expandDaySpanToMonthStart ?? false ? stats.Month.FirstDay : stats.StartDay,
+                expandDaySpanToMonthEnd ?? false ? stats.Month.LastDay : stats.EndDay);
             return stats;
         }
 
@@ -72,9 +72,9 @@ namespace Wikitools.AzureDevOps.Tests
             DateDay? currentDay = null)
             => new ValidWikiPagesStats(
                 stats: pageStats,
-                statsRangeStartDay: ValidWikiPagesStats.FirstDayWithAnyVisitStatic(pageStats) 
+                startDay: ValidWikiPagesStats.FirstDayWithAnyVisitStatic(pageStats) 
                                     ?? Today,
-                statsRangeEndDay: ValidWikiPagesStats.LastDayWithAnyVisitStatic(pageStats) 
+                endDay: ValidWikiPagesStats.LastDayWithAnyVisitStatic(pageStats) 
                                   ?? currentDay 
                                   ?? Today);
 

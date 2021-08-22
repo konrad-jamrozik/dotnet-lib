@@ -65,10 +65,12 @@ namespace Wikitools.AzureDevOps.Tests
                     // Extend the day span to last day of month to avoid violating constraint
                     // forbidding having day span gap when
                     // merging this (PreviousMonthToMerge) month with month CurrentMonthToMerge.
-                    var statsWithSpanExtendedToMonthEnd = new ValidWikiPagesStatsForMonth(
-                        new ValidWikiPagesStats(stats, stats.StatsRangeStartDay,
+                    var statsWithDaySpanExtendedToMonthEnd = new ValidWikiPagesStatsForMonth(
+                        new ValidWikiPagesStats(
+                            stats,
+                            stats.StartDay,
                             stats.Month.LastDay));
-                    return statsWithSpanExtendedToMonthEnd;
+                    return statsWithDaySpanExtendedToMonthEnd;
                 }
                 else
                     return stats;
@@ -121,10 +123,12 @@ namespace Wikitools.AzureDevOps.Tests
                     // Extend the day span to last day of month to avoid violating constraint
                     // forbidding having day span gap when
                     // merging PreviousMonthToMerge month with this month (CurrentMonthToMerge).
-                    var statsWithSpanExtendedToMonthStart = new ValidWikiPagesStatsForMonth(
-                        new ValidWikiPagesStats(stats, stats.Month.FirstDay,
-                            stats.StatsRangeEndDay));
-                    return statsWithSpanExtendedToMonthStart;
+                    var statsWithDaySpanExtendedToMonthStart = new ValidWikiPagesStatsForMonth(
+                        new ValidWikiPagesStats(
+                            stats,
+                            stats.Month.FirstDay,
+                            stats.EndDay));
+                    return statsWithDaySpanExtendedToMonthStart;
                 }
                 else 
                 {
@@ -135,7 +139,7 @@ namespace Wikitools.AzureDevOps.Tests
                         // pass when exercising Merge.
                         // Without this, the current month would have day span of one day of new SimulatedTimeline().UtcNow
                         // and that most likely violate the invariant day span rules present in previous month.
-                        var statsSpanDay = PreviousMonthToMerge.StatsRangeEndDay.AddDays(1);
+                        var statsSpanDay = PreviousMonthToMerge.EndDay.AddDays(1);
                         return new ValidWikiPagesStatsForMonth(new ValidWikiPagesStats(WikiPageStats.EmptyArray,
                             statsSpanDay, statsSpanDay));
                     }

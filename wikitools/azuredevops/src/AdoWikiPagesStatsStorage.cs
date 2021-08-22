@@ -38,10 +38,10 @@ namespace Wikitools.AzureDevOps
                     var validStoredStats = new ValidWikiPagesStatsForMonth(
                         storedStats,
                         stats.Month.FirstDay,
-                        stats.StatsRangeEndDay);
+                        stats.EndDay);
                     return new ValidWikiPagesStatsForMonth(validStoredStats.Merge(stats),
                         stats.Month.FirstDay,
-                        stats.StatsRangeEndDay);
+                        stats.EndDay);
                 });
 
         public async Task<AdoWikiPagesStatsStorage> OverwriteWith(ValidWikiPagesStats stats)
