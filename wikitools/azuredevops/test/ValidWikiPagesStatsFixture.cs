@@ -12,8 +12,7 @@ namespace Wikitools.AzureDevOps.Tests
         public ValidWikiPagesStatsForMonth PagesStatsForMonth(DateDay date)
             => new ValidWikiPagesStatsForMonth(PagesStats(date));
 
-        public ValidWikiPagesStats PagesStats(
-            DateDay date)
+        public ValidWikiPagesStats PagesStats(DateDay date)
         {
             var wikiPageStats = new WikiPageStats[]
             {

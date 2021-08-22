@@ -11,13 +11,6 @@ namespace Wikitools.AzureDevOps.Tests
     [TestFixture]
     public class AdoWikiWithStorageTests
     {
-        // kja 3 test todos:
-        // - DONE Everything empty: no data from wiki, no data from storage
-        // - DONE Data in wiki, nothing in storage
-        // - DONE Data in storage, nothing in wiki
-        // - DONE Data in wiki and storage, within wiki max limit of 30 days
-        // - DONE Deduplicate arrange logic of all tests
-        // - TO-DO Test: Storage with data from 3 months <- this test should fail until more than 30 pageViewsForDays is properly supported
         [Test]
         public async Task NoData()
         {
@@ -59,10 +52,10 @@ namespace Wikitools.AzureDevOps.Tests
         /// - and wiki page stats for previous month coming from storage,
         ///   starting from the earliest available day in the AdoWiki.MaxPageViewsForDays window
         /// When
-        /// - querying AdoWikiWithStorage for page stats for the entire time window
-        ///   of AdoWiki.PageViewsForDaysMax
+        /// - querying AdoWikiWithStorage for page stats for the entire day span of AdoWiki.PageViewsForDaysMax
         /// Then
-        /// - return the union of both previous stats (coming from storage) and current stats (coming from wiki).
+        /// - the merged stats of both previous stats (coming from storage) and current stats (coming from wiki)
+        ///   are returned.
         /// </summary>
         [Test]
         public async Task DataInWikiAndStorageWithinWikiPageViewsForDaysMax()
@@ -96,56 +89,58 @@ namespace Wikitools.AzureDevOps.Tests
             new JsonDiffAssertion(prevStats.Merge(currStats, allowGaps: true), actualStats).Assert();
         }
 
-        // kja 4.1. parameterize with test below and write given/when/then comment
+        /// <summary>
+        /// Given
+        /// - wiki page stats that were stored earlier than AdoWiki.PageViewsForDaysMax days ago,
+        /// meaning they cannot be updated from thw iki
+        /// - and assuming the stats have the following characteristics:
+        ///   - first stored month has no page visits at all
+        ///   - last (current) stored month has no page visits at all
+        ///   - there are months with stored visits
+        ///   - and there is a "gap" month, i.e. a month chronologically in the middle of the stored
+        ///     months that has no visits, but months before and after have visits.
+        /// When
+        /// - querying AdoWikiWithStorage for page stats for the entire day span of all the stored stats.
+        /// Then
+        /// - all stored stats are returned, merged.
+        ///   - This means stats rom beyond AdoWiki.PageViewsForDaysMax were included in the merged stats.
+        ///   - This means the first and last months without any visits were not stripped, i.e.
+        ///     their day span was included.
+        /// </summary>
         [Test]
-        public async Task DataFromStorageOfMoreThanPageViewForDaysMax()
+        public async Task DataFromStorageFromManyMonths()
         {
-            var storedStats = ArrangeStatsFromMonths(new[] { true, true, true });
-            Assert.That(storedStats.VisitedDaysSpan > AdoWiki.PageViewsForDaysMax);
-            Assert.That(storedStats.VisitedDaysSpan > 2*31, "Should be more than 2 months");
-
-            var adoWikiWithStorage = await AdoWikiWithStorage(UtcNowDay, storedStats);
-
-            // Act
-            var actualStats = await adoWikiWithStorage.PagesStats(storedStats.VisitedDaysSpan);
-
-            new JsonDiffAssertion(storedStats, actualStats).Assert();
-        }
-
-        // kja 4.2 currently fails
-        // Stores 7 months, but 1st, 2nd, 4rd, 6th and 7th months have no day stats (7th == current)
-        [Test]
-        public async Task DataFromStorageWithManyMonthsWithoutAnyVisits()
-        {
-            var storedStats = ArrangeStatsFromMonths(new[] { false, false, true, false, true, true, false, false });
+            var statsInMonthPresence = new[] { false, false, true, false, true, true, false, false };
+            var storedStats = ArrangeStatsFromMonths(statsInMonthPresence);
             Assert.That(storedStats.VisitedDaysSpan > AdoWiki.PageViewsForDaysMax);
             Assert.That(storedStats.DaysSpan > 6*31, "Should be more than 6 months");
+            Assert.That(storedStats.MonthsSpan == statsInMonthPresence.Length);
 
             var adoWikiWithStorage = await AdoWikiWithStorage(UtcNowDay, storedStats);
 
             // Act
-            var actualStats = await adoWikiWithStorage.PagesStats(storedStats.VisitedDaysSpan);
+            var actualStats = await adoWikiWithStorage.PagesStats(storedStats.DaysSpan);
 
             new JsonDiffAssertion(storedStats, actualStats).Assert();
-        }
 
-        private ValidWikiPagesStats ArrangeStatsFromMonths(bool[] pageStatsInMonthPresence)
-        {
-            var fix = new ValidWikiPagesStatsFixture();
-            int monthsCount = pageStatsInMonthPresence.Length;
-            IEnumerable<ValidWikiPagesStatsForMonth> months = pageStatsInMonthPresence.Select(
-                (statsPresent, i) =>
-                {
-                    DateDay currDay = UtcNowDay.AddMonths(-monthsCount + 1 + i);
-                    return statsPresent
-                        ? fix.PagesStatsForMonth(currDay)
-                        : new ValidWikiPagesStatsForMonth(
-                            WikiPageStats.EmptyArray,
-                            startDay: currDay,
-                            endDay: currDay);
-                });
+            ValidWikiPagesStats ArrangeStatsFromMonths(bool[] pageStatsInMonthPresence)
+            {
+                var fix = new ValidWikiPagesStatsFixture();
+                int monthsCount = pageStatsInMonthPresence.Length;
+                var months = pageStatsInMonthPresence.Select(
+                    (statsPresent, i) =>
+                    {
+                        DateDay currDay = UtcNowDay.AddMonths(-monthsCount + 1 + i);
+                        return statsPresent
+                            ? fix.PagesStatsForMonth(currDay)
+                            : new ValidWikiPagesStatsForMonth(
+                                WikiPageStats.EmptyArray,
+                                startDay: currDay,
+                                endDay: currDay);
+                    });
 
-            return ValidWikiPagesStats.Merge(months, allowGaps: true);
+                return ValidWikiPagesStats.Merge(months, allowGaps: true);
+            }
         }
 
         private static Task<AdoWikiWithStorage> AdoWikiWithStorage(

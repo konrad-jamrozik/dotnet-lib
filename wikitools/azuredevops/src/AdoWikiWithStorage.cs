@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Diagnostics.Contracts;
+using System.Linq;
 using System.Threading.Tasks;
 using Wikitools.Lib.Primitives;
 
@@ -11,6 +12,8 @@ namespace Wikitools.AzureDevOps
     {
         public Task<ValidWikiPagesStats> PagesStats(int pageViewsForDays)
         {
+            // kj2 instead strongly type the input
+            Contract.Assert(pageViewsForDays >= 1);
             var updatedStorage  = Storage.Update(AdoWiki, pageViewsForDays.MinWith(PageViewsForDaysMax));
             var pagesViewsStats = updatedStorage.Select(s => s.PagesStats(pageViewsForDays));
             return pagesViewsStats;

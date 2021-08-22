@@ -78,6 +78,8 @@ namespace Wikitools.AzureDevOps
 
         public int DaysSpan => (int) (EndDay - StartDay).TotalDays + 1;
 
+        public int MonthsSpan => DateMonth.Range(StartDay, EndDay).Length;
+
         public IEnumerator<WikiPageStats> GetEnumerator() => Data.GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
