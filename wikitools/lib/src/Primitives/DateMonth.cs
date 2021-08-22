@@ -84,6 +84,8 @@ namespace Wikitools.Lib.Primitives
                 : _dateTime.ToString(format, formatProvider);
 
         // kj2 fix as in DateDay Known limitation: this doesn't retain DateTimeKind (e.g. Utc)
+        // Fix it the same way it is fixed in DateDay:
+        // DateTime.SpecifyKind(new DateTime(Year, Month, 1), Kind);
         private readonly DateTime _dateTime = new(Year, Month, 1);
     }
 }
