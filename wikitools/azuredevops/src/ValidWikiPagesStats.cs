@@ -72,9 +72,9 @@ namespace Wikitools.AzureDevOps
             return maxDatePerPage.Any() ? new DateDay(maxDatePerPage.Max()) : null;
         }
 
-        public int? VisitedDaysSpan => LastDayWithAnyVisit != null 
+        public int VisitedDaysSpan => LastDayWithAnyVisit != null
             ? (int) (LastDayWithAnyVisit - FirstDayWithAnyVisit!).TotalDays + 1
-            : null;
+            : 0;
 
         public IEnumerator<WikiPageStats> GetEnumerator() => Data.GetEnumerator();
 

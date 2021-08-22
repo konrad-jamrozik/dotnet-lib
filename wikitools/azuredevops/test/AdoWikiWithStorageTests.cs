@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using NUnit.Framework;
 using Wikitools.Lib.Primitives;
@@ -69,7 +70,7 @@ namespace Wikitools.AzureDevOps.Tests
             var pageViewsForDays   = AdoWiki.MaxPageViewsForDays;
             var fix                = new ValidWikiPagesStatsFixture();
             var currStats          = fix.PagesStatsForMonth(UtcNowDay);
-            var currStatsDaySpan   = (int) currStats.VisitedDaysSpan!;
+            var currStatsDaySpan   = currStats.VisitedDaysSpan;
             var prevStats = fix.PagesStatsForMonth(
                 UtcNowDay.AddDays(-pageViewsForDays + currStatsDaySpan));
             var adoWikiWithStorage = await AdoWikiWithStorage(UtcNowDay, storedStats: prevStats, wikiStats: currStats);
@@ -101,35 +102,25 @@ namespace Wikitools.AzureDevOps.Tests
         [Test]
         public async Task DataFromStorageOfMoreThanMaxPageViewForDays()
         {
-            var fix = new ValidWikiPagesStatsFixture();
+            var storedStats = ArrangeStatsForMoreThanAdoWikiMaxPageViewsForDays();
+            Assert.That(storedStats.VisitedDaysSpan > AdoWiki.MaxPageViewsForDays);
 
-            var currMonthStats = fix.PagesStatsForMonth(UtcNowDay);
-            var prevMonthStats = fix.PagesStatsForMonth(UtcNowDay.AddMonths(-1));
-            var prevPrevMonthStats = fix.PagesStatsForMonth(UtcNowDay.AddMonths(-2));
-
-            var months = new List<ValidWikiPagesStats>
-            {
-                prevPrevMonthStats,
-                prevMonthStats,
-                currMonthStats
-            };
-
-            var allStats = ValidWikiPagesStats.Merge(months, allowGaps: true);
-
-            // kja 5 call tree of this needs implementation of to-do 6.
-            var adoWikiWithStorage = await AdoWikiWithStorage(UtcNowDay, storedStats: allStats);
-
-            // kja 5.1 this is like Wikitools.AzureDevOps.ValidWikiPagesStats.VisitedDaysSpan but for multiple months
-            // Similarly, Merge making "allStats" should be done for Month range. And also SplitByMonth from to-do 6.
-            // Probably introduce some extension method on IEnumerable<ValidWikiPagesStats> for the day span
-            // and for merges.
-            // kja 5.2 something like prevPrevMonthStats.FirstDayWithAnyVisit!.DaySpanTo(currMonthStats.LastDayWithAnyVisit!);
-            int daySpan = (int) (currMonthStats.LastDayWithAnyVisit! - prevPrevMonthStats.FirstDayWithAnyVisit!).TotalDays + 1;
+            var adoWikiWithStorage = await AdoWikiWithStorage(UtcNowDay, storedStats);
 
             // Act
-            var actualStats = await adoWikiWithStorage.PagesStats(daySpan);
+            var actualStats = await adoWikiWithStorage.PagesStats(storedStats.VisitedDaysSpan);
 
-            new JsonDiffAssertion(allStats, actualStats).Assert();
+            new JsonDiffAssertion(storedStats, actualStats).Assert();
+
+            ValidWikiPagesStats ArrangeStatsForMoreThanAdoWikiMaxPageViewsForDays()
+            {
+                var fix = new ValidWikiPagesStatsFixture();
+
+                var months = Enumerable.Range(-2, 3)
+                    .Select(month => fix.PagesStatsForMonth(UtcNowDay.AddMonths(month))).ToList();
+
+                return ValidWikiPagesStats.Merge(months, allowGaps: true);
+            }
         }
 
         private static Task<AdoWikiWithStorage> AdoWikiWithStorage(
@@ -146,11 +137,12 @@ namespace Wikitools.AzureDevOps.Tests
             var decl      = new AzureDevOpsDeclare();
             var testsDecl = new AzureDevOpsTestsDeclare(decl);
             var storage   = await testsDecl.AdoWikiPagesStatsStorage(utcNow, storedStats);
-            var adoWiki = new SimulatedAdoWiki(
-                wikiStats ?? new ValidWikiPagesStats(WikiPageStats.EmptyArray,
-                utcNow.AsDateMonth().FirstDay, 
-                utcNow.AsDateMonth().LastDay));
-            var wiki      = decl.AdoWikiWithStorage(adoWiki, storage);
+            var adoWiki   = new SimulatedAdoWiki(
+                wikiStats ?? new ValidWikiPagesStats(
+                    WikiPageStats.EmptyArray,
+                    startDay: utcNow,
+                    endDay: utcNow));
+            var wiki = decl.AdoWikiWithStorage(adoWiki, storage);
             return wiki;
         }
     }
