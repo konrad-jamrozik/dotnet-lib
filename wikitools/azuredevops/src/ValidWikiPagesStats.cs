@@ -43,7 +43,6 @@ namespace Wikitools.AzureDevOps
             EndDay = endDay;
         }
 
-        // kja 6.1 rename Range to Span. Like: StatsDaySpanStart and StatsDaySpanEnd
         public DateDay StartDay { get; }
         public DateDay EndDay { get; }
 
@@ -90,8 +89,8 @@ namespace Wikitools.AzureDevOps
 
         private static void CheckInvariants(
             IEnumerable<WikiPageStats> pagesStats, 
-            DateDay statsRangeStartDay,
-            DateDay statsRangeEndDay)
+            DateDay startDay,
+            DateDay endDay)
         {
             var pagesStatsArray = pagesStats as WikiPageStats[] ?? pagesStats.ToArray();
             pagesStatsArray.AssertDistinctBy(ps => ps.Id); 
@@ -119,13 +118,13 @@ namespace Wikitools.AzureDevOps
                 dayStats.Assert(ds => ds.Day.Kind == DateTimeKind.Utc);
             });
 
-            Contract.Assert(statsRangeStartDay.CompareTo(statsRangeEndDay) <= 0);
+            Contract.Assert(startDay.CompareTo(endDay) <= 0);
             var firstDayWithAnyVisit = FirstDayWithAnyVisitStatic(pagesStatsArray);
             var lastDayWithAnyVisit = LastDayWithAnyVisitStatic(pagesStatsArray);
 
             // @formatter:off
-            Contract.Assert(firstDayWithAnyVisit == null || statsRangeStartDay .CompareTo(firstDayWithAnyVisit) <= 0);
-            Contract.Assert(lastDayWithAnyVisit  == null || lastDayWithAnyVisit.CompareTo(statsRangeEndDay    ) <= 0);
+            Contract.Assert(firstDayWithAnyVisit == null || startDay .CompareTo(firstDayWithAnyVisit) <= 0);
+            Contract.Assert(lastDayWithAnyVisit  == null || lastDayWithAnyVisit.CompareTo(endDay    ) <= 0);
             // @formatter:on
         }
 
@@ -189,13 +188,14 @@ namespace Wikitools.AzureDevOps
         private static (ValidWikiPagesStatsForMonth? previousMonthStats, ValidWikiPagesStatsForMonth currentMonthStats)
             SplitIntoTwoMonths(ValidWikiPagesStats stats)
         {
-            if (stats.StatsRangeIsWithinOneMonth())
+            if (stats.DaySpanIsWithinOneMonth())
                 return (null, new ValidWikiPagesStatsForMonth(stats));
 
-            var statsRangeStartMonth = stats.StartDay.AsDateMonth();
-            var statsRangeEndMonth = stats.EndDay.AsDateMonth();
-            Contract.Assert(statsRangeStartMonth.NextMonth == statsRangeEndMonth,
-                "Assert: at this point the range of stats being split into two months is expected to span exactly 2 months.");
+            var startMonth = stats.StartDay.AsDateMonth();
+            var endMonth = stats.EndDay.AsDateMonth();
+            Contract.Assert(startMonth.NextMonth == endMonth,
+                "Assert: at this point of execution the day span of stats being split into two months " +
+                "is expected to span 2 months.");
 
             var splitMonths = stats.SplitByMonth().ToArray();
 
@@ -313,7 +313,7 @@ namespace Wikitools.AzureDevOps
                     ps with { DayStats = ps.DayStats.Where(s => s.Day >= startDay && s.Day <= endDay).ToArray() })
                 .ToArray(), startDay, endDay);
 
-        public bool StatsRangeIsWithinOneMonth() 
+        public bool DaySpanIsWithinOneMonth() 
             => StartDay.AsDateMonth() == EndDay.AsDateMonth();
     }
 }

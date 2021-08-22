@@ -31,11 +31,11 @@ namespace Wikitools.AzureDevOps.Tests
             var split = VerifySplitByMonth(
                 target: data.AllPagesStats,
                 previousMonthExpectation: 
-                    data.AllPagesStats.StatsRangeIsWithinOneMonth() 
+                    data.AllPagesStats.DaySpanIsWithinOneMonth() 
                         ? null 
                         : data.PreviousMonthWithCurrentMonthPaths,
                 currentMonthExpectation: 
-                    data.AllPagesStats.StatsRangeIsWithinOneMonth() 
+                    data.AllPagesStats.DaySpanIsWithinOneMonth() 
                         ? data.PreviousMonthWithCurrentMonthPaths 
                         : data.CurrentMonthAfterSplit);
 

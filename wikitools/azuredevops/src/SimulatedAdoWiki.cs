@@ -7,8 +7,8 @@ namespace Wikitools.AzureDevOps
 {
     public record SimulatedAdoWiki(
         IEnumerable<WikiPageStats> PagesStatsData,
-        DateDay StatsRangeStartDay,
-        DateDay StatsRangeEndDay) : IAdoWiki
+        DateDay StartDay,
+        DateDay EndDay) : IAdoWiki
     {
         public SimulatedAdoWiki(ValidWikiPagesStats stats) : this(
             stats, 
@@ -18,9 +18,9 @@ namespace Wikitools.AzureDevOps
         }
 
         public Task<ValidWikiPagesStats> PagesStats(int pageViewsForDays) =>
-            Task.FromResult(new ValidWikiPagesStats(PagesStatsData, StatsRangeStartDay, StatsRangeEndDay));
+            Task.FromResult(new ValidWikiPagesStats(PagesStatsData, StartDay, EndDay));
 
         public Task<ValidWikiPagesStats> PageStats(int pageViewsForDays, int pageId) => Task.FromResult(
-            new ValidWikiPagesStats(PagesStatsData.Where(page => page.Id == pageId), StatsRangeStartDay, StatsRangeEndDay));
+            new ValidWikiPagesStats(PagesStatsData.Where(page => page.Id == pageId), StartDay, EndDay));
     }
 }

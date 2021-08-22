@@ -33,7 +33,7 @@ namespace Wikitools.AzureDevOps
 
         private static ValidWikiPagesStats ValidStatsForMonth(ValidWikiPagesStats stats)
         {
-            Contract.Assert(stats.StatsRangeIsWithinOneMonth());
+            Contract.Assert(stats.DaySpanIsWithinOneMonth());
             return stats;
         }
     }
