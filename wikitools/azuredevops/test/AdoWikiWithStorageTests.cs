@@ -68,11 +68,10 @@ namespace Wikitools.AzureDevOps.Tests
         {
             var pageViewsForDays   = AdoWiki.MaxPageViewsForDays;
             var fix                = new ValidWikiPagesStatsFixture();
-            var currStats          = fix.PagesStatsForMonth(UtcNowDay, expandDaySpanToMonthStart: true);
+            var currStats          = fix.PagesStatsForMonth(UtcNowDay);
             var currStatsDaySpan   = (int) currStats.VisitedDaysSpan!;
             var prevStats = fix.PagesStatsForMonth(
-                UtcNowDay.AddDays(-pageViewsForDays + currStatsDaySpan),
-                expandDaySpanToMonthEnd: true);
+                UtcNowDay.AddDays(-pageViewsForDays + currStatsDaySpan));
             var adoWikiWithStorage = await AdoWikiWithStorage(UtcNowDay, storedStats: prevStats, wikiStats: currStats);
 
             Assert.That(
@@ -93,7 +92,7 @@ namespace Wikitools.AzureDevOps.Tests
             // Act
             var actualStats = await adoWikiWithStorage.PagesStats(pageViewsForDays);
 
-            new JsonDiffAssertion(prevStats.Merge(currStats), actualStats).Assert();
+            new JsonDiffAssertion(prevStats.Merge(currStats, allowGaps: true), actualStats).Assert();
         }
 
         // kja 4 WIP test to exercise 3 months of data
@@ -104,16 +103,9 @@ namespace Wikitools.AzureDevOps.Tests
         {
             var fix = new ValidWikiPagesStatsFixture();
 
-            var currMonthStats = fix.PagesStatsForMonth(
-                UtcNowDay,
-                expandDaySpanToMonthStart: true);
-            var prevMonthStats = fix.PagesStatsForMonth(
-                UtcNowDay.AddMonths(-1),
-                expandDaySpanToMonthStart: true,
-                expandDaySpanToMonthEnd: true);
-            var prevPrevMonthStats = fix.PagesStatsForMonth(
-                UtcNowDay.AddMonths(-2),
-                expandDaySpanToMonthEnd: true);
+            var currMonthStats = fix.PagesStatsForMonth(UtcNowDay);
+            var prevMonthStats = fix.PagesStatsForMonth(UtcNowDay.AddMonths(-1));
+            var prevPrevMonthStats = fix.PagesStatsForMonth(UtcNowDay.AddMonths(-2));
 
             var months = new List<ValidWikiPagesStats>
             {

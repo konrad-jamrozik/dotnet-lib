@@ -9,18 +9,8 @@ namespace Wikitools.AzureDevOps.Tests
 
         private static DateDay Today => new DateDay(new SimulatedTimeline().UtcNow);
 
-        public ValidWikiPagesStatsForMonth PagesStatsForMonth(
-            DateDay date,
-            bool? expandDaySpanToMonthStart = false,
-            bool? expandDaySpanToMonthEnd = false)
-        {
-            var stats = new ValidWikiPagesStatsForMonth(PagesStats(date));
-            stats = new ValidWikiPagesStatsForMonth(
-                stats,
-                expandDaySpanToMonthStart ?? false ? stats.Month.FirstDay : stats.StartDay,
-                expandDaySpanToMonthEnd ?? false ? stats.Month.LastDay : stats.EndDay);
-            return stats;
-        }
+        public ValidWikiPagesStatsForMonth PagesStatsForMonth(DateDay date)
+            => new ValidWikiPagesStatsForMonth(PagesStats(date));
 
         public ValidWikiPagesStats PagesStats(
             DateDay date)
