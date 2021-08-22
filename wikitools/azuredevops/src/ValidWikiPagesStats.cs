@@ -134,14 +134,6 @@ namespace Wikitools.AzureDevOps
         {
             // kja 6 to implement and test
             //
-            // Once done, don't forget to remove the IF check at the beginning of
-            // Wikitools.AzureDevOps.AdoWikiPagesStatsStorage.OverwriteWith
-            // made for backward compat.
-            //
-            // Then also likely remove the 2-arg
-            // Wikitools.AzureDevOps.AdoWikiPagesStatsStorage.OverwriteWith
-            // as it seems to be used only in tests
-            //
             // And then also rewrite the 2-month SplitByMonth to call this SplitByMonth,
             // but just with additional month checks for 2 months (these checks are there
             // to confirm data coming from wiki is indeed only from max 2 months).

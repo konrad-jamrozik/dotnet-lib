@@ -46,11 +46,6 @@ namespace Wikitools.AzureDevOps
 
         public async Task<AdoWikiPagesStatsStorage> OverwriteWith(ValidWikiPagesStats stats)
         {
-            if (stats is ValidWikiPagesStatsForMonth statsForMonth)
-            {
-                return await OverwriteWith(statsForMonth);
-            }
-
             IEnumerable<ValidWikiPagesStatsForMonth> statsByMonth = stats.SplitByMonth();
 
             var writeTasks = statsByMonth
@@ -60,21 +55,6 @@ namespace Wikitools.AzureDevOps
 
             await Task.WhenAll(writeTasks);
 
-            return this;
-        }
-
-        public async Task<AdoWikiPagesStatsStorage> OverwriteWithTwoMonths(ValidWikiPagesStats stats)
-        {
-            var (previousMonthStats, currentMonthStats) = stats.SplitIntoTwoMonths();
-            if (previousMonthStats != null) 
-                await Storage.With<IEnumerable<WikiPageStats>>(previousMonthStats.Month, _ => previousMonthStats);
-            await Storage.With<IEnumerable<WikiPageStats>>(currentMonthStats.Month, _ => currentMonthStats);
-            return this;
-        }
-
-        public async Task<AdoWikiPagesStatsStorage> OverwriteWith(ValidWikiPagesStatsForMonth stats)
-        {
-            await Storage.With<IEnumerable<WikiPageStats>>(stats.Month, _ => stats);
             return this;
         }
 
