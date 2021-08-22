@@ -7,18 +7,18 @@ namespace Wikitools.AzureDevOps
     public record AdoWikiWithStorage(
         IAdoWiki AdoWiki,
         AdoWikiPagesStatsStorage Storage,
-        int? MaxPageViewsForDays = null) : IAdoWiki
+        int? PageViewsForDaysMax = null) : IAdoWiki
     {
         public Task<ValidWikiPagesStats> PagesStats(int pageViewsForDays)
         {
-            var updatedStorage  = Storage.Update(AdoWiki, pageViewsForDays.MinWith(MaxPageViewsForDays));
+            var updatedStorage  = Storage.Update(AdoWiki, pageViewsForDays.MinWith(PageViewsForDaysMax));
             var pagesViewsStats = updatedStorage.Select(s => s.PagesStats(pageViewsForDays));
             return pagesViewsStats;
         }
 
         public Task<ValidWikiPagesStats> PageStats(int pageViewsForDays, int pageId)
         {
-            var dayRange = pageViewsForDays.MinWith(MaxPageViewsForDays);
+            var dayRange = pageViewsForDays.MinWith(PageViewsForDaysMax);
             var updatedStorage  = Storage.Update(AdoWiki, dayRange, pageId);
             var pagesViewsStats = updatedStorage.Select(
                 s =>

@@ -32,10 +32,10 @@ namespace Wikitools.AzureDevOps
 
         // Max value supported by https://docs.microsoft.com/en-us/rest/api/azure/devops/wiki/pages%20batch/get?view=azure-devops-rest-6.1
         // Confirmed empirically as of 3/27/2021.
-        public const int MaxPageViewsForDays = 30;
+        public const int PageViewsForDaysMax = 30;
         // If 0, the call to ADO wiki API still succeeds, but all returned WikiPageDetail will have null ViewStats.
         // Confirmed empirically as of 3/27/2021.
-        private const int MinPageViewsForDays = 1;
+        private const int PageViewsForDaysMin = 1;
 
         public Task<ValidWikiPagesStats> PagesStats(int pageViewsForDays) =>
             PagesStats(pageViewsForDays, GetWikiPagesDetails);
@@ -48,7 +48,7 @@ namespace Wikitools.AzureDevOps
             Func<IWikiHttpClient, int, Task<IEnumerable<WikiPageDetail>>> wikiPagesDetailsFunc)
         {
             Contract.Assert(pageViewsForDays, nameof(pageViewsForDays),
-                new Range(MinPageViewsForDays, MaxPageViewsForDays), upperBoundReason: "ADO API limit");
+                new Range(PageViewsForDaysMin, PageViewsForDaysMax), upperBoundReason: "ADO API limit");
 
             var wikiHttpClient   = WikiHttpClient(AdoWikiUri, PatEnvVar);
             var today = new DateDay(Timeline.UtcNow);

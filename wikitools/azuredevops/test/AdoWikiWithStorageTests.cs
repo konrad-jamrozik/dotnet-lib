@@ -24,7 +24,7 @@ namespace Wikitools.AzureDevOps.Tests
             var adoWikiWithStorage = await AdoWikiWithStorage(UtcNowDay);
 
             // Act
-            var actualStats = await adoWikiWithStorage.PagesStats(AdoWiki.MaxPageViewsForDays);
+            var actualStats = await adoWikiWithStorage.PagesStats(AdoWiki.PageViewsForDaysMax);
 
             new JsonDiffAssertion(new string[0], actualStats).Assert();
         }
@@ -36,7 +36,7 @@ namespace Wikitools.AzureDevOps.Tests
             var adoWikiWithStorage = await AdoWikiWithStorage(UtcNowDay, wikiStats: wikiStats);
 
             // Act
-            var actualStats = await adoWikiWithStorage.PagesStats(AdoWiki.MaxPageViewsForDays);
+            var actualStats = await adoWikiWithStorage.PagesStats(AdoWiki.PageViewsForDaysMax);
 
             new JsonDiffAssertion(wikiStats, actualStats).Assert();
         }
@@ -48,7 +48,7 @@ namespace Wikitools.AzureDevOps.Tests
             var adoWikiWithStorage = await AdoWikiWithStorage(UtcNowDay, storedStats);
 
             // Act
-            var actualStats = await adoWikiWithStorage.PagesStats(AdoWiki.MaxPageViewsForDays);
+            var actualStats = await adoWikiWithStorage.PagesStats(AdoWiki.PageViewsForDaysMax);
 
             new JsonDiffAssertion(storedStats, actualStats).Assert();
         }
@@ -60,14 +60,14 @@ namespace Wikitools.AzureDevOps.Tests
         ///   starting from the earliest available day in the AdoWiki.MaxPageViewsForDays window
         /// When
         /// - querying AdoWikiWithStorage for page stats for the entire time window
-        ///   of AdoWiki.MaxPageViewsForDays
+        ///   of AdoWiki.PageViewsForDaysMax
         /// Then
         /// - return the union of both previous stats (coming from storage) and current stats (coming from wiki).
         /// </summary>
         [Test]
-        public async Task DataInWikiAndStorageWithinWikiMaxPageViewsForDays()
+        public async Task DataInWikiAndStorageWithinWikiPageViewsForDaysMax()
         {
-            var pageViewsForDays   = AdoWiki.MaxPageViewsForDays;
+            var pageViewsForDays   = AdoWiki.PageViewsForDaysMax;
             var fix                = new ValidWikiPagesStatsFixture();
             var currStats          = fix.PagesStatsForMonth(UtcNowDay);
             var currStatsDaySpan   = currStats.VisitedDaysSpan;
@@ -100,10 +100,10 @@ namespace Wikitools.AzureDevOps.Tests
         // kja 4.1. Another test:
         // Stores 7 months, but 1st, 2nd, 4rd, 6th and 7th months have no day stats (7th == current)
         [Test]
-        public async Task DataFromStorageOfMoreThanMaxPageViewForDays()
+        public async Task DataFromStorageOfMoreThanPageViewForDaysMax()
         {
-            var storedStats = ArrangeStatsForMoreThanAdoWikiMaxPageViewsForDays();
-            Assert.That(storedStats.VisitedDaysSpan > AdoWiki.MaxPageViewsForDays);
+            var storedStats = ArrangeStatsForMoreThanAdoWikiPageViewsForDaysMax();
+            Assert.That(storedStats.VisitedDaysSpan > AdoWiki.PageViewsForDaysMax);
 
             var adoWikiWithStorage = await AdoWikiWithStorage(UtcNowDay, storedStats);
 
@@ -112,7 +112,7 @@ namespace Wikitools.AzureDevOps.Tests
 
             new JsonDiffAssertion(storedStats, actualStats).Assert();
 
-            ValidWikiPagesStats ArrangeStatsForMoreThanAdoWikiMaxPageViewsForDays()
+            ValidWikiPagesStats ArrangeStatsForMoreThanAdoWikiPageViewsForDaysMax()
             {
                 var fix = new ValidWikiPagesStatsFixture();
 
