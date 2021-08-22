@@ -80,12 +80,10 @@ namespace Wikitools.AzureDevOps
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-        public static ValidWikiPagesStats Merge(params ValidWikiPagesStats[] stats)
-            => Merge((IEnumerable<ValidWikiPagesStats>) stats);
 
-        public static ValidWikiPagesStats Merge(IEnumerable<ValidWikiPagesStats> stats) 
+        public static ValidWikiPagesStats Merge(IEnumerable<ValidWikiPagesStats> stats, bool allowGaps = false) 
             // kj2 This Merge is O(n^2) while it could be O(n).
-            => stats.Aggregate((merged, next) => merged.Merge(next));
+            => stats.Aggregate((merged, next) => merged.Merge(next, allowGaps));
 
         private static void CheckInvariants(
             IEnumerable<WikiPageStats> pagesStats, 
@@ -123,8 +121,8 @@ namespace Wikitools.AzureDevOps
             var lastDayWithAnyVisit = LastDayWithAnyVisitStatic(pagesStatsArray);
 
             // @formatter:off
-            Contract.Assert(firstDayWithAnyVisit == null || startDay .CompareTo(firstDayWithAnyVisit) <= 0);
-            Contract.Assert(lastDayWithAnyVisit  == null || lastDayWithAnyVisit.CompareTo(endDay    ) <= 0);
+            Contract.Assert(firstDayWithAnyVisit == null || startDay.CompareTo(firstDayWithAnyVisit) <= 0);
+            Contract.Assert(lastDayWithAnyVisit  == null || lastDayWithAnyVisit.CompareTo(endDay   ) <= 0);
             // @formatter:on
         }
 
@@ -194,7 +192,8 @@ namespace Wikitools.AzureDevOps
             return (splitMonths.First(), splitMonths.Last());
         }
 
-        public ValidWikiPagesStats Merge(ValidWikiPagesStats validCurrentStats) => Merge(this, validCurrentStats);
+        public ValidWikiPagesStats Merge(ValidWikiPagesStats validCurrentStats, bool allowGaps = false)
+            => Merge(this, validCurrentStats, allowGaps);
 
         /// <summary>
         /// Merges ADO Wiki page stats. previousStats with currentStats.
@@ -233,7 +232,10 @@ namespace Wikitools.AzureDevOps
         /// </summary>
         // kj2 add tests showing this is associative but not commutative (not comm due to ignoring previousPageStats.Path and same with count)
         // Maybe also add some invariant check if a merge like next.merge(prev) is done instead of prev.merge(next). Basically the non-checked one mentioned above.
-        private static ValidWikiPagesStats Merge(ValidWikiPagesStats previousStats, ValidWikiPagesStats currentStats)
+        private static ValidWikiPagesStats Merge(
+            ValidWikiPagesStats previousStats,
+            ValidWikiPagesStats currentStats,
+            bool allowGaps)
         {
             IEnumerable<WikiPageStats> merged = previousStats.UnionMerge(currentStats, ps => ps.Id, Merge);
             merged = merged.OrderBy(ps => ps.Id)
@@ -243,8 +245,9 @@ namespace Wikitools.AzureDevOps
                 "Assert: Previous stats range should start no later than current stats range");
             Contract.Assert(previousStats.EndDay.CompareTo(currentStats.EndDay) <= 0,
                 "Assert: Previous stats range should end no later than current stats range");
-            Contract.Assert(previousStats.EndDay.AddDays(1).CompareTo(currentStats.StartDay) >= 0,
-                "Assert: There should be no gap in the previous stats range and current stats range");
+            if (!allowGaps) 
+                Contract.Assert(previousStats.EndDay.AddDays(1).CompareTo(currentStats.StartDay) >= 0,
+                    "Assert: There should be no gap in the previous stats range and current stats range");
             return new ValidWikiPagesStats(merged, previousStats.StartDay, currentStats.EndDay);
         }
 

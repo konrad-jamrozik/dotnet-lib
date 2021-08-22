@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using NUnit.Framework;
 using Wikitools.Lib.Primitives;
@@ -114,7 +115,14 @@ namespace Wikitools.AzureDevOps.Tests
                 UtcNowDay.AddMonths(-2),
                 expandDaySpanToMonthEnd: true);
 
-            var allStats = ValidWikiPagesStats.Merge(prevPrevMonthStats, prevMonthStats, currMonthStats);
+            var months = new List<ValidWikiPagesStats>
+            {
+                prevPrevMonthStats,
+                prevMonthStats,
+                currMonthStats
+            };
+
+            var allStats = ValidWikiPagesStats.Merge(months, allowGaps: true);
 
             // kja 5 call tree of this needs implementation of to-do 6.
             var adoWikiWithStorage = await AdoWikiWithStorage(UtcNowDay, storedStats: allStats);
@@ -123,6 +131,7 @@ namespace Wikitools.AzureDevOps.Tests
             // Similarly, Merge making "allStats" should be done for Month range. And also SplitByMonth from to-do 6.
             // Probably introduce some extension method on IEnumerable<ValidWikiPagesStats> for the day span
             // and for merges.
+            // kja 5.2 something like prevPrevMonthStats.FirstDayWithAnyVisit!.DaySpanTo(currMonthStats.LastDayWithAnyVisit!);
             int daySpan = (int) (currMonthStats.LastDayWithAnyVisit! - prevPrevMonthStats.FirstDayWithAnyVisit!).TotalDays + 1;
 
             // Act
