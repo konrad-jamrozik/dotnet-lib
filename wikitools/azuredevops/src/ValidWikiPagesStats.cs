@@ -132,12 +132,6 @@ namespace Wikitools.AzureDevOps
 
         private static IEnumerable<ValidWikiPagesStatsForMonth> SplitByMonth(ValidWikiPagesStats stats) 
         {
-            // kja 6 to implement and test
-            //
-            // And then also rewrite the 2-month SplitByMonth to call this SplitByMonth,
-            // but just with additional month checks for 2 months (these checks are there
-            // to confirm data coming from wiki is indeed only from max 2 months).
-            
             DateDay startDay = stats.StartDay;
             DateDay endDay = stats.EndDay;
 
