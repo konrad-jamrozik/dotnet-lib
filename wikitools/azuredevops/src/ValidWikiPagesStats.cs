@@ -76,6 +76,8 @@ namespace Wikitools.AzureDevOps
             ? (int) (LastDayWithAnyVisit - FirstDayWithAnyVisit!).TotalDays + 1
             : 0;
 
+        public int DaysSpan => (int) (EndDay - StartDay).TotalDays + 1;
+
         public IEnumerator<WikiPageStats> GetEnumerator() => Data.GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
