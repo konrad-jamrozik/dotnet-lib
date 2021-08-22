@@ -22,19 +22,19 @@ namespace Wikitools.AzureDevOps
             IFileSystem fileSystem,
             string storageDirPath,
             DateTime utcNow,
-            int? pageViewsForDaysWikiLimit = null)
+            int? pageViewsForDaysMax = null)
         {
             var storageDir      = new Dir(fileSystem, storageDirPath);
             var storage         = AdoWikiPagesStatsStorage(storageDir, utcNow);
-            var wikiWithStorage = AdoWikiWithStorage(adoWiki, storage, pageViewsForDaysWikiLimit);
+            var wikiWithStorage = AdoWikiWithStorage(adoWiki, storage, pageViewsForDaysMax);
             return wikiWithStorage;
         }
 
         public AdoWikiWithStorage AdoWikiWithStorage(
             IAdoWiki adoWiki,
             AdoWikiPagesStatsStorage storage,
-            int? pageViewsForDaysWikiLimit = null) 
-            => new AdoWikiWithStorage(adoWiki, storage, pageViewsForDaysWikiLimit);
+            int? pageViewsForDaysMax = null) 
+            => new AdoWikiWithStorage(adoWiki, storage, pageViewsForDaysMax);
 
         public AdoWikiPagesStatsStorage AdoWikiPagesStatsStorage(Dir storageDir, DateTime utcNow)
             => new AdoWikiPagesStatsStorage(

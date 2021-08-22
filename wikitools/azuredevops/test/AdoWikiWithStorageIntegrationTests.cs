@@ -68,7 +68,7 @@ namespace Wikitools.AzureDevOps.Tests
             // --SSSS----
             // ->
             // --SSSSWWWW
-            var adoWikiWithStorage = decl.AdoWikiWithStorage(adoWiki, storageWithStats, pageViewsForDaysWikiLimit: 4);
+            var adoWikiWithStorage = decl.AdoWikiWithStorage(adoWiki, storageWithStats, pageViewsForDaysMax: 4);
             var statsForDays3To10 = await adoWikiWithStorage.PagesStats(pageViewsForDays: 8);
             var statsForDays3To10For1Page = await adoWikiWithStorage.PageStats(pageViewsForDays: 8, pageId);
 
