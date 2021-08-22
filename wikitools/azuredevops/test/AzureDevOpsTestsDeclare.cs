@@ -19,7 +19,7 @@ namespace Wikitools.AzureDevOps.Tests
             var storageDir = fs.NextSimulatedDir();
             var storage    = Decl.AdoWikiPagesStatsStorage(storageDir, utcNow);
             if (storedStats != null)
-                storage = await storage.OverwriteWith(storedStats);
+                storage = await storage.ReplaceWith(storedStats);
             return storage;
         }
     }

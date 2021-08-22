@@ -62,7 +62,7 @@ namespace Wikitools.AzureDevOps.Tests
             // ->
             // --SSSS----
             var statsForDays3To6 = statsForDays1To10.Trim(utcNow, -7, -4);
-            var storageWithStats = await storage.OverwriteWith(statsForDays3To6);
+            var storageWithStats = await storage.ReplaceWith(statsForDays3To6);
 
             // Act 4. Obtain last 8 days (days 3 to 10), with last 4 days (days 7 to 10) of page stats from wiki
             // --SSSS----
@@ -132,7 +132,7 @@ namespace Wikitools.AzureDevOps.Tests
             // Act
             var stats = await adoWiki.PageStats(pageViewsForDays, pageId);
 
-            statsStorage = await statsStorage.OverwriteWith(stats);
+            statsStorage = await statsStorage.ReplaceWith(stats);
             var storedStats = statsStorage.PagesStats(pageViewsForDays);
 
             var actualFirstDay = stats.FirstDayWithAnyVisit;

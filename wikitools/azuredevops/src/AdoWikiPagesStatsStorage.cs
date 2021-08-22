@@ -44,7 +44,7 @@ namespace Wikitools.AzureDevOps
                         stats.EndDay);
                 });
 
-        public async Task<AdoWikiPagesStatsStorage> OverwriteWith(ValidWikiPagesStats stats)
+        public async Task<AdoWikiPagesStatsStorage> ReplaceWith(ValidWikiPagesStats stats)
         {
             IEnumerable<ValidWikiPagesStatsForMonth> statsByMonth = stats.SplitByMonth();
 
