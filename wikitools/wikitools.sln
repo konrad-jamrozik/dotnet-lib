@@ -21,6 +21,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "azuredevops", "azuredevops\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "azuredevops-tests", "azuredevops\test\azuredevops-tests.csproj", "{837B0781-D899-4ABA-97E7-B958ACF90AB6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "oxce", "..\oxce\oxce.csproj", "{5120BEE7-2793-494E-991D-B6F1F56A1007}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "oxce-tests", "..\oxce-tests\oxce-tests.csproj", "{89DFD178-EFB2-4B06-9AA1-B097E59C55D1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +55,14 @@ Global
 		{837B0781-D899-4ABA-97E7-B958ACF90AB6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{837B0781-D899-4ABA-97E7-B958ACF90AB6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{837B0781-D899-4ABA-97E7-B958ACF90AB6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5120BEE7-2793-494E-991D-B6F1F56A1007}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5120BEE7-2793-494E-991D-B6F1F56A1007}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5120BEE7-2793-494E-991D-B6F1F56A1007}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5120BEE7-2793-494E-991D-B6F1F56A1007}.Release|Any CPU.Build.0 = Release|Any CPU
+		{89DFD178-EFB2-4B06-9AA1-B097E59C55D1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{89DFD178-EFB2-4B06-9AA1-B097E59C55D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{89DFD178-EFB2-4B06-9AA1-B097E59C55D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{89DFD178-EFB2-4B06-9AA1-B097E59C55D1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
