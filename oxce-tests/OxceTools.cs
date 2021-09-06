@@ -52,21 +52,20 @@ namespace OxceTests
                 File.AppendAllLines(outputFile, itemsLines);
             }
 
-            
-            var headerRow = "itemType," + string.Join(",", basesItems.Select(baseItems => baseItems.Name));
+            var headerRow = "itemName," + string.Join(",", basesItems.Select(baseItems => baseItems.Name));
 
-            var itemTypes = basesItems.SelectMany(baseItems => baseItems.Items.Keys).ToHashSet();
-            var itemRows = itemTypes.OrderBy(itemType => itemType).Select(itemType => ItemRow(itemType, basesItems));
+            var itemNames = basesItems.SelectMany(baseItems => baseItems.Items.Keys).ToHashSet();
+            var itemRows = itemNames.OrderBy(itemName => itemName).Select(itemName => ItemRow(itemName, basesItems));
             
             File.AppendAllLines(outputFile, new List<string> {headerRow});
             File.AppendAllLines(outputFile, itemRows);
         }
 
-        private string ItemRow(string itemType, List<BaseItems> basesItems)
+        private string ItemRow(string itemName, List<BaseItems> basesItems)
         {
             var counts = basesItems.Select(
-                baseItems => baseItems.Items.ContainsKey(itemType) ? baseItems.Items[itemType] : 0);
-            return itemType + "," + string.Join(",", counts);
+                baseItems => baseItems.Items.ContainsKey(itemName) ? baseItems.Items[itemName] : 0);
+            return itemName + "," + string.Join(",", counts);
         }
 
         private static List<string> CurrBaseLines(ref List<string> remBasesLines)
