@@ -51,6 +51,22 @@ namespace OxceTests
                 File.AppendAllLines(outputFile, nameLine);
                 File.AppendAllLines(outputFile, itemsLines);
             }
+
+            
+            var headerRow = "itemType," + string.Join(",", basesItems.Select(baseItems => baseItems.Name));
+
+            var itemTypes = basesItems.SelectMany(baseItems => baseItems.Items.Keys).ToHashSet();
+            var itemRows = itemTypes.OrderBy(itemType => itemType).Select(itemType => ItemRow(itemType, basesItems));
+            
+            File.AppendAllLines(outputFile, new List<string> {headerRow});
+            File.AppendAllLines(outputFile, itemRows);
+        }
+
+        private string ItemRow(string itemType, List<BaseItems> basesItems)
+        {
+            var counts = basesItems.Select(
+                baseItems => baseItems.Items.ContainsKey(itemType) ? baseItems.Items[itemType] : 0);
+            return itemType + "," + string.Join(",", counts);
         }
 
         private static List<string> CurrBaseLines(ref List<string> remBasesLines)
