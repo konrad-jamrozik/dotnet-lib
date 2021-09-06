@@ -42,8 +42,15 @@ namespace OxceTests
                     .TakeWhile(line => !line.StartsWith(FirstBaseLinePrefix))
                     .ToList();
                 remBasesLines = remBasesLines.Skip(currBaseLines.Count + 1).ToList();
-                Console.Out.WriteLine($"Appending {currBaseLines.Count} lines");
-                File.AppendAllLines(outputFile, currBaseLines);
+
+                currBaseLines = currBaseLines.SkipWhile(line => !line.Contains("    name: ")).ToList();
+                var nameLine = currBaseLines.Take(1);
+                currBaseLines = currBaseLines.SkipWhile(line => !line.StartsWith("    items:")).ToList();
+                var itemLines = currBaseLines.Skip(1).TakeWhile(line => line.StartsWith("      ")).ToList();
+
+                Console.Out.WriteLine($"Appending {itemLines.Count + 1} lines");
+                File.AppendAllLines(outputFile, nameLine);
+                File.AppendAllLines(outputFile, itemLines);
             }
         }
     }
