@@ -40,34 +40,51 @@ namespace OxceTests
             
             for (int i = 0; i < basesCount; i++)
             {
-                var currBaseLines = remBasesLines
-                    .Skip(1)
-                    .TakeWhile(line => !line.StartsWith(FirstBaseLinePrefix))
-                    .ToList();
-                remBasesLines = remBasesLines.Skip(currBaseLines.Count + 1).ToList();
+                var currBaseLines = CurrBaseLines(ref remBasesLines);
 
-                currBaseLines = currBaseLines.SkipWhile(line => !line.Contains("    name: ")).ToList();
-                var nameLine = currBaseLines.Take(1).ToList();
-                currBaseLines = currBaseLines.SkipWhile(line => !line.StartsWith("    items:")).ToList();
-                var itemLines = currBaseLines.Skip(1).TakeWhile(line => line.StartsWith("      ")).ToList();
+                var (nameLine, itemsLines) = ReadNameAndItemsLines(currBaseLines);
+                var (name, items) = RegexMatchNameAndItems(nameLine, itemsLines);
+                var baseItems = new BaseItems(name, new Dictionary<string, int>(items));
+                basesItems.Add(baseItems);
 
-                var name = Regex.Match(nameLine[0], "\\s+name:\\s(.*)").Groups[1].Value;
-
-                var items = itemLines.Select(
-                    itemLine =>
-                    {
-                        var match = Regex.Match(itemLine, "\\s+(\\w+):\\s(\\d+)");
-                        var itemName = match.Groups[1].Value;
-                        var itemCount = int.Parse(match.Groups[2].Value);
-                        return new KeyValuePair<string, int>(itemName, itemCount);
-                    });
-
-                basesItems.Add(new BaseItems(name, new Dictionary<string, int>(items)));
-
-                Console.Out.WriteLine($"Appending {itemLines.Count + 1} lines");
+                Console.Out.WriteLine($"Appending {itemsLines.Count + 1} lines");
                 File.AppendAllLines(outputFile, nameLine);
-                File.AppendAllLines(outputFile, itemLines);
+                File.AppendAllLines(outputFile, itemsLines);
             }
+        }
+
+        private static List<string> CurrBaseLines(ref List<string> remBasesLines)
+        {
+            var currBaseLines = remBasesLines
+                .Skip(1)
+                .TakeWhile(line => !line.StartsWith(FirstBaseLinePrefix))
+                .ToList();
+            remBasesLines = remBasesLines.Skip(currBaseLines.Count + 1).ToList();
+            return currBaseLines;
+        }
+
+        private static (List<string> nameLine, List<string> itemLines) ReadNameAndItemsLines(List<string> currBaseLines)
+        {
+            currBaseLines = currBaseLines.SkipWhile(line => !line.Contains("    name: ")).ToList();
+            var nameLine = currBaseLines.Take(1).ToList();
+            currBaseLines = currBaseLines.SkipWhile(line => !line.StartsWith("    items:")).ToList();
+            var itemLines = currBaseLines.Skip(1).TakeWhile(line => line.StartsWith("      ")).ToList();
+            return (nameLine, itemLines);
+        }
+
+        private static (string name, IEnumerable<KeyValuePair<string, int>> items) RegexMatchNameAndItems(List<string> nameLine, List<string> itemLines)
+        {
+            var name = Regex.Match(nameLine[0], "\\s+name:\\s(.*)").Groups[1].Value;
+
+            var items = itemLines.Select(
+                itemLine =>
+                {
+                    var match = Regex.Match(itemLine, "\\s+(\\w+):\\s(\\d+)");
+                    var itemName = match.Groups[1].Value;
+                    var itemCount = int.Parse(match.Groups[2].Value);
+                    return new KeyValuePair<string, int>(itemName, itemCount);
+                });
+            return (name, items);
         }
     }
 }
