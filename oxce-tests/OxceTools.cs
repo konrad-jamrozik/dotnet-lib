@@ -7,9 +7,9 @@ using Wikitools.Lib.OS;
 
 namespace OxceTests
 {
-    public class Tools
+    public class OxceTools
     {
-        private const string FirstBaseLinePrefix = " - lon: ";
+        private const string FirstBaseLinePrefix = "  - lon: ";
 
         [SetUp]
         public void Setup()
@@ -17,7 +17,7 @@ namespace OxceTests
         }
 
         [Test]
-        public void Test1()
+        public void ProcessSaveFile()
         {
             var (inputXcfSave, outputFile) = new Configuration(new FileSystem()).Read<OxceTestsCfg>();
 
@@ -37,11 +37,14 @@ namespace OxceTests
 
             for (int i = 0; i < basesCount; i++)
             {
-                var currBaseLines = remBasesLines.Take(1).TakeWhile(line => line != FirstBaseLinePrefix);
-                remBasesLines = remBasesLines.Skip(currBaseLines.Count()).ToList();
+                var currBaseLines = remBasesLines
+                    .Skip(1)
+                    .TakeWhile(line => !line.StartsWith(FirstBaseLinePrefix))
+                    .ToList();
+                remBasesLines = remBasesLines.Skip(currBaseLines.Count + 1).ToList();
+                Console.Out.WriteLine($"Appending {currBaseLines.Count} lines");
+                File.AppendAllLines(outputFile, currBaseLines);
             }
-
-            File.WriteAllLines(outputFile, remBasesLines);
         }
     }
 }
