@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using NUnit.Framework;
 using Wikitools.Lib.Json;
 using Wikitools.Lib.OS;
@@ -34,7 +36,8 @@ namespace OxceTests
                 .ToList();
 
             int basesCount = remBasesLines.Count(line => line.StartsWith(FirstBaseLinePrefix));
-
+            List<BaseItems> basesItems = new List<BaseItems>(basesCount);
+            
             for (int i = 0; i < basesCount; i++)
             {
                 var currBaseLines = remBasesLines
@@ -44,9 +47,22 @@ namespace OxceTests
                 remBasesLines = remBasesLines.Skip(currBaseLines.Count + 1).ToList();
 
                 currBaseLines = currBaseLines.SkipWhile(line => !line.Contains("    name: ")).ToList();
-                var nameLine = currBaseLines.Take(1);
+                var nameLine = currBaseLines.Take(1).ToList();
                 currBaseLines = currBaseLines.SkipWhile(line => !line.StartsWith("    items:")).ToList();
                 var itemLines = currBaseLines.Skip(1).TakeWhile(line => line.StartsWith("      ")).ToList();
+
+                var name = Regex.Match(nameLine[0], "\\s+name:\\s(.*)").Groups[1].Value;
+
+                var items = itemLines.Select(
+                    itemLine =>
+                    {
+                        var match = Regex.Match(itemLine, "\\s+(\\w+):\\s(\\d+)");
+                        var itemName = match.Groups[1].Value;
+                        var itemCount = int.Parse(match.Groups[2].Value);
+                        return new KeyValuePair<string, int>(itemName, itemCount);
+                    });
+
+                basesItems.Add(new BaseItems(name, new Dictionary<string, int>(items)));
 
                 Console.Out.WriteLine($"Appending {itemLines.Count + 1} lines");
                 File.AppendAllLines(outputFile, nameLine);
