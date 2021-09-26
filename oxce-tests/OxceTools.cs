@@ -19,6 +19,21 @@ namespace OxceTests
         }
 
         [Test]
+        public void ProcessSaveFile2()
+        {
+            var (inputXcfSave, outputFile) = new Configuration(new FileSystem()).Read<OxceTestsCfg>();
+
+            var yaml = new Yaml(File.ReadAllLines(inputXcfSave));
+            var basesSeq = yaml.Sequence("bases");
+            foreach (var baseYaml in basesSeq)
+            {
+                string name = baseYaml.Scalar("name");
+                // kja process items
+            }
+        }
+
+
+        [Test]
         public void ProcessSaveFile()
         {
             var (inputXcfSave, outputFile) = new Configuration(new FileSystem()).Read<OxceTestsCfg>();
