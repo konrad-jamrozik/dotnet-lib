@@ -87,11 +87,14 @@ namespace OxceTests
             return (nameLine, itemLines);
         }
 
-        private static (string name, IEnumerable<KeyValuePair<string, int>> items) RegexMatchNameAndItems(List<string> nameLine, List<string> itemLines)
+        private static (string name, IEnumerable<KeyValuePair<string, int>> items) RegexMatchNameAndItems(List<string> nameLine, List<string> itemsLines)
         {
             var name = Regex.Match(nameLine[0], "\\s+name:\\s(.*)").Groups[1].Value;
 
-            var items = itemLines.Select(
+            if (itemsLines.All(line => line == "      {}"))
+                return (name, new KeyValuePair<string, int>[0]);
+
+            var items = itemsLines.Select(
                 itemLine =>
                 {
                     var match = Regex.Match(itemLine, "\\s+(\\w+):\\s(\\d+)");
