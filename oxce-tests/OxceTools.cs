@@ -24,12 +24,29 @@ namespace OxceTests
             var (inputXcfSave, outputFile) = new Configuration(new FileSystem()).Read<OxceTestsCfg>();
 
             var yaml = new Yaml(File.ReadAllLines(inputXcfSave));
-            var basesSeq = yaml.Sequence("bases");
-            foreach (var baseYaml in basesSeq)
-            {
-                string name = baseYaml.Scalar("name");
-                // kja process items
-            }
+            var basesSeq = yaml.Sequence("bases").ToList();
+            var basesNames = basesSeq.Select(@base => @base.Scalar("name")).ToList();
+            var basesItems = basesSeq.Select(@base => @base.MappingOfInts("items")).ToList();
+            
+            var headerRow = "itemName," + string.Join(",", basesNames);
+
+            var itemsNames = basesItems
+                .SelectMany(baseItems => baseItems.Keys)
+                .ToHashSet();
+            var itemsRows = itemsNames
+                .OrderBy(itemName => itemName)
+                .Select(itemName => ItemRow2(itemName, basesItems));
+            
+            File.WriteAllText(outputFile, ""); // Clear the output file
+            File.AppendAllLines(outputFile, new List<string> {headerRow});
+            File.AppendAllLines(outputFile, itemsRows);
+        }
+
+        private string ItemRow2(string itemName, List<Dictionary<string, int>> basesItems)
+        {
+            var counts = basesItems.Select(
+                baseItems => baseItems.ContainsKey(itemName) ? baseItems[itemName] : 0);
+            return itemName + "," + string.Join(",", counts);
         }
 
 
@@ -69,8 +86,12 @@ namespace OxceTests
 
             var headerRow = "itemName," + string.Join(",", basesItems.Select(baseItems => baseItems.Name));
 
-            var itemNames = basesItems.SelectMany(baseItems => baseItems.Items.Keys).ToHashSet();
-            var itemRows = itemNames.OrderBy(itemName => itemName).Select(itemName => ItemRow(itemName, basesItems));
+            var itemNames = basesItems
+                .SelectMany(baseItems => baseItems.Items.Keys)
+                .ToHashSet();
+            var itemRows = itemNames
+                .OrderBy(itemName => itemName)
+                .Select(itemName => ItemRow(itemName, basesItems));
             
             File.AppendAllLines(outputFile, new List<string> {headerRow});
             File.AppendAllLines(outputFile, itemRows);

@@ -5,17 +5,25 @@ namespace OxceTests
 {
     public class Yaml
     {
+        private readonly string[] _lines;
+
         public Yaml(string[] lines)
         {
+            _lines = lines;
+        }
+
+        public IEnumerable<Yaml> Sequence(string key)
+        {
+            // kja curr work
             throw new NotImplementedException();
         }
 
-        public IEnumerable<Yaml> Sequence(string scalar)
+        public string Scalar(string key)
         {
             throw new NotImplementedException();
         }
 
-        public string Scalar(string scalar)
+        public Dictionary<string, int> MappingOfInts(string key)
         {
             throw new NotImplementedException();
         }
