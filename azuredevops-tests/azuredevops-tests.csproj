@@ -26,6 +26,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\azuredevops\azuredevops.csproj" />
+    <ProjectReference Include="..\lib-tests\lib-tests.csproj" />
   </ItemGroup>
 
   <ItemGroup>
