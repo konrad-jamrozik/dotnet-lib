@@ -25,9 +25,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\azuredevops\test\azuredevops-tests.csproj" />
-    <ProjectReference Include="..\..\lib\test\lib-tests.csproj" />
-    <ProjectReference Include="..\src\wikitools.csproj" />
+    <ProjectReference Include="..\azuredevops-tests\azuredevops-tests.csproj" />
+    <ProjectReference Include="..\wikitools\wikitools.csproj" />
   </ItemGroup>
 
 </Project>

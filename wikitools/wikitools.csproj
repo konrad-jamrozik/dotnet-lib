@@ -9,8 +9,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\azuredevops\src\azuredevops.csproj" />
-    <ProjectReference Include="..\..\lib\src\lib.csproj" />
+    <ProjectReference Include="..\azuredevops\azuredevops.csproj" />
+    <ProjectReference Include="..\lib\lib.csproj" />
   </ItemGroup>
 
   <ItemGroup>
