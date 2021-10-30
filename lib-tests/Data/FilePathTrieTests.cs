@@ -9,7 +9,7 @@ using Xunit;
 
 namespace Wikitools.Lib.Tests.Data
 {
-    public class TrieFromPathsTests
+    public class FilePathTrieTests
     {
         [Fact] 
         public void TrieFromEmptyInput() => Verify(
@@ -155,18 +155,18 @@ namespace Wikitools.Lib.Tests.Data
             });
 
 
-        private static void Verify(string[] pathsData, string[] expectedSegment)
-            => Verify(pathsData, expectedSegment.AsList());
+        private static void Verify(string[] pathsData, string[] expectedPathSegments)
+            => Verify(pathsData, expectedPathSegments.AsList());
 
-        private static void Verify(string[] pathsData, IList<string[]> expectedSegments)
+        private static void Verify(string[] pathsData, IList<string[]> expectedPathsSegments)
         {
             var trie = new FilePathTrie(pathsData);
-            PathPart<object?>[] expectedPaths = expectedSegments.Select(PathPart.Leaf).ToArray();
+            PathPart<object?>[] expectedPaths = expectedPathsSegments.Select(PathPart.Leaf).ToArray();
             
             // Act
             var preorderTraversal = trie.PreorderTraversal();
 
-            // Erase Suffixes by calling PathPart.Leaf, as we don't test for that.
+            // Filter out Suffixes by calling PathPart.Leaf, as we don't test for correctness of suffixes.
             PathPart<object?>[] paths = preorderTraversal.Select(path => PathPart.Leaf(path.Segments)).ToArray();
 
             expectedPaths.Zip(paths).Assert(
