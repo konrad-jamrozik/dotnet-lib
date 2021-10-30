@@ -12,11 +12,11 @@ namespace Wikitools.Lib.Tests.Data
     public class FilePathTrieTests
     {
         [Fact] 
-        public void TrieFromEmptyInput() => Verify(
+        public void TrieFromEmptyInput() => VerifyPreorderTraversal(
             new string[] {}, 
             new List<string[]>());
 
-        [Fact] public void TrieFromTwoSegmentPath() => Verify(
+        [Fact] public void TrieFromTwoSegmentPath() => VerifyPreorderTraversal(
             new[]
             {
                 "foo\\bar"
@@ -27,7 +27,7 @@ namespace Wikitools.Lib.Tests.Data
             });
 
         [Fact]
-        public void TrieFromTwoSingleSegmentPaths() => Verify(
+        public void TrieFromTwoSingleSegmentPaths() => VerifyPreorderTraversal(
             new[]
             {
                 "foo", 
@@ -40,7 +40,7 @@ namespace Wikitools.Lib.Tests.Data
             });
 
         [Fact]
-        public void TrieFromRepeatedPaths() => Verify(
+        public void TrieFromRepeatedPaths() => VerifyPreorderTraversal(
             new[]
             {
                 "foo\\bar", 
@@ -52,7 +52,7 @@ namespace Wikitools.Lib.Tests.Data
             });
 
         [Fact]
-        public void TrieFromReversedPaths() => Verify(
+        public void TrieFromReversedPaths() => VerifyPreorderTraversal(
             new[]
             {
                 "foo\\bar", 
@@ -65,7 +65,7 @@ namespace Wikitools.Lib.Tests.Data
             });
 
         [Fact]
-        public void TrieFromStaircasePaths() => Verify(
+        public void TrieFromStaircasePaths() => VerifyPreorderTraversal(
             new[]
             {
                 "foo", 
@@ -78,7 +78,7 @@ namespace Wikitools.Lib.Tests.Data
             });
 
         [Fact]
-        public void TrieFromReverseStaircasePaths() => Verify(
+        public void TrieFromReverseStaircasePaths() => VerifyPreorderTraversal(
             new[]
             {
                 "foo\\bar\\baz",
@@ -91,7 +91,7 @@ namespace Wikitools.Lib.Tests.Data
             });
 
         [Fact]
-        public void TrieFromBranchingPaths() => Verify(
+        public void TrieFromBranchingPaths() => VerifyPreorderTraversal(
             new[] 
             { 
                 "foo\\bar1", 
@@ -105,7 +105,7 @@ namespace Wikitools.Lib.Tests.Data
             });
 
         [Fact]
-        public void TrieWithEmptyPathsSegmentsWhenComputingSuffixes() => Verify(
+        public void TrieWithEmptyPathsSegmentsWhenComputingSuffixes() => VerifyPreorderTraversal(
             new[] { 
                 "foo\\bar", 
                 "foo\\baz",
@@ -118,7 +118,7 @@ namespace Wikitools.Lib.Tests.Data
             });
 
         [Fact]
-        public void TrieFromDoublyBranchingPaths() => Verify(
+        public void TrieFromDoublyBranchingPaths() => VerifyPreorderTraversal(
             new[] { 
                 "foo\\bar2\\baz1",
                 "foo\\baz1\\foo",
@@ -139,7 +139,7 @@ namespace Wikitools.Lib.Tests.Data
             });
 
         [Fact]
-        public void TrieFromJaggedPaths() => Verify(
+        public void TrieFromJaggedPaths() => VerifyPreorderTraversal(
             new[] { 
                 "foo\\bar\\baz\\qux\\quux", 
                 "bar",
@@ -155,24 +155,24 @@ namespace Wikitools.Lib.Tests.Data
             });
 
 
-        private static void Verify(string[] pathsData, string[] expectedPathSegments)
-            => Verify(pathsData, expectedPathSegments.AsList());
+        private static void VerifyPreorderTraversal(string[] pathsUT, string[] expectedPathSegments)
+            => VerifyPreorderTraversal(pathsUT, expectedPathSegments.AsList());
 
-        private static void Verify(string[] pathsData, IList<string[]> expectedPathsSegments)
+        private static void VerifyPreorderTraversal(string[] pathsUT, IList<string[]> expectedPathsSegments)
         {
-            var trie = new FilePathTrie(pathsData);
-            PathPart<object?>[] expectedPaths = expectedPathsSegments.Select(PathPart.Leaf).ToArray();
+            var trieUT = new FilePathTrie(pathsUT);
             
             // Act
-            var preorderTraversal = trie.PreorderTraversal();
+            var preorderTraversalUT = trieUT.PreorderTraversal();
 
             // Filter out Suffixes by calling PathPart.Leaf, as we don't test for correctness of suffixes.
-            PathPart<object?>[] paths = preorderTraversal.Select(path => PathPart.Leaf(path.Segments)).ToArray();
+            PathPart<object?>[] expectedPaths = expectedPathsSegments.Select(PathPart.Leaf).ToArray();
+            PathPart<object?>[] actualPaths = preorderTraversalUT.Select(path => PathPart.Leaf(path.Segments)).ToArray();
 
-            expectedPaths.Zip(paths).Assert(
-                tuple => tuple.First == tuple.Second,
-                tuple => new Exception($"expected: {tuple.First} actual: {tuple.Second}")).Consume();
-            Assert.Equal(expectedPaths.Length, paths.Length);
+            expectedPaths.Zip(actualPaths).Assert(
+                pathsPair => pathsPair.First == pathsPair.Second,
+                pathsPair => new Exception($"expected: {pathsPair.First} actual: {pathsPair.Second}")).Consume();
+            Assert.Equal(expectedPaths.Length, actualPaths.Length);
         }
     }
 }
