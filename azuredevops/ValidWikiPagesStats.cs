@@ -166,7 +166,7 @@ namespace Wikitools.AzureDevOps
             var middleMonthsStats = middleMonths
                 .Select(month => new ValidWikiPagesStatsForMonth(stats.Trim(month)))
                 .ToList();
-            var monthsStats = firstMonthStats.AsList().Concat(middleMonthsStats).Append(lastMonthStats).ToList();
+            var monthsStats = firstMonthStats.InList().Concat(middleMonthsStats).Append(lastMonthStats).ToList();
             return monthsStats;
         }
 

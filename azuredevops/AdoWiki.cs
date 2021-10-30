@@ -90,7 +90,7 @@ namespace Wikitools.AzureDevOps
                 AdoWikiUri.ProjectName,
                 AdoWikiUri.WikiName,
                 pageId,
-                pageViewsForDays)).AsList();
+                pageViewsForDays)).InList();
 
         private WikiHttpClientWithExceptionWrapping WikiHttpClient(AdoWikiUri adoWikiUri, string patEnvVar)
         {

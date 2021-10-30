@@ -156,7 +156,7 @@ namespace Wikitools.Lib.Tests.Data
 
 
         private static void VerifyPreorderTraversal(string[] pathsUT, string[] expectedPathSegments)
-            => VerifyPreorderTraversal(pathsUT, expectedPathSegments.AsList());
+            => VerifyPreorderTraversal(pathsUT, expectedPathSegments.InList());
 
         private static void VerifyPreorderTraversal(string[] pathsUT, IList<string[]> expectedPathsSegments)
         {
