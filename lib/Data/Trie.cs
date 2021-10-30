@@ -14,24 +14,14 @@ namespace Wikitools.Lib.Data
             _ => Array.Empty<PathPart<TValue>>()
         };
 
-        /// <summary>
-        /// This traversal implementation will behave as follows:
-        /// (a) each returned path part will have all segments of the part itself
-        /// and (b) each returned path part will also have all segments of prefix path parts prepended.
-        /// and (c) there will be entry in the result for each path part that has no suffixes.
-        /// and (d) there will be entry in the result for each path part that has at least one suffix.
-        /// </summary>
-        private static IEnumerable<PathPart<TValue>> PreorderTraversal(PathPart<TValue> pathPart)
+        private static IEnumerable<PathPart<TValue>> PreorderTraversal(PathPart<TValue> prefixPathPart)
         {
-            // This variable contains the segments providing property (a).
-            // Note that currentPathPart.Suffixes is nonempty, but redundant, as all suffixes
-            // will be returned as other elements of the return enumerable, thanks to property (d).
-            var currentPathPart = pathPart.AsList();
-            // The .Select(pathPart.Concat) provides property (b)
-            var suffixes = PreorderTraversal(pathPart.Suffixes).Select(pathPart.Concat);
-            // Excluding currentPathPart if there are no suffixes would negate property (c)
-            // Excluding currentPathPart if there are    suffixes would negate property (d)
-            return currentPathPart.Concat(suffixes);
+            var traversedSuffixes = PreorderTraversal(prefixPathPart.Suffixes);
+            // The .Concat here ensures that each pathPart starts with the prefixPathPart.
+            var pathParts = traversedSuffixes.Select(prefixPathPart.Concat);
+            // The .Concat here ensure the prefixPathPart itself is prepended to the list
+            // of returned path parts.
+            return prefixPathPart.AsList().Concat(pathParts);
         }
 
         private static IEnumerable<PathPart<TValue>> PreorderTraversal(IEnumerable<PathPart<TValue>> pathParts) 

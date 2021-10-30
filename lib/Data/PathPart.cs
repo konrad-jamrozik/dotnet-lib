@@ -27,6 +27,10 @@ namespace Wikitools.Lib.Data
         public override int GetHashCode() => this.GetHashCodeOnProperties();
     }
 
+    /// <summary>
+    /// Wraps a set of path segments into a corresponding PathPart that is a leaf,
+    /// meaning it has no trie suffixes attached to it.
+    /// </summary>
     public static class PathPart
     {
         public static PathPart<object?> Leaf(IEnumerable<string> segments) 
