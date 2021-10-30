@@ -52,8 +52,7 @@ namespace Wikitools.AzureDevOps.Tests
                     new(7, date)
                 })
             };
-            return Build(
-                wikiPageStats);
+            return Build(wikiPageStats);
         }
 
         public static ValidWikiPagesStats Build(

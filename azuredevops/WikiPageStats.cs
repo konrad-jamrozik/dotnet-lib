@@ -9,8 +9,7 @@ namespace Wikitools.AzureDevOps
     /// Assumed invariants about the underlying ADO API behavior, confirmed by manual tests:
     /// - DayStats array might be empty, but never null.
     /// - A DayStat entry has a Count of at least 1.
-    /// - More invariants checked here: Wikitools.AzureDevOps.ValidWikiPagesStats.CheckInvariants
-    /// 
+    /// - All the relevant invariants checked in: Wikitools.AzureDevOps.ValidWikiPagesStats.CheckInvariants
     /// </summary>
     public record WikiPageStats(string Path, int Id, WikiPageStats.DayStat[] DayStats)
     {
