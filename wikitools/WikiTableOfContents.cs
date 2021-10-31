@@ -28,9 +28,11 @@ namespace Wikitools
             // this will ensure that the value returned from the PreorderTraversal below is populated.
             //
             // Example desired output:
-            // [/foo](foo) 10 views
-            //     [/bar](foo/bar) 30 views
-            //
+            // [/Proj](/Proj) - 5 views  
+            // [/Proj/BCDR](/Proj/BCDR) - 5 views  
+            // [/Proj/BCDR/BCDR Plan - Handling a Data Center Outage](/Proj/BCDR/BCDR-Plan-%2D-Handling-a-Data-Center-Outage) - 100 views :fire:  
+            // [/Proj/BCDR/BCDR Plan - Improvements to Proj](/Proj/BCDR/BCDR-Plan-%2D-Improvements-to-Proj) - 200 views :fire::fire:
+
             // Notes:
             // - this report knows how to convert path to hyperlink
             //   - hyperlink conversion probably should be abstracted to be generic: in MarkdownDocument
@@ -41,7 +43,7 @@ namespace Wikitools
             var paths = filePaths.PreorderTraversal().Select(
                 pathPart =>
                 {
-                    var (segments, value, _) = pathPart;
+                    var (segments, value, suffixes) = pathPart;
                     return string.Join("/", segments);
                 }).Cast<object>().ToArray();
             return paths;

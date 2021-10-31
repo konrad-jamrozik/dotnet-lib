@@ -16,14 +16,15 @@ namespace Wikitools.Lib.Tests.Data
             new string[] {}, 
             new List<string[]>());
 
-        [Fact] public void TrieFromTwoSegmentPath() => VerifyPreorderTraversal(
+        [Fact] 
+        public void TrieFromThreeSegmentPath() => VerifyPreorderTraversal(
             new[]
             {
-                "foo\\bar"
+                "foo\\bar\\baz"
             }, 
             new[]
             {
-                "foo", "bar"
+                "foo", "bar", "baz"
             });
 
         [Fact]
@@ -64,6 +65,11 @@ namespace Wikitools.Lib.Tests.Data
                 new[] { "bar", "foo" }
             });
 
+        // kja 3 the expectations here are wrong. Each prefixs should be included, as each wiki prefix
+        // path can have visits, and that's what we need.
+        // Also, I am not sure if traversing file system paths will give us this case when it comes
+        // to inputs, or just "foo\\bar\\baz".
+        // See how Wikitools.Lib.OS.FileTree.FilePathTrie works to check this.
         [Fact]
         public void TrieFromStaircasePaths() => VerifyPreorderTraversal(
             new[]

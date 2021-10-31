@@ -7,7 +7,7 @@ namespace Wikitools.AzureDevOps.Tests
     {
         public ValidWikiPagesStats PagesStats() => PagesStats(Today);
 
-        private static DateDay Today => new DateDay(new SimulatedTimeline().UtcNow);
+        public static DateDay Today => new DateDay(new SimulatedTimeline().UtcNow);
 
         public ValidWikiPagesStatsForMonth PagesStatsForMonth(DateDay date)
             => new ValidWikiPagesStatsForMonth(PagesStats(date));

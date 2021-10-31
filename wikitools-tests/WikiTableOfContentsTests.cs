@@ -15,20 +15,29 @@ namespace Wikitools.Tests
         
         // kja 3 curr work:
         // - fix expectations to be on what I proposed in WikiTableOfContents comment
-        //  - this includes weaving in wiki data stats
+        //   - this includes weaving in wiki data stats
         // - simplify fixture logic
+        // - there should be another test like that, but integration,
+        // obtaining the input data from local clone of given wiki, per config.
         [Fact]
         public async Task WritesWikiTableOfContents()
         {
             // var fs = new SimulatedFileSystem();
-            // fs.FileTree()
-            var pathsTrie = new FilePathTrie(new List<string> { "foo\\bar", "foo\\qux" });
-            var validWikiPagesStats = ValidWikiPagesStatsFixture.Build(
-                new[] { new WikiPageStats("foo\\bar", 1, Array.Empty<WikiPageStats.DayStat>()) }) 
+            // var filePathTrie = fs.FileTree(".");
+            var filePathTrie = new FilePathTrie(new List<string> { "foo\\bar", "foo\\qux", "foo\\baz\\bar" });
+            var validWikiPagesStats =
+                ValidWikiPagesStatsFixture.Build(
+                        new WikiPageStats[]
+                        {
+                            new(
+                                "foo\\bar",
+                                1,
+                                new WikiPageStats.DayStat[] { new(10, ValidWikiPagesStatsFixture.Today) })
+                        }) 
                 as IEnumerable<WikiPageStats>;
 
             var toc = new WikiTableOfContents(
-                Task.FromResult(pathsTrie), 
+                Task.FromResult(filePathTrie), 
                 Task.FromResult(validWikiPagesStats));
 
             // Arrange expectations
@@ -36,7 +45,8 @@ namespace Wikitools.Tests
             {
                 "foo",
                 "foo/bar",
-                "foo/qux"
+                "foo/qux",
+                "foo/baz/bar"
             }));
 
             await new MarkdownDocumentDiff(expected, toc).Verify();

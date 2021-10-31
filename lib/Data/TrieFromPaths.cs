@@ -33,7 +33,9 @@ namespace Wikitools.Lib.Data
             
             var suffixes = Suffixes(pathsSuffixes, segmentsByDepthSuffixes);
 
-            return new PathPart<object?>(prefix, null, suffixes);
+            // kj2 Currently value is null here as weaving values in
+            // when building a trie from a path is not yet supported.
+            return new PathPart<object?>(prefix, Value: null, suffixes);
         }
 
         private static IEnumerable<PathPart<object?>> Suffixes(
