@@ -29,6 +29,20 @@ namespace Wikitools.Tests
         {
         }
 
+        [Fact(Skip = "Tool to be used manually")]
+        public void WriteOutGitRepoClonePaths()
+        {
+            var fs = new FileSystem();
+            WikitoolsCfg cfg = new Configuration(fs).Read<WikitoolsCfg>();
+            var clonePath = cfg.GitRepoClonePath;
+            _testOut.WriteLine("Clone path: " + clonePath);
+            var fileTree = new FileTree(fs, clonePath);
+            foreach (var fileTreePath in fileTree.Paths)
+            {
+                _testOut.WriteLine(fileTreePath);
+            }
+        }
+
         [Fact(Skip = "Scratchpad test")]
         public void TypeReflectionScratchpad()
         {

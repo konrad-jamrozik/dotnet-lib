@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -12,12 +13,22 @@ namespace Wikitools.Lib.OS
         // https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/file-system/how-to-iterate-through-a-directory-tree
         public Task<FilePathTrie> FilePathTrie()
         {
-            // kj2 make this method Lazy
-            // kj2 implement properly walking the tree: decoupled from IFilesystem
-            var directoryInfo = new DirectoryInfo(Path);
-            var fileInfos     = directoryInfo.GetFiles("*.*", SearchOption.AllDirectories);
-            var paths         = fileInfos.Select(fi => System.IO.Path.GetRelativePath(Path, fi.FullName));
+
+            var paths = Paths;
             return Task.FromResult(new FilePathTrie(paths.ToArray()));
+        }
+
+        public IEnumerable<string> Paths
+        {
+            get
+            {
+                // kj2 make this method Lazy
+                // kj2 implement properly walking the tree: decoupled from IFilesystem
+                var directoryInfo = new DirectoryInfo(Path);
+                var fileInfos = directoryInfo.GetFiles("*.*", SearchOption.AllDirectories);
+                var paths = fileInfos.Select(fi => System.IO.Path.GetRelativePath(Path, fi.FullName));
+                return paths;
+            }
         }
     }
 }
