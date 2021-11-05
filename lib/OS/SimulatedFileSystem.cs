@@ -75,7 +75,7 @@ namespace Wikitools.Lib.OS
 
         public byte[] ReadAllBytes(string path) => Encoding.UTF8.GetBytes(ReadAllText(path));
 
-        public Task<FilePathTrie> FileTree(string path)
+        public FileTree FileTree(string path)
         {
             throw new NotImplementedException();
         }

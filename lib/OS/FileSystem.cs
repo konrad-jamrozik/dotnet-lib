@@ -45,11 +45,7 @@ namespace Wikitools.Lib.OS
 
         public T ReadAllJsonTo<T>(string path) => ReadAllBytes(path).FromJsonTo<T>();
 
-        public Task<FilePathTrie> FileTree(string path)
-        {
-            var fileTree = new FileTree(this, path);
-            return fileTree.FilePathTrie();
-        }
+        public FileTree FileTree(string path) => new FileTree(this, path);
 
         public Dir? Parent(string path) => Parent(this, path);
 

@@ -16,7 +16,7 @@ namespace Wikitools.Lib.OS
         JsonElement ReadAllJson(string path);
         T ReadAllJsonTo<T>(string path);
         byte[] ReadAllBytes(string path);
-        Task<FilePathTrie> FileTree(string path);
+        FileTree FileTree(string path);
         Dir? Parent(string path);
     }
 }

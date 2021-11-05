@@ -9,11 +9,11 @@ namespace Wikitools
 {
     public record WikiTableOfContents : MarkdownDocument
     {
-        public WikiTableOfContents(Task<FilePathTrie> filePaths, Task<IEnumerable<WikiPageStats>> pageStats) : base(
-            GetContent(filePaths, pageStats)) { }
+        public WikiTableOfContents(AdoWikiPagesPaths pagesPaths, Task<IEnumerable<WikiPageStats>> pageStats) : base(
+            GetContent(pagesPaths, pageStats)) { }
 
         private static async Task<object[]> GetContent(
-            Task<FilePathTrie> filePathsTask,
+            AdoWikiPagesPaths pagesPaths,
             Task<IEnumerable<WikiPageStats>> pagesStatsTask)
         {
             // kja 2 next todos on critical path:
@@ -39,8 +39,10 @@ namespace Wikitools
             // - stats will be used to compute if icons should show: new, active, stale
             // - thresholds for icons passed separately as param, coming from config
 
-            var filePaths = await filePathsTask;
-            var paths = filePaths.PreorderTraversal().Select(
+            // kj2 here we need filtering on trie from the internal nodes, the same as for "leafsOnly" in:
+            // Wikitools.Lib.Tests.Data.FilePathTrieTests.VerifyPreorderTraversal
+            var trie = new FilePathTrie(pagesPaths);
+            var paths = trie.PreorderTraversal().Select(
                 pathPart =>
                 {
                     var (segments, value, suffixes) = pathPart;

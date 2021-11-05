@@ -62,9 +62,8 @@ namespace Wikitools
             var pagesViewsReport = new PagesViewsStatsReport(timeline, pagesViewsStats, cfg.AdoWikiPageViewsForDays);
             var monthlyReport    = new MonthlyStatsReport(pastCommits, AuthorFilter, PathFilter);
             var wikiToc          = new WikiTableOfContents(
-                // kj2 pass here AdoWikiPagesPaths:
-                // new AdoWikiPagesPaths(fs.FileTree(cfg.GitRepoClonePath).Result.Paths);
-                fs.FileTree(cfg.GitRepoClonePath), 
+                new AdoWikiPagesPaths(fs.FileTree(cfg.GitRepoClonePath).Paths),
+                // kj2 plug in the data from wiki: pagesViewsStats
                 Task.FromResult((IEnumerable<WikiPageStats>) new List<WikiPageStats>()));
 
             var docsToWrite = new MarkdownDocument[]

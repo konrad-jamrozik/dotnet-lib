@@ -33,7 +33,7 @@ namespace Wikitools.Tests
             WikitoolsCfg cfg = new Configuration(fs).Read<WikitoolsCfg>();
             var clonePath = cfg.GitRepoClonePath;
             _testOut.WriteLine("Clone path: " + clonePath);
-            var filteredPaths = new AdoWikiPagesPaths(fs.FileTree(clonePath).Result.Paths);
+            var filteredPaths = new AdoWikiPagesPaths(fs.FileTree(clonePath).Paths);
             foreach (var fileTreePath in filteredPaths)
             {
                 _testOut.WriteLine(fileTreePath);

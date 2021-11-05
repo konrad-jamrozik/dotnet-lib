@@ -23,9 +23,9 @@ namespace Wikitools.Tests
         [Fact]
         public async Task WritesWikiTableOfContents()
         {
-            // var fs = new SimulatedFileSystem();
-            // var filePathTrie = fs.FileTree(".");
-            var filePathTrie = new FilePathTrie(new List<string> { "foo\\bar", "foo\\qux", "foo\\baz\\bar" });
+            var gitCloneRootPaths = new List<string> { "foo\\bar", "foo\\qux", "foo\\baz\\bar" };
+            var adoWikiPagesPaths = new AdoWikiPagesPaths(gitCloneRootPaths);
+
             var validWikiPagesStats =
                 ValidWikiPagesStatsFixture.Build(
                         new WikiPageStats[]
@@ -38,7 +38,7 @@ namespace Wikitools.Tests
                 as IEnumerable<WikiPageStats>;
 
             var toc = new WikiTableOfContents(
-                Task.FromResult(filePathTrie), 
+                adoWikiPagesPaths,
                 Task.FromResult(validWikiPagesStats));
 
             // Arrange expectations
