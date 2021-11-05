@@ -19,6 +19,7 @@ namespace Wikitools.Tests
         // - simplify fixture logic
         // - there should be another test like that, but integration,
         // obtaining the input data from local clone of given wiki, per config.
+        //   - For that, see Wikitools.Tests.Tools.WriteOutGitRepoClonePaths.
         [Fact]
         public async Task WritesWikiTableOfContents()
         {
