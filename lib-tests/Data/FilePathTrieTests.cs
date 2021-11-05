@@ -65,11 +65,6 @@ namespace Wikitools.Lib.Tests.Data
                 new[] { "bar", "foo" }
             });
 
-        // kja 3 the expectations here are wrong. Each prefixs should be included, as each wiki prefix
-        // path can have visits, and that's what we need.
-        // Also, I am not sure if traversing file system paths will give us this case when it comes
-        // to inputs, or just "foo\\bar\\baz".
-        // See how Wikitools.Lib.OS.FileTree.FilePathTrie works to check this.
         [Fact]
         public void TrieFromStaircasePaths() => VerifyPreorderTraversal(
             new[]
@@ -82,6 +77,41 @@ namespace Wikitools.Lib.Tests.Data
             {
                 new[] { "foo", "bar", "baz" }
             });
+
+        [Fact]
+        public void TrieFromStaircasePathsWithFiles() => VerifyPreorderTraversal(
+            new[]
+            {
+                "foo\\f1", 
+                "foo\\bar\\f2",
+                "foo\\bar\\qux\\f3"
+            }, 
+            new[]
+            {
+                new[] { "foo" },
+                new[] { "foo", "f1" },
+                new[] { "foo", "bar" },
+                new[] { "foo", "bar", "f2" },
+                // This entry is missing because there was only 1 suffix after "qux", i.e. there was no "fork".
+                // new[] { "foo", "bar" "qux"},
+                new[] { "foo", "bar", "qux", "f3" }
+            });
+
+        [Fact]
+        public void TrieFromStaircasePathsWithFilesLeafsOnly() => VerifyPreorderTraversal(
+            new[]
+            {
+                "foo\\f1", 
+                "foo\\bar\\f2",
+                "foo\\bar\\qux\\f3"
+            }, 
+            new[]
+            {
+                new[] { "foo", "f1" },
+                new[] { "foo", "bar", "f2" },
+                new[] { "foo", "bar", "qux", "f3" }
+            },
+            leafsOnly: true);
 
         [Fact]
         public void TrieFromReverseStaircasePaths() => VerifyPreorderTraversal(
@@ -164,7 +194,10 @@ namespace Wikitools.Lib.Tests.Data
         private static void VerifyPreorderTraversal(string[] pathsUT, string[] expectedPathSegments)
             => VerifyPreorderTraversal(pathsUT, expectedPathSegments.InList());
 
-        private static void VerifyPreorderTraversal(string[] pathsUT, IList<string[]> expectedPathsSegments)
+        private static void VerifyPreorderTraversal(
+            string[] pathsUT,
+            IList<string[]> expectedPathsSegments,
+            bool leafsOnly = false)
         {
             var trieUT = new FilePathTrie(pathsUT);
             
@@ -173,7 +206,12 @@ namespace Wikitools.Lib.Tests.Data
 
             // Filter out Suffixes by calling PathPart.Leaf, as we don't test for correctness of suffixes.
             PathPart<object?>[] expectedPaths = expectedPathsSegments.Select(PathPart.Leaf).ToArray();
-            PathPart<object?>[] actualPaths = preorderTraversalUT.Select(path => PathPart.Leaf(path.Segments)).ToArray();
+            
+            if (leafsOnly)
+                preorderTraversalUT = preorderTraversalUT.Where(path => !path.Suffixes.Any());
+            
+            PathPart<object?>[] actualPaths =
+                preorderTraversalUT.Select(path => PathPart.Leaf(path.Segments)).ToArray();
 
             expectedPaths.Zip(actualPaths).Assert(
                 pathsPair => pathsPair.First == pathsPair.Second,

@@ -28,7 +28,7 @@ namespace Wikitools.Lib.Data
             return prefixPathPart.InList().Concat(pathParts);
         }
 
-        private static IEnumerable<PathPart<TValue>> PreorderTraversal(IEnumerable<PathPart<TValue>> pathParts) 
-            => pathParts.SelectMany(PreorderTraversal);
+        private static IEnumerable<PathPart<TValue>> PreorderTraversal(IEnumerable<PathPart<TValue>> pathParts)
+            => pathParts.SelectMany(PreorderTraversal).ToList();
     }
 }
