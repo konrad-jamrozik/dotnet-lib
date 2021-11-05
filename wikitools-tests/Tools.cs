@@ -1,9 +1,6 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using MoreLinq;
-using MoreLinq.Experimental;
 using Wikitools.AzureDevOps;
 using Wikitools.Lib.Json;
 using Wikitools.Lib.OS;
@@ -36,8 +33,8 @@ namespace Wikitools.Tests
             WikitoolsCfg cfg = new Configuration(fs).Read<WikitoolsCfg>();
             var clonePath = cfg.GitRepoClonePath;
             _testOut.WriteLine("Clone path: " + clonePath);
-            var fileTree = new FileTree(fs, clonePath);
-            foreach (var fileTreePath in fileTree.Paths)
+            var filteredPaths = new AdoWikiPagesPaths(fs.FileTree(clonePath).Result.Paths);
+            foreach (var fileTreePath in filteredPaths)
             {
                 _testOut.WriteLine(fileTreePath);
             }

@@ -23,11 +23,11 @@ namespace Wikitools.Lib.OS
             get
             {
                 // kj2 make this method Lazy
-                // kj2 implement properly walking the tree: decoupled from IFilesystem
+                // kj2 implement properly walking the tree: decoupled from IFileSystem
                 var directoryInfo = new DirectoryInfo(Path);
                 var fileInfos = directoryInfo.GetFiles("*.*", SearchOption.AllDirectories);
                 var paths = fileInfos.Select(fi => System.IO.Path.GetRelativePath(Path, fi.FullName));
-                return paths;
+                return new SortedSet<string>(paths);
             }
         }
     }
