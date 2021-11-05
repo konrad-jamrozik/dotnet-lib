@@ -9,7 +9,11 @@ namespace Wikitools.Lib.Data
     {
         public IEnumerable<PathPart<TValue>> PreorderTraversal() => RootPathPart switch
         {
+            // The .segments.Any() filter here ensures that if the input enumerable is empty,
+            // the returned enumerable is empty instead of being a collection with one PathPart which is empty.
             var (segments, _, _) when segments.Any() => PreorderTraversal(RootPathPart),
+            // This case ensures that if the input RootPathPart has empty prefix, the preorder still
+            // is done instead of the method returning empty value.
             var (_, _, suffixes) when suffixes.Any() => PreorderTraversal(RootPathPart.Suffixes),
             _ => Array.Empty<PathPart<TValue>>()
         };
