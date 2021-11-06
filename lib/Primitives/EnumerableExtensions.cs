@@ -69,5 +69,35 @@ namespace Wikitools.Lib.Primitives
                 throw new InvariantException(message);
             }
         }
+
+        public static IEnumerable<TResult> ZipMatching<TFirst, TSecond, TResult>(
+            this IEnumerable<TFirst> first,
+            IEnumerable<TSecond> second,
+            Func<TFirst, TSecond, bool> match,
+            Func<TFirst, TSecond, TResult> selectResult)
+        {
+            using var firstEnumerator = first.GetEnumerator();
+            using var secondEnumerator = second.GetEnumerator();
+
+            while (firstEnumerator.MoveNext())
+            {
+                var currSecondItemFound = secondEnumerator.MoveNext();
+
+                if (!currSecondItemFound)
+                    throw new InvalidOperationException();
+
+                var currFirstItem = firstEnumerator.Current;
+                var currSecondItem = secondEnumerator.Current;
+
+                if (!match(currFirstItem, currSecondItem))
+                    throw new InvalidOperationException(
+                        $"currFirstItem: {currFirstItem} currSecondItem: {currSecondItem}");
+
+                yield return selectResult(currFirstItem, currSecondItem);
+            }
+
+            if (secondEnumerator.MoveNext())
+                throw new InvalidOperationException();
+        }
     }
 }
