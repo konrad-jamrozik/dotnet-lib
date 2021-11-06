@@ -40,13 +40,18 @@ namespace Wikitools
             // - stats will be used to compute if icons should show: new, active, stale
             // - thresholds for icons passed separately as param, coming from config
 
-            // kja 4 I need to implement abstract "ZipMatching" and use it here.
-            // It takes as input two sorted collections and zips through them until it finds matching elements,
-            // then does the zipping operation, then continues matching.
-            // See if MoreLinq has it.
-            // IMPORTANT: this requires for pagesStats to be sorted.
+            // kja 4 need to handle escaping (write a test for it):
+            // path from wiki: "Path": "/1CS v2/TSG: how to disable 1CS v2 in Azure DevOps organization",
+            // path from file system: "1CS-v2\TSG%3A-how-to-disable-1CS-v2-in-Azure-DevOps-organization.md"
+
+            var trie = new FilePathTrie(pagesPaths);
+            // kja 4 this ZipMaching will have to be adjusted to handle pages that don't have corresponding page
+            // stats.
+            // - See the pseudocode below. Name it something like "ZipMatchingLeftJoin".
+            // - I should confirm the need of having this with an integration test running on local repo.
+            // - IMPORTANT: this requires for pagesStats to be sorted.
             //
-            // Pseudocode:
+            // - Pseudocode:
             // trie.PreorderTraversal().ZipMatching(pagesStatsTask.result,
             //   matcher: ((segments, _, _), wikiPageStats =>
             //      if (FileSystem.SplitPathInverse(segments) == wikiPageStats.Path)
@@ -56,19 +61,14 @@ namespace Wikitools
             //      else // missing wikiPageStats for given path segments
             //          yield (segments, empty stats)
             //          next segments;
-
-            // kja 4 need to handle escaping (write a test for it):
-            // path from wiki: "Path": "/1CS v2/TSG: how to disable 1CS v2 in Azure DevOps organization",
-            // path from file system: "1CS-v2\TSG%3A-how-to-disable-1CS-v2-in-Azure-DevOps-organization.md"
-
-            var trie = new FilePathTrie(pagesPaths);
             var lines = trie.PreorderTraversal().ZipMatching(
                 pagesStatsTask.Result,
                 // kj2 dehardcode the "/" for joining segments.
                 // The authority here is whatever the ADO API returns to the wikiPageStats.
                 match: (pathPart, wikiPageStats)
                     => "/" + string.Join("/", pathPart.Segments) == wikiPageStats.Path + ".md",
-                selectResult: (pathPart, wikiPageStats) => wikiPageStats.Path);
+                selectResult: (pathPart, wikiPageStats)
+                    => $"[{wikiPageStats.Path}]({wikiPageStats.Path}) - {wikiPageStats.DayStats.Sum(ds => ds.Count)} views");
             return lines.Cast<object>().ToArray();
         }
     }

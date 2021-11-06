@@ -52,8 +52,8 @@ namespace Wikitools.Tests
             // Arrange expectations
             var expected = new MarkdownDocument(Task.FromResult(new object[]
             {
-                "/foo",
-                "/foo/bar",
+                "[/foo](/foo) - 10 views",
+                "[/foo/bar](/foo/bar) - 25 views",
             }));
 
             // Act
