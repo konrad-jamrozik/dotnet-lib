@@ -45,7 +45,7 @@ namespace Wikitools.Tests
                         }) 
                 as IEnumerable<WikiPageStats>;
 
-            var toc = new WikiTableOfContents(
+            var tocUT = new WikiTableOfContents(
                 adoWikiPagesPaths,
                 Task.FromResult(validWikiPagesStats));
 
@@ -56,7 +56,8 @@ namespace Wikitools.Tests
                 "foo/bar.md",
             }));
 
-            await new MarkdownDocumentDiff(expected, toc).Verify();
+            // Act
+            await new MarkdownDocumentDiff(expected, tocUT).Verify();
         }
     }
 }

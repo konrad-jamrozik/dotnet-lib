@@ -7,7 +7,15 @@ namespace Wikitools.Lib.Data
 {
     public abstract record Trie<TValue>(PathPart<TValue> RootPathPart)
     {
-        public IEnumerable<PathPart<TValue>> PreorderTraversal() => RootPathPart switch
+        public IEnumerable<PathPart<TValue>> PreorderTraversal(bool leafsOnly = true)
+        {
+            var rootPreorderTraversal = RootPreorderTraversal;
+            return leafsOnly 
+                ? rootPreorderTraversal.Where(path => !path.Suffixes.Any()) 
+                : rootPreorderTraversal;
+        }
+
+        private IEnumerable<PathPart<TValue>> RootPreorderTraversal => RootPathPart switch
         {
             // The .segments.Any() filter here ensures that if the input enumerable is empty,
             // the returned enumerable is empty instead of being a collection with one PathPart which is empty.

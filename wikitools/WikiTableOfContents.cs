@@ -39,8 +39,23 @@ namespace Wikitools
             // - stats will be used to compute if icons should show: new, active, stale
             // - thresholds for icons passed separately as param, coming from config
 
-            // kj2 here we need filtering on trie from the internal nodes, the same as for "leafsOnly" in:
-            // Wikitools.Lib.Tests.Data.FilePathTrieTests.VerifyPreorderTraversal
+            // kja 4 I need to implement abstract "ZipMatching" and use it here.
+            // It takes as input two sorted collections and zips through them until it finds matching elements,
+            // then does the zipping operation, then continues matching.
+            // See if MoreLinq has it.
+            // IMPORTANT: this requires for pagesStats to be sorted.
+            //
+            // Pseudocode:
+            // trie.PreorderTraversal().ZipMatching(pagesStatsTask.result,
+            //   matcher: ((segments, _, _), wikiPageStats =>
+            //      if (FileSystem.SplitPathInverse(segments) == wikiPageStats.Path)
+            //          yield (segments, wikiPageStats);
+            //          next segments;
+            //          next wikiPageStats;
+            //      else // missing wikiPageStats for given path segments
+            //          yield (segments, empty stats)
+            //          next segments;
+
             var trie = new FilePathTrie(pagesPaths);
             var paths = trie.PreorderTraversal().Select(
                 pathPart =>

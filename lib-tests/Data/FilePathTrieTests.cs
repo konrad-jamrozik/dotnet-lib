@@ -202,13 +202,10 @@ namespace Wikitools.Lib.Tests.Data
             var trieUT = new FilePathTrie(pathsUT);
             
             // Act
-            var preorderTraversalUT = trieUT.PreorderTraversal();
+            var preorderTraversalUT = trieUT.PreorderTraversal(leafsOnly);
 
             // Filter out Suffixes by calling PathPart.Leaf, as we don't test for correctness of suffixes.
             PathPart<object?>[] expectedPaths = expectedPathsSegments.Select(PathPart.Leaf).ToArray();
-            
-            if (leafsOnly)
-                preorderTraversalUT = preorderTraversalUT.Where(path => !path.Suffixes.Any());
             
             PathPart<object?>[] actualPaths =
                 preorderTraversalUT.Select(path => PathPart.Leaf(path.Segments)).ToArray();
