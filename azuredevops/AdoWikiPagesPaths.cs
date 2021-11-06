@@ -13,11 +13,22 @@ namespace Wikitools.AzureDevOps
     /// </summary>
     public record AdoWikiPagesPaths(IEnumerable<string> GitCloneRootPaths) : IEnumerable<string>
     {
+        // kj2 this should be parameterized
+        public const string WikiPagesFolder = "wiki";
+        public const string WikiPagesPrefix = WikiPagesFolder + "\\";
+
         private IEnumerable<string> PagePaths
-            => new SortedSet<string>(GitCloneRootPaths.Where(
-                path => path.StartsWith("wiki")
-                        && !Regex.Match(path, @"\\.attachments|\\\.order")
-                            .Success));
+            => new SortedSet<string>(
+                GitCloneRootPaths
+                    .Where(
+                        path =>
+                            // Take paths only from within wiki pages folder
+                            path.StartsWith(WikiPagesFolder)
+                            // Filter out metadata directories and files
+                            && !Regex.Match(path, @"\\.attachments|\\\.order").Success)
+                    // Strip the wiki pages folder
+                    .Select(path => path.Substring(WikiPagesPrefix.Length))
+                );
 
         public IEnumerator<string> GetEnumerator() => PagePaths.GetEnumerator();
 

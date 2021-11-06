@@ -1,10 +1,9 @@
-using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Wikitools.AzureDevOps;
 using Wikitools.AzureDevOps.Tests;
 using Wikitools.Lib.Markdown;
-using Wikitools.Lib.OS;
 using Wikitools.Lib.Tests.Markdown;
 using Xunit;
 
@@ -12,7 +11,6 @@ namespace Wikitools.Tests
 {
     public class WikiTableOfContentsTests
     {
-        
         // kja 3 curr work:
         // - fix expectations to be on what I proposed in WikiTableOfContents comment
         //   - this includes weaving in wiki data stats
@@ -23,17 +21,27 @@ namespace Wikitools.Tests
         [Fact]
         public async Task WritesWikiTableOfContents()
         {
-            var gitCloneRootPaths = new List<string> { "foo\\bar", "foo\\qux", "foo\\baz\\bar" };
+            var wikiPagesPrefix = AdoWikiPagesPaths.WikiPagesPrefix;
+            var gitCloneRootPaths =
+                new List<string> { "foo.md", "foo\\bar.md" }.Select(
+                    path => wikiPagesPrefix + path);
             var adoWikiPagesPaths = new AdoWikiPagesPaths(gitCloneRootPaths);
 
             var validWikiPagesStats =
+                // kj2 this could be simplified to
+                // ValidWikiPagesStatsFixture.Build(("foo.md", 10), ("bar\\bar.md",25));
                 ValidWikiPagesStatsFixture.Build(
                         new WikiPageStats[]
                         {
                             new(
-                                "foo\\bar",
+                                "foo.md",
                                 1,
-                                new WikiPageStats.DayStat[] { new(10, ValidWikiPagesStatsFixture.Today) })
+                                new WikiPageStats.DayStat[] { new(10, ValidWikiPagesStatsFixture.Today) }),
+                            new(
+                                "foo\\bar.md",
+                                2,
+                                new WikiPageStats.DayStat[] { new(25, ValidWikiPagesStatsFixture.Today) })
+
                         }) 
                 as IEnumerable<WikiPageStats>;
 
@@ -44,10 +52,8 @@ namespace Wikitools.Tests
             // Arrange expectations
             var expected = new MarkdownDocument(Task.FromResult(new object[]
             {
-                "foo",
-                "foo/bar",
-                "foo/qux",
-                "foo/baz/bar"
+                "foo.md",
+                "foo/bar.md",
             }));
 
             await new MarkdownDocumentDiff(expected, toc).Verify();
