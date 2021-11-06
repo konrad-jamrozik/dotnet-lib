@@ -16,7 +16,10 @@ namespace Wikitools.Lib.OS
             return parentDirInfo != null ? new Dir(fs, parentDirInfo.FullName) : null;
         }
 
-        public static IEnumerable<string> SplitPath(string path) => path.Split(Path.DirectorySeparatorChar);
+        public static IEnumerable<string> SplitPath(string path) => path.Split(System.IO.Path.DirectorySeparatorChar);
+
+        public static string Path(IEnumerable<string> segments)
+            => string.Join(System.IO.Path.DirectorySeparatorChar, segments);
 
         public Dir CurrentDir => new (this, Directory.GetCurrentDirectory());
 
@@ -31,11 +34,11 @@ namespace Wikitools.Lib.OS
             return new Dir(this, directoryInfo.FullName);
         }
 
-        public string JoinPath(string? path1, string? path2) => Path.Join(path1, path2);
+        public string JoinPath(string? path1, string? path2) => System.IO.Path.Join(path1, path2);
 
         public bool FileExists(string path) => File.Exists(path);
 
-        public string CombinePath(string path1, string path2) => Path.Combine(path1, path2);
+        public string CombinePath(string path1, string path2) => System.IO.Path.Combine(path1, path2);
 
         public string ReadAllText(string path) => File.ReadAllText(path);
 

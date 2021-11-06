@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Wikitools.AzureDevOps;
 using Wikitools.Lib.Markdown;
 using Wikitools.Lib.OS;
+using Wikitools.Lib.Primitives;
 
 namespace Wikitools
 {
@@ -56,14 +57,19 @@ namespace Wikitools
             //          yield (segments, empty stats)
             //          next segments;
 
+            // kja 4 need to handle escaping (write a test for it):
+            // path from wiki: "Path": "/1CS v2/TSG: how to disable 1CS v2 in Azure DevOps organization",
+            // path from file system: "1CS-v2\TSG%3A-how-to-disable-1CS-v2-in-Azure-DevOps-organization.md"
+
             var trie = new FilePathTrie(pagesPaths);
-            var paths = trie.PreorderTraversal().Select(
-                pathPart =>
-                {
-                    var (segments, value, suffixes) = pathPart;
-                    return string.Join("/", segments);
-                }).Cast<object>().ToArray();
-            return paths;
+            var lines = trie.PreorderTraversal().ZipMatching(
+                pagesStatsTask.Result,
+                // kj2 dehardcode the "/" for joining segments.
+                // The authority here is whatever the ADO API returns to the wikiPageStats.
+                match: (pathPart, wikiPageStats)
+                    => "/" + string.Join("/", pathPart.Segments) == wikiPageStats.Path + ".md",
+                selectResult: (pathPart, wikiPageStats) => wikiPageStats.Path);
+            return lines.Cast<object>().ToArray();
         }
     }
 }

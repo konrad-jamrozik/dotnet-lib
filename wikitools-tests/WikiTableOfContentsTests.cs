@@ -34,11 +34,11 @@ namespace Wikitools.Tests
                         new WikiPageStats[]
                         {
                             new(
-                                "foo.md",
+                                "/foo",
                                 1,
                                 new WikiPageStats.DayStat[] { new(10, ValidWikiPagesStatsFixture.Today) }),
                             new(
-                                "foo\\bar.md",
+                                "/foo/bar",
                                 2,
                                 new WikiPageStats.DayStat[] { new(25, ValidWikiPagesStatsFixture.Today) })
 
@@ -52,8 +52,8 @@ namespace Wikitools.Tests
             // Arrange expectations
             var expected = new MarkdownDocument(Task.FromResult(new object[]
             {
-                "foo.md",
-                "foo/bar.md",
+                "/foo",
+                "/foo/bar",
             }));
 
             // Act
