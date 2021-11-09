@@ -10,6 +10,7 @@ namespace Wikitools
 {
     public record WikiTableOfContents : MarkdownDocument
     {
+        // kj2 should pagesStats be forced to be ValidStats? Probably yes.
         public WikiTableOfContents(AdoWikiPagesPaths pagesPaths, Task<IEnumerable<WikiPageStats>> pageStats) : base(
             GetContent(pagesPaths, pageStats)) { }
 
@@ -17,6 +18,10 @@ namespace Wikitools
             AdoWikiPagesPaths pagesPaths,
             Task<IEnumerable<WikiPageStats>> pagesStatsTask)
         {
+            var pagesStats = pagesStatsTask.Result;
+            // kj2 probably sort it earlier and include the sort order need in param type
+            pagesStats = pagesStats.OrderBy(ps => ps.Path).ToList();
+
             // kja 2 next todos on critical path:
             // - Actually obtain pageStats passed to this method
             //   - currently the caller uses dummy empty value
@@ -40,12 +45,17 @@ namespace Wikitools
             // - stats will be used to compute if icons should show: new, active, stale
             // - thresholds for icons passed separately as param, coming from config
 
-            // kja 4 need to handle escaping (write a test for it):
+            // kja 3 need to handle escaping (write a test for it):
             // path from wiki: "Path": "/1CS v2/TSG: how to disable 1CS v2 in Azure DevOps organization",
             // path from file system: "1CS-v2\TSG%3A-how-to-disable-1CS-v2-in-Azure-DevOps-organization.md"
+            // kja 4 also, in general, the formats are currently misaligned. Details:
+            // WritesTableOfContentsFromLocalWikiGitClone test returns
+            // 1CS-v2.md for the file system, but /1CS for the stats.
+            // Note that - has ASCII val of 45 (in python: ord('-')) but period ('.') has 46,.
+            // Hence 1CS-v2.md appears before 1CS.md in fs. But stripping '.md' would fix it.
 
             var trie = new FilePathTrie(pagesPaths);
-            // kja 4 this ZipMaching will have to be adjusted to handle pages that don't have corresponding page
+            // kja 3 this ZipMatching will have to be adjusted to handle pages that don't have corresponding page
             // stats.
             // - See the pseudocode below. Name it something like "ZipMatchingLeftJoin".
             // - I should confirm the need of having this with an integration test running on local repo.
@@ -62,9 +72,9 @@ namespace Wikitools
             //          yield (segments, empty stats)
             //          next segments;
             var lines = trie.PreorderTraversal().ZipMatching(
-                pagesStatsTask.Result,
+                pagesStats,
                 // kj2 dehardcode the "/" for joining segments.
-                // The authority here is whatever the ADO API returns to the wikiPageStats.
+                // The authority here is whatever the ADO API returns (which ends up in wikiPageStats).
                 match: (pathPart, wikiPageStats)
                     => "/" + string.Join("/", pathPart.Segments) == wikiPageStats.Path + ".md",
                 selectResult: (pathPart, wikiPageStats)

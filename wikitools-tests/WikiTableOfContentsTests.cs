@@ -11,13 +11,6 @@ namespace Wikitools.Tests
 {
     public class WikiTableOfContentsTests
     {
-        // kja 3 curr work:
-        // - fix expectations to be on what I proposed in WikiTableOfContents comment
-        //   - this includes weaving in wiki data stats
-        // - simplify fixture logic
-        // - there should be another test like that, but integration,
-        // obtaining the input data from local clone of given wiki, per config.
-        //   - For that, see Wikitools.Tests.Tools.WriteOutGitRepoClonePaths.
         [Fact]
         public async Task WritesWikiTableOfContents()
         {
