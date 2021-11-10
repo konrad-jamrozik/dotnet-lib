@@ -13,9 +13,6 @@ namespace OxceTests
     {
         private const string FirstBaseLinePrefix = "  - lon: ";
 
-
-
-
         [SetUp]
         public void Setup()
         {
@@ -29,22 +26,51 @@ namespace OxceTests
             var yamlMapping = new YamlMapping(File.ReadAllLines(inputXcfSave));
             var basesLines = yamlMapping.Lines("bases").ToList();
             var basesNodesLines = new YamlBlockSequence(basesLines).NodesLines();
+
+            var soldiers = new List<Soldier>();
+
             foreach (IEnumerable<string> baseNodeLines in basesNodesLines)
             {
-                Console.Out.WriteLine("===== Next base! =====");
-                var baseYamlMapping = new YamlMapping(baseNodeLines);
-                var baseName = baseYamlMapping.Lines("name");
-                Console.Out.WriteLine($"base name: {baseName.Single()}");
-                var soldiersYamlBlockSequence = new YamlBlockSequence(baseYamlMapping.Lines("soldiers"));
-                var soldiersNodesLines = soldiersYamlBlockSequence.NodesLines();
+                var (baseName, soldiersNodesLines) = ParseBase(baseNodeLines);
+                // Console.Out.WriteLine("===== Next base! =====");
+                // Console.Out.WriteLine($"base name: {baseName.Single()}");
                 foreach (IEnumerable<string> soldierNodeLines in soldiersNodesLines)
                 {
-                    Console.Out.WriteLine("    ===== Next soldier! =====");
-                    var soldierYamlMapping = new YamlMapping(soldierNodeLines);
-                    var soldierName = soldierYamlMapping.Lines("name");
-                    Console.Out.WriteLine($"    soldier name: {soldierName.Single()}");
+                    ParseSoldier(soldierNodeLines, soldiers, baseName);
                 }
             }
+
+            foreach (var soldier in soldiers)
+            {
+                Console.Out.WriteLine($"{soldier.BaseName},{soldier.Type},{soldier.Name},{soldier.Missions}");
+            }
+        }
+
+        private static (string baseName, IEnumerable<IEnumerable<string>> soldiersNodesLines) ParseBase(IEnumerable<string> baseNodeLines)
+        {
+            var baseYamlMapping = new YamlMapping(baseNodeLines);
+            var baseName = baseYamlMapping.Lines("name").Single();
+            var soldiersYamlBlockSequence = new YamlBlockSequence(baseYamlMapping.Lines("soldiers"));
+            var soldiersNodesLines = soldiersYamlBlockSequence.NodesLines();
+            return (baseName, soldiersNodesLines);
+        }
+
+        private static void ParseSoldier(IEnumerable<string> soldierNodeLines, List<Soldier> soldiers, string baseName)
+        {
+            var soldierYamlMapping = new YamlMapping(soldierNodeLines);
+            var soldierType = soldierYamlMapping.Lines("type").Single();
+            var soldierName = soldierYamlMapping.Lines("name").Single();
+            var soldierMissions = soldierYamlMapping.Lines("missions").Single();
+            // Console.Out.WriteLine("    ===== Next soldier! =====");
+            // Console.Out.WriteLine($"    soldier name: {soldierName.Single()}");
+            // Console.Out.WriteLine($"    soldier missions: {soldierMissions.Single()}");
+
+            soldiers.Add(
+                new Soldier(
+                    soldierType,
+                    soldierName,
+                    int.Parse(soldierMissions),
+                    baseName));
         }
 
         [Test]
