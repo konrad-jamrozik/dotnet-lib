@@ -3,6 +3,9 @@ using System.Collections.Generic;
 
 namespace OxceTests
 {
+    // Partial parser Mapping from https://yaml.org/spec/1.2.2/
+
+    // Partial parser for https://yaml.org/spec/1.2.2/
     public class Yaml
     {
         private readonly string[] _lines;
@@ -12,9 +15,13 @@ namespace OxceTests
             _lines = lines;
         }
 
-        public IEnumerable<Yaml> Sequence(string key)
+        public IEnumerable<Yaml> Mapping(string key)
         {
-            // kja curr work
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<Yaml> BlockSequence(string key)
+        {
             throw new NotImplementedException();
         }
 

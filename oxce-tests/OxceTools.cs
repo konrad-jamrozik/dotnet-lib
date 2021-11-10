@@ -13,18 +13,43 @@ namespace OxceTests
     {
         private const string FirstBaseLinePrefix = "  - lon: ";
 
+
+        [Test]
+        public void TestYamlMapping()
+        {
+            var yamlMapping = new YamlMapping(
+                new[]
+                {
+                    "key1: 5",
+                    "key2:  ",
+                    "  - foo",
+                    "  - bar",
+                    "key3: 42" 
+                });
+        }
+
         [SetUp]
         public void Setup()
         {
         }
 
+
         [Test]
-        public void ProcessSaveFile2()
+        public void ProcessSaveFileSoldiers()
+        {
+            var (inputXcfSave, outputFile) = new Configuration(new FileSystem()).Read<OxceTestsCfg>();
+            var yaml = new Yaml(File.ReadAllLines(inputXcfSave));
+            var basesSeq = yaml.BlockSequence("bases").ToList();
+            var basesNames = basesSeq.Select(@base => @base.Scalar("name")).ToList();
+        }
+
+        [Test]
+        public void ProcessSaveFileStoresYamlStub()
         {
             var (inputXcfSave, outputFile) = new Configuration(new FileSystem()).Read<OxceTestsCfg>();
 
             var yaml = new Yaml(File.ReadAllLines(inputXcfSave));
-            var basesSeq = yaml.Sequence("bases").ToList();
+            var basesSeq = yaml.BlockSequence("bases").ToList();
             var basesNames = basesSeq.Select(@base => @base.Scalar("name")).ToList();
             var basesItems = basesSeq.Select(@base => @base.MappingOfInts("items")).ToList();
             
