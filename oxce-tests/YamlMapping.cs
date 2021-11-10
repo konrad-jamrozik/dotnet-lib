@@ -3,8 +3,7 @@ using System.Linq;
 
 namespace OxceTests
 {
-
-
+    // Partial parser Mapping from https://yaml.org/spec/1.2.2/
     public class YamlMapping
     {
         private readonly IEnumerable<string> _lines;
@@ -16,7 +15,7 @@ namespace OxceTests
 
         public IEnumerable<string> Lines(string key)
         {
-            List<string> valueLines = new List<string>();
+            var valueLines = new List<string>();
             bool appendingLines = false;
             
             foreach (string line in _lines)
@@ -40,30 +39,21 @@ namespace OxceTests
             return indentedValueLines;
         }
 
-        private static bool FoundKey(string key, string line)
-        {
-            return line.StartsWith(key + ":");
-        }
+        private static bool FoundKey(string key, string line) => line.StartsWith(key + ":");
 
         private static bool FinishedAppendingLines(string line)
         {
-            bool endOfIndentedLines = line.TrimStart() != line;
-
-            if (endOfIndentedLines)
-                return true;
-            return false;
+            bool lineIsNotIndented = line.TrimStart() != line;
+            return lineIsNotIndented;
         }
 
-        private static void AppendLine(List<string> valueLines, string line)
-        {
-            valueLines.Add(line);
-        }
+        private static void AppendLine(List<string> valueLines, string line) => valueLines.Add(line);
 
         private static void AddValueFromKeyLineIfPresent(string key, string line, List<string> valueLines)
         {
-            string keyLine = line.Substring((key + ":").Length).Trim();
-            if (keyLine.Any())
-                valueLines.Add(keyLine);
+            string lineWithKeyStripped = line.Substring((key + ":").Length).Trim();
+            if (lineWithKeyStripped.Any())
+                valueLines.Add(lineWithKeyStripped);
         }
     }
 }

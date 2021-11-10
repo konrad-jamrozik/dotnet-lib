@@ -3,8 +3,6 @@ using System.Collections.Generic;
 
 namespace OxceTests
 {
-    // Partial parser Mapping from https://yaml.org/spec/1.2.2/
-
     // Partial parser for https://yaml.org/spec/1.2.2/
     public class Yaml
     {
