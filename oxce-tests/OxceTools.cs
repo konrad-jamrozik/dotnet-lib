@@ -14,19 +14,7 @@ namespace OxceTests
         private const string FirstBaseLinePrefix = "  - lon: ";
 
 
-        [Test]
-        public void TestYamlMapping()
-        {
-            var yamlMapping = new YamlMapping(
-                new[]
-                {
-                    "key1: 5",
-                    "key2:  ",
-                    "  - foo",
-                    "  - bar",
-                    "key3: 42" 
-                });
-        }
+
 
         [SetUp]
         public void Setup()

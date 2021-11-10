@@ -6,6 +6,7 @@ namespace OxceTests
     // Partial parser Mapping from https://yaml.org/spec/1.2.2/
     public class YamlMapping
     {
+        private const string Indent = "  ";
         private readonly IEnumerable<string> _lines;
 
         public YamlMapping(IEnumerable<string> lines)
@@ -35,7 +36,7 @@ namespace OxceTests
                 }
             }
 
-            var indentedValueLines = valueLines.Select(line => line.Substring(2));
+            var indentedValueLines = valueLines.Select(line => line.Substring(Indent.Length));
             return indentedValueLines;
         }
 
@@ -43,7 +44,7 @@ namespace OxceTests
 
         private static bool FinishedAppendingLines(string line)
         {
-            bool lineIsNotIndented = line.TrimStart() != line;
+            bool lineIsNotIndented = line.TrimStart() == line;
             return lineIsNotIndented;
         }
 
@@ -53,7 +54,7 @@ namespace OxceTests
         {
             string lineWithKeyStripped = line.Substring((key + ":").Length).Trim();
             if (lineWithKeyStripped.Any())
-                valueLines.Add(lineWithKeyStripped);
+                valueLines.Add(Indent + lineWithKeyStripped);
         }
     }
 }
