@@ -28,9 +28,17 @@ namespace OxceTests
             var (inputXcfSave, outputFile) = new Configuration(new FileSystem()).Read<OxceTestsCfg>();
             var yamlMapping = new YamlMapping(File.ReadAllLines(inputXcfSave));
             var basesLines = yamlMapping.Lines("bases").ToList();
-            foreach (var basesLine in basesLines)
+            var basesNodesLines = new YamlBlockSequence(basesLines).NodesLines();
+            foreach (IEnumerable<string> baseNodeLines in basesNodesLines)
             {
-                Console.Out.WriteLine(basesLine);
+                Console.Out.WriteLine("===== Next base! =====");
+                var baseYamlMapping = new YamlMapping(baseNodeLines);
+                var baseName = baseYamlMapping.Lines("name");
+                Console.Out.WriteLine($"base name: {baseName.Single()}");
+                // foreach (string baseNodeLine in baseNodeLines)
+                // {
+                //     Console.Out.WriteLine(baseNodeLine);
+                // }
             }
             //var basesNames = basesLines.Select(@base => @base.Scalar("name")).ToList();
         }
