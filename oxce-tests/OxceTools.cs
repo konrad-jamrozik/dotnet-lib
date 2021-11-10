@@ -35,12 +35,16 @@ namespace OxceTests
                 var baseYamlMapping = new YamlMapping(baseNodeLines);
                 var baseName = baseYamlMapping.Lines("name");
                 Console.Out.WriteLine($"base name: {baseName.Single()}");
-                // foreach (string baseNodeLine in baseNodeLines)
-                // {
-                //     Console.Out.WriteLine(baseNodeLine);
-                // }
+                var soldiersYamlBlockSequence = new YamlBlockSequence(baseYamlMapping.Lines("soldiers"));
+                var soldiersNodesLines = soldiersYamlBlockSequence.NodesLines();
+                foreach (IEnumerable<string> soldierNodeLines in soldiersNodesLines)
+                {
+                    Console.Out.WriteLine("    ===== Next soldier! =====");
+                    var soldierYamlMapping = new YamlMapping(soldierNodeLines);
+                    var soldierName = soldierYamlMapping.Lines("name");
+                    Console.Out.WriteLine($"    soldier name: {soldierName.Single()}");
+                }
             }
-            //var basesNames = basesLines.Select(@base => @base.Scalar("name")).ToList();
         }
 
         [Test]
