@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace OxceTests
 {
-    // Partial parser Mapping from https://yaml.org/spec/1.2.2/
+    // Partial parser of Mapping from https://yaml.org/spec/1.2.2/
     public class YamlMapping
     {
         private const string Indent = "  ";
@@ -26,7 +26,7 @@ namespace OxceTests
                     if (FinishedAppendingLines(line)) 
                         break;
 
-                    AppendLine(valueLines, line);
+                    AppendLine(line, valueLines);
                 } 
                 else if (FoundKey(key, line))
                 {
@@ -48,7 +48,7 @@ namespace OxceTests
             return lineIsNotIndented;
         }
 
-        private static void AppendLine(List<string> valueLines, string line) => valueLines.Add(line);
+        private static void AppendLine(string line, List<string> valueLines) => valueLines.Add(line);
 
         private static void AddValueFromKeyLineIfPresent(string key, string line, List<string> valueLines)
         {

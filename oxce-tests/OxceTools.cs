@@ -26,9 +26,13 @@ namespace OxceTests
         public void ProcessSaveFileSoldiers()
         {
             var (inputXcfSave, outputFile) = new Configuration(new FileSystem()).Read<OxceTestsCfg>();
-            var yaml = new Yaml(File.ReadAllLines(inputXcfSave));
-            var basesSeq = yaml.BlockSequence("bases").ToList();
-            var basesNames = basesSeq.Select(@base => @base.Scalar("name")).ToList();
+            var yamlMapping = new YamlMapping(File.ReadAllLines(inputXcfSave));
+            var basesLines = yamlMapping.Lines("bases").ToList();
+            foreach (var basesLine in basesLines)
+            {
+                Console.Out.WriteLine(basesLine);
+            }
+            //var basesNames = basesLines.Select(@base => @base.Scalar("name")).ToList();
         }
 
         [Test]
