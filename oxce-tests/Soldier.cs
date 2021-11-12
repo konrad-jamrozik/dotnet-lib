@@ -1,3 +1,6 @@
+using System.Linq;
+using System.Text.RegularExpressions;
+
 namespace OxceTests
 {
     public record Soldier(
@@ -9,5 +12,18 @@ namespace OxceTests
         int Rank,
         int MonthsService,
         int StatGainTotal,
-        int CurrentPsiSkill) { }
+        int CurrentPsiSkill)
+    {
+        public static string CsvHeaders() 
+            => string.Join(",", typeof(Soldier).GetProperties().Select(p => p.Name));
+
+        public string CsvString()
+        {
+            var str = ToString();
+            var csvStr = Regex.Replace(str, "Soldier {(.*) }", "$1");
+            csvStr = Regex.Replace(csvStr, " \\w+\\ = ", "");
+            return csvStr;
+
+        }
+    }
 }

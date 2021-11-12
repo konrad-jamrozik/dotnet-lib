@@ -40,9 +40,10 @@ namespace OxceTests
                 }
             }
 
+            Console.Out.WriteLine(Soldier.CsvHeaders());
             foreach (var soldier in soldiers)
             {
-                Console.Out.WriteLine(soldier);
+                Console.Out.WriteLine(soldier.CsvString());
             }
         }
 
@@ -58,32 +59,33 @@ namespace OxceTests
         // kja curr work
         private static void ParseSoldier(IEnumerable<string> soldierNodeLines, List<Soldier> soldiers, string baseName)
         {
-            var soldierYamlMapping = new YamlMapping(soldierNodeLines);
-            var soldierType = soldierYamlMapping.Lines("type").Single();
-            var soldierName = soldierYamlMapping.Lines("name").Single();
-            var soldierMissions = int.Parse(soldierYamlMapping.Lines("missions").Single());
-            var soldierKills = int.Parse(soldierYamlMapping.Lines("kills").Single());
-            var soldierRank = int.Parse(soldierYamlMapping.Lines("rank").Single());
-            var soldierMonthsService = int.Parse(soldierYamlMapping.Lines("monthsService").Single());
-            var soldierStatGainTotal = int.Parse(soldierYamlMapping.Lines("statGainTotal").Single());
-            var soldierInitialStats = new YamlMapping(soldierYamlMapping.Lines("initialStats"));
-            var soldierCurrentStats = new YamlMapping(soldierYamlMapping.Lines("currentStats"));
-            var soldierCurrentPsiSkill = int.Parse(soldierCurrentStats.Lines("psiSkill").Single());
+            var soldier = new YamlMapping(soldierNodeLines);
+            var type = soldier.Lines("type").Single();
+            var name = soldier.Lines("name").Single();
+            var missions = int.Parse(soldier.Lines("missions").Single());
+            var kills = int.Parse(soldier.Lines("kills").Single());
+            var rank = int.Parse(soldier.Lines("rank").Single());
+            var soldierDiary = new YamlMapping(soldier.Lines("diary"));
+            int monthsService = int.TryParse(soldierDiary.Lines("monthsService").SingleOrDefault(), out monthsService) ? monthsService : 0;
+            int statGainTotal = int.TryParse(soldierDiary.Lines("statGainTotal").SingleOrDefault(), out statGainTotal) ? statGainTotal : 0;
+            var initialStats = new YamlMapping(soldier.Lines("initialStats"));
+            var currentStats = new YamlMapping(soldier.Lines("currentStats"));
+            var currentPsiSkill = int.Parse(currentStats.Lines("psiSkill").Single());
             // Console.Out.WriteLine("    ===== Next soldier! =====");
             // Console.Out.WriteLine($"    soldier name: {soldierName.Single()}");
             // Console.Out.WriteLine($"    soldier missions: {soldierMissions.Single()}");
 
             soldiers.Add(
                 new Soldier(
-                    soldierType,
-                    soldierName,
-                    soldierMissions,
+                    type,
+                    name,
+                    missions,
                     baseName,
-                    soldierKills,
-                    soldierRank,
-                    soldierMonthsService,
-                    soldierStatGainTotal,
-                    soldierCurrentPsiSkill));
+                    kills,
+                    rank,
+                    monthsService,
+                    statGainTotal,
+                    currentPsiSkill));
         }
 
         [Test]
