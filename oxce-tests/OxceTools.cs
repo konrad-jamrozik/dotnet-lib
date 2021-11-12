@@ -70,19 +70,41 @@ namespace OxceTests
             int statGainTotal = int.TryParse(soldierDiary.Lines("statGainTotal").SingleOrDefault(), out statGainTotal) ? statGainTotal : 0;
             var initialStats = new YamlMapping(soldier.Lines("initialStats"));
             var currentStats = new YamlMapping(soldier.Lines("currentStats"));
+            var currentTU = ParseInt(currentStats, "tu");
+            var currentStamina = ParseInt(currentStats, "stamina");
+            var currentHealth = ParseInt(currentStats, "health");
+            var currentBravery = ParseInt(currentStats, "bravery");
+            var currentReactions = ParseInt(currentStats, "reactions");
+            var currentFiring = ParseInt(currentStats, "firing");
+            var currentThrowing = ParseInt(currentStats, "throwing");
+            var currentStrength = ParseInt(currentStats, "strength");
+            var currentPsiStrength = ParseInt(currentStats, "psiStrength");
             var currentPsiSkill = ParseInt(currentStats, "psiSkill");
+            var currentMelee = ParseInt(currentStats, "melee");
+            var currentMana = ParseInt(currentStats, "mana");
 
             soldiers.Add(
                 new Soldier(
-                    type,
                     name,
+                    type,
                     missions,
                     baseName,
                     kills,
                     rank,
                     monthsService,
                     statGainTotal,
-                    currentPsiSkill));
+                    currentTU,
+                    currentStamina,
+                    currentHealth,
+                    currentBravery,
+                    currentReactions,
+                    currentFiring,
+                    currentThrowing,
+                    currentStrength,
+                    currentPsiStrength,
+                    currentPsiSkill,
+                    currentMelee,
+                    currentMana));
         }
 
         private static string ParseString(YamlMapping soldier, string key) => soldier.Lines(key).Single();

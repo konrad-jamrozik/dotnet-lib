@@ -4,15 +4,26 @@ using System.Text.RegularExpressions;
 namespace OxceTests
 {
     public record Soldier(
-        string Type,
         string Name,
+        string Type,
         int Missions,
         string BaseName,
         int Kills,
         int Rank,
         int MonthsService,
         int StatGainTotal,
-        int CurrentPsiSkill)
+        int CurrentTU,
+        int CurrentStamina,
+        int CurrentHealth,
+        int CurrentBravery,
+        int CurrentReactions,
+        int CurrentFiring,
+        int CurrentThrowing,
+        int CurrentStrength,
+        int CurrentPsiStrength,
+        int CurrentPsiSkill,
+        int CurrentMelee,
+        int CurrentMana)
     {
         public static string CsvHeaders() 
             => string.Join(",", typeof(Soldier).GetProperties().Select(p => p.Name));
