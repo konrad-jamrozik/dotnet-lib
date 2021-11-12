@@ -60,20 +60,17 @@ namespace OxceTests
         private static void ParseSoldier(IEnumerable<string> soldierNodeLines, List<Soldier> soldiers, string baseName)
         {
             var soldier = new YamlMapping(soldierNodeLines);
-            var type = soldier.Lines("type").Single();
-            var name = soldier.Lines("name").Single();
-            var missions = int.Parse(soldier.Lines("missions").Single());
-            var kills = int.Parse(soldier.Lines("kills").Single());
-            var rank = int.Parse(soldier.Lines("rank").Single());
+            var type = ParseString(soldier, "type");
+            var name = ParseString(soldier, "name");
+            var missions = ParseInt(soldier, "missions");
+            var kills = ParseInt(soldier, "kills");
+            var rank = ParseInt(soldier, "rank");
             var soldierDiary = new YamlMapping(soldier.Lines("diary"));
             int monthsService = int.TryParse(soldierDiary.Lines("monthsService").SingleOrDefault(), out monthsService) ? monthsService : 0;
             int statGainTotal = int.TryParse(soldierDiary.Lines("statGainTotal").SingleOrDefault(), out statGainTotal) ? statGainTotal : 0;
             var initialStats = new YamlMapping(soldier.Lines("initialStats"));
             var currentStats = new YamlMapping(soldier.Lines("currentStats"));
-            var currentPsiSkill = int.Parse(currentStats.Lines("psiSkill").Single());
-            // Console.Out.WriteLine("    ===== Next soldier! =====");
-            // Console.Out.WriteLine($"    soldier name: {soldierName.Single()}");
-            // Console.Out.WriteLine($"    soldier missions: {soldierMissions.Single()}");
+            var currentPsiSkill = ParseInt(currentStats, "psiSkill");
 
             soldiers.Add(
                 new Soldier(
@@ -87,6 +84,11 @@ namespace OxceTests
                     statGainTotal,
                     currentPsiSkill));
         }
+
+        private static string ParseString(YamlMapping soldier, string key) => soldier.Lines(key).Single();
+
+        private static int ParseInt(YamlMapping soldier, string key) => int.Parse(soldier.Lines(key).Single());
+
 
         [Test]
         public void ProcessSaveFileStoresYamlStub()
