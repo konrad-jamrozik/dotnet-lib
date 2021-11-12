@@ -42,7 +42,7 @@ namespace OxceTests
 
             foreach (var soldier in soldiers)
             {
-                Console.Out.WriteLine($"{soldier.BaseName},{soldier.Type},{soldier.Name},{soldier.Missions}");
+                Console.Out.WriteLine(soldier);
             }
         }
 
@@ -55,12 +55,20 @@ namespace OxceTests
             return (baseName, soldiersNodesLines);
         }
 
+        // kja curr work
         private static void ParseSoldier(IEnumerable<string> soldierNodeLines, List<Soldier> soldiers, string baseName)
         {
             var soldierYamlMapping = new YamlMapping(soldierNodeLines);
             var soldierType = soldierYamlMapping.Lines("type").Single();
             var soldierName = soldierYamlMapping.Lines("name").Single();
-            var soldierMissions = soldierYamlMapping.Lines("missions").Single();
+            var soldierMissions = int.Parse(soldierYamlMapping.Lines("missions").Single());
+            var soldierKills = int.Parse(soldierYamlMapping.Lines("kills").Single());
+            var soldierRank = int.Parse(soldierYamlMapping.Lines("rank").Single());
+            var soldierMonthsService = int.Parse(soldierYamlMapping.Lines("monthsService").Single());
+            var soldierStatGainTotal = int.Parse(soldierYamlMapping.Lines("statGainTotal").Single());
+            var soldierInitialStats = new YamlMapping(soldierYamlMapping.Lines("initialStats"));
+            var soldierCurrentStats = new YamlMapping(soldierYamlMapping.Lines("currentStats"));
+            var soldierCurrentPsiSkill = int.Parse(soldierCurrentStats.Lines("psiSkill").Single());
             // Console.Out.WriteLine("    ===== Next soldier! =====");
             // Console.Out.WriteLine($"    soldier name: {soldierName.Single()}");
             // Console.Out.WriteLine($"    soldier missions: {soldierMissions.Single()}");
@@ -69,8 +77,13 @@ namespace OxceTests
                 new Soldier(
                     soldierType,
                     soldierName,
-                    int.Parse(soldierMissions),
-                    baseName));
+                    soldierMissions,
+                    baseName,
+                    soldierKills,
+                    soldierRank,
+                    soldierMonthsService,
+                    soldierStatGainTotal,
+                    soldierCurrentPsiSkill));
         }
 
         [Test]
