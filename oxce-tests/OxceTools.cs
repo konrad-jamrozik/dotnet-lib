@@ -77,8 +77,8 @@ namespace OxceTests
             var manaMissing = ParseIntOrZero(soldier, "manaMissing");
             var rank = ParseInt(soldier, "rank");
             var soldierDiary = new YamlMapping(soldier.Lines("diary"));
-            int monthsService = ParseIntOrZero(soldierDiary, "monthsService");
-            int statGainTotal = ParseIntOrZero(soldierDiary, "statGainTotal");
+            var monthsService = ParseIntOrZero(soldierDiary, "monthsService");
+            var statGainTotal = ParseIntOrZero(soldierDiary, "statGainTotal");
             var initialStats = new YamlMapping(soldier.Lines("initialStats"));
             var currentStats = new YamlMapping(soldier.Lines("currentStats"));
             var currentTU = ParseInt(currentStats, "tu");

@@ -16,9 +16,9 @@ namespace OxceTests
             "TrainStrength",
             "TrainMelee",
             "TrainMana",
-            "TrainPsiSkill",
             "TrainTotal",
             "FullyTrained",
+            "TrainPsiSkill",
             "PsiTrained"
         };
 
