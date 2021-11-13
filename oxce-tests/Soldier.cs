@@ -31,7 +31,10 @@ namespace OxceTests
         private static IEnumerable<PropertyInfo> Properties { get; } = typeof(Soldier).GetProperties();
 
         public static string CsvHeaders()
-            => string.Join(",", Properties.Select(p => p.Name).Union(TrainingStats.CsvHeaders()));
+            => string.Join(",", 
+                Properties.Select(p => p.Name)
+                    .Union(TrainingStats.CsvHeaders())
+                    .Union(MaxStats.CsvHeaders()));
 
         public float KillsPerMission => Missions >= 5 ? (float) Kills / Missions : 0;
 
@@ -55,7 +58,7 @@ namespace OxceTests
         private IEnumerable<(string Key, object Value)> DataMap()
         {
             var propertyData = Properties.Select(p => (p.Name, p.GetValue(this)));
-            var allData = propertyData.Union(TrainingStats.Get(this));
+            var allData = propertyData.Union(TrainingStats.Get(this)).Union(MaxStats.Get(this));
             return allData;
         }
     }
