@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 using NUnit.Framework;
 using Wikitools.Lib.Json;
 using Wikitools.Lib.OS;
+using Wikitools.Lib.Primitives;
 
 namespace OxceTests
 {
@@ -18,46 +19,54 @@ namespace OxceTests
         {
         }
 
-
         [Test]
         public void ProcessSaveFileSoldiers()
         {
-            var (inputXcfSave, outputFile) = new Configuration(new FileSystem()).Read<OxceTestsCfg>();
+            var (inputXcfSave, outputDirectory, outputFile) = new Configuration(new FileSystem()).Read<OxceTestsCfg>();
+            var basesNodesLines = GetBasesNodesLines(inputXcfSave);
+            var soldiers = ParseSoldiers(basesNodesLines);
+            WriteOutSoldiers(soldiers, outputDirectory);
+        }
+
+        private static IEnumerable<IEnumerable<string>> GetBasesNodesLines(string inputXcfSave)
+        {
             var yamlMapping = new YamlMapping(File.ReadAllLines(inputXcfSave));
             var basesLines = yamlMapping.Lines("bases").ToList();
             var basesNodesLines = new YamlBlockSequence(basesLines).NodesLines();
-
-            var soldiers = new List<Soldier>();
-
-            foreach (IEnumerable<string> baseNodeLines in basesNodesLines)
-            {
-                var (baseName, soldiersNodesLines) = ParseBase(baseNodeLines);
-                // Console.Out.WriteLine("===== Next base! =====");
-                // Console.Out.WriteLine($"base name: {baseName.Single()}");
-                foreach (IEnumerable<string> soldierNodeLines in soldiersNodesLines)
-                {
-                    ParseSoldier(soldierNodeLines, soldiers, baseName);
-                }
-            }
-
-            Console.Out.WriteLine(Soldier.CsvHeaders());
-            foreach (var soldier in soldiers)
-            {
-                Console.Out.WriteLine(soldier.CsvString());
-            }
+            return basesNodesLines;
         }
 
-        private static (string baseName, IEnumerable<IEnumerable<string>> soldiersNodesLines) ParseBase(IEnumerable<string> baseNodeLines)
+        private static List<Soldier> ParseSoldiers(IEnumerable<IEnumerable<string>> basesLines)
         {
-            var baseYamlMapping = new YamlMapping(baseNodeLines);
-            var baseName = baseYamlMapping.Lines("name").Single();
-            var soldiersYamlBlockSequence = new YamlBlockSequence(baseYamlMapping.Lines("soldiers"));
-            var soldiersNodesLines = soldiersYamlBlockSequence.NodesLines();
-            return (baseName, soldiersNodesLines);
+            var soldiers = basesLines.SelectMany(
+                baseLines =>
+                {
+                    var (baseName, soldiersLines) = ParseBase(baseLines);
+                    var soldiers = soldiersLines.Select(soldierLines => ParseSoldier(soldierLines, baseName));
+                    return soldiers;
+                }).ToList();
+            return soldiers;
+        }
+
+        private static (string baseName, IEnumerable<IEnumerable<string>> soldiersLines) ParseBase(IEnumerable<string> baseLines)
+        {
+            var baseYaml = new YamlMapping(baseLines);
+            var soldiersYaml = new YamlBlockSequence(baseYaml.Lines("soldiers"));
+            var soldiersLines = soldiersYaml.NodesLines();
+            return (baseName: ParseString(baseYaml, "name"), soldiersLines);
+        }
+
+        private static void WriteOutSoldiers(List<Soldier> soldiers, string outputDirectory)
+        {
+            string[] csvLines = Soldier.CsvHeaders().InList().Concat(soldiers.Select(s => s.CsvString())).ToArray();
+            var soldierDataOutputFile = Path.Join(outputDirectory, "soldier_data.csv");
+
+            File.WriteAllLines(soldierDataOutputFile, csvLines);
+            csvLines.ForEach(line => Console.Out.WriteLine(line));
         }
 
         // kja curr work
-        private static void ParseSoldier(IEnumerable<string> soldierNodeLines, List<Soldier> soldiers, string baseName)
+        private static Soldier ParseSoldier(IEnumerable<string> soldierNodeLines, string baseName)
         {
             var soldier = new YamlMapping(soldierNodeLines);
             var type = ParseString(soldier, "type");
@@ -83,39 +92,38 @@ namespace OxceTests
             var currentMelee = ParseInt(currentStats, "melee");
             var currentMana = ParseInt(currentStats, "mana");
 
-            soldiers.Add(
-                new Soldier(
-                    name,
-                    type,
-                    baseName,
-                    missions,
-                    kills,
-                    rank,
-                    monthsService,
-                    statGainTotal,
-                    currentTU,
-                    currentStamina,
-                    currentHealth,
-                    currentBravery,
-                    currentReactions,
-                    currentFiring,
-                    currentThrowing,
-                    currentStrength,
-                    currentPsiStrength,
-                    currentPsiSkill,
-                    currentMelee,
-                    currentMana));
+            return new Soldier(
+                name,
+                type,
+                baseName,
+                missions,
+                kills,
+                rank,
+                monthsService,
+                statGainTotal,
+                currentTU,
+                currentStamina,
+                currentHealth,
+                currentBravery,
+                currentReactions,
+                currentFiring,
+                currentThrowing,
+                currentStrength,
+                currentPsiStrength,
+                currentPsiSkill,
+                currentMelee,
+                currentMana);
         }
 
-        private static string ParseString(YamlMapping soldier, string key) => soldier.Lines(key).Single();
+        private static string ParseString(YamlMapping mapping, string key) => mapping.Lines(key).Single();
 
-        private static int ParseInt(YamlMapping soldier, string key) => int.Parse(soldier.Lines(key).Single());
+        private static int ParseInt(YamlMapping mapping, string key) => int.Parse(mapping.Lines(key).Single());
 
 
         [Test]
         public void ProcessSaveFileStoresYamlStub()
         {
-            var (inputXcfSave, outputFile) = new Configuration(new FileSystem()).Read<OxceTestsCfg>();
+            var (inputXcfSave, outputDirectory, outputFile) = new Configuration(new FileSystem()).Read<OxceTestsCfg>();
 
             var yaml = new Yaml(File.ReadAllLines(inputXcfSave));
             var basesSeq = yaml.BlockSequence("bases").ToList();
@@ -147,7 +155,7 @@ namespace OxceTests
         [Test]
         public void ProcessSaveFile()
         {
-            var (inputXcfSave, outputFile) = new Configuration(new FileSystem()).Read<OxceTestsCfg>();
+            var (inputXcfSave, outputDirectory, outputFile) = new Configuration(new FileSystem()).Read<OxceTestsCfg>();
 
             // Clear the output file
             File.WriteAllText(outputFile, "");
