@@ -20,15 +20,24 @@ namespace OxceTests
         }
 
         [Test]
-        public void ProcessSaveFileSoldiers()
+        public void ProcessSaveFileBaseSoldiers()
         {
             var (inputXcfSave, outputDirectory, outputFile) = new Configuration(new FileSystem()).Read<OxceTestsCfg>();
-            var basesNodesLines = GetBasesNodesLines(inputXcfSave);
-            var soldiers = ParseSoldiers(basesNodesLines);
-            WriteOutSoldiers(soldiers, outputDirectory);
+            var basesLines = GetBasesLines(inputXcfSave);
+            var soldiers = ParseBaseSoldiers(basesLines);
+            WriteBaseSoldiers(soldiers, outputDirectory);
         }
 
-        private static IEnumerable<IEnumerable<string>> GetBasesNodesLines(string inputXcfSave)
+        [Test]
+        public void ProcessSaveFileBaseItemCounts()
+        {
+            var (inputXcfSave, outputDirectory, outputFile) = new Configuration(new FileSystem()).Read<OxceTestsCfg>();
+            var basesNodesLines = GetBasesLines(inputXcfSave);
+            var itemCounts = ParseBaseItemCounts(basesNodesLines);
+            WriteBaseItemCounts(itemCounts, outputDirectory);
+        }
+
+        private static IEnumerable<IEnumerable<string>> GetBasesLines(string inputXcfSave)
         {
             var yamlMapping = new YamlMapping(File.ReadAllLines(inputXcfSave));
             var basesLines = yamlMapping.Lines("bases").ToList();
@@ -36,19 +45,31 @@ namespace OxceTests
             return basesNodesLines;
         }
 
-        private static List<Soldier> ParseSoldiers(IEnumerable<IEnumerable<string>> basesLines)
+        private static List<Soldier> ParseBaseSoldiers(IEnumerable<IEnumerable<string>> basesLines)
         {
             var soldiers = basesLines.SelectMany(
                 baseLines =>
                 {
-                    var (baseName, soldiersLines) = ParseBase(baseLines);
+                    var (baseName, soldiersLines) = ParseBaseSoldiers(baseLines);
                     var soldiers = soldiersLines.Select(soldierLines => ParseSoldier(soldierLines, baseName));
                     return soldiers;
                 }).ToList();
             return soldiers;
         }
 
-        private static (string baseName, IEnumerable<IEnumerable<string>> soldiersLines) ParseBase(IEnumerable<string> baseLines)
+        private static List<ItemCount> ParseBaseItemCounts(IEnumerable<IEnumerable<string>> basesLines)
+        {
+            var items = basesLines.SelectMany(
+                baseLines =>
+                {
+                    var (baseName, itemCountsDataPairs) = ParseBaseItemCounts(baseLines);
+                    var items = itemCountsDataPairs.Select(pair => new ItemCount(pair.Key, int.Parse(pair.Value), baseName));
+                    return items;
+                }).ToList();
+            return items;
+        }
+
+        private static (string baseName, IEnumerable<IEnumerable<string>> soldiersLines) ParseBaseSoldiers(IEnumerable<string> baseLines)
         {
             var baseYaml = new YamlMapping(baseLines);
             var soldiersYaml = new YamlBlockSequence(baseYaml.Lines("soldiers"));
@@ -56,19 +77,36 @@ namespace OxceTests
             return (baseName: ParseString(baseYaml, "name"), soldiersLines);
         }
 
-        private static void WriteOutSoldiers(List<Soldier> soldiers, string outputDirectory)
+        private static (string baseName, IEnumerable<(string Key, string Value)> itemCountsDataPairs) ParseBaseItemCounts(IEnumerable<string> baseLines)
+        {
+            var baseYaml = new YamlMapping(baseLines);
+            var itemCountsYaml = new YamlMapping(baseYaml.Lines("items"));
+            var itemCountsDataPairs = itemCountsYaml.KeyValuePairs();
+            return (baseName: ParseString(baseYaml, "name"), itemCountsDataPairs);
+        }
+
+        private static void WriteBaseSoldiers(List<Soldier> soldiers, string outputDirectory)
         {
             string[] csvLines = Soldier.CsvHeaders().InList().Concat(soldiers.Select(s => s.CsvString())).ToArray();
-            var soldierDataOutputFile = Path.Join(outputDirectory, "soldier_data.csv");
+            var soldierDataOutputFile = Path.Join(outputDirectory, "base_soldiers_query.csv");
 
             File.WriteAllLines(soldierDataOutputFile, csvLines);
             csvLines.ForEach(line => Console.Out.WriteLine(line));
         }
 
-        // kja curr work
-        private static Soldier ParseSoldier(IEnumerable<string> soldierNodeLines, string baseName)
+        private static void WriteBaseItemCounts(List<ItemCount> items, string outputDirectory)
         {
-            var soldier = new YamlMapping(soldierNodeLines);
+            string[] csvLines = ItemCount.CsvHeaders().InList().Concat(items.Select(s => s.CsvString())).ToArray();
+            var itemCountDataOutputFile = Path.Join(outputDirectory, "base_item_counts_query.csv");
+
+            File.WriteAllLines(itemCountDataOutputFile, csvLines);
+            csvLines.ForEach(line => Console.Out.WriteLine(line));
+        }
+
+
+        private static Soldier ParseSoldier(IEnumerable<string> soldierLines, string baseName)
+        {
+            var soldier = new YamlMapping(soldierLines);
             var type = ParseString(soldier, "type");
             var name = ParseString(soldier, "name");
             var missions = ParseInt(soldier, "missions");

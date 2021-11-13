@@ -40,6 +40,12 @@ namespace OxceTests
             return indentedValueLines;
         }
 
+        public IEnumerable<(string Key, string Value)> KeyValuePairs()
+        {
+            // kja current work
+            return new List<(string Key, string Value)>();
+        }
+
         private static bool FoundKey(string key, string line) => line.StartsWith(key + ":");
 
         private static bool FinishedAppendingLines(string line)
