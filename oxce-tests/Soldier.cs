@@ -41,13 +41,13 @@ namespace OxceTests
 
         public string Humanoid = Type is "STR_SOLDIER" or "STR_HYBRID" ? "TRUE" : "FALSE";
 
-        public override string ToString() => "Soldier { " 
+        public override string ToString() => $"{nameof(Soldier)} {{ " 
             + string.Join(", ", DataMap().Select(p => $"{p.Key} = {p.Value}")) + " }";
 
         public string CsvString()
         {
             var str = ToString();
-            var csvStr = Regex.Replace(str, "Soldier {(.*) }", "$1");
+            var csvStr = Regex.Replace(str, $"{nameof(Soldier)} {{(.*) }}", "$1");
             csvStr = Regex.Replace(csvStr, " \\w+\\ = ", "");
             return csvStr;
         }
