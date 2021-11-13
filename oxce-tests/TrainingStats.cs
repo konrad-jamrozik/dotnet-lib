@@ -16,8 +16,10 @@ namespace OxceTests
             "TrainStrength",
             "TrainMelee",
             "TrainMana",
+            "TrainPsiSkill",
             "TrainTotal",
-            "FullyTrained"
+            "FullyTrained",
+            "PsiTrained"
         };
 
         public static IEnumerable<(string Key, object Value)> Get(Soldier soldier)
@@ -39,7 +41,9 @@ namespace OxceTests
             var derivedData = new (string, object)[]
             {
                 ("TrainTotal", trainTotal),
-                ("FullyTrained", trainTotal == 0 ? "TRUE" : "FALSE")
+                ("FullyTrained", trainTotal == 0 ? "TRUE" : "FALSE"),
+                ("TrainPsiSkill", Math.Min(soldier.CurrentPsiSkill - caps.PsiSkill, 0)),
+                ("PsiTrained", soldier.CurrentPsiSkill - caps.PsiSkill <= 0 ? "TRUE" : "FALSE")
             };
 
             var allData = CsvHeaders().Zip(values)

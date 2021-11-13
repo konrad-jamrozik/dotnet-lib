@@ -73,10 +73,12 @@ namespace OxceTests
             var name = ParseString(soldier, "name");
             var missions = ParseInt(soldier, "missions");
             var kills = ParseInt(soldier, "kills");
+            var recovery = ParseIntOrZero(soldier, "recovery");
+            var manaMissing = ParseIntOrZero(soldier, "manaMissing");
             var rank = ParseInt(soldier, "rank");
             var soldierDiary = new YamlMapping(soldier.Lines("diary"));
-            int monthsService = int.TryParse(soldierDiary.Lines("monthsService").SingleOrDefault(), out monthsService) ? monthsService : 0;
-            int statGainTotal = int.TryParse(soldierDiary.Lines("statGainTotal").SingleOrDefault(), out statGainTotal) ? statGainTotal : 0;
+            int monthsService = ParseIntOrZero(soldierDiary, "monthsService");
+            int statGainTotal = ParseIntOrZero(soldierDiary, "statGainTotal");
             var initialStats = new YamlMapping(soldier.Lines("initialStats"));
             var currentStats = new YamlMapping(soldier.Lines("currentStats"));
             var currentTU = ParseInt(currentStats, "tu");
@@ -100,6 +102,8 @@ namespace OxceTests
                 kills,
                 rank,
                 monthsService,
+                recovery,
+                manaMissing,
                 statGainTotal,
                 currentTU,
                 currentStamina,
@@ -115,9 +119,15 @@ namespace OxceTests
                 currentMana);
         }
 
-        private static string ParseString(YamlMapping mapping, string key) => mapping.Lines(key).Single();
 
-        private static int ParseInt(YamlMapping mapping, string key) => int.Parse(mapping.Lines(key).Single());
+        private static string ParseString(YamlMapping mapping, string key) 
+            => mapping.Lines(key).Single();
+
+        private static int ParseInt(YamlMapping mapping, string key)
+            => int.Parse(mapping.Lines(key).Single());
+
+        private static int ParseIntOrZero(YamlMapping mapping, string key)
+            => int.TryParse(mapping.Lines(key).SingleOrDefault(), out var value) ? value : 0;
 
 
         [Test]
