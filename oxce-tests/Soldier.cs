@@ -28,7 +28,7 @@ namespace OxceTests
         int CurrentMelee,
         int CurrentMana)
     {
-        public float KillsPerMission => Missions >= 5 ? Kills / Missions : 0;
+        public float KillsPerMission => Missions >= 5 ? (float) Kills / Missions : 0;
 
         public int StatGain => Math.Max(StatGainTotal - CurrentPsiSkill, 0);
 
@@ -37,23 +37,24 @@ namespace OxceTests
         public static string CsvHeaders()
             => string.Join(
                 ",",
-                PrintableProperties.Select(p => p.Name));
+                PrintableProperties.Select(p => p.Name).Union(TrainingStats.CsvHeaders()));
 
         private static IEnumerable<PropertyInfo> PrintableProperties { get; } =
             typeof(Soldier).GetProperties().Where(p => p.Name != nameof(TrainingStatCaps));
 
-        private Dictionary<string, object> ElementsToPrint()
+        private Dictionary<string, object> PrintableKeyValuePairs()
         {
             var propertyData = PrintableProperties.Select(p => new KeyValuePair<string, object>(p.Name, p.GetValue(this)));
 
-            IEnumerable<KeyValuePair<string, object>> trainingData = TrainingStatCaps.TrainingData(this);
-            return new Dictionary<string, object>(propertyData.Union(trainingData));
+            IEnumerable<KeyValuePair<string, object>> trainingData = TrainingStats.Get(this);
+            var allData = propertyData.Union(trainingData);
+            return new Dictionary<string, object>(allData);
         }
 
 
         public override string ToString() => "Soldier { " + string.Join(
             ", ",
-            ElementsToPrint().Select(p => $"{p.Key} = {p.Value}")) + " }";
+            PrintableKeyValuePairs().Select(p => $"{p.Key} = {p.Value}")) + " }";
 
         public string CsvString()
         {
