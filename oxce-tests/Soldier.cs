@@ -28,6 +28,11 @@ namespace OxceTests
         int CurrentMelee,
         int CurrentMana)
     {
+        private static IEnumerable<PropertyInfo> Properties { get; } = typeof(Soldier).GetProperties();
+
+        public static string CsvHeaders()
+            => string.Join(",", Properties.Select(p => p.Name).Union(TrainingStats.CsvHeaders()));
+
         public float KillsPerMission => Missions >= 5 ? (float) Kills / Missions : 0;
 
         public int StatGainReal => Math.Max(StatGainTotal - CurrentPsiSkill, 0);
@@ -36,21 +41,8 @@ namespace OxceTests
 
         public string Humanoid = Type is "STR_SOLDIER" or "STR_HYBRID" ? "TRUE" : "FALSE";
 
-        public TrainingStatCaps TrainingStatCaps => TrainingStatCaps.MapByType[Type];
-
-        private IEnumerable<KeyValuePair<string, object>> TrainingStatsData => TrainingStats.Get(this);
-
-        private static IEnumerable<PropertyInfo> PrintableProperties { get; } =
-            typeof(Soldier).GetProperties().Where(p => p.Name != nameof(TrainingStatCaps) && p.Name != nameof(TrainingStatsData));
-
-        public static string CsvHeaders()
-            => string.Join(
-                ",",
-                PrintableProperties.Select(p => p.Name).Union(TrainingStats.CsvHeaders()));
-
-        public override string ToString() => "Soldier { " + string.Join(
-            ", ",
-            PrintableKeyValuePairs().Select(p => $"{p.Key} = {p.Value}")) + " }";
+        public override string ToString() => "Soldier { " 
+            + string.Join(", ", DataMap().Select(p => $"{p.Key} = {p.Value}")) + " }";
 
         public string CsvString()
         {
@@ -60,11 +52,11 @@ namespace OxceTests
             return csvStr;
         }
 
-        private Dictionary<string, object> PrintableKeyValuePairs()
+        private IEnumerable<(string Key, object Value)> DataMap()
         {
-            var propertyData = PrintableProperties.Select(p => new KeyValuePair<string, object>(p.Name, p.GetValue(this)));
-            var allData = propertyData.Union(TrainingStatsData);
-            return new Dictionary<string, object>(allData);
+            var propertyData = Properties.Select(p => (p.Name, p.GetValue(this)));
+            var allData = propertyData.Union(TrainingStats.Get(this));
+            return allData;
         }
     }
 }

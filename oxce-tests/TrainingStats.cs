@@ -20,32 +20,33 @@ namespace OxceTests
             "FullyTrained"
         };
 
-        public static IEnumerable<KeyValuePair<string, object>> Get(Soldier soldier)
+        public static IEnumerable<(string Key, object Value)> Get(Soldier soldier)
         {
+            var caps = TrainingStatCaps.MapByType[soldier.Type];
             var values = new List<int>
             {
-                Math.Min(soldier.CurrentTU - soldier.TrainingStatCaps.TU, 0),
-                Math.Min(soldier.CurrentStamina - soldier.TrainingStatCaps.Stamina, 0),
-                Math.Min(soldier.CurrentHealth - soldier.TrainingStatCaps.Health, 0),
-                Math.Min(soldier.CurrentFiring - soldier.TrainingStatCaps.Firing, 0),
-                Math.Min(soldier.CurrentThrowing - soldier.TrainingStatCaps.Throwing, 0),
-                Math.Min(soldier.CurrentStrength - soldier.TrainingStatCaps.Strength, 0),
-                Math.Min(soldier.CurrentMelee - soldier.TrainingStatCaps.Melee, 0),
-                Math.Min(soldier.CurrentMana - soldier.TrainingStatCaps.Mana, 0)
+                Math.Min(soldier.CurrentTU - caps.TU, 0),
+                Math.Min(soldier.CurrentStamina - caps.Stamina, 0),
+                Math.Min(soldier.CurrentHealth - caps.Health, 0),
+                Math.Min(soldier.CurrentFiring - caps.Firing, 0),
+                Math.Min(soldier.CurrentThrowing - caps.Throwing, 0),
+                Math.Min(soldier.CurrentStrength - caps.Strength, 0),
+                Math.Min(soldier.CurrentMelee - caps.Melee, 0),
+                Math.Min(soldier.CurrentMana - caps.Mana, 0)
             };
 
             var trainTotal = values.Sum();
-            var derivedPairs = new (string, object)[]
+            var derivedData = new (string, object)[]
             {
                 ("TrainTotal", trainTotal),
                 ("FullyTrained", trainTotal == 0 ? "TRUE" : "FALSE")
             };
 
-            var allPairs = CsvHeaders().Zip(values)
+            var allData = CsvHeaders().Zip(values)
                 .Select(pair => (pair.First, (object)pair.Second))
-                .Union(derivedPairs);
-            
-            return allPairs.Select(p => new KeyValuePair<string, object>(p.Item1, p.Item2));
+                .Union(derivedData);
+
+            return allData;
         }
     }
 }
