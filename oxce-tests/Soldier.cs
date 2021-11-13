@@ -30,27 +30,23 @@ namespace OxceTests
     {
         public float KillsPerMission => Missions >= 5 ? (float) Kills / Missions : 0;
 
-        public int StatGain => Math.Max(StatGainTotal - CurrentPsiSkill, 0);
+        public int StatGainReal => Math.Max(StatGainTotal - CurrentPsiSkill, 0);
+
+        public string Helix => Name.EndsWith("H") ? "TRUE" : "FALSE";
+
+        public string Humanoid = Type is "STR_SOLDIER" or "STR_HYBRID" ? "TRUE" : "FALSE";
 
         public TrainingStatCaps TrainingStatCaps => TrainingStatCaps.MapByType[Type];
+
+        private IEnumerable<KeyValuePair<string, object>> TrainingStatsData => TrainingStats.Get(this);
+
+        private static IEnumerable<PropertyInfo> PrintableProperties { get; } =
+            typeof(Soldier).GetProperties().Where(p => p.Name != nameof(TrainingStatCaps) && p.Name != nameof(TrainingStatsData));
 
         public static string CsvHeaders()
             => string.Join(
                 ",",
                 PrintableProperties.Select(p => p.Name).Union(TrainingStats.CsvHeaders()));
-
-        private static IEnumerable<PropertyInfo> PrintableProperties { get; } =
-            typeof(Soldier).GetProperties().Where(p => p.Name != nameof(TrainingStatCaps));
-
-        private Dictionary<string, object> PrintableKeyValuePairs()
-        {
-            var propertyData = PrintableProperties.Select(p => new KeyValuePair<string, object>(p.Name, p.GetValue(this)));
-
-            IEnumerable<KeyValuePair<string, object>> trainingData = TrainingStats.Get(this);
-            var allData = propertyData.Union(trainingData);
-            return new Dictionary<string, object>(allData);
-        }
-
 
         public override string ToString() => "Soldier { " + string.Join(
             ", ",
@@ -62,6 +58,13 @@ namespace OxceTests
             var csvStr = Regex.Replace(str, "Soldier {(.*) }", "$1");
             csvStr = Regex.Replace(csvStr, " \\w+\\ = ", "");
             return csvStr;
+        }
+
+        private Dictionary<string, object> PrintableKeyValuePairs()
+        {
+            var propertyData = PrintableProperties.Select(p => new KeyValuePair<string, object>(p.Name, p.GetValue(this)));
+            var allData = propertyData.Union(TrainingStatsData);
+            return new Dictionary<string, object>(allData);
         }
     }
 }
