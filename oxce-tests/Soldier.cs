@@ -14,7 +14,7 @@ namespace OxceTests
         int Kills,
         int Rank,
         int MonthsService,
-        int Recovery,
+        float Recovery,
         int ManaMissing,
         int StatGainTotal,
         int CurrentTU,

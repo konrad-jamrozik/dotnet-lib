@@ -73,7 +73,7 @@ namespace OxceTests
             var name = ParseString(soldier, "name");
             var missions = ParseInt(soldier, "missions");
             var kills = ParseInt(soldier, "kills");
-            var recovery = ParseIntOrZero(soldier, "recovery");
+            var recovery = ParseFloatOrZero(soldier, "recovery");
             var manaMissing = ParseIntOrZero(soldier, "manaMissing");
             var rank = ParseInt(soldier, "rank");
             var soldierDiary = new YamlMapping(soldier.Lines("diary"));
@@ -119,7 +119,6 @@ namespace OxceTests
                 currentMana);
         }
 
-
         private static string ParseString(YamlMapping mapping, string key) 
             => mapping.Lines(key).Single();
 
@@ -129,6 +128,8 @@ namespace OxceTests
         private static int ParseIntOrZero(YamlMapping mapping, string key)
             => int.TryParse(mapping.Lines(key).SingleOrDefault(), out var value) ? value : 0;
 
+        private static float ParseFloatOrZero(YamlMapping mapping, string key)
+            => float.TryParse(mapping.Lines(key).SingleOrDefault(), out var value) ? value : 0;
 
         [Test]
         public void ProcessSaveFileStoresYamlStub()

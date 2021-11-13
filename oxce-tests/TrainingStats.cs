@@ -43,7 +43,7 @@ namespace OxceTests
                 ("TrainTotal", trainTotal),
                 ("FullyTrained", trainTotal == 0 ? "TRUE" : "FALSE"),
                 ("TrainPsiSkill", Math.Min(soldier.CurrentPsiSkill - caps.PsiSkill, 0)),
-                ("PsiTrained", soldier.CurrentPsiSkill - caps.PsiSkill <= 0 ? "TRUE" : "FALSE")
+                ("PsiTrained", soldier.CurrentPsiSkill - caps.PsiSkill < 0 ? "FALSE" : "TRUE")
             };
 
             var allData = CsvHeaders().Zip(values)
