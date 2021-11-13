@@ -87,8 +87,8 @@ namespace OxceTests
                 new Soldier(
                     name,
                     type,
-                    missions,
                     baseName,
+                    missions,
                     kills,
                     rank,
                     monthsService,
