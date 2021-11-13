@@ -1,3 +1,4 @@
+using System.Linq;
 using NUnit.Framework;
 
 namespace OxceTests
@@ -28,6 +29,20 @@ namespace OxceTests
                 Assert.That(yamlMapping.Lines("key 4"),  Is.EquivalentTo(new[] { "- qux" }));
 
             });
+        }
+
+        [Test]
+        public void TestYamlMappingKeyValuePairs()
+        {
+            var yamlMapping = new YamlMapping(
+                new[]
+                {
+                    "key1:",
+                    "  {}",
+                });
+            var nestedYamlMapping = new YamlMapping(yamlMapping.Lines("key1"));
+
+            Assert.That(nestedYamlMapping.KeyValuePairs().Count(), Is.Zero);
         }
     }
 }

@@ -63,8 +63,8 @@ namespace OxceTests
                 baseLines =>
                 {
                     var (baseName, itemCountsDataPairs) = ParseBaseItemCounts(baseLines);
-                    var items = itemCountsDataPairs.Select(pair => new ItemCount(pair.Key, int.Parse(pair.Value), baseName));
-                    return items;
+                    var itemCounts = itemCountsDataPairs.Select(pair => new ItemCount(baseName, pair.Key, int.Parse(pair.Value)));
+                    return itemCounts;
                 }).ToList();
             return items;
         }

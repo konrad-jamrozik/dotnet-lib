@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -42,8 +43,15 @@ namespace OxceTests
 
         public IEnumerable<(string Key, string Value)> KeyValuePairs()
         {
-            // kja current work
-            return new List<(string Key, string Value)>();
+            if (_lines.Count() == 1 && _lines.Single() == "{}")
+                return Array.Empty<(string Key, string Value)>();
+
+            return _lines.Select(
+                line =>
+                {
+                    var split = line.Split(": ");
+                    return (split[0], split[1]);
+                });
         }
 
         private static bool FoundKey(string key, string line) => line.StartsWith(key + ":");

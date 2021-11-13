@@ -30,13 +30,13 @@ namespace OxceTests
         int CurrentMelee,
         int CurrentMana)
     {
-        private static IEnumerable<PropertyInfo> Properties { get; } = typeof(Soldier).GetProperties();
-
         public static string CsvHeaders()
             => string.Join(",", 
                 Properties.Select(p => p.Name)
                     .Union(TrainingStats.CsvHeaders())
                     .Union(MaxStats.CsvHeaders()));
+
+        private static IEnumerable<PropertyInfo> Properties { get; } = typeof(Soldier).GetProperties();
 
         public float KillsPerMission => Missions >= 5 ? (float) Kills / Missions : 0;
 
