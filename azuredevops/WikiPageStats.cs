@@ -6,10 +6,19 @@ using Wikitools.Lib.Primitives;
 namespace Wikitools.AzureDevOps
 {
     /// <summary>
+    /// Represents stats of an ADO wiki page. Primarily to be be constructed from
+    /// Microsoft.TeamFoundation.Wiki.WebApi.WikiPageDetail [1]
+    /// by a call to
+    /// Wikitools.AzureDevOps.WikiPageStats.From.
+    ///
     /// Assumed invariants about the underlying ADO API behavior, confirmed by manual tests:
+    /// 
     /// - DayStats array might be empty, but never null.
     /// - A DayStat entry has a Count of at least 1.
     /// - All the relevant invariants checked in: Wikitools.AzureDevOps.ValidWikiPagesStats.CheckInvariants
+    /// - The Path format is of format as codified by Wikitools.AzureDevOps.WikiPageStatsPath
+    ///
+    /// [1] <a href="https://docs.microsoft.com/en-us/rest/api/azure/devops/wiki/page-stats/get?view=azure-devops-rest-6.0#wikipagedetail"/>
     /// </summary>
     public record WikiPageStats(string Path, int Id, WikiPageStats.DayStat[] DayStats)
     {
