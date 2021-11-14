@@ -73,7 +73,10 @@ namespace Wikitools
             // kj2 probably sort it earlier and include the sort order need in param type
             pagesStats = pagesStats.OrderBy(ps => ps.Path).ToList();
 
-
+            // kja 5 change this to:
+            // var trie = new FilePathTrie(pagesPaths.Select(pp => new WikiPageStats.Path(pp)), WikiPageStats.PathSeparatorSplit));
+            // Note that currently 'new FilePathTrie' has hardcoded FileSystemPath.Split. That needs to be parameterizable.
+            // The WikiPageStats.Path type should be used for WikiPageStats.Path propery, as now it is just string.
             var trie = new FilePathTrie(pagesPaths);
             var lines = trie.PreorderTraversal().ZipMatching(
                 pagesStats,
