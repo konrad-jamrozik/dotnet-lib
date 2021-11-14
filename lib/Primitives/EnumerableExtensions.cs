@@ -91,7 +91,7 @@ namespace Wikitools.Lib.Primitives
 
                 if (!match(currFirstItem, currSecondItem))
                     throw new InvalidOperationException(
-                        $"currFirstItem: {currFirstItem} currSecondItem: {currSecondItem}");
+                        $"Items do not match. currFirstItem: '{currFirstItem}' currSecondItem: '{currSecondItem}'");
 
                 yield return selectResult(currFirstItem, currSecondItem);
             }

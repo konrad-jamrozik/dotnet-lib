@@ -32,7 +32,7 @@ namespace Wikitools.Tests
                 fs,
                 cfg.StorageDirPath,
                 timeline.UtcNow);
-            var pagesStats = wiki.PagesStats(10).Result as IEnumerable<WikiPageStats>;
+            var pagesStats = wiki.PagesStats(30).Result as IEnumerable<WikiPageStats>;
 
             var toc = new WikiTableOfContents(wikiPagesPaths, Task.FromResult(pagesStats));
 
@@ -41,7 +41,8 @@ namespace Wikitools.Tests
 
             for (var i = 0; i < contentResult.Length; i++)
             {
-                Console.Out.WriteLine(i);
+                // kja 5 make proper test assertion
+                Console.Out.WriteLine(contentResult[i] + "  ");
             }
         }
     }

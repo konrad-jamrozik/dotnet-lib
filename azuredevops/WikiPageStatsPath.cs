@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.VisualBasic;
-using MoreLinq;
+﻿using System.Net;
 
 namespace Wikitools.AzureDevOps
 {
@@ -22,6 +18,8 @@ namespace Wikitools.AzureDevOps
     /// - The path separators are "/".
     /// - The path always starts with a separator.
     /// - Special characters of "/","\" and "#" withing path segments are not allowed.
+    /// - There cannot be any spaces at end of any path segment (they will get trimmed by wiki when saving the path).
+    /// - There cannot be periods at the start or end of any path segment (same reason as above).
     /// - A path cannot end with ".md"
     ///   - This is likely because in the repository the pages are saved as .md (markdown) files.
     /// - Other various special characters are allowed.
@@ -32,7 +30,7 @@ namespace Wikitools.AzureDevOps
         /// <summary>
         /// See class comment.
         /// </summary>
-        private const char Separator = '/';
+        public const string Separator = "/";
 
         /// <summary>
         /// Converts a file system path to a markdown file with contents of given ADO wiki page
@@ -40,21 +38,14 @@ namespace Wikitools.AzureDevOps
         /// </summary>
         public static WikiPageStatsPath FromFileSystemPath(string path)
         {
-            // kja 6 curr work. Need to:
-            // - write tests
-            // - convert "-" to " "
-            // - add "/" att the beginning
-            // - unescape special chars
-            // - sort again once all of this is done
-            // - example target path: proj/proj-Customer-Support/proj-Customer-FAQ-re-Kusto-Schema-(08%2D07%2D2020)
-            //   - the ending here is "(08-07-2020)"
-
-            var processedPath = path.Replace(System.IO.Path.DirectorySeparatorChar, Separator);
-            processedPath = StripMarkdownFileExtension(processedPath);
+            var processedPath = path.Replace(System.IO.Path.DirectorySeparatorChar.ToString(), Separator);
+            processedPath = Separator + StripMarkdownFileExtension(processedPath);
+            processedPath = processedPath.Replace('-', ' ');
+            // This ensures that UrlDecode will preserve the + signs instead of converting them to spaces.
+            processedPath = processedPath.Replace("+", "%2B");
+            processedPath = WebUtility.UrlDecode(processedPath);
             return new WikiPageStatsPath(processedPath);
         }
-
-        public static IEnumerable<string> SplitPath(string path) => path.Split(Separator);
 
         public static explicit operator string(WikiPageStatsPath path)
             => path.Path;
