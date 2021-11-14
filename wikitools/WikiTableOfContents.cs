@@ -14,14 +14,6 @@ namespace Wikitools
         public WikiTableOfContents(AdoWikiPagesPaths pagesPaths, Task<IEnumerable<WikiPageStats>> pageStats) : base(
             GetContent(pagesPaths, pageStats)) { }
 
-        private static async Task<object[]> GetContent(
-            AdoWikiPagesPaths pagesPaths,
-            Task<IEnumerable<WikiPageStats>> pagesStatsTask)
-        {
-            var pagesStats = pagesStatsTask.Result;
-            // kj2 probably sort it earlier and include the sort order need in param type
-            pagesStats = pagesStats.OrderBy(ps => ps.Path).ToList();
-
             // kja 2 next todos on critical path:
             // - Actually obtain pageStats passed to this method
             //   - currently the caller uses dummy empty value
@@ -38,13 +30,14 @@ namespace Wikitools
             // [/Proj/BCDR](/Proj/BCDR) - 5 views  
             // [/Proj/BCDR/BCDR Plan - Handling a Data Center Outage](/Proj/BCDR/BCDR-Plan-%2D-Handling-a-Data-Center-Outage) - 100 views :fire:  
             // [/Proj/BCDR/BCDR Plan - Improvements to Proj](/Proj/BCDR/BCDR-Plan-%2D-Improvements-to-Proj) - 200 views :fire::fire:
-
+            //
+            // -------------
             // Notes:
-            // - this report knows how to convert path to hyperlink
+            // - this report knows how to convert path to hyperlinks
             //   - hyperlink conversion probably should be abstracted to be generic: in MarkdownDocument
             // - stats will be used to compute if icons should show: new, active, stale
             // - thresholds for icons passed separately as param, coming from config
-
+            //
             // kja 3 need to handle escaping (write a test for it):
             // path from wiki: "Path": "/1CS v2/TSG: how to disable 1CS v2 in Azure DevOps organization",
             // path from file system: "1CS-v2\TSG%3A-how-to-disable-1CS-v2-in-Azure-DevOps-organization.md"
@@ -53,8 +46,8 @@ namespace Wikitools
             // 1CS-v2.md for the file system, but /1CS for the stats.
             // Note that - has ASCII val of 45 (in python: ord('-')) but period ('.') has 46,.
             // Hence 1CS-v2.md appears before 1CS.md in fs. But stripping '.md' would fix it.
-
-            var trie = new FilePathTrie(pagesPaths);
+            //
+            // -------------
             // kja 3 this ZipMatching will have to be adjusted to handle pages that don't have corresponding page
             // stats.
             // - See the pseudocode below. Name it something like "ZipMatchingLeftJoin".
@@ -71,12 +64,23 @@ namespace Wikitools
             //      else // missing wikiPageStats for given path segments
             //          yield (segments, empty stats)
             //          next segments;
+
+        private static async Task<object[]> GetContent(
+            AdoWikiPagesPaths pagesPaths,
+            Task<IEnumerable<WikiPageStats>> pagesStatsTask)
+        {
+            var pagesStats = pagesStatsTask.Result;
+            // kj2 probably sort it earlier and include the sort order need in param type
+            pagesStats = pagesStats.OrderBy(ps => ps.Path).ToList();
+
+
+            var trie = new FilePathTrie(pagesPaths);
             var lines = trie.PreorderTraversal().ZipMatching(
                 pagesStats,
                 // kj2 dehardcode the "/" for joining segments.
                 // The authority here is whatever the ADO API returns (which ends up in wikiPageStats).
-                match: (pathPart, wikiPageStats)
-                    => "/" + string.Join("/", pathPart.Segments) == wikiPageStats.Path + ".md",
+                match: (fsPathPart, wikiPageStats)
+                    => "/" + string.Join("/", fsPathPart.Segments) == wikiPageStats.Path + ".md",
                 selectResult: (pathPart, wikiPageStats)
                     => $"[{wikiPageStats.Path}]({wikiPageStats.Path}) - {wikiPageStats.DayStats.Sum(ds => ds.Count)} views");
             return lines.Cast<object>().ToArray();

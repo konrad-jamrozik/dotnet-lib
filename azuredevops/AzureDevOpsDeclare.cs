@@ -7,7 +7,7 @@ namespace Wikitools.AzureDevOps
 {
     // kj2 cohesion of this class is low. Possibly split into
     // GitLogDecl and AdoWikiWithStorageDecl
-    // Other possible suffixed: Ctor, Def, Scaffolding, Blueprint, Chart (a'la Helm Chart), Factory, DI (for Dep. Inj).
+    // Other possible suffixes: Ctor, Def, Scaffolding, Blueprint, Chart (a'la Helm Chart), Factory, DI (for Dep. Inj).
     // With that, for each class Foo, we will have:
     // Foo, FooChart, FooTests, FooIntegrationTests, FooFixture, FooTestData, FooTestDataFixture
     public class AzureDevOpsDeclare
