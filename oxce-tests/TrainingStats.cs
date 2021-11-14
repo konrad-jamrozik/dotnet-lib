@@ -15,7 +15,6 @@ namespace OxceTests
             "TrainThrowing",
             "TrainStrength",
             "TrainMelee",
-            "TrainMana",
             "TrainTotal",
             "FullyTrained",
             "TrainPsiSkill",
@@ -34,7 +33,6 @@ namespace OxceTests
                 Math.Min(soldier.CurrentThrowing - caps.Throwing, 0),
                 Math.Min(soldier.CurrentStrength - caps.Strength, 0),
                 Math.Min(soldier.CurrentMelee - caps.Melee, 0),
-                Math.Min(soldier.CurrentMana - caps.Mana, 0)
             };
 
             var trainTotal = values.Sum();

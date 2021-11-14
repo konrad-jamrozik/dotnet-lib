@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 namespace OxceTests
 {
     public record Soldier(
+        int Id,
         string Name,
         string Type,
         string BaseName,
@@ -44,7 +45,7 @@ namespace OxceTests
 
         public string Helix => Name.EndsWith("H") ? "TRUE" : "FALSE";
 
-        public string Humanoid = Type is "STR_SOLDIER" or "STR_HYBRID" ? "TRUE" : "FALSE";
+        public string Humanoid => Type is "STR_SOLDIER" or "STR_HYBRID" ? "TRUE" : "FALSE";
 
         public override string ToString() => $"{nameof(Soldier)} {{ " 
             + string.Join(", ", DataMap().Select(p => $"{p.Key} = {p.Value}")) + " }";

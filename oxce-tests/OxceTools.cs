@@ -85,7 +85,7 @@ namespace OxceTests
 
         private static void WriteBaseSoldiers(List<Soldier> soldiers, string outputDirectory)
         {
-            string[] csvLines = Soldier.CsvHeaders().InList().Concat(soldiers.Select(s => s.CsvString())).ToArray();
+            string[] csvLines = Soldier.CsvHeaders().InList().Concat(soldiers.OrderBy(s => s.Id).Select(s => s.CsvString())).ToArray();
             var soldierDataOutputFile = Path.Join(outputDirectory, "base_soldiers_query.csv");
 
             File.WriteAllLines(soldierDataOutputFile, csvLines);
@@ -104,6 +104,7 @@ namespace OxceTests
         private static Soldier ParseSoldier(IEnumerable<string> soldierLines, string baseName)
         {
             var soldier = new YamlMapping(soldierLines);
+            var id = ParseInt(soldier, "id");
             var type = ParseString(soldier, "type");
             var name = ParseString(soldier, "name");
             var missions = ParseInt(soldier, "missions");
@@ -130,6 +131,7 @@ namespace OxceTests
             var currentMana = ParseInt(currentStats, "mana");
 
             return new Soldier(
+                id,
                 name,
                 type,
                 baseName,
