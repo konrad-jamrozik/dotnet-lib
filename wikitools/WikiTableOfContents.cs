@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MoreLinq;
 using Wikitools.AzureDevOps;
 using Wikitools.Lib.Markdown;
-using Wikitools.Lib.Primitives;
 
 namespace Wikitools
 {
@@ -22,22 +22,6 @@ namespace Wikitools
             // Notes:
             // - stats will be used to compute if icons should show: new, active, stale
             // - thresholds for icons passed separately as param, coming from config
-            //
-            // -------------
-            // kja 3 this ZipMatching will have to be adjusted to handle pages that don't have corresponding stats
-            // - See the pseudocode below. Name it something like "ZipMatchingLeftJoin".
-            // - I should confirm the need of having this with an integration test running on local repo.
-            //
-            // - Pseudocode:
-            // trie.PreorderTraversal().ZipMatching(pagesStatsTask.result,
-            //   matcher: ((segments, _, _), wikiPageStats =>
-            //      if (FileSystem.SplitPathInverse(segments) == wikiPageStats.Path)
-            //          yield (segments, wikiPageStats);
-            //          next segments;
-            //          next wikiPageStats;
-            //      else // missing wikiPageStats for given path segments
-            //          yield (segments, empty stats)
-            //          next segments;
 
         private static async Task<object[]> GetContent(
             AdoWikiPagesPaths pagesPaths,
@@ -48,12 +32,27 @@ namespace Wikitools
                 .Select(path => (string)WikiPageStatsPath.FromFileSystemPath(path))
                 .OrderBy(p => p.Replace(WikiPageStatsPath.Separator, " "));
 
-            var lines = wikiPathsFromFsPaths.ZipMatching(
-                pagesStats,
-                match: (wikiPath, wikiPageStats)
-                    => wikiPath == wikiPageStats.Path,
-                selectResult: (wikiPath, wikiPageStats)
-                    => $"[{wikiPageStats.Path}]({ConvertPathToWikiLink(wikiPageStats.Path)}) - {wikiPageStats.DayStats.Sum(ds => ds.Count)} views");
+            IEnumerable<(string? path, WikiPageStats? pagesStats)> fullJoin =
+                wikiPathsFromFsPaths.FullJoin(
+                    pagesStats,
+                    firstKeySelector: path => path,
+                    secondKeySelector: stats => stats.Path,
+                    firstSelector: path => (path, null),
+                    secondSelector: stats => (null, stats),
+                    bothSelector: (path, stats) => ((string?)path, (WikiPageStats?)stats)).ToList();
+
+            var lines = fullJoin.Where(data => data.path != null && data.pagesStats != null).Select(
+                data =>
+                    $"[{data.pagesStats!.Path}]({ConvertPathToWikiLink(data.pagesStats.Path)}) - {data.pagesStats.DayStats.Sum(ds => ds.Count)} views"
+            );
+
+            // Currently unused, but later on will be routed to diagnostic logging.
+            var pathsWithoutStats = fullJoin.Where(data => data.path != null && data.pagesStats == null)
+                .Select(data => data.path).ToList();
+            // Ditto.
+            var statsWithoutFsPaths = fullJoin.Where(data => data.path == null && data.pagesStats != null)
+                .Select(data => data.pagesStats!.Path).ToList();
+
             return lines.Cast<object>().ToArray();
         }
 
