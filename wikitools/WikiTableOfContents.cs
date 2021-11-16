@@ -47,11 +47,15 @@ namespace Wikitools
             );
 
             // Currently unused, but later on will be routed to diagnostic logging.
+            // Generally speaking this can happen if a path is very new and nobody visitied it yet, but
+            // I should confirm it. kj2 pathsWithoutStats 
             var pathsWithoutStats = fullJoin.Where(data => data.path != null && data.pagesStats == null)
                 .Select(data => data.path).ToList();
-            // Ditto.
+            // Currently unused, but later on will be routed to diagnostic logging.
+            // Generally this shouldn't happen, but it does. Looks like my merging algorithm for Valid stats
+            // doesn't work as expected. Need to investigate. kj2 statsWithoutFsPaths 
             var statsWithoutFsPaths = fullJoin.Where(data => data.path == null && data.pagesStats != null)
-                .Select(data => data.pagesStats!.Path).ToList();
+                .Select(data => data.pagesStats).ToList();
 
             return lines.Cast<object>().ToArray();
         }
