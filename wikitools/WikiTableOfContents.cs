@@ -27,11 +27,10 @@ namespace Wikitools
             AdoWikiPagesPaths pagesPaths,
             Task<IEnumerable<WikiPageStats>> pagesStatsTask)
         {
-            var pagesStats = SortPaths(await pagesStatsTask);
-            var wikiPathsFromFsPaths = pagesPaths
-                .Select(path => (string)WikiPageStatsPath.FromFileSystemPath(path))
-                .OrderBy(p => p.Replace(WikiPageStatsPath.Separator, " "));
-
+            var pagesStats = await pagesStatsTask;
+            var wikiPathsFromFS = SortPaths(
+                pagesPaths.Select(path => (string)WikiPageStatsPath.FromFileSystemPath(path)));
+                
             // pathsWithoutStats:
             // Currently unused, but later on will be routed to diagnostic logging.
             // This can happen if a path is very new and nobody visited it yet.
@@ -41,9 +40,9 @@ namespace Wikitools
             // This shouldn't happen, but it does. Looks like my merging algorithm for Valid stats
             // doesn't work as expected. Need to investigate. kj2 statsWithoutFsPaths 
             var (pathsWithStats, pathsWithoutStats, statsWithoutFsPaths) =
-                wikiPathsFromFsPaths.FullJoinToSets(
+                wikiPathsFromFS.FullJoinToSets(
                     pagesStats,
-                    firstKeySelector: path => path,
+                    firstKeySelector: wikiPath => wikiPath,
                     secondKeySelector: stats => stats.Path);
 
             var tocLines = pathsWithStats.Select(
@@ -55,7 +54,7 @@ namespace Wikitools
             return tocLines.Cast<object>().ToArray();
         }
 
-        private static IOrderedEnumerable<WikiPageStats> SortPaths(IEnumerable<WikiPageStats> pagesStats)
+        private static IOrderedEnumerable<string> SortPaths(IEnumerable<string> paths)
         {
             // Here we replace separator with space so that space doesn't interfere
             // with sorting of directories.
@@ -79,11 +78,12 @@ namespace Wikitools
             // /dirFoo/file_A1
             // /dirFoo/file_A2
             // 
-            return pagesStats.OrderBy(ps => ps.Path.Replace(WikiPageStatsPath.Separator, " "));
+            return paths.OrderBy(path => path.Replace(WikiPageStatsPath.Separator, " "));
         }
 
         /// <summary>
-        /// Converts the 'path', which is in format Wikitools.AzureDevOps.WikiPageStatsPath.WikiPageStatsPath,
+        /// Converts the 'path', which is in format
+        /// Wikitools.AzureDevOps.WikiPageStatsPath.WikiPageStatsPath,
         /// to a link that ADO Wiki understands as an absolute path to a page in given wiki.
         ///
         /// Reference:
