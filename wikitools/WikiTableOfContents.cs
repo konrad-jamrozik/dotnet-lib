@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using MoreLinq;
 using Wikitools.AzureDevOps;
 using Wikitools.Lib.Markdown;
+using Wikitools.Lib.Primitives;
 
 namespace Wikitools
 {
@@ -32,59 +32,54 @@ namespace Wikitools
                 .Select(path => (string)WikiPageStatsPath.FromFileSystemPath(path))
                 .OrderBy(p => p.Replace(WikiPageStatsPath.Separator, " "));
 
-            IEnumerable<(string? path, WikiPageStats? pagesStats)> fullJoin =
-                wikiPathsFromFsPaths.FullJoin(
+            // pathsWithoutStats:
+            // Currently unused, but later on will be routed to diagnostic logging.
+            // This can happen if a path is very new and nobody visited it yet.
+            //
+            // statsWithoutFsPaths:
+            // Currently unused, but later on will be routed to diagnostic logging.
+            // This shouldn't happen, but it does. Looks like my merging algorithm for Valid stats
+            // doesn't work as expected. Need to investigate. kj2 statsWithoutFsPaths 
+            var (pathsWithStats, pathsWithoutStats, statsWithoutFsPaths) =
+                wikiPathsFromFsPaths.FullJoinToSets(
                     pagesStats,
                     firstKeySelector: path => path,
-                    secondKeySelector: stats => stats.Path,
-                    firstSelector: path => (path, null),
-                    secondSelector: stats => (null, stats),
-                    bothSelector: (path, stats) => ((string?)path, (WikiPageStats?)stats)).ToList();
+                    secondKeySelector: stats => stats.Path);
 
-            var lines = fullJoin.Where(data => data.path != null && data.pagesStats != null).Select(
+            var tocLines = pathsWithStats.Select(
                 data =>
-                    $"[{data.pagesStats!.Path}]({ConvertPathToWikiLink(data.pagesStats.Path)}) - {data.pagesStats.DayStats.Sum(ds => ds.Count)} views"
+                    $"[{data.Right.Path}]({ConvertPathToWikiLink(data.Right.Path)}) - " +
+                    $"{data.Right.DayStats.Sum(ds => ds.Count)} views"
             );
 
-            // Currently unused, but later on will be routed to diagnostic logging.
-            // Generally speaking this can happen if a path is very new and nobody visited it yet, but
-            // I should confirm it. kj2 pathsWithoutStats 
-            var pathsWithoutStats = fullJoin.Where(data => data.path != null && data.pagesStats == null)
-                .Select(data => data.path).ToList();
-            // Currently unused, but later on will be routed to diagnostic logging.
-            // Generally this shouldn't happen, but it does. Looks like my merging algorithm for Valid stats
-            // doesn't work as expected. Need to investigate. kj2 statsWithoutFsPaths 
-            var statsWithoutFsPaths = fullJoin.Where(data => data.path == null && data.pagesStats != null)
-                .Select(data => data.pagesStats).ToList();
-
-            return lines.Cast<object>().ToArray();
+            return tocLines.Cast<object>().ToArray();
         }
 
         private static IOrderedEnumerable<WikiPageStats> SortPaths(IEnumerable<WikiPageStats> pagesStats)
         {
-            return pagesStats
-                // Here we replace separator with space so that space doesn't interfere with sorting of directories.
-                // ASCII ordinal of the separator is 47, while of space it is 32,
-                // so by replacing the separator with the space,
-                // space will no longer be sorted first.
-                //
-                // Without this custom sorting, instead of ending up with paths sorted like this:
-                //
-                // /dirFoo
-                // /dirFoo/file_A1
-                // /dirFoo/file_A2
-                // /dirFoo Bar/file_B1
-                // /dirFoo Bar/file_B2
-                //
-                // We would end up with paths sorted like this:
-                //
-                // /dirFoo
-                // /dirFoo Bar/file_B1
-                // /dirFoo Bar/file_B2
-                // /dirFoo/file_A1
-                // /dirFoo/file_A2
-                // 
-                .OrderBy(ps => ps.Path.Replace(WikiPageStatsPath.Separator, " "));
+            // Here we replace separator with space so that space doesn't interfere
+            // with sorting of directories.
+            // ASCII ordinal of the separator is 47, while of space it is 32,
+            // so by replacing the separator with the space,
+            // space will no longer be sorted first.
+            //
+            // Without this custom sorting, instead of ending up with paths sorted like this:
+            //
+            // /dirFoo
+            // /dirFoo/file_A1
+            // /dirFoo/file_A2
+            // /dirFoo Bar/file_B1
+            // /dirFoo Bar/file_B2
+            //
+            // We would end up with paths sorted like this:
+            //
+            // /dirFoo
+            // /dirFoo Bar/file_B1
+            // /dirFoo Bar/file_B2
+            // /dirFoo/file_A1
+            // /dirFoo/file_A2
+            // 
+            return pagesStats.OrderBy(ps => ps.Path.Replace(WikiPageStatsPath.Separator, " "));
         }
 
         /// <summary>

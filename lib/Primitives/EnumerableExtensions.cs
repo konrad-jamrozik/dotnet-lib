@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using MoreLinq;
 using Wikitools.Lib.Contracts;
 
 namespace Wikitools.Lib.Primitives
@@ -29,9 +30,9 @@ namespace Wikitools.Lib.Primitives
             var firstByKey  = firstArray.ToDictionary(selectKey);
             var secondByKey = secondArray.ToDictionary(selectKey);
 
-            var firstKeySet     = firstArray.Select(selectKey).ToHashSet();
-            var secondKeySet    = secondArray.Select(selectKey).ToHashSet();
-            var overlappingKeys = firstKeySet.Intersect(secondKeySet).ToHashSet();
+            var firstKeySet     = Enumerable.ToHashSet(firstArray.Select(selectKey));
+            var secondKeySet    = Enumerable.ToHashSet(secondArray.Select(selectKey));
+            var overlappingKeys = Enumerable.ToHashSet(firstKeySet.Intersect(secondKeySet));
 
             var firstExceptSecond = firstKeySet.Except(secondKeySet).Select(key => firstByKey[key]);
             var secondExceptFirst = secondKeySet.Except(firstKeySet).Select(key => secondByKey[key]);
@@ -91,13 +92,45 @@ namespace Wikitools.Lib.Primitives
 
                 if (!match(currFirstItem, currSecondItem))
                     throw new InvalidOperationException(
-                        $"Items do not match. currFirstItem: '{currFirstItem}' currSecondItem: '{currSecondItem}'");
+                        $"Items do not match. " +
+                        $"currFirstItem: '{currFirstItem}' " +
+                        $"currSecondItem: '{currSecondItem}'");
 
                 yield return selectResult(currFirstItem, currSecondItem);
             }
 
             if (secondEnumerator.MoveNext())
                 throw new InvalidOperationException();
+        }
+
+        public static JoinSets<TLeft, TRight> FullJoinToSets<TLeft, TRight, TKey>(
+            this IEnumerable<TLeft> first,
+            IEnumerable<TRight> second,
+            Func<TLeft, TKey> firstKeySelector,
+            Func<TRight, TKey> secondKeySelector) 
+                where TLeft : class
+                where TRight : class
+        {
+            List<(TLeft? left, TRight? right)> fullJoin = first.FullJoin(second,
+                firstKeySelector,
+                secondKeySelector,
+                firstSelector: firstElem => (firstElem, null),
+                secondSelector: secondElem => (null, secondElem),
+                bothSelector: (firstElem, secondElem) => ((TLeft?) firstElem, (TRight?) secondElem))
+                .ToList();
+
+            IEnumerable<(TLeft, TRight)> both = 
+                fullJoin.Where(e => e is { left: { }, right: { } })!;
+            
+            IEnumerable<TLeft> left = fullJoin
+                .Where(e => e is { left: { }, right: null })
+                .Select(e => e.left)!;
+            
+            IEnumerable<TRight> right = fullJoin
+                .Where(e => e is { left: null, right: { } })
+                .Select(e => e.right)!;
+
+            return new JoinSets<TLeft, TRight>(both, left, right);
         }
     }
 }

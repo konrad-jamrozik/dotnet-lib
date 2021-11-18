@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Wikitools.Lib.Contracts
 {
@@ -19,6 +21,22 @@ namespace Wikitools.Lib.Contracts
         {
             if (!condition)
                 throw message != null ? new InvariantException(message!) : new InvariantException();
+        }
+
+        public static void AssertEqual<T>(IEnumerable<T> first, IEnumerable<T> second)
+          where T : IEquatable<T>
+        {
+            var firstArr = first as T[] ?? first.ToArray();
+            var secondArr = second as T[] ?? second.ToArray();
+            if (firstArr.Length != secondArr.Length)
+                throw new InvariantException();
+
+            firstArr.Zip(secondArr).ToList().ForEach(
+                tuple =>
+                {
+                    if (!tuple.First.Equals(tuple.Second))
+                        throw new InvariantException();
+                });
         }
 
         /// <summary>
