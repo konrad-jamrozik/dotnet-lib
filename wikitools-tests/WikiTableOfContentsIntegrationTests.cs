@@ -32,7 +32,8 @@ namespace Wikitools.Tests
                 fs,
                 cfg.StorageDirPath,
                 timeline.UtcNow);
-            var pagesStats = wiki.PagesStats(30).Result as IEnumerable<WikiPageStats>;
+            // kja when the pagesStats input goes beyond what is stored on file system, no exception is thrown, which is not great.
+            var pagesStats = wiki.PagesStats(90).Result as IEnumerable<WikiPageStats>;
 
             var toc = new WikiTableOfContents(wikiPagesPaths, Task.FromResult(pagesStats));
 
@@ -41,7 +42,7 @@ namespace Wikitools.Tests
 
             for (var i = 0; i < contentResult.Length; i++)
             {
-                // kja 5 make proper test assertion
+                // kja 5 make proper test assertion. Probably some count based on config file.
                 Console.Out.WriteLine(contentResult[i] + "  ");
             }
         }
