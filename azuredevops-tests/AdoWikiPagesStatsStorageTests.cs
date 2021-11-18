@@ -1,7 +1,5 @@
 using System.Threading.Tasks;
 using NUnit.Framework;
-using Wikitools.Lib.OS;
-using Wikitools.Lib.Primitives;
 using Wikitools.Lib.Tests.Json;
 using static Wikitools.Lib.Primitives.SimulatedTimeline;
 

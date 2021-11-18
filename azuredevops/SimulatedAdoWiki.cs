@@ -17,10 +17,17 @@ namespace Wikitools.AzureDevOps
         {
         }
 
-        public Task<ValidWikiPagesStats> PagesStats(int pageViewsForDays) =>
-            Task.FromResult(new ValidWikiPagesStats(PagesStatsData, StartDay, EndDay));
+        public Task<ValidWikiPagesStats> PagesStats(int pageViewsForDays)
+        {
+            AdoWiki.AssertPageViewsForDaysRange(pageViewsForDays);
+            return Task.FromResult(new ValidWikiPagesStats(PagesStatsData, StartDay, EndDay));
+        }
 
-        public Task<ValidWikiPagesStats> PageStats(int pageViewsForDays, int pageId) => Task.FromResult(
-            new ValidWikiPagesStats(PagesStatsData.Where(page => page.Id == pageId), StartDay, EndDay));
+        public Task<ValidWikiPagesStats> PageStats(int pageViewsForDays, int pageId)
+        {
+            AdoWiki.AssertPageViewsForDaysRange(pageViewsForDays);
+            return Task.FromResult(
+                new ValidWikiPagesStats(PagesStatsData.Where(page => page.Id == pageId), StartDay, EndDay));
+        }
     }
 }

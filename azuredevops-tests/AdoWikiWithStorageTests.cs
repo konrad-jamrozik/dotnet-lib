@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using NUnit.Framework;
@@ -92,7 +91,8 @@ namespace Wikitools.AzureDevOps.Tests
         /// <summary>
         /// Given
         /// - wiki page stats that were stored earlier than AdoWiki.PageViewsForDaysMax days ago,
-        /// meaning they cannot be updated from thw iki
+        /// meaning they cannot be updated from the wiki, as they are beyond
+        /// AdoWiki.PageViewsForDaysMax days in the past.
         /// - and assuming the stats have the following characteristics:
         ///   - first stored month has no page visits at all
         ///   - last (current) stored month has no page visits at all
@@ -103,7 +103,7 @@ namespace Wikitools.AzureDevOps.Tests
         /// - querying AdoWikiWithStorage for page stats for the entire day span of all the stored stats.
         /// Then
         /// - all stored stats are returned, merged.
-        ///   - This means stats rom beyond AdoWiki.PageViewsForDaysMax were included in the merged stats.
+        ///   - This means stats from beyond AdoWiki.PageViewsForDaysMax were included in the merged stats.
         ///   - This means the first and last months without any visits were not stripped, i.e.
         ///     their day span was included.
         /// </summary>

@@ -27,6 +27,15 @@ namespace Wikitools.AzureDevOps
     /// </remarks>
     public record AdoWiki(AdoWikiUri AdoWikiUri, string PatEnvVar, IEnvironment Env, ITimeline Timeline) : IAdoWiki
     {
+        public static void AssertPageViewsForDaysRange(int pageViewsForDays)
+        {
+            Contract.Assert(
+                pageViewsForDays,
+                nameof(pageViewsForDays),
+                new Range(PageViewsForDaysMin, PageViewsForDaysMax),
+                upperBoundReason: "ADO API limit");
+        }
+
         public AdoWiki(string adoWikiUriStr, string patEnvVar, IEnvironment env, ITimeline timeline) : this(
             new AdoWikiUri(adoWikiUriStr), patEnvVar, env, timeline) { }
 
@@ -47,8 +56,7 @@ namespace Wikitools.AzureDevOps
         private async Task<ValidWikiPagesStats> PagesStats(int pageViewsForDays,
             Func<IWikiHttpClient, int, Task<IEnumerable<WikiPageDetail>>> wikiPagesDetailsFunc)
         {
-            Contract.Assert(pageViewsForDays, nameof(pageViewsForDays),
-                new Range(PageViewsForDaysMin, PageViewsForDaysMax), upperBoundReason: "ADO API limit");
+            AssertPageViewsForDaysRange(pageViewsForDays);
 
             var wikiHttpClient   = WikiHttpClient(AdoWikiUri, PatEnvVar);
             var today = new DateDay(Timeline.UtcNow);
