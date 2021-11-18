@@ -103,13 +103,18 @@ namespace Wikitools.Lib.Primitives
                 throw new InvalidOperationException();
         }
 
-        public static JoinSets<TLeft, TRight> FullJoinToSets<TLeft, TRight, TKey>(
-            this IEnumerable<TLeft> first,
-            IEnumerable<TRight> second,
-            Func<TLeft, TKey> firstKeySelector,
-            Func<TRight, TKey> secondKeySelector) 
-                where TLeft : class
-                where TRight : class
+        public static (
+            IEnumerable<(TLeft, TRight)> Both,
+            IEnumerable<TLeft> Left,
+            IEnumerable<TRight> Right
+            )
+            FullJoinToSegments<TLeft, TRight, TKey>(
+                this IEnumerable<TLeft> first,
+                IEnumerable<TRight> second,
+                Func<TLeft, TKey> firstKeySelector,
+                Func<TRight, TKey> secondKeySelector)
+            where TLeft : class
+            where TRight : class
         {
             List<(TLeft? left, TRight? right)> fullJoin = first.FullJoin(second,
                 firstKeySelector,
@@ -130,7 +135,7 @@ namespace Wikitools.Lib.Primitives
                 .Where(e => e is { left: null, right: { } })
                 .Select(e => e.right)!;
 
-            return new JoinSets<TLeft, TRight>(both, left, right);
+            return (both, left, right);
         }
     }
 }

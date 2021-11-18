@@ -10,8 +10,10 @@ namespace Wikitools
     public record WikiTableOfContents : MarkdownDocument
     {
         // kj2 should pagesStats be forced to be ValidStats? Probably yes.
-        public WikiTableOfContents(AdoWikiPagesPaths pagesPaths, Task<IEnumerable<WikiPageStats>> pageStats) : base(
-            GetContent(pagesPaths, pageStats)) { }
+        public WikiTableOfContents(
+            AdoWikiPagesPaths pagesPaths, 
+            Task<IEnumerable<WikiPageStats>> pageStats) 
+            : base(GetContent(pagesPaths, pageStats)) { }
 
             // kja 2 next todos on critical path:
             // - Actually obtain pageStats passed to this method
@@ -40,16 +42,18 @@ namespace Wikitools
             // This shouldn't happen, but it does. Looks like my merging algorithm for Valid stats
             // doesn't work as expected. Need to investigate. kj2 statsWithoutFsPaths 
             var (pathsWithStats, pathsWithoutStats, statsWithoutFsPaths) =
-                wikiPathsFromFS.FullJoinToSets(
+                wikiPathsFromFS.FullJoinToSegments(
                     pagesStats,
                     firstKeySelector: wikiPath => wikiPath,
                     secondKeySelector: stats => stats.Path);
 
             var tocLines = pathsWithStats.Select(
                 data =>
-                    $"[{data.Right.Path}]({ConvertPathToWikiLink(data.Right.Path)}) - " +
-                    $"{data.Right.DayStats.Sum(ds => ds.Count)} views"
-            );
+                {
+                    var (_, pageStats) = data;
+                    return $"[{pageStats.Path}]({ConvertPathToWikiLink(pageStats.Path)}) - " +
+                           $"{pageStats.DayStats.Sum(ds => ds.Count)} views";
+                });
 
             return tocLines.Cast<object>().ToArray();
         }
