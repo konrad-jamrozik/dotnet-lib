@@ -34,9 +34,7 @@ namespace Wikitools.Tests
                                 "/foo/bar",
                                 2,
                                 new WikiPageStats.DayStat[] { new(25, ValidWikiPagesStatsFixture.Today) })
-
-                        }) 
-                as IEnumerable<WikiPageStats>;
+                        });
 
             var tocUT = new WikiTableOfContents(
                 adoWikiPagesPaths,

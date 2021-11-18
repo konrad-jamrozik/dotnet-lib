@@ -10,25 +10,14 @@ namespace Wikitools
 {
     public record WikiTableOfContents : MarkdownDocument
     {
-        // kj2 should pagesStats be forced to be ValidStats? Probably yes.
         public WikiTableOfContents(
             AdoWikiPagesPaths pagesPaths, 
-            Task<IEnumerable<WikiPageStats>> pageStats) 
+            Task<ValidWikiPagesStats> pageStats) 
             : base(GetContent(pagesPaths, pageStats)) { }
-
-            // kja 2 next todos on critical path:
-            // - Actually obtain pageStats passed to this method
-            //   - currently the caller uses dummy empty value
-            //   - need to come from more than 30 days, so also from storage -> I just implemented support for it, but looks like I still have assertion locking to 30 days.
-            //
-            // -------------
-            // Notes:
-            // - stats will be used to compute if icons should show: new, active, stale
-            // - thresholds for icons passed separately as param, coming from config
 
         private static async Task<object[]> GetContent(
             AdoWikiPagesPaths pagesPaths,
-            Task<IEnumerable<WikiPageStats>> pagesStatsTask)
+            Task<ValidWikiPagesStats> pagesStatsTask)
         {
             var pagesStats = await pagesStatsTask;
             var wikiPathsFromFS = SortPaths(

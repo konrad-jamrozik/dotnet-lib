@@ -52,7 +52,9 @@ namespace Wikitools
             // https://docs.microsoft.com/en-us/dotnet/api/system.threading.tasks.task?view=net-5.0#separating-task-creation-and-execution
             // Maybe source generators could help here. See [Cache] and [Memoize] use cases here:
             // https://github.com/dotnet/roslyn/issues/16160
-            var pagesViewsStats = wiki.PagesStats(cfg.AdoWikiPageViewsForDays);
+            // 11/17/2021: Or maybe doing stuff like LINQ IEnumerable is enuch? IEnumerable and related
+            // collections are lazy after all.
+            var pagesViewsStats = wiki.PagesStats(90 /* cfg.AdoWikiPageViewsForDays */);
 
             bool AuthorFilter(string author) => !cfg.ExcludedAuthors.Any(author.Contains);
             bool PathFilter(string path) => !cfg.ExcludedPaths.Any(path.Contains);
@@ -62,9 +64,7 @@ namespace Wikitools
             var pagesViewsReport = new PagesViewsStatsReport(timeline, pagesViewsStats, cfg.AdoWikiPageViewsForDays);
             var monthlyReport    = new MonthlyStatsReport(pastCommits, AuthorFilter, PathFilter);
             var wikiToc          = new WikiTableOfContents(
-                new AdoWikiPagesPaths(fs.FileTree(cfg.GitRepoClonePath).Paths),
-                // kj2 plug in the data from wiki: pagesViewsStats
-                Task.FromResult((IEnumerable<WikiPageStats>) new List<WikiPageStats>()));
+                new AdoWikiPagesPaths(fs.FileTree(cfg.GitRepoClonePath).Paths), pagesViewsStats);
 
             var docsToWrite = new MarkdownDocument[]
             {
