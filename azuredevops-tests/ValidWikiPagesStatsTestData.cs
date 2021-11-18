@@ -155,11 +155,11 @@ namespace Wikitools.AzureDevOps.Tests
         //
         // This needs to be used for asserting current month after .SplitByMonth() on AllPagesStats,
         // instead of CurrentMonthToMerge, which keeps entry for a page that has no days, as opposed to this property.
-        // The need to use this property is because the splitting of AllPagesStats does not retain information about
+        // We need to use this property because the splitting of AllPagesStats does not retain information about
         // the existence fooPage in current month if it has no stats. Having no stats can mean both:
         // "page exists but had no views this month"
         // and "page no longer exists"
-        // thus the expectation here is that .SplitByMonth will retain the page entry with no day
+        // thus the expectation here is that .SplitByMonth() will retain the page entry with no day
         // view stats, even if the page was deleted.
         // It is assumed that client code is responsible for post-processing of the data
         // to remove any deleted pages, if need be.

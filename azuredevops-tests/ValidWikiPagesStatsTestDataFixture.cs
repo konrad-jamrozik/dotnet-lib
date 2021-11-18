@@ -72,7 +72,7 @@ namespace Wikitools.AzureDevOps.Tests
         /// - when merging data for previous and current month, retain the day view
         /// stats for the page that was deleted, even though ADO would no longer show
         /// the view stats for that page in current month.
-        /// - as a consequence, when calling .SplitByMonth() merged data, always show the pages
+        /// - as a consequence, when calling .SplitByMonth() on merged data, always show the pages
         /// with empty day view stats, even if they didn't exist because they were deleted
         /// or weren't yet created. .SplitByMonth() is unable to determine if pages
         /// were nonexistent or just with no views, as merging doesn't retain this information.

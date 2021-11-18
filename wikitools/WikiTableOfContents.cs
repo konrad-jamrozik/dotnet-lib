@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Wikitools.AzureDevOps;
+using Wikitools.Lib.Contracts;
 using Wikitools.Lib.Markdown;
 using Wikitools.Lib.Primitives;
 
@@ -33,19 +34,24 @@ namespace Wikitools
             var wikiPathsFromFS = SortPaths(
                 pagesPaths.Select(path => (string)WikiPageStatsPath.FromFileSystemPath(path)));
                 
-            // pathsWithoutStats:
-            // Currently unused, but later on will be routed to diagnostic logging.
-            // This can happen if a path is very new and nobody visited it yet.
-            //
             // statsWithoutFsPaths:
             // Currently unused, but later on will be routed to diagnostic logging.
-            // This shouldn't happen, but it does. Looks like my merging algorithm for Valid stats
-            // doesn't work as expected. Need to investigate. kj2 statsWithoutFsPaths 
-            var (pathsWithStats, pathsWithoutStats, statsWithoutFsPaths) =
+            // Such stats denote pages that have since been deleted.
+            // For details, see comment on 
+            // Wikitools.AzureDevOps.Tests.ValidWikiPagesStatsTestDataFixture.PageStatsPagesMissing
+            var (pathsWithStats, pathsWithoutStats, statsWithoutPaths) =
                 wikiPathsFromFS.FullJoinToSegments(
                     pagesStats,
                     firstKeySelector: wikiPath => wikiPath,
                     secondKeySelector: stats => stats.Path);
+
+            pathsWithoutStats = pathsWithoutStats.ToList();
+            if (pathsWithoutStats.Any())
+                throw new InvariantException(
+                    "There should never be any path without wiki stats. "
+                    + "Even just-created pages should show up, with 0 views"
+                    + "TSG: Ensure your local clone of the ADO wiki is in sync with the remote "
+                    + "repository. Offending paths: " + string.Join(";", pathsWithoutStats));
 
             var tocLines = pathsWithStats.Select(
                 data =>
