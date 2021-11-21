@@ -33,6 +33,7 @@ namespace Wikitools.Tests
                 cfg.TestStorageDirPath,
                 timeline.UtcNow);
             // kj2 when the pagesStats input goes beyond what is stored on file system, no exception is thrown, which is not great.
+            // kj2 won't this pick up the wrong stats, because I am using 'test' dir for storage dir?
             var pagesStats = wiki.PagesStats(90).Result;
 
             var toc = new WikiTableOfContents(wikiPagesPaths, Task.FromResult(pagesStats));
