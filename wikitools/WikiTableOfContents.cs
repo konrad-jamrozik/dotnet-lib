@@ -37,10 +37,15 @@ namespace Wikitools
             pathsWithoutStats = pathsWithoutStats.ToList();
             if (pathsWithoutStats.Any())
                 throw new InvariantException(
-                    "There should never be any path without wiki stats. "
-                    + "Even just-created pages should show up, with 0 views"
+                    "There should never be any pages without wiki stats.\n"
+                    + "Even just-created pages should show up, with 0 views.\n"
                     + "TSG: Ensure your local clone of the ADO wiki is in sync with the remote "
-                    + "repository. Offending paths: " + string.Join(";", pathsWithoutStats));
+                    + "repository.\n"
+                    + "If a page was renamed since you did 'git pull', it will likely "
+                    + "cause this issue.\n"
+                    + "The paths of pages without stats: " 
+                    + "\n"
+                    + string.Join("\n", pathsWithoutStats));
 
             var tocLines = pathsWithStats.Select(
                 data =>
