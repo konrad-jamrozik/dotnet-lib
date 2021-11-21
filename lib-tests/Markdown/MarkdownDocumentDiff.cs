@@ -10,10 +10,10 @@ namespace Wikitools.Lib.Tests.Markdown
         public Task Verify() => 
             AssertNoDiffBetween(Expected, Act(Sut));
 
-        private static async Task AssertNoDiffBetween(MarkdownDocument expected, Task<ParsedMarkdownDocument> actual) =>
+        private static async Task AssertNoDiffBetween(MarkdownDocument expected, Task<MarkdownDocument> actual) =>
             new JsonDiffAssertion(await expected.Content, await (await actual).Content).Assert();
 
-        private static async Task<ParsedMarkdownDocument> Act(MarkdownDocument sut)
+        private static async Task<MarkdownDocument> Act(MarkdownDocument sut)
         {
             await using var sw = new StringWriter();
 
