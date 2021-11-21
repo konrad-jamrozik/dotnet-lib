@@ -23,8 +23,8 @@ namespace Wikitools.Tests
             var fs       = new FileSystem();
             var cfg      = new Configuration(fs).Read<WikitoolsTestsCfg>();
 
-            var repoPaths = fs.FileTree(cfg.TestGitRepoClonePath).Paths;
-            var wikiPagesPaths = new AdoWikiPagesPaths(repoPaths);
+            var pathsInRepo = fs.FileTree(cfg.TestGitRepoClonePath).Paths;
+            var wikiPagesPaths = new AdoWikiPagesPaths(pathsInRepo);
 
             var decl = new AzureDevOpsDeclare();
             var wiki = decl.AdoWikiWithStorage(
