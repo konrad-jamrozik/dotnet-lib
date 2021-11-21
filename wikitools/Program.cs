@@ -86,10 +86,10 @@ namespace Wikitools
 // kja 1 high-level todos
 // 1. One page TOC
 // - Annotations (icons): Newly added, lots of traffic, stale.
-// 2. Instead of outputting to TextWriter, point to local wiki git clone.
-// - Output to configurable file paths, to be .md files in the git clone.
 /*
  * Work progress milestones:
+ * 11/21/2021:
+ * - Writing out one wiki page TOC data, with stats from storage (>30 days).
  * 2/27/2021:
  * - Persisting wiki data to HDD as monthly json, allowing to report more than 30 days.
  * - Tooling for merging and splitting existing wiki data.
