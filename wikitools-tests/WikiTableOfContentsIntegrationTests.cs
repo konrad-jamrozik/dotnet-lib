@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using NUnit.Framework;
 using Wikitools.AzureDevOps;
@@ -21,16 +20,16 @@ namespace Wikitools.Tests
             var timeline = new Timeline();
             var env      = new Environment();
             var fs       = new FileSystem();
-            var cfg      = new Configuration(fs).Read<WikitoolsCfg>();
+            var cfg      = new Configuration(fs).Read<WikitoolsTestsCfg>();
 
-            var repoPaths = fs.FileTree(cfg.GitRepoClonePath).Paths;
+            var repoPaths = fs.FileTree(cfg.TestGitRepoClonePath).Paths;
             var wikiPagesPaths = new AdoWikiPagesPaths(repoPaths);
 
             var decl = new AzureDevOpsDeclare();
             var wiki = decl.AdoWikiWithStorage(
                 new AdoWiki(cfg.AzureDevOpsCfg.AdoWikiUri, cfg.AzureDevOpsCfg.AdoPatEnvVar, env, timeline),
                 fs,
-                cfg.StorageDirPath,
+                cfg.TestStorageDirPath,
                 timeline.UtcNow);
             // kja when the pagesStats input goes beyond what is stored on file system, no exception is thrown, which is not great.
             var pagesStats = wiki.PagesStats(90).Result;
@@ -39,6 +38,10 @@ namespace Wikitools.Tests
 
             // Act
             var contentResult = toc.Content.Result;
+
+            Assert.That(
+                contentResult.Length, 
+                Is.GreaterThanOrEqualTo(cfg.TestGitRepoExpectedPathsMinPageCount));
 
             for (var i = 0; i < contentResult.Length; i++)
             {
