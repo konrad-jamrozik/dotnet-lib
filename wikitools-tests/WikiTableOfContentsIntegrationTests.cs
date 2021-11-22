@@ -58,8 +58,8 @@ namespace Wikitools.Tests
         {
             var timeline = new Timeline();
             var env      = new Environment();
-            var decl     = new AzureDevOpsDeclare();
-            var wiki = decl.AdoWikiWithStorage(
+            var wikiDecl = new AdoWikiWithStorageDeclare();
+            var wiki = wikiDecl.AdoWikiWithStorage(
                 timeline,
                 fs,
                 env,

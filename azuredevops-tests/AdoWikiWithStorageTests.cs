@@ -154,7 +154,7 @@ namespace Wikitools.AzureDevOps.Tests
             ValidWikiPagesStats? storedStats = null,
             ValidWikiPagesStats? wikiStats = null)
         {
-            var adoDecl     = new AzureDevOpsDeclare();
+            var wikiDecl    = new AdoWikiWithStorageDeclare();
             var storageDecl = new AdoWikiPagesStatsStorageDeclare();
             var storage     = await storageDecl.AdoWikiPagesStatsStorage(utcNow, storedStats);
             var adoWiki     = new SimulatedAdoWiki(
@@ -162,7 +162,7 @@ namespace Wikitools.AzureDevOps.Tests
                     WikiPageStats.EmptyArray,
                     startDay: utcNow,
                     endDay: utcNow));
-            var wiki = adoDecl.AdoWikiWithStorage(adoWiki, storage);
+            var wiki = wikiDecl.AdoWikiWithStorage(adoWiki, storage);
             return wiki;
         }
     }

@@ -1,5 +1,4 @@
-﻿using System;
-using Wikitools.Lib.OS;
+﻿using Wikitools.Lib.OS;
 using Wikitools.Lib.Primitives;
 
 namespace Wikitools.AzureDevOps
@@ -7,7 +6,7 @@ namespace Wikitools.AzureDevOps
     // kj2 Other possible suffixes: Ctor, Def, Scaffolding, Blueprint, Chart (a'la Helm Chart), Factory, DI (for Dep. Inj).
     // With that, for each class Foo, we will have:
     // Foo, FooChart, FooTests, FooIntegrationTests, FooFixture, FooTestData, FooTestDataFixture
-    public class AzureDevOpsDeclare
+    public class AdoWikiWithStorageDeclare
     {
         public AdoWikiWithStorage AdoWikiWithStorage(
             ITimeline timeline,

@@ -32,8 +32,10 @@ namespace Wikitools
             IEnvironment env)
         {
             var cfg = new Configuration(fs).Read<WikitoolsCfg>();
-            var gitLog = new GitLogDeclare().GitLog(os, cfg.GitRepoCloneDir(fs), cfg.GitExecutablePath);
-            var wiki = new AzureDevOpsDeclare().AdoWikiWithStorage(
+            var gitLogDecl = new GitLogDeclare();
+            var gitLog = gitLogDecl.GitLog(os, cfg.GitRepoCloneDir(fs), cfg.GitExecutablePath);
+            var wikiDecl = new AdoWikiWithStorageDeclare();
+            var wiki = wikiDecl.AdoWikiWithStorage(
                 timeline,
                 fs,
                 env,

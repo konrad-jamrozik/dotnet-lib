@@ -45,7 +45,7 @@ namespace Wikitools.AzureDevOps.Tests
         [Test]
         public async Task ObtainsAndMergesDataFromAdoWikiApiAndStorage()
         {
-            var (decl, pageId, utcNow, adoWiki, storage) = ArrangeSut();
+            var (wikiDecl, pageId, utcNow, adoWiki, storage) = ArrangeSut();
 
             // ReSharper disable CommentTypo
             // Act 1. Obtain 10 days of page stats from wiki (days 1 to 10)
@@ -68,7 +68,10 @@ namespace Wikitools.AzureDevOps.Tests
             // --SSSS----
             // ->
             // --SSSSWWWW
-            var adoWikiWithStorage = decl.AdoWikiWithStorage(adoWiki, storageWithStats, pageViewsForDaysMax: 4);
+            var adoWikiWithStorage = wikiDecl.AdoWikiWithStorage(
+                adoWiki,
+                storageWithStats,
+                pageViewsForDaysMax: 4);
             var statsForDays3To10 = await adoWikiWithStorage.PagesStats(pageViewsForDays: 8);
             var statsForDays3To10For1Page = await adoWikiWithStorage.PageStats(pageViewsForDays: 8, pageId);
 
@@ -102,8 +105,9 @@ namespace Wikitools.AzureDevOps.Tests
         ///   there has to be recent ongoing, daily activity.
         /// - For other assumptions, see comments on WikitoolsConfig members.
         /// </summary>
-        private static (AzureDevOpsDeclare decl, int pageId, DateTime utcNow, IAdoWiki adoWiki, AdoWikiPagesStatsStorage storage)
-            ArrangeSut()
+        private static (AdoWikiWithStorageDeclare wikiDecl, int pageId, DateTime utcNow, IAdoWiki
+            adoWiki, AdoWikiPagesStatsStorage storage)
+            ArrangeSut() // kj2 refactor. This method has too long return type.
         {
             var timeline    = new Timeline();
             var utcNow      = timeline.UtcNow;
@@ -113,14 +117,14 @@ namespace Wikitools.AzureDevOps.Tests
             var adoCfg      = cfg.Read<AzureDevOpsCfg>();
             var adoTestsCfg = cfg.Read<AzureDevOpsTestsCfg>();
             var storageDir  = new Dir(fs, adoTestsCfg.TestStorageDirPath);
-            var adoDecl     = new AzureDevOpsDeclare();
+            var wikiDecl    = new AdoWikiWithStorageDeclare();
             var storageDecl = new AzureDevOps.AdoWikiPagesStatsStorageDeclare();
             var storage     = storageDecl.AdoWikiPagesStatsStorage(storageDir, utcNow);
 
             IAdoWiki adoWiki = new AdoWiki(adoCfg.AdoWikiUri, adoCfg.AdoPatEnvVar, env, timeline);
             adoWiki = new AdoWikiWithPreconditionChecks(adoWiki);
 
-            return (adoDecl, adoTestsCfg.TestAdoWikiPageId, utcNow, adoWiki, storage);
+            return (wikiDecl, adoTestsCfg.TestAdoWikiPageId, utcNow, adoWiki, storage);
         }
 
         private async Task VerifyDayRangeOfWikiStats(int pageViewsForDays)
