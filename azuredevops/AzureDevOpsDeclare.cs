@@ -20,7 +20,8 @@ namespace Wikitools.AzureDevOps
         {
             var adoWiki         = new AdoWiki(adoWikiUri, adoPatEnvVar, env, timeline);
             var storageDir      = new Dir(fs, storageDirPath);
-            var storage         = new AdoWikiPagesStatsStorageDeclare().AdoWikiPagesStatsStorage(storageDir, timeline.UtcNow);
+            var storageDecl     = new AdoWikiPagesStatsStorageDeclare();
+            var storage         = storageDecl.AdoWikiPagesStatsStorage(storageDir, timeline.UtcNow);
             var wikiWithStorage = AdoWikiWithStorage(adoWiki, storage, pageViewsForDaysMax);
             return wikiWithStorage;
         }

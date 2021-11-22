@@ -154,15 +154,15 @@ namespace Wikitools.AzureDevOps.Tests
             ValidWikiPagesStats? storedStats = null,
             ValidWikiPagesStats? wikiStats = null)
         {
-            var decl      = new AzureDevOpsDeclare();
-            var testsDecl = new AzureDevOpsTestsDeclare();
-            var storage   = await testsDecl.AdoWikiPagesStatsStorage(utcNow, storedStats);
-            var adoWiki   = new SimulatedAdoWiki(
+            var adoDecl     = new AzureDevOpsDeclare();
+            var storageDecl = new AdoWikiPagesStatsStorageDeclare();
+            var storage     = await storageDecl.AdoWikiPagesStatsStorage(utcNow, storedStats);
+            var adoWiki     = new SimulatedAdoWiki(
                 wikiStats ?? new ValidWikiPagesStats(
                     WikiPageStats.EmptyArray,
                     startDay: utcNow,
                     endDay: utcNow));
-            var wiki = decl.AdoWikiWithStorage(adoWiki, storage);
+            var wiki = adoDecl.AdoWikiWithStorage(adoWiki, storage);
             return wiki;
         }
     }

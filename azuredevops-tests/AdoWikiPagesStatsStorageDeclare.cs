@@ -4,7 +4,7 @@ using Wikitools.Lib.Primitives;
 
 namespace Wikitools.AzureDevOps.Tests
 {
-    public class AzureDevOpsTestsDeclare
+    public class AdoWikiPagesStatsStorageDeclare
     {
         public Task<AdoWikiPagesStatsStorage> AdoWikiPagesStatsStorage(
             DateDay utcNow,
@@ -17,7 +17,7 @@ namespace Wikitools.AzureDevOps.Tests
         {
             var fs         = new SimulatedFileSystem();
             var storageDir = fs.NextSimulatedDir();
-            var decl       = new AdoWikiPagesStatsStorageDeclare();
+            var decl       = new AzureDevOps.AdoWikiPagesStatsStorageDeclare();
             var storage    = decl.AdoWikiPagesStatsStorage(storageDir, utcNow);
             if (storedStats != null)
                 storage = await storage.ReplaceWith(storedStats);
