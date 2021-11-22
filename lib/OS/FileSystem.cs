@@ -28,6 +28,12 @@ namespace Wikitools.Lib.OS
         public Task WriteAllTextAsync(string path, string contents) 
             => File.WriteAllTextAsync(path, contents);
 
+        public StreamWriter CreateText(string path)
+            => File.CreateText(path);
+
+        public string[] ReadAllLines(string path)
+            => File.ReadAllLines(path);
+
         public Dir CreateDirectory(string path)
         {
             var directoryInfo = Directory.CreateDirectory(path);

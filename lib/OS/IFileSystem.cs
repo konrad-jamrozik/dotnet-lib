@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.IO;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Wikitools.Lib.OS
@@ -8,6 +9,8 @@ namespace Wikitools.Lib.OS
         Dir CurrentDir { get; }
         bool DirectoryExists(string path);
         public Task WriteAllTextAsync(string path, string contents);
+        public StreamWriter CreateText(string path);
+        public string[] ReadAllLines(string path);
         Dir CreateDirectory(string path);
         string JoinPath(string? path1, string? path2);
         bool FileExists(string path);

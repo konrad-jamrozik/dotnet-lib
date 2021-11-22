@@ -49,6 +49,16 @@ namespace Wikitools.Lib.OS
             return Task.CompletedTask;
         }
 
+        public StreamWriter CreateText(string path)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string[] ReadAllLines(string path)
+        {
+            throw new NotImplementedException();
+        }
+
         public Dir CreateDirectory(string path)
         {
             _existingDirs.Add(path);
