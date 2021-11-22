@@ -53,7 +53,7 @@ namespace Wikitools
             // https://github.com/dotnet/roslyn/issues/16160
             // 11/17/2021: Or maybe doing stuff like LINQ IEnumerable is enuch? IEnumerable and related
             // collections are lazy after all.
-            var pagesViewsStats = wiki.PagesStats(90 /* cfg.AdoWikiPageViewsForDays */);
+            var pagesViewsStats = wiki.PagesStats(cfg.AdoWikiPageViewsForDays);
 
             bool AuthorFilter(string author) => !cfg.ExcludedAuthors.Any(author.Contains);
             bool PathFilter(string path) => !cfg.ExcludedPaths.Any(path.Contains);
@@ -72,7 +72,7 @@ namespace Wikitools
                 // filesReport,
                 // pagesViewsReport,
                 // monthlyReport,
-                wikiToc
+                // wikiToc
             };
             return docsToWrite;
         }
