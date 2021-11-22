@@ -34,7 +34,7 @@ namespace Wikitools.AzureDevOps.Tests
             var fixture          = new ValidWikiPagesStatsFixture();
             var stats            = fixture.PagesStatsForMonth(UtcNowDay);
             var storedStats      = stats.Trim(UtcNowDay, -pageViewsForDays, 0);
-            var adoDecl          = new AzureDevOpsTestsDeclare(new AzureDevOpsDeclare());
+            var adoDecl          = new AzureDevOpsTestsDeclare();
             var storage          = await adoDecl.AdoWikiPagesStatsStorage(UtcNowDay, storedStats);
 
             Assert.That(

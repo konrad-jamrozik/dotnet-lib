@@ -114,7 +114,7 @@ namespace Wikitools.AzureDevOps.Tests
             var adoTestsCfg = cfg.Read<AzureDevOpsTestsCfg>();
             var storageDir  = new Dir(fs, adoTestsCfg.TestStorageDirPath);
             var decl        = new AzureDevOpsDeclare();
-            var storage     = decl.AdoWikiPagesStatsStorage(storageDir, utcNow);
+            var storage     = new AdoWikiPagesStatsStorageDeclare().AdoWikiPagesStatsStorage(storageDir, utcNow);
 
             IAdoWiki adoWiki = new AdoWiki(adoCfg.AdoWikiUri, adoCfg.AdoPatEnvVar, env, timeline);
             adoWiki = new AdoWikiWithPreconditionChecks(adoWiki);

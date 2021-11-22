@@ -155,7 +155,7 @@ namespace Wikitools.AzureDevOps.Tests
             ValidWikiPagesStats? wikiStats = null)
         {
             var decl      = new AzureDevOpsDeclare();
-            var testsDecl = new AzureDevOpsTestsDeclare(decl);
+            var testsDecl = new AzureDevOpsTestsDeclare();
             var storage   = await testsDecl.AdoWikiPagesStatsStorage(utcNow, storedStats);
             var adoWiki   = new SimulatedAdoWiki(
                 wikiStats ?? new ValidWikiPagesStats(
