@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.IO;
+using System.Threading.Tasks;
 
 namespace Wikitools.Lib.OS
 {
@@ -16,8 +17,14 @@ namespace Wikitools.Lib.OS
 
         public string ReadAllText(string fileName) => FileSystem.ReadAllText(JoinPath(fileName));
 
+        public string[] ReadAllLines(string fileName)
+            => FileSystem.ReadAllLines(JoinPath(fileName));
+
         public Task WriteAllTextAsync(string fileName, string contents) =>
             FileSystem.WriteAllTextAsync(JoinPath(fileName), contents);
+
+        public StreamWriter CreateText(string fileName)
+            => FileSystem.CreateText(JoinPath(fileName));
 
         public Dir? Parent => FileSystem.Parent(Path);
     }

@@ -3,9 +3,9 @@ using Wikitools.Lib.Json;
 
 namespace Wikitools.Tests;
 
-public record WikitoolsTestsCfg(
+public record WikitoolsIntegrationTestsCfg(
+    WikitoolsCfg WikitoolsCfg,
     AzureDevOpsCfg AzureDevOpsCfg,
-    string TestGitRepoClonePath,
     string TestStorageDirPath,
     int TestGitRepoExpectedPathsMinPageCount,
     int TestGitRepoExpectedPathsMinPageViewsCount) : IConfiguration;

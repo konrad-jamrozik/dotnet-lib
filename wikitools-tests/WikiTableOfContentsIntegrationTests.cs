@@ -6,6 +6,7 @@ using Wikitools.AzureDevOps;
 using Wikitools.Lib.Json;
 using Wikitools.Lib.OS;
 using Wikitools.Lib.Primitives;
+using Wikitools.Lib.Tests;
 using Environment = Wikitools.Lib.OS.Environment;
 
 namespace Wikitools.Tests
@@ -14,6 +15,8 @@ namespace Wikitools.Tests
     [TestFixture]
     public class WikiTableOfContentsIntegrationTests
     {
+        private const int PageViewsForDays = 90;
+
         // kj2 simplify / dedup DI in this test with wikitools Program logic.
         [Test]
         public void WritesTableOfContentsFromLocalWikiGitClone()
@@ -21,42 +24,26 @@ namespace Wikitools.Tests
             var timeline = new Timeline();
             var env      = new Environment();
             var fs       = new FileSystem();
-            var cfg      = new Configuration(fs).Read<WikitoolsTestsCfg>();
+            var cfg      = new Configuration(fs).Read<WikitoolsIntegrationTestsCfg>();
 
-            var pathsInRepo = fs.FileTree(cfg.TestGitRepoClonePath).Paths;
+            var pathsInRepo = fs.FileTree(cfg.WikitoolsCfg.GitRepoClonePath).Paths;
             var wikiPagesPaths = new AdoWikiPagesPaths(pathsInRepo);
 
             var decl = new AzureDevOpsDeclare();
             var wiki = decl.AdoWikiWithStorage(
                 new AdoWiki(cfg.AzureDevOpsCfg.AdoWikiUri, cfg.AzureDevOpsCfg.AdoPatEnvVar, env, timeline),
                 fs,
-                cfg.TestStorageDirPath,
+                cfg.WikitoolsCfg.StorageDirPath,
                 timeline.UtcNow);
             // kj2 when the pagesStats input goes beyond what is stored on file system, no exception is thrown, which is not great.
-            // kj2 won't this pick up the wrong stats, because I am using 'test' dir for storage dir?
-            var pagesStats = wiki.PagesStats(90).Result;
+            var pagesStats = wiki.PagesStats(PageViewsForDays).Result;
 
             var toc = new WikiTableOfContents(wikiPagesPaths, Task.FromResult(pagesStats));
 
-            // kja 2 introduce abstraction for writing to temporary output test dir. Something like:
-            // var testFile = new TemporaryTestFile(cfg.TestStorageDirPath);
-            // // Act
-            // var lines = testFile.Write(writable /* : IWritableToText */)
-            var outputFilePath = cfg.TestStorageDirPath + Path.DirectorySeparatorChar +
-                                 nameof(WritesTableOfContentsFromLocalWikiGitClone) + ".txt";
+            var testFile = new TestFile(new Dir(fs, cfg.TestStorageDirPath));
 
-            // kja 2 should use fs
-            using (var outputFileWriter = File.CreateText(outputFilePath))
-            {
-                // Act
-                toc.WriteAsync(outputFileWriter).Wait();
-
-            }
-
-            Console.Out.WriteLine($"Wrote to {outputFilePath}");
-
-            // kja 2 should use fs
-            var actualLines = File.ReadAllLines(outputFilePath);
+            // Act
+            var actualLines = testFile.Write(toc);
 
             Assert.That(
                 actualLines.Length, 
