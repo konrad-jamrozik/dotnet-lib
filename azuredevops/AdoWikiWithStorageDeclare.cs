@@ -4,8 +4,14 @@ using Wikitools.Lib.Primitives;
 namespace Wikitools.AzureDevOps
 {
     // kj2 Other possible suffixes: Ctor, Def, Scaffolding, Blueprint, Chart (a'la Helm Chart), Factory, DI (for Dep. Inj).
+    //
+    // From https://helm.sh/docs/topics/architecture/
+    // "The chart is a bundle of information necessary to create an instance of a Kubernetes application."
+    // "The config contains configuration information that can be merged into a packaged chart to create a releasable object."
+    //
     // With that, for each class Foo, we will have:
     // Foo, FooChart, FooTests, FooIntegrationTests, FooFixture, FooTestData, FooTestDataFixture
+    
     public class AdoWikiWithStorageDeclare
     {
         public AdoWikiWithStorage AdoWikiWithStorage(
