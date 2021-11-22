@@ -1,5 +1,6 @@
 using Wikitools.AzureDevOps;
 using Wikitools.Lib.Json;
+using Wikitools.Lib.OS;
 
 namespace Wikitools.Tests;
 
@@ -8,4 +9,7 @@ public record WikitoolsIntegrationTestsCfg(
     AzureDevOpsCfg AzureDevOpsCfg,
     string TestStorageDirPath,
     int TestGitRepoExpectedPathsMinPageCount,
-    int TestGitRepoExpectedPathsMinPageViewsCount) : IConfiguration;
+    int TestGitRepoExpectedPathsMinPageViewsCount) : IConfiguration
+{
+    public Dir TestStorageDir(IFileSystem fs) => new Dir(fs, TestStorageDirPath);
+}
