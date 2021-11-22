@@ -1,6 +1,6 @@
 ﻿using System;
-using Wikitools.Lib.Git;
 using Wikitools.Lib.OS;
+using Wikitools.Lib.Primitives;
 using Wikitools.Lib.Storage;
 
 namespace Wikitools.AzureDevOps
@@ -12,25 +12,18 @@ namespace Wikitools.AzureDevOps
     // Foo, FooChart, FooTests, FooIntegrationTests, FooFixture, FooTestData, FooTestDataFixture
     public class AzureDevOpsDeclare
     {
-        public GitLog GitLog(IOperatingSystem os, Dir gitRepoDir, string gitExecutablePath)
-        {
-            var repo = new GitRepository(
-                new GitBashShell(os, gitExecutablePath),
-                gitRepoDir
-            );
-            var gitLog = new GitLog(repo);
-            return gitLog;
-        }
-
         public AdoWikiWithStorage AdoWikiWithStorage(
-            IAdoWiki adoWiki,
-            IFileSystem fileSystem,
+            ITimeline timeline,
+            IFileSystem fs,
+            IEnvironment env,
+            string adoWikiUri,
+            string adoPatEnvVar,
             string storageDirPath,
-            DateTime utcNow,
             int? pageViewsForDaysMax = null)
         {
-            var storageDir      = new Dir(fileSystem, storageDirPath);
-            var storage         = AdoWikiPagesStatsStorage(storageDir, utcNow);
+            var adoWiki         = new AdoWiki(adoWikiUri, adoPatEnvVar, env, timeline);
+            var storageDir      = new Dir(fs, storageDirPath);
+            var storage         = AdoWikiPagesStatsStorage(storageDir, timeline.UtcNow);
             var wikiWithStorage = AdoWikiWithStorage(adoWiki, storage, pageViewsForDaysMax);
             return wikiWithStorage;
         }

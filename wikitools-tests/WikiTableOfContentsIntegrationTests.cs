@@ -58,17 +58,15 @@ namespace Wikitools.Tests
         {
             var timeline = new Timeline();
             var env      = new Environment();
-            var decl = new AzureDevOpsDeclare();
-            // kj2 simplify / dedup DI in this test with wikitools Program logic.
+            var decl     = new AzureDevOpsDeclare();
             var wiki = decl.AdoWikiWithStorage(
-                new AdoWiki(
-                    cfg.AzureDevOpsCfg.AdoWikiUri,
-                    cfg.AzureDevOpsCfg.AdoPatEnvVar,
-                    env,
-                    timeline),
+                timeline,
                 fs,
-                cfg.WikitoolsCfg.StorageDirPath,
-                timeline.UtcNow);
+                env,
+                cfg.AzureDevOpsCfg.AdoWikiUri,
+                cfg.AzureDevOpsCfg.AdoPatEnvVar,
+                cfg.WikitoolsCfg.StorageDirPath);
+
             // kj2 when the pagesStats input goes beyond what is stored on file system, no exception is thrown, which is not great.
             var pagesStats = wiki.PagesStats(PageViewsForDays).Result;
             return pagesStats;

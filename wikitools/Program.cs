@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -16,16 +15,13 @@ namespace Wikitools
     {
         public static async Task Main(string[] args)
         {
-            ITimeline        timeline = new Timeline();
-            IOperatingSystem os       = new WindowsOS();
-            IFileSystem      fs       = new FileSystem();
-            IEnvironment     env      = new Environment();
-            WikitoolsCfg cfg = new Configuration(fs).Read<WikitoolsCfg>();
-            IAdoWiki adoWiki = new AdoWiki(cfg.AzureDevOpsCfg.AdoWikiUri, cfg.AzureDevOpsCfg.AdoPatEnvVar, env, timeline);
+            ITimeline timeline = new Timeline();
+            IOperatingSystem os = new WindowsOS();
+            IFileSystem fs = new FileSystem();
+            IEnvironment env = new Environment();
 
-            var docsToWrite = DocsToWrite(timeline, os, fs, adoWiki, cfg);
+            var docsToWrite = DocsToWrite(timeline, os, fs, env);
             var outputSink  = Console.Out;
-
             await WriteAll(docsToWrite, outputSink);
         }
 
@@ -33,16 +29,17 @@ namespace Wikitools
             ITimeline timeline,
             IOperatingSystem os,
             IFileSystem fs,
-            IAdoWiki adoWiki,
-            WikitoolsCfg cfg)
+            IEnvironment env)
         {
-            var decl   = new AzureDevOpsDeclare();
-            var gitLog = decl.GitLog(os, new Dir(fs, cfg.GitRepoClonePath), cfg.GitExecutablePath);
-            var wiki = decl.AdoWikiWithStorage(
-                adoWiki,
+            var cfg = new Configuration(fs).Read<WikitoolsCfg>();
+            var gitLog = new GitLogDeclare().GitLog(os, cfg.GitRepoCloneDir(fs), cfg.GitExecutablePath);
+            var wiki = new AzureDevOpsDeclare().AdoWikiWithStorage(
+                timeline,
                 fs,
-                cfg.StorageDirPath,
-                timeline.UtcNow);
+                env,
+                cfg.AzureDevOpsCfg.AdoWikiUri,
+                cfg.AzureDevOpsCfg.AdoPatEnvVar,
+                cfg.StorageDirPath);
 
             var recentCommits = gitLog.Commits(cfg.GitLogDays);
             var pastCommits   = gitLog.Commits(cfg.MonthlyReportStartDate, cfg.MonthlyReportEndDate);

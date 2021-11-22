@@ -1,6 +1,7 @@
 ﻿using System;
 using Wikitools.AzureDevOps;
 using Wikitools.Lib.Json;
+using Wikitools.Lib.OS;
 
 namespace Wikitools
 {
@@ -15,5 +16,8 @@ namespace Wikitools
         DateTime MonthlyReportStartDate,
         DateTime MonthlyReportEndDate,
         int Top,
-        string StorageDirPath) : IConfiguration;
+        string StorageDirPath) : IConfiguration
+    {
+        public Dir GitRepoCloneDir(IFileSystem fs) => new Dir(fs, GitRepoClonePath);
+    }
 }
