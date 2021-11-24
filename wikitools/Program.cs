@@ -67,12 +67,14 @@ public static class Program
 // - Same as above, but for top 3 most active authors (with exclusions)
 // - Add annotations (icons): Newly added, lots of traffic (use :fire: in the MD)
 //   - Emojis: https://docs.microsoft.com/en-us/azure/devops/project/wiki/markdown-guidance?view=azure-devops#emoji
-// b) make Program update all the reports in the local git clone, so that I can write a script
+// b) make Program update all the reports in the local git clone, so that I can write a PS1 script
 // that does:
 //   git pull
 //   wikitools.exe
 //   git commit
 //   git push
+// c) convert this PS1 script to be fully done by C# / wikitools.exe instead.
+// Then use Windows Task Scheduler.
 
 /*
  * Work progress milestones:
