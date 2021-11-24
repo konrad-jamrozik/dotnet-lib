@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Threading.Tasks;
 using NUnit.Framework;
 using Wikitools.AzureDevOps;
@@ -30,11 +31,15 @@ namespace Wikitools.Tests
                 actualLines.Length, 
                 Is.GreaterThanOrEqualTo(cfg.TestGitRepoExpectedPathsMinPageCount));
 
-            // kja 2 add assertion over min views count from cfg. This will need to show how to read back the data from file.
+            var tocLines = actualLines.Select(line => new WikiTableOfContents.Line(line));
+            Assert.That(
+                tocLines.Sum(line => line.Views),
+                Is.GreaterThanOrEqualTo(
+                    cfg.TestGitRepoExpectedPathsMinPageViewsCount));
         }
 
         private static WikiTableOfContents WikiTableOfContents(
-            FileSystem fs,
+            IFileSystem fs,
             WikitoolsIntegrationTestsCfg cfg)
         {
             var wikiPagesPaths = AdoWikiPagesPaths(fs, cfg);
