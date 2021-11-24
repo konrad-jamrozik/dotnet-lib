@@ -12,7 +12,7 @@ namespace Wikitools.AzureDevOps
     /// [1] https://docs.microsoft.com/en-us/rest/api/azure/devops/wiki/page%20stats/get?view=azure-devops-rest-6.0
     ///
     /// Assumed invariants about the underlying ADO API behavior, confirmed by manual tests, are as follows:
-    /// - Everything evident from the CheckInvariants() method.
+    /// - Everything evident from the CheckInvariants() method. // kj2 this should be explained in English
     /// - If a page path was changed since last call to this method, it will appear only with the new path.
     ///   Consider a page with (ID, Path) of (42, "/Foo") and some set XDayViews of daily view counts.
     ///   Consider following sequence of events:
