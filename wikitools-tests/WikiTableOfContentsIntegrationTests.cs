@@ -42,7 +42,7 @@ namespace Wikitools.Tests
             IFileSystem fs,
             WikitoolsIntegrationTestsCfg cfg)
         {
-            var wikiPagesPaths = AdoWikiPagesPaths(fs, cfg);
+            var wikiPagesPaths = AdoWikiPagesPaths(fs, cfg.WikitoolsCfg);
             var pagesStats = ValidWikiPagesStats(fs, cfg);
             var toc = new WikiTableOfContents(wikiPagesPaths, Task.FromResult(pagesStats));
             return toc;
@@ -50,9 +50,9 @@ namespace Wikitools.Tests
 
         private static AdoWikiPagesPaths AdoWikiPagesPaths(
             IFileSystem fs,
-            WikitoolsIntegrationTestsCfg cfg)
+            WikitoolsCfg cfg)
         {
-            var pathsInRepo = fs.FileTree(cfg.WikitoolsCfg.GitRepoClonePath).Paths;
+            var pathsInRepo = fs.FileTree(cfg.GitRepoClonePath).Paths;
             var wikiPagesPaths = new AdoWikiPagesPaths(pathsInRepo);
             return wikiPagesPaths;
         }
