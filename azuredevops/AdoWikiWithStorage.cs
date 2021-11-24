@@ -27,12 +27,12 @@ namespace Wikitools.AzureDevOps
             var dayRange = pageViewsForDays.MinWith(PageViewsForDaysMax);
             var updatedStorage  = Storage.Update(AdoWiki, dayRange, pageId);
             var pagesViewsStats = updatedStorage.Select(
-                s =>
+                storage =>
                 {
                     var endDay = new DateDay(Storage.CurrentDate);
                     var startDay = endDay.AddDays(-dayRange + 1);
                     return new ValidWikiPagesStats(
-                        s.PagesStats(dayRange).Where(page => page.Id == pageId),
+                        storage.PagesStats(dayRange).Where(page => page.Id == pageId),
                         startDay, 
                         endDay);
                 });
