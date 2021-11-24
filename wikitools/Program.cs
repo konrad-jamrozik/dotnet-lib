@@ -9,54 +9,53 @@ using Wikitools.Lib.OS;
 using Wikitools.Lib.Primitives;
 using Environment = Wikitools.Lib.OS.Environment;
 
-namespace Wikitools
+namespace Wikitools;
+
+public static class Program
 {
-    public static class Program
+    public static async Task Main(string[] args)
     {
-        public static async Task Main(string[] args)
-        {
-            ITimeline timeline = new Timeline();
-            IOperatingSystem os = new WindowsOS();
-            IFileSystem fs = new FileSystem();
-            IEnvironment env = new Environment();
+        ITimeline timeline = new Timeline();
+        IOperatingSystem os = new WindowsOS();
+        IFileSystem fs = new FileSystem();
+        IEnvironment env = new Environment();
 
-            var docsToWrite = DocsToWrite(timeline, os, fs, env);
-            var outputSink  = Console.Out;
-            await WriteAll(docsToWrite, outputSink);
-        }
-
-        private static MarkdownDocument[] DocsToWrite(
-            ITimeline timeline,
-            IOperatingSystem os,
-            IFileSystem fs,
-            IEnvironment env)
-        {
-            var cfg = new Configuration(fs).Read<WikitoolsCfg>();
-            var wikiDecl = new AdoWikiWithStorageDeclare();
-            var wiki = wikiDecl.AdoWikiWithStorage(
-                timeline,
-                fs,
-                env,
-                cfg.AzureDevOpsCfg.AdoWikiUri,
-                cfg.AzureDevOpsCfg.AdoPatEnvVar,
-                cfg.StorageDirPath);
-
-            var pagesViewsStats = wiki.PagesStats(cfg.AdoWikiPageViewsForDays);
-
-            var wikiToc = new WikiTableOfContents(
-                new AdoWikiPagesPaths(fs.FileTree(cfg.GitRepoClonePath).Paths),
-                pagesViewsStats);
-
-            var docsToWrite = new MarkdownDocument[]
-            {
-                wikiToc
-            };
-            return docsToWrite;
-        }
-
-        private static Task WriteAll(MarkdownDocument[] docs, TextWriter textWriter) =>
-            Task.WhenAll(docs.Select(doc => doc.WriteAsync(textWriter)).ToArray());
+        var docsToWrite = DocsToWrite(timeline, os, fs, env);
+        var outputSink  = Console.Out;
+        await WriteAll(docsToWrite, outputSink);
     }
+
+    private static MarkdownDocument[] DocsToWrite(
+        ITimeline timeline,
+        IOperatingSystem os,
+        IFileSystem fs,
+        IEnvironment env)
+    {
+        var cfg = new Configuration(fs).Read<WikitoolsCfg>();
+        var wikiDecl = new AdoWikiWithStorageDeclare();
+        var wiki = wikiDecl.AdoWikiWithStorage(
+            timeline,
+            fs,
+            env,
+            cfg.AzureDevOpsCfg.AdoWikiUri,
+            cfg.AzureDevOpsCfg.AdoPatEnvVar,
+            cfg.StorageDirPath);
+
+        var pagesViewsStats = wiki.PagesStats(cfg.AdoWikiPageViewsForDays);
+
+        var wikiToc = new WikiTableOfContents(
+            new AdoWikiPagesPaths(fs.FileTree(cfg.GitRepoClonePath).Paths),
+            pagesViewsStats);
+
+        var docsToWrite = new MarkdownDocument[]
+        {
+            wikiToc
+        };
+        return docsToWrite;
+    }
+
+    private static Task WriteAll(MarkdownDocument[] docs, TextWriter textWriter) =>
+        Task.WhenAll(docs.Select(doc => doc.WriteAsync(textWriter)).ToArray());
 }
 
 // kja 1 high-level todos
