@@ -67,8 +67,8 @@ namespace Wikitools
 
             var docsToWrite = new MarkdownDocument[]
             {
+                authorsReport,
                 // kj2 temporarily commented out
-                // authorsReport,
                 // filesReport,
                 // pagesViewsReport,
                 // monthlyReport,
