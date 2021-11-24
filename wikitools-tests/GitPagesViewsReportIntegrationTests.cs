@@ -34,8 +34,7 @@ public class GitPagesViewsReportIntegrationTests
         var timeline = new Timeline();
         var env = new Environment();
 
-        var wikiDecl = new AdoWikiWithStorageDeclare();
-        var wiki = wikiDecl.AdoWikiWithStorage(
+        var wiki = new AdoWikiWithStorageDeclare().AdoWikiWithStorage(
             timeline,
             fs,
             env,

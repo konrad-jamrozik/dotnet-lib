@@ -33,19 +33,18 @@ public class GitFilesStatsReportIntegrationTests
     {
         var timeline = new Timeline();
         var os = new WindowsOS();
-        bool PathFilter(string path) => !cfg.ExcludedPaths.Any(path.Contains);
-        var gitLogDecl = new GitLogDeclare();
-        var gitLog = gitLogDecl.GitLog(
+
+        var gitLog = new GitLogDeclare().GitLog(
             os,
             cfg.GitRepoCloneDir(fs),
             cfg.GitExecutablePath);
-        var recentCommits = gitLog.Commits(cfg.GitLogDays);
+
         var filesReport = new GitFilesStatsReport(
             timeline,
-            recentCommits,
+            gitLog.Commits(cfg.GitLogDays),
             cfg.GitLogDays,
             cfg.Top,
-            PathFilter);
+            path => !cfg.ExcludedPaths.Any(path.Contains));
 
         return filesReport;
     }

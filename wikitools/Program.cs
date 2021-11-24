@@ -41,7 +41,6 @@ namespace Wikitools
                 cfg.AzureDevOpsCfg.AdoPatEnvVar,
                 cfg.StorageDirPath);
 
-
             var pagesViewsStats = wiki.PagesStats(cfg.AdoWikiPageViewsForDays);
 
             var wikiToc = new WikiTableOfContents(

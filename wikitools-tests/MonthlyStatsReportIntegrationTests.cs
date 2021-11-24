@@ -31,16 +31,16 @@ public class MonthlyStatsReportIntegrationTests
         WikitoolsCfg cfg)
     {
         var os = new WindowsOS();
-        var gitLogDecl = new GitLogDeclare();
-        var gitLog = gitLogDecl.GitLog(
+
+        var gitLog = new GitLogDeclare().GitLog(
             os,
             cfg.GitRepoCloneDir(fs),
             cfg.GitExecutablePath);
-        var pastCommits = gitLog.Commits(cfg.MonthlyReportStartDate, cfg.MonthlyReportEndDate);
-        bool AuthorFilter(string author) => !cfg.ExcludedAuthors.Any(author.Contains);
-        bool PathFilter(string path) => !cfg.ExcludedPaths.Any(path.Contains);
 
-        var monthlyReport = new MonthlyStatsReport(pastCommits, AuthorFilter, PathFilter);
+        var monthlyReport = new MonthlyStatsReport(
+            gitLog.Commits(cfg.MonthlyReportStartDate, cfg.MonthlyReportEndDate),
+            author => !cfg.ExcludedAuthors.Any(author.Contains),
+            path => !cfg.ExcludedPaths.Any(path.Contains));
 
         return monthlyReport;
     }

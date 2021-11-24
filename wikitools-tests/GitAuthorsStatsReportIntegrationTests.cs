@@ -33,20 +33,18 @@ public class GitAuthorsStatsReportIntegrationTests
     {
         var timeline = new Timeline();
         var os = new WindowsOS();
-        bool AuthorFilter(string author) => !cfg.ExcludedAuthors.Any(author.Contains);
 
-        var gitLogDecl = new GitLogDeclare();
-        var gitLog = gitLogDecl.GitLog(
+        var gitLog = new GitLogDeclare().GitLog(
             os,
             cfg.GitRepoCloneDir(fs),
             cfg.GitExecutablePath);
-        var recentCommits = gitLog.Commits(cfg.GitLogDays);
+
         var authorsReport = new GitAuthorsStatsReport(
             timeline,
-            recentCommits,
+            gitLog.Commits(cfg.GitLogDays),
             cfg.GitLogDays,
             cfg.Top,
-            AuthorFilter);
+            author => !cfg.ExcludedAuthors.Any(author.Contains));
 
         return authorsReport;
     }
