@@ -28,7 +28,7 @@ public class GitAuthorsStatsReportIntegrationTests
     }
 
     private static GitAuthorsStatsReport GitAuthorsStatsReport(
-        FileSystem fs,
+        IFileSystem fs,
         WikitoolsIntegrationTestsCfg cfg)
     {
         var timeline = new Timeline();
