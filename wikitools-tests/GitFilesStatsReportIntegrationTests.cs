@@ -17,7 +17,7 @@ public class GitFilesStatsReportIntegrationTests
     {
         var fs = new FileSystem();
         var cfg = new Configuration(fs).Read<WikitoolsIntegrationTestsCfg>();
-        var filesReport = GitAuthorsStatsReport(fs, cfg.WikitoolsCfg);
+        var filesReport = GitFilesStatsReport(fs, cfg.WikitoolsCfg);
         var testFile = new TestFile(cfg.TestStorageDir(fs));
 
         // Act
@@ -27,7 +27,7 @@ public class GitFilesStatsReportIntegrationTests
         Assert.That(lines.Count(l => l.StartsWith("| ")), Is.GreaterThanOrEqualTo(3));
     }
 
-    private static GitFilesStatsReport GitAuthorsStatsReport(
+    private static GitFilesStatsReport GitFilesStatsReport(
         IFileSystem fs,
         WikitoolsCfg cfg)
     {
