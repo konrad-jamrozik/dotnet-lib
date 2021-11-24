@@ -17,7 +17,7 @@ namespace Wikitools.Tests
         private const int PageViewsForDays = 90;
 
         [Test]
-        public void WritesTableOfContentsFromLocalWikiGitClone()
+        public void WritesWikiTableOfContents()
         {
             var fs = new FileSystem();
             var cfg = new Configuration(fs).Read<WikitoolsIntegrationTestsCfg>();
