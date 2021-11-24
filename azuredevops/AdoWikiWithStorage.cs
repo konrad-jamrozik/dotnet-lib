@@ -10,6 +10,8 @@ namespace Wikitools.AzureDevOps
         AdoWikiPagesStatsStorage Storage,
         int? PageViewsForDaysMax = null) : IAdoWiki
     {
+        private const int DefaultPageViewsForDaysMax = AzureDevOps.AdoWiki.PageViewsForDaysMax;
+
         public Task<ValidWikiPagesStats> PagesStats(int pageViewsForDays)
         {
             // kj2 Contract.Assert(pageViewsForDays >= 1); / instead strongly type the input
@@ -17,7 +19,7 @@ namespace Wikitools.AzureDevOps
             var updatedStorage = Storage.Update(
                 AdoWiki,
                 pageViewsForDays.MinWith(
-                    PageViewsForDaysMax ?? AzureDevOps.AdoWiki.PageViewsForDaysMax));
+                    PageViewsForDaysMax ?? DefaultPageViewsForDaysMax));
             var pagesViewsStats = updatedStorage.Select(s => s.PagesStats(pageViewsForDays));
             return pagesViewsStats;
         }
