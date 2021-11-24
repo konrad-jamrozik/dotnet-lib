@@ -14,6 +14,7 @@ namespace Wikitools.AzureDevOps
     
     public class AdoWikiWithStorageDeclare
     {
+        // kj2 stop accepting config primitives as params; instead, accept entire *Cfg object.
         public AdoWikiWithStorage AdoWikiWithStorage(
             ITimeline timeline,
             IFileSystem fs,

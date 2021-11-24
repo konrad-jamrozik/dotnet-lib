@@ -73,6 +73,7 @@ namespace Wikitools.Tests
                 cfg.WikitoolsCfg.StorageDirPath);
 
             // kj2 when the pagesStats input goes beyond what is stored on file system, no exception is thrown, which is not great.
+            // kj2 get rid of all .Result and .Wait() calls in the codebase, if possible.
             var pagesStats = wiki.PagesStats(PageViewsForDays).Result;
             return pagesStats;
         }

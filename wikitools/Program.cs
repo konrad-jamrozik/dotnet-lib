@@ -59,9 +59,21 @@ public static class Program
         Task.WhenAll(docs.Select(doc => doc.WriteAsync(textWriter)).ToArray());
 }
 
-// kja 1 high-level todos
-// 1. One page TOC
-// - Annotations (icons): Newly added, lots of traffic, stale.
+// kja 1 high-level todos:
+// a) implement "top pages" report, which will show:
+// - top 10 most edited pages last week. Might be less than 10 if not enough activity.
+// - top 10 most viewed pages last week. Might be less than 10 if not enough activity.
+// - Same as above, but for the last month.
+// - Same as above, but for top 3 most active authors (with exclusions)
+// - Add annotations (icons): Newly added, lots of traffic (use :fire: in the MD)
+//   - Emojis: https://docs.microsoft.com/en-us/azure/devops/project/wiki/markdown-guidance?view=azure-devops#emoji
+// b) make Program update all the reports in the local git clone, so that I can write a script
+// that does:
+//   git pull
+//   wikitools.exe
+//   git commit
+//   git push
+
 /*
  * Work progress milestones:
  * 11/21/2021:

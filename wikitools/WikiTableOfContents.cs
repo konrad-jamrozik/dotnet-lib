@@ -47,6 +47,7 @@ namespace Wikitools
                     + "\n"
                     + string.Join("\n", pathsWithoutStats));
 
+            // kja 2 add header line, like Wikitools.GitFilesStatsReport.DescriptionFormat
             var tocLines = pathsWithStats.Select(
                 data =>
                 {
