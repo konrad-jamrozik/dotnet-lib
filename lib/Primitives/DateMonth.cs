@@ -23,7 +23,7 @@ namespace Wikitools.Lib.Primitives
             Contract.Assert(startDay.CompareTo(endDay) <= 0);
             DateMonth iteratedMonth = startDay.AsDateMonth();
             var output = new List<DateMonth>();
-            // kj2 to get rid of this while I need something like "AggregateWhile"
+            // kj2 to get rid of this 'while' I need something like "AggregateWhile"
             // on a lazy stream of (month, month.NextMonth, month.NextMonth.NextMonth)  
             // Something like:
             // startDay.AsDateMonth().AggregateWhile(

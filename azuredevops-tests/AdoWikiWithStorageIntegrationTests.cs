@@ -107,7 +107,7 @@ namespace Wikitools.AzureDevOps.Tests
         /// </summary>
         private static (AdoWikiWithStorageDeclare wikiDecl, int pageId, DateTime utcNow, IAdoWiki
             adoWiki, AdoWikiPagesStatsStorage storage)
-            ArrangeSut() // kj2 refactor. This method has too long return type.
+            ArrangeSut() // kj2 ArrangeSut / refactor. This method has too long return type.
         {
             var timeline    = new Timeline();
             var utcNow      = timeline.UtcNow;

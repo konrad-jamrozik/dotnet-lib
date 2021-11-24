@@ -12,7 +12,8 @@ namespace Wikitools.AzureDevOps
     /// [1] https://docs.microsoft.com/en-us/rest/api/azure/devops/wiki/page%20stats/get?view=azure-devops-rest-6.0
     ///
     /// Assumed invariants about the underlying ADO API behavior, confirmed by manual tests, are as follows:
-    /// - Everything evident from the CheckInvariants() method. // kj2 this should be explained in English
+    /// kj2 ValidWikiPagesStats invariants should be explained in English
+    /// - Everything evident from the CheckInvariants() method. 
     /// - If a page path was changed since last call to this method, it will appear only with the new path.
     ///   Consider a page with (ID, Path) of (42, "/Foo") and some set XDayViews of daily view counts.
     ///   Consider following sequence of events:
@@ -101,11 +102,11 @@ namespace Wikitools.AzureDevOps
             // Pages are expected to generally have unique paths, except the special case of when
             // a page was deleted and then new page was created with the same path.
             // In such case two pages with different IDs will have the same path.
-            // kj2 test for this; write a test that would fail if pagesStatsArray.AssertDistinctBy(ps => ps.Path); would be present.
+            // kj2 test for ValidWikiPagesStats invariant; write a test that would fail if pagesStatsArray.AssertDistinctBy(ps => ps.Path); would be present.
             Contract.Assert(pagesStatsArray.DistinctBy(ps => ps.Path).Count() <= pagesStatsArray.Length);
             pagesStatsArray.AssertOrderedBy(ps => ps.Id);
 
-            // kj2 move these invariants to WikiPageStats itself.
+            // kj2 move ValidWikiPagesStats invariants to WikiPageStats itself.
             // Don't forget to update comment on that class!
             pagesStatsArray.ForEach(ps =>
             {

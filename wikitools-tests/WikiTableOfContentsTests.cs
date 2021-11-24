@@ -21,7 +21,7 @@ namespace Wikitools.Tests
             var adoWikiPagesPaths = new AdoWikiPagesPaths(gitCloneRootPaths);
 
             var validWikiPagesStats =
-                // kj2 this could be simplified to
+                // kj2 WikiTableOfContentsTests fixture building / this could be simplified to
                 // ValidWikiPagesStatsFixture.Build(("foo.md", 10), ("bar\\bar.md",25));
                 ValidWikiPagesStatsFixture.Build(
                         new WikiPageStats[]

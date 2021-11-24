@@ -11,6 +11,7 @@ using Environment = Wikitools.Lib.OS.Environment;
 
 namespace Wikitools;
 
+// kj2 move all projects to C# 10 and use file-scoped namespaces
 public static class Program
 {
     public static async Task Main(string[] args)

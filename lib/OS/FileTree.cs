@@ -21,7 +21,7 @@ namespace Wikitools.Lib.OS
         {
             get
             {
-                // kj2 make this method Lazy
+                // kj2 FileTree.Paths / make this method Lazy
                 // kj2 implement properly walking the tree: decoupled from IFileSystem
                 var directoryInfo = new DirectoryInfo(Path);
                 var fileInfos = directoryInfo.GetFiles("*.*", SearchOption.AllDirectories);
