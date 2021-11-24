@@ -25,17 +25,17 @@ namespace Wikitools.Tests
             var testFile = new TestFile(cfg.TestStorageDir(fs));
 
             // Act
-            var actualLines = testFile.Write(toc);
+            var readLines = testFile.Write(toc);
+
+            var actualLines = readLines.Select(line => new WikiTableOfContents.Line(line)).ToList();
 
             Assert.That(
-                actualLines.Length, 
+                actualLines.Count,
                 Is.GreaterThanOrEqualTo(cfg.TestGitRepoExpectedPathsMinPageCount));
 
-            var tocLines = actualLines.Select(line => new WikiTableOfContents.Line(line));
             Assert.That(
-                tocLines.Sum(line => line.Views),
-                Is.GreaterThanOrEqualTo(
-                    cfg.TestGitRepoExpectedPathsMinPageViewsCount));
+                actualLines.Sum(line => line.Views),
+                Is.GreaterThanOrEqualTo(cfg.TestGitRepoExpectedPathsMinPageViewsCount));
         }
 
         private static WikiTableOfContents WikiTableOfContents(
