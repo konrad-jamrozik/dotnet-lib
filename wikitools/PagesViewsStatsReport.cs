@@ -43,7 +43,7 @@ namespace Wikitools
                 .ToArray();
 
             var rows = pathsStats
-                .Select((path, views) => new object[] { $"{views + 1}", path.path, path.views })
+                .Select((stats, i) => new object[] { i + 1, stats.path, stats.views })
                 .ToArray();
 
             return (headerRow: HeaderRow, rows);
