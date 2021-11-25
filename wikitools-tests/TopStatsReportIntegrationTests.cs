@@ -39,7 +39,8 @@ public class TopStatsReportIntegrationTests
         // kja current work - see comment on Wikitools.TopStatsReport
 
         var timeline = new Timeline();
-        var commits = GitLogCommits(fs, cfg, gitLogDays: 30);
+        int gitLogDays = 30;
+        var commits = GitLogCommits(fs, cfg, gitLogDays);
         var ago30Days = new DateDay(timeline.UtcNow.AddDays(-30));
         var ago7Days = new DateDay(timeline.UtcNow.AddDays(-7));
         var ago1Day = new DateDay(timeline.UtcNow.AddDays(-1));
@@ -49,7 +50,7 @@ public class TopStatsReportIntegrationTests
         var pageViewStats = PageViewStats(timeline, fs, cfg, adoCfg);
         var authorsReport = new TopStatsReport(
             timeline,
-            cfg.GitLogDays,
+            gitLogDays,
             cfg.AdoWikiPageViewsForDays,
             authorLastWeekStats, 
             authorLast30DaysStats,
