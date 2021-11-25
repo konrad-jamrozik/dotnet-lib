@@ -13,9 +13,9 @@ public record GitFileStats(
 {
     public static readonly object[] HeaderRow = { "Place", "FilePath", "Insertions", "Deletions" };
 
-    private static GitFileStats[] GitFilesStatsFrom(
+    public static GitFileStats[] GitFilesStatsFrom(
         GitLogCommit[] commits,
-        Func<string, bool>? filePathFilter,
+        Func<string, bool>? filePathFilter = null,
         int? top = null)
     {
         filePathFilter ??= _ => true;

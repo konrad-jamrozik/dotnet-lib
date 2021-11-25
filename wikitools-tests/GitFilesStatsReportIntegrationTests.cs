@@ -39,12 +39,15 @@ public class GitFilesStatsReportIntegrationTests
             cfg.GitRepoCloneDir(fs),
             cfg.GitExecutablePath);
 
+        var commits = gitLog.Commits(cfg.GitLogDays);
+        bool FilePathFilter(string path) => !cfg.ExcludedPaths.Any(path.Contains);
+        // kj2 result
+        var stats = GitFileStats.GitFilesStatsFrom(commits.Result, FilePathFilter, cfg.Top);
+
         var filesReport = new GitFilesStatsReport(
             timeline,
-            gitLog.Commits(cfg.GitLogDays),
             cfg.GitLogDays,
-            cfg.Top,
-            path => !cfg.ExcludedPaths.Any(path.Contains));
+            stats);
 
         return filesReport;
     }
