@@ -13,7 +13,7 @@ public record GitFileStats(
 {
     public static readonly object[] HeaderRow = { "Place", "FilePath", "Insertions", "Deletions" };
 
-    public static GitFileStats[] GitFilesStatsFrom(
+    public static GitFileStats[] From(
         GitLogCommit[] commits,
         Func<string, bool>? filePathFilter = null,
         int? top = null)

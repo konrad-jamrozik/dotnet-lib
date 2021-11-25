@@ -32,7 +32,7 @@ namespace Wikitools.Tests
             var gitLog  = new GitLogDeclare().GitLog(os, gitRepoDir, gitExecutablePath);
             var commits = gitLog.Commits(logDays);
             // kj2 .Result
-            var stats = GitFileStats.GitFilesStatsFrom(commits.Result, top: top);
+            var stats = GitFileStats.From(commits.Result, top: top);
             var sut     = new GitFilesStatsReport(timeline, logDays, stats);
 
             // Arrange expectations

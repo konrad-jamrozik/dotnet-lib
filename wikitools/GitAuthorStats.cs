@@ -15,7 +15,7 @@ public record GitAuthorStats(
     public static readonly object[] HeaderRow =
         { "Place", "Author", "Files changed", "Insertions", "Deletions" };
 
-    public static GitAuthorStats[] GitAuthorsStatsFrom(
+    public static GitAuthorStats[] From(
         GitLogCommit[] commits,
         Func<string, bool>? authorFilter = null,
         int? top = null)

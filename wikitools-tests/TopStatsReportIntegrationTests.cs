@@ -45,8 +45,8 @@ public class TopStatsReportIntegrationTests
         bool AuthorFilter(string author) => !cfg.ExcludedAuthors.Any(author.Contains);
         bool FilePathFilter(string path) => !cfg.ExcludedPaths.Any(path.Contains);
         
-        var authorStats = GitAuthorStats.GitAuthorsStatsFrom(commitsResult, AuthorFilter, cfg.Top); 
-        var fileStats = GitFileStats.GitFilesStatsFrom(commitsResult, FilePathFilter, cfg.Top);
+        var authorStats = GitAuthorStats.From(commitsResult, AuthorFilter, cfg.Top); 
+        var fileStats = GitFileStats.From(commitsResult, FilePathFilter, cfg.Top);
 
         var authorsReport = new TopStatsReport(
             timeline,

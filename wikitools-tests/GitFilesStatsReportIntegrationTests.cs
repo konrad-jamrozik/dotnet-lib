@@ -42,7 +42,7 @@ public class GitFilesStatsReportIntegrationTests
         var commits = gitLog.Commits(cfg.GitLogDays);
         bool FilePathFilter(string path) => !cfg.ExcludedPaths.Any(path.Contains);
         // kj2 result
-        var stats = GitFileStats.GitFilesStatsFrom(commits.Result, FilePathFilter, cfg.Top);
+        var stats = GitFileStats.From(commits.Result, FilePathFilter, cfg.Top);
 
         var filesReport = new GitFilesStatsReport(
             timeline,
