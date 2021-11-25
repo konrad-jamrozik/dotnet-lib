@@ -16,7 +16,7 @@ namespace Wikitools.AzureDevOps
             // use it here (instead of passing the two days separately do month.DaySpan)
             // in many places including computations that do things like "-pageViewsForDays+1".
             // In fact, pageViewsForDays should be of that type itself.
-            // kj2 also: rename existing DayRange to DaySpan.
+            // kj2 also: rename existing DayRange substrings to DaySpan.
             : this(new ValidWikiPagesStats(stats, month.FirstDay, month.LastDay)) { }
 
         public new ValidWikiPagesStatsForMonth Trim(DateTime currentDate, int daysFrom, int daysTo)

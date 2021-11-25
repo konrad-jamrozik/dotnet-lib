@@ -37,22 +37,24 @@ public class TopStatsReportIntegrationTests
         // kj2 dedup logic used in this method, and in int tests for other reports using the same data.
 
         var timeline = new Timeline();
-        var commits = GitLogCommits(fs, cfg);
-        var authorStats = GitAuthorStats(cfg, commits);
+        var commits = GitLogCommits(fs, cfg, gitLogDays: 30);
+        var ago7Days = new DateDay(timeline.UtcNow.AddDays(-7));
+        var ago1Day = new DateDay(timeline.UtcNow.AddDays(-1));
+        var authorLastWeekStats = GitAuthorStats(cfg, commits, top: 5, daySpan: (ago7Days, ago1Day));
         var fileStats = GitFileStats(cfg, commits);
         var pageViewStats = PageViewStats(timeline, fs, cfg, adoCfg);
         var authorsReport = new TopStatsReport(
             timeline,
             cfg.GitLogDays,
             cfg.AdoWikiPageViewsForDays,
-            authorStats, 
+            authorLastWeekStats, 
             fileStats,
             pageViewStats);
 
         return authorsReport;
     }
 
-    private static GitLogCommit[] GitLogCommits(IFileSystem fs, WikitoolsCfg cfg)
+    private static GitLogCommit[] GitLogCommits(IFileSystem fs, WikitoolsCfg cfg, int gitLogDays)
     {
         var os = new WindowsOS();
 
@@ -61,15 +63,19 @@ public class TopStatsReportIntegrationTests
             cfg.GitRepoCloneDir(fs),
             cfg.GitExecutablePath);
 
-        var commits = gitLog.Commits(cfg.GitLogDays);
+        var commits = gitLog.Commits(gitLogDays);
         var commitsResult = commits.Result; // kj2 .Result
         return commitsResult;
     }
 
-    private static GitAuthorStats[] GitAuthorStats(WikitoolsCfg cfg, GitLogCommit[] commits)
+    private static GitAuthorStats[] GitAuthorStats(
+        WikitoolsCfg cfg,
+        GitLogCommit[] commits,
+        int top,
+        (DateDay sinceDay, DateDay untilDay) daySpan)
     {
         bool AuthorFilter(string author) => !cfg.ExcludedAuthors.Any(author.Contains);
-        var authorStats = Wikitools.GitAuthorStats.From(commits, AuthorFilter, cfg.Top);
+        var authorStats = Wikitools.GitAuthorStats.From(commits, AuthorFilter, top, daySpan);
         return authorStats;
     }
 

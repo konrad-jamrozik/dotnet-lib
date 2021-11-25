@@ -6,6 +6,10 @@ using Wikitools.Lib.OS;
 
 namespace Wikitools.Lib.Json
 {
+    // kj2 need to figure out better way of handling configs, as they are not versioned.
+    // The config values are not strictly speaking secrets, but I cannot share them as this is in public
+    // repo yet the config values refer to company-internal artifacts.
+    // kj2 problem with config refresh. They refresh in the /bin of owning project, but not in the runtime project, so rebuild doesn't refresh them properly.
     public record Configuration(IFileSystem FS)
     {
         /// <summary>
