@@ -43,7 +43,7 @@ public class TopStatsReportIntegrationTests
         var commits = gitLog.Commits(cfg.GitLogDays);
         bool AuthorFilter(string author) => !cfg.ExcludedAuthors.Any(author.Contains);
         // kj2 .Result
-        var stats = GitAuthorStats.AuthorsStatsFrom(commits.Result, AuthorFilter, cfg.Top); 
+        var stats = GitAuthorStats.GitAuthorsStatsFrom(commits.Result, AuthorFilter, cfg.Top); 
         var authorsReport = new TopStatsReport(
             timeline,
             cfg.GitLogDays,

@@ -31,7 +31,8 @@ namespace Wikitools.Tests
             // Arrange SUT declaration
             var gitLog  = new GitLogDeclare().GitLog(os, gitRepoDir, gitExecutablePath);
             var commits = gitLog.Commits(logDays);
-            var stats   = GitAuthorStats.AuthorsStatsFrom(commits.Result, top: top); // kj2 .Result
+            // kj2 .Result
+            var stats   = GitAuthorStats.GitAuthorsStatsFrom(commits.Result, top: top);
             var sut     = new GitAuthorsStatsReport(timeline, logDays, stats);
 
             // Arrange expectations

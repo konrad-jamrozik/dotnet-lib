@@ -15,7 +15,7 @@ public record GitAuthorStats(
     public static readonly object[] HeaderRow =
         { "Place", "Author", "Files changed", "Insertions", "Deletions" };
 
-    public static GitAuthorStats[] AuthorsStatsFrom(
+    public static GitAuthorStats[] GitAuthorsStatsFrom(
         GitLogCommit[] commits,
         Func<string, bool>? authorFilter = null,
         int? top = null)
@@ -56,6 +56,7 @@ public record GitAuthorStats(
         SumByAuthor(GitLogCommit[] commits)
     {
         var commitsByAuthor = commits.GroupBy(commit => commit.Author);
+        // kj2 return here AuthorStats with 0ed place that will be changed by the caller.
         var statsSumByAuthor = commitsByAuthor.Select(authorCommits =>
             (
                 author: authorCommits.Key,
