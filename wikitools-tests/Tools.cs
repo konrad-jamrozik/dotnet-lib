@@ -53,6 +53,8 @@ namespace Wikitools.Tests
             }
         }
 
+        // kja apparently there is hole in the stored monthly stats for Sep-Oct as I didn't run this often enough.
+        // I need to ensure that normal program execution fixes it, or at least detects
         [Fact(Skip = "Tool to be used manually")]
         public async Task ToolGetWikiStats()
         {

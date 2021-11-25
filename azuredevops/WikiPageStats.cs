@@ -14,7 +14,8 @@ namespace Wikitools.AzureDevOps
     /// Assumed invariants about the underlying ADO API behavior, confirmed by manual tests:
     /// 
     /// - DayStats array might be empty, but never null.
-    /// - A DayStat entry has a Count of at least 1.
+    /// - A DayStat entry has a Count of at least 1. // kj2 assert DayStat.Count >= 1 in code. It is currently asserted in ValidWikiPageStats.
+    ///   - Thus, in case of a day with no views, the DayStats entry for that day is missing altogether.
     /// - All the relevant invariants checked in: Wikitools.AzureDevOps.ValidWikiPagesStats.CheckInvariants
     /// - The Path format is of format as codified by Wikitools.AzureDevOps.WikiPageStatsPath
     ///
