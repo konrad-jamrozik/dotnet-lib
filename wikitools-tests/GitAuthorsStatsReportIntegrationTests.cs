@@ -42,13 +42,13 @@ public class GitAuthorsStatsReportIntegrationTests
         var commits = gitLog.Commits(cfg.GitLogDays);
         bool AuthorFilter(string author) => !cfg.ExcludedAuthors.Any(author.Contains);
         // kj2 .Result
-        var stats = GitAuthorStats.AuthorsStatsFrom(commits.Result, AuthorFilter, cfg.Top);
+        var stats = GitAuthorStats.AuthorsStatsFrom(commits.Result, AuthorFilter, cfg.Top); 
 
-        var authorsReport2 = new GitAuthorsStatsReport(
+        var authorsReport = new GitAuthorsStatsReport(
             timeline,
             cfg.GitLogDays,
             stats);
 
-        return authorsReport2;
+        return authorsReport;
     }
 }
