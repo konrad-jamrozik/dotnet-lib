@@ -10,7 +10,11 @@ namespace Wikitools.Lib.Markdown
 {
     public record MarkdownDocument(Task<object[]> Content) : IWritableToText
     {
-        public async Task WriteAsync(TextWriter textWriter) => await textWriter.WriteAsync(await ToMarkdown(this));
+        public MarkdownDocument(object[] content) : this(Task.FromResult(content)) 
+        { }
+
+        public async Task WriteAsync(TextWriter textWriter)
+            => await textWriter.WriteAsync(await ToMarkdown(this));
 
         private static async Task<string> ToMarkdown(MarkdownDocument doc) =>
             (await doc.Content).Select(entry => entry switch

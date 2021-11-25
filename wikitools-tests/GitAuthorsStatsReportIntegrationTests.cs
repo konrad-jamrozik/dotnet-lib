@@ -39,13 +39,16 @@ public class GitAuthorsStatsReportIntegrationTests
             cfg.GitRepoCloneDir(fs),
             cfg.GitExecutablePath);
 
-        var authorsReport = new GitAuthorsStatsReport(
-            timeline,
-            gitLog.Commits(cfg.GitLogDays),
-            cfg.GitLogDays,
-            cfg.Top,
-            author => !cfg.ExcludedAuthors.Any(author.Contains));
+        var commits = gitLog.Commits(cfg.GitLogDays);
+        bool AuthorFilter(string author) => !cfg.ExcludedAuthors.Any(author.Contains);
+        // kj2 usage of .Result
+        var stats = GitAuthorStats.AuthorsStatsFrom(commits.Result, AuthorFilter, cfg.Top);
 
-        return authorsReport;
+        var authorsReport2 = new GitAuthorsStatsReport(
+            timeline,
+            cfg.GitLogDays,
+            stats);
+
+        return authorsReport2;
     }
 }
