@@ -1,6 +1,7 @@
 using System.Linq;
 using NUnit.Framework;
 using Wikitools.AzureDevOps;
+using Wikitools.Lib.Git;
 using Wikitools.Lib.Json;
 using Wikitools.Lib.OS;
 using Wikitools.Lib.Primitives;
@@ -33,9 +34,26 @@ public class TopStatsReportIntegrationTests
         WikitoolsCfg cfg,
         AzureDevOpsCfg adoCfg)
     {
-        // kja dedup logic used in this method, and in int tests for other reports using the same data.
+        // kj2 dedup logic used in this method, and in int tests for other reports using the same data.
 
         var timeline = new Timeline();
+        var commits = GitLogCommits(fs, cfg);
+        var authorStats = GitAuthorStats(cfg, commits);
+        var fileStats = GitFileStats(cfg, commits);
+        var pageViewStats = PageViewStats(timeline, fs, cfg, adoCfg);
+        var authorsReport = new TopStatsReport(
+            timeline,
+            cfg.GitLogDays,
+            cfg.AdoWikiPageViewsForDays,
+            authorStats, 
+            fileStats,
+            pageViewStats);
+
+        return authorsReport;
+    }
+
+    private static GitLogCommit[] GitLogCommits(IFileSystem fs, WikitoolsCfg cfg)
+    {
         var os = new WindowsOS();
 
         var gitLog = new GitLogDeclare().GitLog(
@@ -45,39 +63,43 @@ public class TopStatsReportIntegrationTests
 
         var commits = gitLog.Commits(cfg.GitLogDays);
         var commitsResult = commits.Result; // kj2 .Result
-        bool AuthorFilter(string author) => !cfg.ExcludedAuthors.Any(author.Contains);
-        bool FilePathFilter(string path) => !cfg.ExcludedPaths.Any(path.Contains);
-        
-        var authorStats = GitAuthorStats.From(commitsResult, AuthorFilter, cfg.Top); 
-        var fileStats = GitFileStats.From(commitsResult, FilePathFilter, cfg.Top);
+        return commitsResult;
+    }
 
+    private static GitAuthorStats[] GitAuthorStats(WikitoolsCfg cfg, GitLogCommit[] commits)
+    {
+        bool AuthorFilter(string author) => !cfg.ExcludedAuthors.Any(author.Contains);
+        var authorStats = Wikitools.GitAuthorStats.From(commits, AuthorFilter, cfg.Top);
+        return authorStats;
+    }
+
+    private static GitFileStats[] GitFileStats(WikitoolsCfg cfg, GitLogCommit[] commits)
+    {
+        bool FilePathFilter(string path) => !cfg.ExcludedPaths.Any(path.Contains);
+        var fileStats = Wikitools.GitFileStats.From(commits, FilePathFilter, cfg.Top);
+        return fileStats;
+    }
+
+    private static PathViewStats[] PageViewStats(
+        ITimeline timeline,
+        IFileSystem fs,
+        WikitoolsCfg cfg,
+        AzureDevOpsCfg adoCfg)
+    {
         var env = new Environment();
 
         var wiki = new AdoWikiWithStorageDeclare().AdoWikiWithStorage(
             timeline,
             fs,
             env,
-            // kj2 instead here we there should be cfg.AzureDevOpsCfg.AdoWikiUri,
-            // and below cfg.AzureDevOpsCfg.AdoPatEnvVar,
-            // but currently Configuration class doesn't support more than one level of nesting
-            // of configs. Even worse, it just throws null.
             adoCfg.AdoWikiUri,
             adoCfg.AdoPatEnvVar,
             cfg.StorageDirPath);
 
-        var pagesViewsStats = wiki.PagesStats(cfg.AdoWikiPageViewsForDays);
+        var pagesStats = wiki.PagesStats(cfg.AdoWikiPageViewsForDays);
 
         // kj2 .Result
-        var pathViewStats = PathViewStats.From(pagesViewsStats.Result);
-
-        var authorsReport = new TopStatsReport(
-            timeline,
-            cfg.GitLogDays,
-            cfg.AdoWikiPageViewsForDays,
-            authorStats, 
-            fileStats,
-            pathViewStats);
-
-        return authorsReport;
+        var pageViewStats = PathViewStats.From(pagesStats.Result);
+        return pageViewStats;
     }
 }
