@@ -46,7 +46,7 @@ public class TopStatsReportIntegrationTests
         var ago1Day = new DateDay(timeline.UtcNow.AddDays(-1));
         var authorLastWeekStats = GitAuthorStats(cfg, commits, top: 5, daySpan: (ago7Days, ago1Day));
         var authorLast30DaysStats = GitAuthorStats(cfg, commits, top: 10, daySpan: (ago30Days, ago1Day));
-        var fileStats = GitFileStats(cfg, commits);
+        var fileStats = GitFileStats(cfg, commits, top: 10);
         var pageViewStats = PageViewStats(timeline, fs, cfg, adoCfg);
         var authorsReport = new TopStatsReport(
             timeline,
@@ -85,10 +85,10 @@ public class TopStatsReportIntegrationTests
         return authorStats;
     }
 
-    private static GitFileStats[] GitFileStats(WikitoolsCfg cfg, GitLogCommit[] commits)
+    private static GitFileStats[] GitFileStats(WikitoolsCfg cfg, GitLogCommit[] commits, int top)
     {
         bool FilePathFilter(string path) => !cfg.ExcludedPaths.Any(path.Contains);
-        var fileStats = Wikitools.GitFileStats.From(commits, FilePathFilter, cfg.Top);
+        var fileStats = Wikitools.GitFileStats.From(commits, FilePathFilter, top);
         return fileStats;
     }
 

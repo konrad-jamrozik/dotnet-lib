@@ -21,7 +21,7 @@ public record TopStatsReport : MarkdownDocument
 {
     public const string AuthorDescriptionFormat = "Top {0} git contributions since last {1} days as of {2}";
 
-    public const string FileDescriptionFormat = "Git file changes since last {0} days as of {1}";
+    public const string FileDescriptionFormat = "Top {0} Git files by insertions since last {1} days as of {2}";
 
     public const string PathViewDescriptionFormat =
         "Path views since last {0} days as of {1}. Total wiki pages: {2}";
@@ -69,7 +69,7 @@ public record TopStatsReport : MarkdownDocument
                 "",
                 GitAuthorStats.TabularData(authorDataRowsLast30Days),
                 "",
-                string.Format(FileDescriptionFormat, days, timeline.UtcNow),
+                string.Format(FileDescriptionFormat, 10, 30, timeline.UtcNow),
                 "",
                 GitFileStats.TabularData(fileDataRows),
                 "",
