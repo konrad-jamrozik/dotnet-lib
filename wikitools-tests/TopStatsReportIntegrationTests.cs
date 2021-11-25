@@ -36,11 +36,15 @@ public class TopStatsReportIntegrationTests
     {
         // kj2 dedup logic used in this method, and in int tests for other reports using the same data.
 
+        // kja current work - see comment on Wikitools.TopStatsReport
+
         var timeline = new Timeline();
         var commits = GitLogCommits(fs, cfg, gitLogDays: 30);
+        var ago30Days = new DateDay(timeline.UtcNow.AddDays(-30));
         var ago7Days = new DateDay(timeline.UtcNow.AddDays(-7));
         var ago1Day = new DateDay(timeline.UtcNow.AddDays(-1));
         var authorLastWeekStats = GitAuthorStats(cfg, commits, top: 5, daySpan: (ago7Days, ago1Day));
+        var authorLast30DaysStats = GitAuthorStats(cfg, commits, top: 10, daySpan: (ago30Days, ago1Day));
         var fileStats = GitFileStats(cfg, commits);
         var pageViewStats = PageViewStats(timeline, fs, cfg, adoCfg);
         var authorsReport = new TopStatsReport(
@@ -48,6 +52,7 @@ public class TopStatsReportIntegrationTests
             cfg.GitLogDays,
             cfg.AdoWikiPageViewsForDays,
             authorLastWeekStats, 
+            authorLast30DaysStats,
             fileStats,
             pageViewStats);
 

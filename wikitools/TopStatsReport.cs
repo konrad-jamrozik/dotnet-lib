@@ -5,19 +5,21 @@ namespace Wikitools;
 
 // kja TopStatsReport
 // implement "top stats" report, which will show:
-// - top 10 most edited pages last week. Might be less than 10 if not enough activity.
+// - Top 5 most prolific authors in last 7 days - DONE
+// - Top 10 most prolific authors in last 30 days - DONE
+
+// - top 5 most edited pages last week
 //   - Data already there (GitFileStats), but need to tweak filtering
-// - top 10 most viewed pages last week. Might be less than 10 if not enough activity.
+// - top 5 most viewed pages last week.
 //   - Data already here (GitPathViewStats), but need to tweak filtering
 // - Same as above, but for the last month.
 //   - Need to add it to report
-// - Same as above, but for top 3 most active authors (with exclusions)
-//   - Data already here (GitAuthorStats), but need to tweak filtering
+
 // - Add annotations (icons): Newly added, lots of traffic (use :fire: in the MD)
 //   - Emojis: https://docs.microsoft.com/en-us/azure/devops/project/wiki/markdown-guidance?view=azure-devops#emoji
 public record TopStatsReport : MarkdownDocument
 {
-    public const string AuthorDescriptionFormat = "Git contributions since last {0} days as of {1}";
+    public const string AuthorDescriptionFormat = "Top {0} git contributions since last {1} days as of {2}";
 
     public const string FileDescriptionFormat = "Git file changes since last {0} days as of {1}";
 
@@ -34,24 +36,38 @@ public record TopStatsReport : MarkdownDocument
         ITimeline timeline,
         int days,
         int pageViewsForDays,
-        GitAuthorStats[] authorDataRows,
+        GitAuthorStats[] authorDataRowsLastWeek,
+        GitAuthorStats[] authorDataRowsLast30Days,
         GitFileStats[] fileDataRows,
         PathViewStats[] pathViewDataRows) : base(
-        GetContent(timeline, days, pageViewsForDays, authorDataRows, fileDataRows, pathViewDataRows)) { }
+        GetContent(
+            timeline,
+            days,
+            pageViewsForDays,
+            authorDataRowsLastWeek,
+            authorDataRowsLast30Days,
+            fileDataRows,
+            pathViewDataRows)) { }
 
     private static object[] GetContent(
         ITimeline timeline,
         int days,
         int pageViewsForDays,
-        GitAuthorStats[] authorDataRows,
+        GitAuthorStats[] authorDataRowsLastWeek,
+        GitAuthorStats[] authorDataRowsLast30Days,
         GitFileStats[] fileDataRows,
         PathViewStats[] pathViewDataRows)
         =>
             new object[]
             {
-                string.Format(AuthorDescriptionFormat, days, timeline.UtcNow),
+                // kj2 dehardcode magic constants
+                string.Format(AuthorDescriptionFormat, 5, 7, new DateDay(timeline.UtcNow).AddDays(-1)),
                 "",
-                GitAuthorStats.TabularData(authorDataRows),
+                GitAuthorStats.TabularData(authorDataRowsLastWeek),
+                "",
+                string.Format(AuthorDescriptionFormat, 10, 30, new DateDay(timeline.UtcNow).AddDays(-1)),
+                "",
+                GitAuthorStats.TabularData(authorDataRowsLast30Days),
                 "",
                 string.Format(FileDescriptionFormat, days, timeline.UtcNow),
                 "",
