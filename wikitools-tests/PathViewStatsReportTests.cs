@@ -25,7 +25,8 @@ namespace Wikitools.Tests
 
             // Arrange SUT declaration
             var pagesStats = adoWiki.PagesStats(pageViewsForDays);
-            var sut        = new PathViewStatsReport(timeline, pagesStats, pageViewsForDays);
+            var pathViewStats = PathViewStats.From(pagesStats.Result); // kj2 .Result
+            var sut        = new PathViewStatsReport(timeline, pageViewsForDays, pathViewStats);
 
             var expected = new MarkdownDocument(Task.FromResult(new object[]
             {
@@ -35,7 +36,7 @@ namespace Wikitools.Tests
                     pagesStatsData.Length),
                 "",
                 new TabularData(
-                    HeaderRow: PathViewStatsReport.HeaderRow,
+                    HeaderRow: PathViewStats.HeaderRow,
                     Rows: data.ExpectedRows[(nameof(PathViewStatsReportTests), pagesStatsData)])
             }));
 

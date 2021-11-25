@@ -9,7 +9,6 @@ public record PathViewStats(
     string FilePath,
     int Views)
 {
-    public const string DescriptionFormat = "Page views since last {0} days as of {1}. Total wiki pages: {2}";
     public static readonly object[] HeaderRow = { "Place", "Path", "Views" };
 
     public static PathViewStats[] From(

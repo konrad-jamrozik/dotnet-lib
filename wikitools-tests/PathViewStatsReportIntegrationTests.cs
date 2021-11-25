@@ -38,7 +38,7 @@ public class PathViewStatsReportIntegrationTests
             timeline,
             fs,
             env,
-            // kj2 instead here we there should be cfg.AzureDevOpsCfg.AdoWikiUri,
+            // kj2 instead here there should be cfg.AzureDevOpsCfg.AdoWikiUri,
             // and below cfg.AzureDevOpsCfg.AdoPatEnvVar,
             // but currently Configuration class doesn't support more than one level of nesting
             // of configs. Even worse, it just throws null.
@@ -55,7 +55,12 @@ public class PathViewStatsReportIntegrationTests
         // collections are lazy after all.
         var pagesViewsStats = wiki.PagesStats(cfg.AdoWikiPageViewsForDays);
 
-        var pagesViewsReport = new PathViewStatsReport(timeline, pagesViewsStats, cfg.AdoWikiPageViewsForDays);
+        // kj2 .Result
+        var pathViewStats = PathViewStats.From(pagesViewsStats.Result);
+        var pagesViewsReport = new PathViewStatsReport(
+            timeline,
+            cfg.AdoWikiPageViewsForDays,
+            pathViewStats);
 
         return pagesViewsReport;
     }
