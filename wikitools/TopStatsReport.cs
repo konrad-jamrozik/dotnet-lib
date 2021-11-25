@@ -4,9 +4,10 @@ using Wikitools.Lib.Primitives;
 namespace Wikitools;
 
 // kja TopStatsReport
-// implement "top pages" report, which will show:
+// implement "top stats" report, which will show:
 // - top 10 most edited pages last week. Might be less than 10 if not enough activity.
 //   - Data will come from GitFilesStatsReport
+//     - Data already there (GitFileStats), but need to tweak filtering
 // - top 10 most viewed pages last week. Might be less than 10 if not enough activity.
 //   - Data will come from GitPagesViewsReport
 // - Same as above, but for the last month.
@@ -16,20 +17,32 @@ namespace Wikitools;
 //   - Emojis: https://docs.microsoft.com/en-us/azure/devops/project/wiki/markdown-guidance?view=azure-devops#emoji
 public record TopStatsReport : MarkdownDocument
 {
-    public const string DescriptionFormat = "Git contributions since last {0} days as of {1}";
+    public const string AuthorDescriptionFormat = "Git contributions since last {0} days as of {1}";
+
+    public const string FileDescriptionFormat = "Git file changes since last {0} days as of {1}";
 
     public TopStatsReport(
         ITimeline timeline,
         int days,
-        GitAuthorStats[] dataRows) : base(
-        GetContent(timeline, days, dataRows)) { }
+        GitAuthorStats[] authorDataRows,
+        GitFileStats[] fileDataRows) : base(
+        GetContent(timeline, days, authorDataRows, fileDataRows)) { }
 
-    private static object[] GetContent(ITimeline timeline, int days, GitAuthorStats[] dataRows)
+    private static object[] GetContent(
+        ITimeline timeline,
+        int days,
+        GitAuthorStats[] authorDataRows,
+        GitFileStats[] fileDataRows)
         =>
             new object[]
             {
-                string.Format(DescriptionFormat, days, timeline.UtcNow),
+                string.Format(AuthorDescriptionFormat, days, timeline.UtcNow),
                 "",
-                GitAuthorStats.TabularData(dataRows)
+                GitAuthorStats.TabularData(authorDataRows),
+                "",
+                string.Format(FileDescriptionFormat, days, timeline.UtcNow),
+                "",
+                GitFileStats.TabularData(fileDataRows)
+
             };
 }

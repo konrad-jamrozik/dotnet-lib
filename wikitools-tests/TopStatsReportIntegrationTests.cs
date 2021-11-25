@@ -41,13 +41,18 @@ public class TopStatsReportIntegrationTests
             cfg.GitExecutablePath);
 
         var commits = gitLog.Commits(cfg.GitLogDays);
+        var commitsResult = commits.Result; // kj2 .Result
         bool AuthorFilter(string author) => !cfg.ExcludedAuthors.Any(author.Contains);
-        // kj2 .Result
-        var stats = GitAuthorStats.GitAuthorsStatsFrom(commits.Result, AuthorFilter, cfg.Top); 
+        bool FilePathFilter(string path) => !cfg.ExcludedPaths.Any(path.Contains);
+        
+        var authorStats = GitAuthorStats.GitAuthorsStatsFrom(commitsResult, AuthorFilter, cfg.Top); 
+        var fileStats = GitFileStats.GitFilesStatsFrom(commitsResult, FilePathFilter, cfg.Top);
+
         var authorsReport = new TopStatsReport(
             timeline,
             cfg.GitLogDays,
-            stats);
+            authorStats, 
+            fileStats);
 
         return authorsReport;
     }
