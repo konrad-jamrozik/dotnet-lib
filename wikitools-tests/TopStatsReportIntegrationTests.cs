@@ -1,9 +1,7 @@
 using System;
 using System.Linq;
-using System.Threading.Tasks;
 using NUnit.Framework;
 using Wikitools.AzureDevOps;
-using Wikitools.Lib.Git;
 using Wikitools.Lib.Json;
 using Wikitools.Lib.OS;
 using Wikitools.Lib.Primitives;
@@ -30,7 +28,7 @@ public class TopStatsReportIntegrationTests
         Assert.That(lines.Count(l => l.StartsWith("| ")), Is.GreaterThanOrEqualTo(3));
     }
 
-    private static GitAuthorsStatsReport TopStatsReport(
+    private static TopStatsReport TopStatsReport(
         IFileSystem fs,
         WikitoolsCfg cfg)
     {
@@ -42,14 +40,14 @@ public class TopStatsReportIntegrationTests
             cfg.GitRepoCloneDir(fs),
             cfg.GitExecutablePath);
 
-        // kja current work: introduce TopStatsReport.
-        Task<GitLogCommit[]> commits = gitLog.Commits(cfg.GitLogDays);
-        int? top = cfg.Top;
-        Func<string, bool>? authorFilter = author => !cfg.ExcludedAuthors.Any(author.Contains);
-        var authorsReport = new GitAuthorsStatsReport(
+        var commits = gitLog.Commits(cfg.GitLogDays);
+        bool AuthorFilter(string author) => !cfg.ExcludedAuthors.Any(author.Contains);
+        // kj2 .Result
+        var stats = GitAuthorStats.AuthorsStatsFrom(commits.Result, AuthorFilter, cfg.Top); 
+        var authorsReport = new TopStatsReport(
             timeline,
             cfg.GitLogDays,
-            GitAuthorStats.AuthorsStatsFrom(commits.Result, authorFilter ?? (_ => true), top));
+            stats);
 
         return authorsReport;
     }
