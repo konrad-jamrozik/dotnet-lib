@@ -39,25 +39,49 @@ namespace Wikitools
             Func<string, bool> authorFilter,
             int? top)
         {
+            GitAuthorStatsRow[] rows = GitAuthorsStatsRows(commits, authorFilter, top);
+
+            // kj2 Rows conversion to object[]: instead of this conversion, TabularData should
+            // handle not only object[][], but also arbitrary_record[], and use reflection
+            // to convert this record into a an array of objects[].
+            var rowsAsObjectArrays = rows.Select(
+                    row => new object[]
+                    {
+                        row.Place, row.AuthorName, row.FilesChanges, row.Insertions, row.Deletions
+                    })
+                .ToArray();
+
+            return (headerRow: HeaderRow, rowsAsObjectArrays);
+        }
+
+        private static GitAuthorStatsRow[] GitAuthorsStatsRows(
+            GitLogCommit[] commits,
+            Func<string, bool> authorFilter,
+            int? top)
+        {
             var statsSumByAuthor = SumByAuthor(commits)
                 .OrderByDescending(s => s.insertions + s.deletions)
                 .Where(s => authorFilter(s.author))
                 .ToArray();
 
-            statsSumByAuthor = top is not null 
-                ? statsSumByAuthor.Take((int) top).ToArray() 
+            statsSumByAuthor = top is not null
+                ? statsSumByAuthor.Take((int)top).ToArray()
                 : statsSumByAuthor;
 
             var rows = statsSumByAuthor
-                .Select((s, i) => new object[]
-                    { i + 1, s.author, s.filesChanged, s.insertions, s.deletions })
+                .Select(
+                    (data, i) => new GitAuthorStatsRow(
+                        i + 1,
+                        data.author,
+                        data.filesChanged,
+                        data.insertions,
+                        data.deletions))
                 .ToArray();
-
-            return (headerRow: HeaderRow, rows);
+            return rows;
         }
 
-        private static (string author, int filesChanged, int insertions, int deletions)[] SumByAuthor(
-            GitLogCommit[] commits)
+        private static (string author, int filesChanged, int insertions, int deletions)[]
+            SumByAuthor(GitLogCommit[] commits)
         {
             var commitsByAuthor = commits.GroupBy(commit => commit.Author);
             var statsSumByAuthor = commitsByAuthor.Select(authorCommits =>
