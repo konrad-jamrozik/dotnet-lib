@@ -20,7 +20,7 @@ public record GitFileStats(
     {
         filePathFilter ??= _ => true;
         var statsSumByFilePath = SumByFilePath(commits)
-            .OrderByDescending(stats => stats.insertions + stats.deletions)
+            .OrderByDescending(stats => stats.insertions)
             .Where(stat => filePathFilter(stat.filePath))
             .ToArray();
 
