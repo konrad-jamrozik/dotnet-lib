@@ -1,6 +1,9 @@
+using System;
 using System.Linq;
+using System.Threading.Tasks;
 using NUnit.Framework;
 using Wikitools.AzureDevOps;
+using Wikitools.Lib.Git;
 using Wikitools.Lib.Json;
 using Wikitools.Lib.OS;
 using Wikitools.Lib.Primitives;
@@ -40,12 +43,13 @@ public class TopStatsReportIntegrationTests
             cfg.GitExecutablePath);
 
         // kja current work: introduce TopStatsReport.
+        Task<GitLogCommit[]> commits = gitLog.Commits(cfg.GitLogDays);
+        int? top = cfg.Top;
+        Func<string, bool>? authorFilter = author => !cfg.ExcludedAuthors.Any(author.Contains);
         var authorsReport = new GitAuthorsStatsReport(
             timeline,
-            gitLog.Commits(cfg.GitLogDays),
             cfg.GitLogDays,
-            cfg.Top,
-            author => !cfg.ExcludedAuthors.Any(author.Contains));
+            GitAuthorStats.AuthorsStatsFrom(commits.Result, authorFilter ?? (_ => true), top));
 
         return authorsReport;
     }

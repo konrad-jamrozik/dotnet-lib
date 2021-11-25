@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using Wikitools.Lib.Data;
 using Wikitools.Lib.Git;
 
 namespace Wikitools;
@@ -16,9 +17,10 @@ public record GitAuthorStats(
 
     public static GitAuthorStats[] AuthorsStatsFrom(
         GitLogCommit[] commits,
-        Func<string, bool> authorFilter,
-        int? top)
+        Func<string, bool>? authorFilter = null,
+        int? top = null)
     {
+        authorFilter ??= _ => true;
         var statsSumByAuthor = SumByAuthor(commits)
             .OrderByDescending(s => s.insertions + s.deletions)
             .Where(s => authorFilter(s.author))
@@ -40,6 +42,16 @@ public record GitAuthorStats(
         return rows;
     }
 
+    public static TabularData TabularData(GitAuthorStats[] rows)
+    {
+        // kj2 Rows conversion to object[]: instead of this conversion, TabularData should
+        // handle not only object[][], but also arbitrary_record[], and use reflection
+        // to convert this record into a an array of objects[].
+        var rowsAsObjectArrays = rows.Select(AsObjectArray).ToArray();
+
+        return new TabularData((headerRow: HeaderRow, rowsAsObjectArrays));
+    }
+
     private static (string author, int filesChanged, int insertions, int deletions)[]
         SumByAuthor(GitLogCommit[] commits)
     {
@@ -55,11 +67,9 @@ public record GitAuthorStats(
         return statsSumByAuthor.ToArray();
     }
 
-    public static object[] AsObjectArray(GitAuthorStats row)
-    {
-        return new object[]
+    private static object[] AsObjectArray(GitAuthorStats row)
+        => new object[]
         {
             row.Place, row.AuthorName, row.FilesChanges, row.Insertions, row.Deletions
         };
-    }
 }

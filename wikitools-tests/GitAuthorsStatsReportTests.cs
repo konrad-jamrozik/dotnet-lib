@@ -12,7 +12,7 @@ namespace Wikitools.Tests
 {
     public class GitAuthorsStatsReportTests
     {
-        [Fact]
+        [Fact] // kj2 use everywhere NUnit 
         public async Task ReportsGitAuthorsStats()
         {
             // Arrange inputs
@@ -31,7 +31,8 @@ namespace Wikitools.Tests
             // Arrange SUT declaration
             var gitLog  = new GitLogDeclare().GitLog(os, gitRepoDir, gitExecutablePath);
             var commits = gitLog.Commits(logDays);
-            var sut     = new GitAuthorsStatsReport(timeline, commits, logDays, top);
+            var stats   = GitAuthorStats.AuthorsStatsFrom(commits.Result, top: top); // kj2 .Result
+            var sut     = new GitAuthorsStatsReport(timeline, logDays, stats);
 
             // Arrange expectations
             var expected = new MarkdownDocument(Task.FromResult(new object[]
