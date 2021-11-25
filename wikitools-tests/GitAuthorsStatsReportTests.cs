@@ -38,7 +38,7 @@ namespace Wikitools.Tests
             {
                 string.Format(GitAuthorsStatsReport.DescriptionFormat, logDays, timeline.UtcNow),
                 "",
-                new TabularData((GitAuthorsStatsReport.HeaderRow,
+                new TabularData((GitAuthorStats.HeaderRow,
                     data.ExpectedRows[(nameof(GitAuthorsStatsReportTests), commitsData)]))
             }));
 
