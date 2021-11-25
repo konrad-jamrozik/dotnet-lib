@@ -21,18 +21,25 @@ public record TopStatsReport : MarkdownDocument
 
     public const string FileDescriptionFormat = "Git file changes since last {0} days as of {1}";
 
+    public const string PathViewDescriptionFormat =
+        "Path views since last {0} days as of {1}. Total wiki pages: {2}";
+
     public TopStatsReport(
         ITimeline timeline,
         int days,
+        int pageViewsForDays,
         GitAuthorStats[] authorDataRows,
-        GitFileStats[] fileDataRows) : base(
-        GetContent(timeline, days, authorDataRows, fileDataRows)) { }
+        GitFileStats[] fileDataRows,
+        PathViewStats[] pathViewDataRows) : base(
+        GetContent(timeline, days, pageViewsForDays, authorDataRows, fileDataRows, pathViewDataRows)) { }
 
     private static object[] GetContent(
         ITimeline timeline,
         int days,
+        int pageViewsForDays,
         GitAuthorStats[] authorDataRows,
-        GitFileStats[] fileDataRows)
+        GitFileStats[] fileDataRows,
+        PathViewStats[] pathViewDataRows)
         =>
             new object[]
             {
@@ -42,7 +49,14 @@ public record TopStatsReport : MarkdownDocument
                 "",
                 string.Format(FileDescriptionFormat, days, timeline.UtcNow),
                 "",
-                GitFileStats.TabularData(fileDataRows)
-
+                GitFileStats.TabularData(fileDataRows),
+                "",
+                string.Format(
+                    PathViewDescriptionFormat,
+                    pageViewsForDays,
+                    timeline.UtcNow,
+                    pathViewDataRows.Length),
+                "",
+                PathViewStats.TabularData(pathViewDataRows)
             };
 }
