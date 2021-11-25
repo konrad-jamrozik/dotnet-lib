@@ -7,12 +7,12 @@ using Wikitools.Lib.Data;
 
 namespace Wikitools
 {
-    public record PagesViewsStatsReport : MarkdownDocument
+    public record PathViewStatsReport : MarkdownDocument
     {
         public const string DescriptionFormat = "Page views since last {0} days as of {1}. Total wiki pages: {2}";
         public static readonly object[] HeaderRow = { "Place", "Path", "Views" };
 
-        public PagesViewsStatsReport(ITimeline timeline, Task<ValidWikiPagesStats> stats, int pageViewsForDays) :
+        public PathViewStatsReport(ITimeline timeline, Task<ValidWikiPagesStats> stats, int pageViewsForDays) :
             base(GetContent(timeline, pageViewsForDays, stats)) { }
 
         private static async Task<object[]> GetContent(

@@ -9,14 +9,14 @@ using Xunit;
 
 namespace Wikitools.Tests
 {
-    public class PagesViewsStatsReportTests
+    public class PathViewStatsReportTests
     {
         [Fact]
-        public async Task ReportsPagesViewsStats()
+        public async Task ReportsPathViewStats()
         {
             // Arrange inputs
             var data             = new ReportTestsData();
-            var pagesStatsData   = data.PagesStats;
+            var pagesStatsData   = data.WikiPagesStats;
             var pageViewsForDays = 30;
 
             // Arrange simulations
@@ -25,18 +25,18 @@ namespace Wikitools.Tests
 
             // Arrange SUT declaration
             var pagesStats = adoWiki.PagesStats(pageViewsForDays);
-            var sut        = new PagesViewsStatsReport(timeline, pagesStats, pageViewsForDays);
+            var sut        = new PathViewStatsReport(timeline, pagesStats, pageViewsForDays);
 
             var expected = new MarkdownDocument(Task.FromResult(new object[]
             {
-                string.Format(PagesViewsStatsReport.DescriptionFormat,
+                string.Format(PathViewStatsReport.DescriptionFormat,
                     pageViewsForDays,
                     timeline.UtcNow,
                     pagesStatsData.Length),
                 "",
                 new TabularData(
-                    HeaderRow: PagesViewsStatsReport.HeaderRow,
-                    Rows: data.ExpectedRows[(nameof(PagesViewsStatsReportTests), pagesStatsData)])
+                    HeaderRow: PathViewStatsReport.HeaderRow,
+                    Rows: data.ExpectedRows[(nameof(PathViewStatsReportTests), pagesStatsData)])
             }));
 
             // Act

@@ -24,7 +24,7 @@ namespace Wikitools.AzureDevOps.Tests
         [Test]
         public async Task DataInWiki()
         {
-            var wikiStats          = new ValidWikiPagesStatsFixture().PagesStats(UtcNowDay);
+            var wikiStats          = new ValidWikiPagesStatsFixture().WikiPagesStats(UtcNowDay);
             var adoWikiWithStorage = await AdoWikiWithStorage(UtcNowDay, wikiStats: wikiStats);
 
             // Act

@@ -10,10 +10,10 @@ namespace Wikitools.Tests;
 
 [Category("integration")]
 [TestFixture]
-public class GitPagesViewsReportIntegrationTests
+public class PathViewStatsReportIntegrationTests
 {
     [Test]
-    public void WritesPagesViewsReport()
+    public void WritesPathViewStatsReport()
     {
         var fs = new FileSystem();
         var cfg = new Configuration(fs).Read<WikitoolsIntegrationTestsCfg>();
@@ -27,7 +27,7 @@ public class GitPagesViewsReportIntegrationTests
         Assert.That(lines.Count(l => l.StartsWith("| ")), Is.GreaterThanOrEqualTo(3));
     }
 
-    private static PagesViewsStatsReport GitPagesViewsReport(
+    private static PathViewStatsReport GitPagesViewsReport(
         IFileSystem fs,
         WikitoolsCfg cfg, AzureDevOpsCfg adoCfg)
     {
@@ -55,7 +55,7 @@ public class GitPagesViewsReportIntegrationTests
         // collections are lazy after all.
         var pagesViewsStats = wiki.PagesStats(cfg.AdoWikiPageViewsForDays);
 
-        var pagesViewsReport = new PagesViewsStatsReport(timeline, pagesViewsStats, cfg.AdoWikiPageViewsForDays);
+        var pagesViewsReport = new PathViewStatsReport(timeline, pagesViewsStats, cfg.AdoWikiPageViewsForDays);
 
         return pagesViewsReport;
     }

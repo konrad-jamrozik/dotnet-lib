@@ -5,14 +5,14 @@ namespace Wikitools.AzureDevOps.Tests
 {
     public class ValidWikiPagesStatsFixture
     {
-        public ValidWikiPagesStats PagesStats() => PagesStats(Today);
+        public ValidWikiPagesStats WikiPagesStats() => WikiPagesStats(Today);
 
         public static DateDay Today => new DateDay(new SimulatedTimeline().UtcNow);
 
         public ValidWikiPagesStatsForMonth PagesStatsForMonth(DateDay date)
-            => new ValidWikiPagesStatsForMonth(PagesStats(date));
+            => new ValidWikiPagesStatsForMonth(WikiPagesStats(date));
 
-        public ValidWikiPagesStats PagesStats(DateDay date)
+        public ValidWikiPagesStats WikiPagesStats(DateDay date)
         {
             var wikiPageStats = new WikiPageStats[]
             {
