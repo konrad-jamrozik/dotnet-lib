@@ -39,32 +39,35 @@ public class TopStatsReportIntegrationTests
         // kja current work - see comment on Wikitools.TopStatsReport
 
         var timeline = new Timeline();
-        int gitLogDays = 30; // kja change everywhere 30 to 28 days.
-        var commits = GitLogCommits(fs, cfg, gitLogDays);
-        // kja add filter to 7 Days
-        var pagesStatsLast7Days = PagesStats(timeline, fs, cfg, adoCfg);
-
+        var dataDays = 28;
         var ago1Day = timeline.DaysFromUtcNow(-1).AddDays(-5); // kja temp. And -5 below.
         var ago7Days = timeline.DaysFromUtcNow(-7).AddDays(-5);
-        var ago30Days = timeline.DaysFromUtcNow(-30);
+        var ago28Days = timeline.DaysFromUtcNow(-dataDays);
         
+        var commits = GitLogCommits(fs, cfg, dataDays);
         var commitsLast7Days = GitLogCommit.FilterCommits(commits, (ago7Days, ago1Day));
-        var commitsLast30Days = GitLogCommit.FilterCommits(commits, (ago30Days, ago1Day));
+        var commitsLast28Days = GitLogCommit.FilterCommits(commits, (ago28Days, ago1Day));
         
         var authorStatsLast7Days = GitAuthorStats(cfg, commitsLast7Days, top: 5);
-        var authorStatsLast30Days = GitAuthorStats(cfg, commitsLast30Days, top: 10);
+        var authorStatsLast28Days = GitAuthorStats(cfg, commitsLast28Days, top: 10);
         var fileStatsLast7Days = GitFileStats(cfg, commitsLast7Days, top: 10);
-        var fileStatsLast30Days = GitFileStats(cfg, commitsLast30Days, top: 20);
-        var pageViewStatsLast7Days = PageViewStats(pagesStatsLast7Days, top: 10);
+        var fileStatsLast28Days = GitFileStats(cfg, commitsLast28Days, top: 20);
+
+        // Here, The 1 is added to dataDays for pageViewsForDays
+        // to account for how ADO API interprets the range. See:
+        // AdoWikiWithStorageIntegrationTests.ObtainsAndStoresDataFromAdoWikiForToday
+        var pagesStats = PagesStats(timeline, fs, cfg, adoCfg, pageViewsForDays: dataDays + 1);
+        var pagesStatsLast7Days = PageViewStats(pagesStats.Trim(ago7Days, ago1Day), top: 10);
+        var pagesStatsLast28Days = PageViewStats(pagesStats.Trim(ago28Days, ago1Day), top: 30);
 
         var authorsReport = new TopStatsReport(
             timeline,
-            cfg.AdoWikiPageViewsForDays,
             authorStatsLast7Days, 
-            authorStatsLast30Days,
+            authorStatsLast28Days,
             fileStatsLast7Days,
-            fileStatsLast30Days,
-            pageViewStatsLast7Days);
+            fileStatsLast28Days,
+            pagesStatsLast7Days,
+            pagesStatsLast28Days);
 
         return authorsReport;
     }
@@ -112,7 +115,8 @@ public class TopStatsReportIntegrationTests
         ITimeline timeline,
         IFileSystem fs,
         WikitoolsCfg cfg,
-        AzureDevOpsCfg adoCfg)
+        AzureDevOpsCfg adoCfg,
+        int pageViewsForDays)
     {
         var env = new Environment();
 
@@ -124,7 +128,7 @@ public class TopStatsReportIntegrationTests
             adoCfg.AdoPatEnvVar,
             cfg.StorageDirPath);
 
-        var pagesStats = wiki.PagesStats(cfg.AdoWikiPageViewsForDays);
+        var pagesStats = wiki.PagesStats(pageViewsForDays);
         var pagesStatsResult = pagesStats.Result; // kj2 .Result
         return pagesStatsResult;
     }

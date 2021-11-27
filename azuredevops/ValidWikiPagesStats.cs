@@ -298,11 +298,11 @@ namespace Wikitools.AzureDevOps
             currentDate.AddDays(daysFrom),
             currentDate.AddDays(daysTo));
 
-        public ValidWikiPagesStats Trim(DateTime startDate, DateTime endDate) 
-            => Trim(
-                this,
-                new DateDay(startDate),
-                new DateDay(endDate));
+        public ValidWikiPagesStats Trim(DateTime startDate, DateTime endDate)
+            => Trim(this, new DateDay(startDate), new DateDay(endDate));
+
+        public ValidWikiPagesStats Trim(DateDay startDay, DateDay endDay)
+            => Trim(this, startDay, endDay);
 
         private static ValidWikiPagesStats Trim(ValidWikiPagesStats stats, DateDay startDay, DateDay endDay) =>
             new ValidWikiPagesStats(stats.Select(ps =>

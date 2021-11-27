@@ -39,16 +39,12 @@ namespace Wikitools.Lib.Git
 
         public static GitLogCommit[] FilterCommits(
             GitLogCommit[] commits,
-            (DateDay sinceDay, DateDay untilDay)? daySpan)
+            (DateDay sinceDay, DateDay untilDay) daySpan)
         {
-            if (daySpan is null) return commits;
-
-            var sinceDay = daySpan.Value.sinceDay;
-            var untilDay = daySpan.Value.untilDay;
             commits = commits
                 .Where(
-                    commit => sinceDay.CompareTo(commit.Date) <= 0
-                              && untilDay.CompareTo(commit.Date) >= 0)
+                    commit => daySpan.sinceDay.CompareTo(commit.Date) <= 0
+                              && daySpan.untilDay.CompareTo(commit.Date) >= 0)
                 .ToArray();
 
             return commits;

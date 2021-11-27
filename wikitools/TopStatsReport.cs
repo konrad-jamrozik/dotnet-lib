@@ -4,16 +4,6 @@ using Wikitools.Lib.Primitives;
 namespace Wikitools;
 
 // kja TopStatsReport
-// implement "top stats" report, which will show:
-// - Top 5 most prolific authors in last 7 days - DONE
-// - Top 10 most prolific authors in last 30 days - DONE
-// - top 10 most edited pages last 7 days - DONE
-// - top 20 most edited pages last 30 days - DONE
-// - top 5 most viewed pages last week.
-//   - Data already here (GitPathViewStats), but need to tweak filtering
-// - Same as above, but for the last month.
-//   - Need to add it to report
-
 // - Add annotations (icons): Newly added, lots of traffic (use :fire: in the MD)
 //   - Emojis: https://docs.microsoft.com/en-us/azure/devops/project/wiki/markdown-guidance?view=azure-devops#emoji
 public record TopStatsReport : MarkdownDocument
@@ -33,38 +23,39 @@ public record TopStatsReport : MarkdownDocument
     // necessarily come from config; it will be hardcoded in the TopStats type itself.
     public TopStatsReport(
         Timeline timeline,
-        int pageViewsForDays,
         GitAuthorStats[] authorDataRowsLast7Days,
-        GitAuthorStats[] authorDataRowsLast30Days,
+        GitAuthorStats[] authorDataRowsLast28Days,
         GitFileStats[] fileDataRowsLast7Days,
-        GitFileStats[] fileDataRowsLast30Days,
-        PathViewStats[] pathViewDataRows) : base(
+        GitFileStats[] fileDataRowsLast28Days,
+        PathViewStats[] pathViewDataRowsLast7Days,
+        PathViewStats[] pathViewDataRowsLast28Days) : base(
         GetContent(
             timeline,
-            pageViewsForDays,
             authorDataRowsLast7Days,
-            authorDataRowsLast30Days,
+            authorDataRowsLast28Days,
             fileDataRowsLast7Days,
-            fileDataRowsLast30Days,
-            pathViewDataRows)) { }
+            fileDataRowsLast28Days,
+            pathViewDataRowsLast7Days,
+            pathViewDataRowsLast28Days)) { }
 
     private static object[] GetContent(
         Timeline timeline,
-        int pageViewsForDays,
         GitAuthorStats[] authorDataRowsLast7Days,
         GitAuthorStats[] authorDataRowsLast30Days,
         GitFileStats[] fileDataRowsLast7Days,
         GitFileStats[] fileDataRowsLast30Days,
-        PathViewStats[] pathViewDataRows)
+        PathViewStats[] pathViewDataRowsLast7Days,
+        PathViewStats[] pathViewDataRowsLast28Days)
         =>
             new object[]
             {
                 // kj2 dehardcode magic constants. They should come from the stats collections themselves: both ranges and tops.
                 string.Format(AuthorDescriptionFormat, 5, 7, timeline.DaysFromUtcNow(-1)),
                 "",
-                GitAuthorStats.TabularData(authorDataRowsLast7Days),
+                // kj2 would be cool if paths in these tables are hyperlinked, like in WTOC.
+                GitAuthorStats.TabularData(authorDataRowsLast7Days), 
                 "",
-                string.Format(AuthorDescriptionFormat, 10, 30, timeline.DaysFromUtcNow(-1)),
+                string.Format(AuthorDescriptionFormat, 10, 28, timeline.DaysFromUtcNow(-1)),
                 "",
                 GitAuthorStats.TabularData(authorDataRowsLast30Days),
                 "",
@@ -72,12 +63,18 @@ public record TopStatsReport : MarkdownDocument
                 "",
                 GitFileStats.TabularData(fileDataRowsLast7Days),
                 "",
-                string.Format(FileDescriptionFormat, 20, 30, timeline.DaysFromUtcNow(-1)),
+                string.Format(FileDescriptionFormat, 20, 28, timeline.DaysFromUtcNow(-1)),
                 "",
                 GitFileStats.TabularData(fileDataRowsLast30Days),
                 "",
                 string.Format(PathViewDescriptionFormat, 10, 7, timeline.DaysFromUtcNow(-1)),
                 "",
-                PathViewStats.TabularData(pathViewDataRows)
+                // kja bug: having "|" in the page title breaks table MD formatting.
+                // They can be escaped with "\"
+                PathViewStats.TabularData(pathViewDataRowsLast7Days),
+                "",
+                string.Format(PathViewDescriptionFormat, 30, 28, timeline.DaysFromUtcNow(-1)),
+                "",
+                PathViewStats.TabularData(pathViewDataRowsLast28Days)
             };
 }
