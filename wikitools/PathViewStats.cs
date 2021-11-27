@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using Wikitools.AzureDevOps;
 using Wikitools.Lib.Data;
@@ -12,7 +13,8 @@ public record PathViewStats(
     public static readonly object[] HeaderRow = { "Place", "Path", "Views" };
 
     public static PathViewStats[] From(
-        ValidWikiPagesStats stats)
+        ValidWikiPagesStats stats,
+        int? top = null)
     {
         var pathsStats = stats 
             .Select(pageStats =>
@@ -23,6 +25,8 @@ public record PathViewStats(
             )
             .Where(stat => stat.views > 0)
             .OrderByDescending(stat => stat.views)
+            // kj2 make this into extension method and replace everywhere, also for "top is not null"
+            .Take(top != null ? new Range(0, (int)top) : Range.All)
             .ToArray();
 
         var rows = pathsStats

@@ -39,18 +39,24 @@ public class TopStatsReportIntegrationTests
         // kja current work - see comment on Wikitools.TopStatsReport
 
         var timeline = new Timeline();
-        int gitLogDays = 30;
+        int gitLogDays = 30; // kja change everywhere 30 to 28 days.
         var commits = GitLogCommits(fs, cfg, gitLogDays);
+        // kja add filter to 7 Days
+        var pagesStatsLast7Days = PagesStats(timeline, fs, cfg, adoCfg);
+
         var ago1Day = timeline.DaysFromUtcNow(-1).AddDays(-5); // kja temp. And -5 below.
         var ago7Days = timeline.DaysFromUtcNow(-7).AddDays(-5);
         var ago30Days = timeline.DaysFromUtcNow(-30);
+        
         var commitsLast7Days = GitLogCommit.FilterCommits(commits, (ago7Days, ago1Day));
         var commitsLast30Days = GitLogCommit.FilterCommits(commits, (ago30Days, ago1Day));
+        
         var authorStatsLast7Days = GitAuthorStats(cfg, commitsLast7Days, top: 5);
         var authorStatsLast30Days = GitAuthorStats(cfg, commitsLast30Days, top: 10);
         var fileStatsLast7Days = GitFileStats(cfg, commitsLast7Days, top: 10);
         var fileStatsLast30Days = GitFileStats(cfg, commitsLast30Days, top: 20);
-        var pageViewStats = PageViewStats(timeline, fs, cfg, adoCfg);
+        var pageViewStatsLast7Days = PageViewStats(pagesStatsLast7Days, top: 10);
+
         var authorsReport = new TopStatsReport(
             timeline,
             cfg.AdoWikiPageViewsForDays,
@@ -58,7 +64,7 @@ public class TopStatsReportIntegrationTests
             authorStatsLast30Days,
             fileStatsLast7Days,
             fileStatsLast30Days,
-            pageViewStats);
+            pageViewStatsLast7Days);
 
         return authorsReport;
     }
@@ -95,6 +101,14 @@ public class TopStatsReportIntegrationTests
     }
 
     private static PathViewStats[] PageViewStats(
+        ValidWikiPagesStats pagesStats,
+        int top)
+    {
+        var pageViewStats = PathViewStats.From(pagesStats, top);
+        return pageViewStats;
+    }
+
+    private static ValidWikiPagesStats PagesStats(
         ITimeline timeline,
         IFileSystem fs,
         WikitoolsCfg cfg,
@@ -111,9 +125,7 @@ public class TopStatsReportIntegrationTests
             cfg.StorageDirPath);
 
         var pagesStats = wiki.PagesStats(cfg.AdoWikiPageViewsForDays);
-
-        // kj2 .Result
-        var pageViewStats = PathViewStats.From(pagesStats.Result);
-        return pageViewStats;
+        var pagesStatsResult = pagesStats.Result; // kj2 .Result
+        return pagesStatsResult;
     }
 }
