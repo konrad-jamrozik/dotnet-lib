@@ -69,8 +69,6 @@ public record TopStatsReport : MarkdownDocument
                 "",
                 string.Format(PathViewDescriptionFormat, 10, 7, timeline.DaysFromUtcNow(-1)),
                 "",
-                // kja bug: having "|" in the page title breaks table MD formatting.
-                // They can be escaped with "\"
                 PathViewStats.TabularData(pathViewDataRowsLast7Days),
                 "",
                 string.Format(PathViewDescriptionFormat, 30, 28, timeline.DaysFromUtcNow(-1)),

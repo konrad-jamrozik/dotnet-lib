@@ -36,7 +36,9 @@ namespace Wikitools.Lib.Markdown
             => string.Join("-", Enumerable.Repeat("|", headerRow.Length + 1));
 
         private static string WrapInMarkdown(object[] row)
-            => row.Aggregate("|", (@out, col) => @out + " " + col + " |");
+            => row.Aggregate(
+                "|",
+                (@out, col) => @out + " " + col.ToString()!.Replace("|", "\\|") + " |");
 
         private static object[] UnwrapFromMarkdown(string markdownLine) =>
             markdownLine.Split('|', StringSplitOptions.RemoveEmptyEntries)
