@@ -11,7 +11,7 @@ public record GitFileStats(
     int Insertions,
     int Deletions)
 {
-    public static readonly object[] HeaderRow = { "Place", "FilePath", "Insertions", "Deletions" };
+    public static readonly object[] HeaderRow = { "Place", "File Path", "Insertions", "Deletions" };
 
     public static GitFileStats[] From(
         GitLogCommit[] commits,
