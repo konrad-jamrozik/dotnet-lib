@@ -5,5 +5,7 @@ namespace Wikitools.Lib.Primitives
     public class Timeline : ITimeline
     {
         public DateTime UtcNow => DateTime.UtcNow;
+
+        public DateDay DaysFromUtcNow(int days) => new DateDay(UtcNow).AddDays(days);
     }
 }

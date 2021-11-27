@@ -35,40 +35,47 @@ public record TopStatsReport : MarkdownDocument
     public TopStatsReport(
         ITimeline timeline,
         int pageViewsForDays,
-        GitAuthorStats[] authorDataRowsLastWeek,
+        GitAuthorStats[] authorDataRowsLast7Days,
         GitAuthorStats[] authorDataRowsLast30Days,
-        GitFileStats[] fileDataRows,
+        GitFileStats[] fileDataRowsLast7Days,
+        GitFileStats[] fileDataRowsLast30Days,
         PathViewStats[] pathViewDataRows) : base(
         GetContent(
             timeline,
             pageViewsForDays,
-            authorDataRowsLastWeek,
+            authorDataRowsLast7Days,
             authorDataRowsLast30Days,
-            fileDataRows,
+            fileDataRowsLast7Days,
+            fileDataRowsLast30Days,
             pathViewDataRows)) { }
 
     private static object[] GetContent(
         ITimeline timeline,
         int pageViewsForDays,
-        GitAuthorStats[] authorDataRowsLastWeek,
+        GitAuthorStats[] authorDataRowsLast7Days,
         GitAuthorStats[] authorDataRowsLast30Days,
-        GitFileStats[] fileDataRows,
+        GitFileStats[] fileDataRowsLast7Days,
+        GitFileStats[] fileDataRowsLast30Days,
         PathViewStats[] pathViewDataRows)
         =>
             new object[]
             {
-                // kj2 dehardcode magic constants
+                // kj2 dehardcode magic constants. They should come from the stats collections themselves: both ranges and tops.
                 string.Format(AuthorDescriptionFormat, 5, 7, new DateDay(timeline.UtcNow).AddDays(-1)),
                 "",
-                GitAuthorStats.TabularData(authorDataRowsLastWeek),
+                GitAuthorStats.TabularData(authorDataRowsLast7Days),
                 "",
                 string.Format(AuthorDescriptionFormat, 10, 30, new DateDay(timeline.UtcNow).AddDays(-1)),
                 "",
                 GitAuthorStats.TabularData(authorDataRowsLast30Days),
                 "",
-                string.Format(FileDescriptionFormat, 10, 30, timeline.UtcNow),
+                string.Format(FileDescriptionFormat, 10, 7, timeline.UtcNow),
                 "",
-                GitFileStats.TabularData(fileDataRows),
+                GitFileStats.TabularData(fileDataRowsLast7Days),
+                "",
+                string.Format(FileDescriptionFormat, 20, 30, timeline.UtcNow),
+                "",
+                GitFileStats.TabularData(fileDataRowsLast30Days),
                 "",
                 string.Format(
                     PathViewDescriptionFormat,

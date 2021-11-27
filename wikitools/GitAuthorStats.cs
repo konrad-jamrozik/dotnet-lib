@@ -19,11 +19,8 @@ public record GitAuthorStats(
     public static GitAuthorStats[] From(
         GitLogCommit[] commits,
         Func<string, bool>? authorFilter = null,
-        int? top = null,
-        (DateDay sinceDay, DateDay untilDay)? daySpan = null)
+        int? top = null)
     {
-        commits = FilterCommits(commits, daySpan);
-        
         authorFilter ??= _ => true;
         var statsSumByAuthor = SumByAuthor(commits)
             .OrderByDescending(s => s.insertions + s.deletions)
@@ -44,23 +41,6 @@ public record GitAuthorStats(
                     data.deletions))
             .ToArray();
         return rows;
-    }
-
-    private static GitLogCommit[] FilterCommits(
-        GitLogCommit[] commits,
-        (DateDay sinceDay, DateDay untilDay)? daySpan)
-    {
-        if (daySpan is null) return commits;
-
-        var sinceDay = daySpan.Value.sinceDay;
-        var untilDay = daySpan.Value.untilDay;
-        commits = commits
-            .Where(
-                commit => sinceDay.CompareTo(commit.Date) <= 0
-                          && untilDay.CompareTo(commit.Date) >= 0)
-            .ToArray();
-
-        return commits;
     }
 
     public static TabularData TabularData(GitAuthorStats[] rows)

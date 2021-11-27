@@ -41,19 +41,23 @@ public class TopStatsReportIntegrationTests
         var timeline = new Timeline();
         int gitLogDays = 30;
         var commits = GitLogCommits(fs, cfg, gitLogDays);
-        var ago30Days = new DateDay(timeline.UtcNow.AddDays(-30));
-        var ago7Days = new DateDay(timeline.UtcNow.AddDays(-7));
-        var ago1Day = new DateDay(timeline.UtcNow.AddDays(-1));
-        var authorLastWeekStats = GitAuthorStats(cfg, commits, top: 5, daySpan: (ago7Days, ago1Day));
-        var authorLast30DaysStats = GitAuthorStats(cfg, commits, top: 10, daySpan: (ago30Days, ago1Day));
-        var fileStats = GitFileStats(cfg, commits, top: 10);
+        var ago1Day = timeline.DaysFromUtcNow(-1).AddDays(-5); // kja temp. And -5 below.
+        var ago7Days = timeline.DaysFromUtcNow(-7).AddDays(-5);
+        var ago30Days = timeline.DaysFromUtcNow(-30);
+        var commitsLast7Days = GitLogCommit.FilterCommits(commits, (ago7Days, ago1Day));
+        var commitsLast30Days = GitLogCommit.FilterCommits(commits, (ago30Days, ago1Day));
+        var authorStatsLast7Days = GitAuthorStats(cfg, commitsLast7Days, top: 5);
+        var authorStatsLast30Days = GitAuthorStats(cfg, commitsLast30Days, top: 10);
+        var fileStatsLast7Days = GitFileStats(cfg, commitsLast7Days, top: 10);
+        var fileStatsLast30Days = GitFileStats(cfg, commitsLast30Days, top: 20);
         var pageViewStats = PageViewStats(timeline, fs, cfg, adoCfg);
         var authorsReport = new TopStatsReport(
             timeline,
             cfg.AdoWikiPageViewsForDays,
-            authorLastWeekStats, 
-            authorLast30DaysStats,
-            fileStats,
+            authorStatsLast7Days, 
+            authorStatsLast30Days,
+            fileStatsLast7Days,
+            fileStatsLast30Days,
             pageViewStats);
 
         return authorsReport;
@@ -76,11 +80,10 @@ public class TopStatsReportIntegrationTests
     private static GitAuthorStats[] GitAuthorStats(
         WikitoolsCfg cfg,
         GitLogCommit[] commits,
-        int top,
-        (DateDay sinceDay, DateDay untilDay) daySpan)
+        int top)
     {
         bool AuthorFilter(string author) => !cfg.ExcludedAuthors.Any(author.Contains);
-        var authorStats = Wikitools.GitAuthorStats.From(commits, AuthorFilter, top, daySpan);
+        var authorStats = Wikitools.GitAuthorStats.From(commits, AuthorFilter, top);
         return authorStats;
     }
 

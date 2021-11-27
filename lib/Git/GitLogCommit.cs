@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using Wikitools.Lib.Primitives;
 
 namespace Wikitools.Lib.Git
 {
@@ -34,6 +35,23 @@ namespace Wikitools.Lib.Git
                 var filePath   = split[2];
                 return (insertions, deletions, filePath);
             }
+        }
+
+        public static GitLogCommit[] FilterCommits(
+            GitLogCommit[] commits,
+            (DateDay sinceDay, DateDay untilDay)? daySpan)
+        {
+            if (daySpan is null) return commits;
+
+            var sinceDay = daySpan.Value.sinceDay;
+            var untilDay = daySpan.Value.untilDay;
+            commits = commits
+                .Where(
+                    commit => sinceDay.CompareTo(commit.Date) <= 0
+                              && untilDay.CompareTo(commit.Date) >= 0)
+                .ToArray();
+
+            return commits;
         }
     }
 }
