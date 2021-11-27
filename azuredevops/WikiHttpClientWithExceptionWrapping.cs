@@ -16,7 +16,7 @@ namespace Wikitools.AzureDevOps
             int pageId,
             int pageViewsForDays) =>
             // API reference:
-            // https://docs.microsoft.com/en-us/rest/api/azure/devops/wiki/page%20stats/get?view=azure-devops-rest-6.0
+            // https://docs.microsoft.com/en-us/rest/api/azure/devops/wiki/page-stats/get?view=azure-devops-rest-6.0
             TryInvoke(() => Client.GetPageDataAsync(projectName, wikiName, pageId, pageViewsForDays));
 
         public Task<PagedList<WikiPageDetail>> GetPagesBatchAsync(
@@ -24,7 +24,7 @@ namespace Wikitools.AzureDevOps
             string projectName,
             string wikiName) =>
             // API reference:
-            // https://docs.microsoft.com/en-us/rest/api/azure/devops/wiki/pages%20batch/get?view=azure-devops-rest-6.0
+            // https://docs.microsoft.com/en-us/rest/api/azure/devops/wiki/pages-batch/get?view=azure-devops-rest-6.0
             TryInvoke(() => Client.GetPagesBatchAsync(request, projectName, wikiName));
 
         private async Task<T> TryInvoke<T>(Func<Task<T>> func)
