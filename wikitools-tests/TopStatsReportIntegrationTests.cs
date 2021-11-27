@@ -50,7 +50,6 @@ public class TopStatsReportIntegrationTests
         var pageViewStats = PageViewStats(timeline, fs, cfg, adoCfg);
         var authorsReport = new TopStatsReport(
             timeline,
-            gitLogDays,
             cfg.AdoWikiPageViewsForDays,
             authorLastWeekStats, 
             authorLast30DaysStats,

@@ -34,7 +34,6 @@ public record TopStatsReport : MarkdownDocument
     // necessarily come from config; it will be hardcoded in the TopStats type itself.
     public TopStatsReport(
         ITimeline timeline,
-        int days,
         int pageViewsForDays,
         GitAuthorStats[] authorDataRowsLastWeek,
         GitAuthorStats[] authorDataRowsLast30Days,
@@ -42,7 +41,6 @@ public record TopStatsReport : MarkdownDocument
         PathViewStats[] pathViewDataRows) : base(
         GetContent(
             timeline,
-            days,
             pageViewsForDays,
             authorDataRowsLastWeek,
             authorDataRowsLast30Days,
@@ -51,7 +49,6 @@ public record TopStatsReport : MarkdownDocument
 
     private static object[] GetContent(
         ITimeline timeline,
-        int days,
         int pageViewsForDays,
         GitAuthorStats[] authorDataRowsLastWeek,
         GitAuthorStats[] authorDataRowsLast30Days,
