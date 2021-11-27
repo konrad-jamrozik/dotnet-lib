@@ -10,10 +10,10 @@ namespace Wikitools.Tests;
 
 [Category("integration")]
 [TestFixture]
-public class PathViewStatsReportIntegrationTests
+public class PageViewStatsReportIntegrationTests
 {
     [Test]
-    public void WritesPathViewStatsReport()
+    public void WritesPageViewStatsReport()
     {
         var fs = new FileSystem();
         var cfg = new Configuration(fs).Read<WikitoolsIntegrationTestsCfg>();
@@ -27,7 +27,7 @@ public class PathViewStatsReportIntegrationTests
         Assert.That(lines.Count(l => l.StartsWith("| ")), Is.GreaterThanOrEqualTo(3));
     }
 
-    private static PathViewStatsReport GitPagesViewsReport(
+    private static PageViewStatsReport GitPagesViewsReport(
         IFileSystem fs,
         WikitoolsCfg cfg, AzureDevOpsCfg adoCfg)
     {
@@ -56,11 +56,11 @@ public class PathViewStatsReportIntegrationTests
         var pagesViewsStats = wiki.PagesStats(cfg.AdoWikiPageViewsForDays);
 
         // kj2 .Result
-        var pathViewStats = PathViewStats.From(pagesViewsStats.Result);
-        var pagesViewsReport = new PathViewStatsReport(
+        var pageViewStats = PageViewStats.From(pagesViewsStats.Result);
+        var pagesViewsReport = new PageViewStatsReport(
             timeline,
             cfg.AdoWikiPageViewsForDays,
-            pathViewStats);
+            pageViewStats);
 
         return pagesViewsReport;
     }

@@ -29,7 +29,7 @@ namespace Wikitools.Tests
                     new object[] { 4, "/Foo/bar200_5.md", 200, 5 },
                     new object[] { 5, "/Foo/bar100_10.md", 100, 10 },
                 },
-                [(nameof(PathViewStatsReportTests), WikiPagesStats)] = new[] {
+                [(nameof(PageViewStatsReportTests), WikiPagesStats)] = new[] {
                     new object[] { 1, "/Foo/Baz", 182 },
                     new object[] { 2, "/Foo", 70 },
                     new object[] { 3, "/Qux/Quux/Quuz", 28 },

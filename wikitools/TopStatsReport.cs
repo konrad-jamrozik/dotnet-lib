@@ -12,8 +12,8 @@ public record TopStatsReport : MarkdownDocument
 
     public const string FileDescriptionFormat = "Top {0} Git files by insertions since last {1} days as of {2}";
 
-    public const string PathViewDescriptionFormat =
-        "Top {0} paths by views since last {1} days as of {2}";
+    public const string PageViewDescriptionFormat =
+        "Top {0} pages by views since last {1} days as of {2}";
 
     // kja the report itself decides what are the top ranges (7d, 30d, top 10), so it needs to
     // to do the filtering itself, and not get the data as input.
@@ -27,16 +27,16 @@ public record TopStatsReport : MarkdownDocument
         GitAuthorStats[] authorDataRowsLast28Days,
         GitFileStats[] fileDataRowsLast7Days,
         GitFileStats[] fileDataRowsLast28Days,
-        PathViewStats[] pathViewDataRowsLast7Days,
-        PathViewStats[] pathViewDataRowsLast28Days) : base(
+        PageViewStats[] pageViewDataRowsLast7Days,
+        PageViewStats[] pageViewDataRowsLast28Days) : base(
         GetContent(
             timeline,
             authorDataRowsLast7Days,
             authorDataRowsLast28Days,
             fileDataRowsLast7Days,
             fileDataRowsLast28Days,
-            pathViewDataRowsLast7Days,
-            pathViewDataRowsLast28Days)) { }
+            pageViewDataRowsLast7Days,
+            pageViewDataRowsLast28Days)) { }
 
     private static object[] GetContent(
         Timeline timeline,
@@ -44,8 +44,8 @@ public record TopStatsReport : MarkdownDocument
         GitAuthorStats[] authorDataRowsLast30Days,
         GitFileStats[] fileDataRowsLast7Days,
         GitFileStats[] fileDataRowsLast30Days,
-        PathViewStats[] pathViewDataRowsLast7Days,
-        PathViewStats[] pathViewDataRowsLast28Days)
+        PageViewStats[] pageViewDataRowsLast7Days,
+        PageViewStats[] pageViewDataRowsLast28Days)
         =>
             new object[]
             {
@@ -67,12 +67,12 @@ public record TopStatsReport : MarkdownDocument
                 "",
                 GitFileStats.TabularData(fileDataRowsLast30Days),
                 "",
-                string.Format(PathViewDescriptionFormat, 10, 7, timeline.DaysFromUtcNow(-1)),
+                string.Format(PageViewDescriptionFormat, 10, 7, timeline.DaysFromUtcNow(-1)),
                 "",
-                PathViewStats.TabularData(pathViewDataRowsLast7Days),
+                PageViewStats.TabularData(pageViewDataRowsLast7Days),
                 "",
-                string.Format(PathViewDescriptionFormat, 30, 28, timeline.DaysFromUtcNow(-1)),
+                string.Format(PageViewDescriptionFormat, 30, 28, timeline.DaysFromUtcNow(-1)),
                 "",
-                PathViewStats.TabularData(pathViewDataRowsLast28Days)
+                PageViewStats.TabularData(pageViewDataRowsLast28Days)
             };
 }

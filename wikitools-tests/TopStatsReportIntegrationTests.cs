@@ -104,11 +104,11 @@ public class TopStatsReportIntegrationTests
         return fileStats;
     }
 
-    private static PathViewStats[] PageViewStats(
+    private static PageViewStats[] PageViewStats(
         ValidWikiPagesStats pagesStats,
         int top)
     {
-        var pageViewStats = PathViewStats.From(pagesStats, top);
+        var pageViewStats = Wikitools.PageViewStats.From(pagesStats, top);
         return pageViewStats;
     }
 

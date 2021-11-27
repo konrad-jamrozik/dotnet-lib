@@ -5,14 +5,14 @@ using Wikitools.Lib.Data;
 
 namespace Wikitools;
 
-public record PathViewStats(
+public record PageViewStats(
     int Place,
     string FilePath,
     int Views)
 {
     public static readonly object[] HeaderRow = { "Place", "Path", "Views" };
 
-    public static PathViewStats[] From(
+    public static PageViewStats[] From(
         ValidWikiPagesStats stats,
         int? top = null)
     {
@@ -30,13 +30,13 @@ public record PathViewStats(
             .ToArray();
 
         var rows = pathsStats
-            .Select((path, i) => new PathViewStats(i + 1, path.path, path.views))
+            .Select((path, i) => new PageViewStats(i + 1, path.path, path.views))
             .ToArray();
 
         return rows;
     }
 
-    public static TabularData TabularData(PathViewStats[] rows)
+    public static TabularData TabularData(PageViewStats[] rows)
     {
         // kj2 same as Wikitools.GitAuthorStats.TabularData
         var rowsAsObjectArrays = rows.Select(AsObjectArray).ToArray();
@@ -44,7 +44,7 @@ public record PathViewStats(
         return new TabularData((headerRow: HeaderRow, rowsAsObjectArrays));
     }
 
-    private static object[] AsObjectArray(PathViewStats row)
+    private static object[] AsObjectArray(PageViewStats row)
         => new object[]
         { row.Place, row.FilePath, row.Views };
 }
