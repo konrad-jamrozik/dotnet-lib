@@ -24,8 +24,8 @@ namespace Wikitools.Tests
                 },
                 [(nameof(GitFilesStatsReportTests), CommitsLogs)] = new[] {
                     new object[] { 1, "/Foo/bar601_7.md", 601, 7 },
-                    new object[] { 2, "/Qux/Corge377_89.md", 377, 89 },
-                    new object[] { 3, "/Foo/bar400_13.md", 400, 13 },
+                    new object[] { 2, "/Foo/bar400_13.md", 400, 13 },
+                    new object[] { 3, "/Qux/Corge377_89.md", 377, 89 },
                     new object[] { 4, "/Foo/bar200_5.md", 200, 5 },
                     new object[] { 5, "/Foo/bar100_10.md", 100, 10 },
                 },
