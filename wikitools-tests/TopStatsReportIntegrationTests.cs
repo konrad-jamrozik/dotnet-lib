@@ -54,7 +54,8 @@ public class TopStatsReportIntegrationTests
         var fileStatsLast28Days = GitFileStats(cfg, commitsLast28Days, top: 20);
 
         // Here, The 1 is added to dataDays for pageViewsForDays
-        // to account for how ADO API interprets the range. See:
+        // to account for how ADO REST API interprets the range.
+        // For more, see comment on:
         // AdoWikiWithStorageIntegrationTests.ObtainsAndStoresDataFromAdoWikiForToday
         var pagesStats = PagesStats(timeline, fs, cfg, adoCfg, pageViewsForDays: dataDays + 1);
         var pagesStatsLast7Days = PageViewStats(pagesStats.Trim(ago7Days, ago1Day), top: 10);
