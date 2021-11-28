@@ -6,7 +6,7 @@ namespace Wikitools;
 public record TopStatsReport : MarkdownDocument
 {
     private const string AuthorDescriptionFormat =
-        "# Top {0} contributions since {1} days";
+        "# Top {0} contributors since {1} days";
 
     private const string FileDescriptionFormat =
         "# Top {0} files by insertions since {1} days";
