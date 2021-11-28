@@ -17,7 +17,7 @@ namespace Wikitools.Lib.Markdown
             var groups = markdownLines.GroupAdjacent(line => line.FirstOrDefault() == '|');
 
             var content = groups.SelectMany(group => 
-                @group.Key 
+                @group.Key // true if the group's key is "|" i.e. it is a table
                     ? Return(new MarkdownTable(@group.ToArray()).Data).Cast<object>() 
                     : @group.ToArray())
                 .ToArray();

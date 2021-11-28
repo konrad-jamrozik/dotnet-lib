@@ -10,6 +10,10 @@ namespace Wikitools.Lib.Markdown
 {
     public record MarkdownDocument(Task<object[]> Content) : IWritableToText
     {
+        // kj2 needs to be duplicated a lot in UT assertions. Fix.
+        // kj2 JsonDiff doesn't seem to properly show the extra whitespace on assertion failures.
+        public const string LineBreakMarker = "  ";
+
         public MarkdownDocument(object[] content) : this(Task.FromResult(content)) 
         { }
 
@@ -20,8 +24,7 @@ namespace Wikitools.Lib.Markdown
             (await doc.Content).Select(entry => entry switch
             {
                 TabularData td => new MarkdownTable(td) + Environment.NewLine,
-                // The double space here tells markdown to break line.
-                _ => entry + "  " + Environment.NewLine
+                _ => entry + LineBreakMarker + Environment.NewLine
             })
             .Aggregate(new StringBuilder(), (sb, str) => sb.Append(str))
             .ToString();

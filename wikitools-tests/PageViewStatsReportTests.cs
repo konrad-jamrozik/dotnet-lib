@@ -33,8 +33,8 @@ namespace Wikitools.Tests
                 string.Format(PageViewStatsReport.DescriptionFormat,
                     pageViewsForDays,
                     timeline.UtcNow,
-                    pagesStatsData.Length),
-                "",
+                    pagesStatsData.Length) + MarkdownDocument.LineBreakMarker,
+                "" + MarkdownDocument.LineBreakMarker,
                 new TabularData(
                     HeaderRow: PageViewStats.HeaderRow,
                     Rows: data.ExpectedRows[(nameof(PageViewStatsReportTests), pagesStatsData)])

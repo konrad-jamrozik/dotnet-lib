@@ -6,6 +6,7 @@ namespace Wikitools.Lib.Tests.Json
     // Note this doesn't support tuples. Please see comment on Wikitools.Lib.Json.JsonDiff
     public record JsonDiffAssertion(JsonDiff Diff)
     {
+        // kj2 this baseline/target is confusing. Should be instead expected/actual.
         public JsonDiffAssertion(object baseline, object target) : this(new JsonDiff(baseline, target)) { }
 
         public void Assert()

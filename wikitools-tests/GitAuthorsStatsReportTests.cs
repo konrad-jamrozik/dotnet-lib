@@ -38,8 +38,9 @@ namespace Wikitools.Tests
             // Arrange expectations
             var expected = new MarkdownDocument(Task.FromResult(new object[]
             {
-                string.Format(GitAuthorsStatsReport.DescriptionFormat, logDays, timeline.UtcNow),
-                "",
+                string.Format(GitAuthorsStatsReport.DescriptionFormat, logDays, timeline.UtcNow) 
+                + MarkdownDocument.LineBreakMarker,
+                "" + MarkdownDocument.LineBreakMarker,
                 new TabularData((GitAuthorStats.HeaderRow,
                     data.ExpectedRows[(nameof(GitAuthorsStatsReportTests), commitsData)]))
             }));

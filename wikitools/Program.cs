@@ -45,6 +45,7 @@ public static class Program
         var pagesViewsStats = wiki.PagesStats(cfg.AdoWikiPageViewsForDays);
 
         var wikiToc = new WikiTableOfContents(
+            timeline,
             new AdoWikiPagesPaths(fs.FileTree(cfg.GitRepoClonePath).Paths),
             pagesViewsStats);
 
