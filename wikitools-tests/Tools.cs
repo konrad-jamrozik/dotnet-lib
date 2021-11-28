@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 using Wikitools.AzureDevOps;
 using Wikitools.Lib.Json;
@@ -53,8 +52,6 @@ namespace Wikitools.Tests
             }
         }
 
-        // kja apparently there is hole in the stored monthly stats for Sep-Oct as I didn't run this often enough.
-        // I need to ensure that normal program execution fixes it, or at least detects
         [Fact(Skip = "Tool to be used manually")]
         public async Task ToolGetWikiStats()
         {
@@ -68,7 +65,7 @@ namespace Wikitools.Tests
                 env,
                 timeline);
 
-            var pagesViewsStats = adoWiki.PagesStats(cfg.AdoWikiPageViewsForDays);
+            var pagesViewsStats = adoWiki.PagesStats(pageViewsForDays: AdoWiki.PageViewsForDaysMax);
 
             var storage = new MonthlyJsonFilesStorage(new Dir(fs, cfg.StorageDirPath));
 
@@ -77,6 +74,8 @@ namespace Wikitools.Tests
                 $"wiki_stats_{timeline.UtcNow:yyyy_MM_dd}_{cfg.AdoWikiPageViewsForDays}days.json");
         }
 
+        // kj2 I need to ensure this transferring of data scraped from ADO wiki into monthly storage
+        // is done during normal program execution, not by this extra tool.
         [Fact(Skip = "Tool to be used manually")]
         public void SplitIntoMonthlyStats()
         {
@@ -84,14 +83,31 @@ namespace Wikitools.Tests
             var cfg = new Configuration(fs).Read<WikitoolsCfg>();
             var storage = new MonthlyJsonFilesStorage(new Dir(fs, cfg.StorageDirPath));
 
-            MergeWikiStatsIntoMonth(
-                fs,
-                cfg.StorageDirPath,
-                storage,
-                new DateDay(2021, 01, 19, DateTimeKind.Utc),
-                new DateDay(2021, 2, 7, DateTimeKind.Utc),
-                new DateMonth(2021, 1));
+            var data = new (int month, (int month, int day) stats1, (int month, int day) stats2)[]
+            {
+                (month: 1, (month: 1, day: 19), (month: 2, day: 7)),
+                (month: 2, (month: 2, day: 7), (month: 3, day: 3)),
+                (month: 3, (month: 3, day: 28), (month: 4, day: 26)),
+                (month: 4, (month: 4, day: 26), (month: 5, day: 4)),
+                (month: 5, (month: 5, day: 14), (month: 6, day: 4)),
+                (month: 6, (month: 6, day: 19), (month: 7, day: 15)),
+                (month: 7, (month: 7, day: 15), (month: 8, day: 3)),
+                (month: 8, (month: 8, day: 13), (month: 9, day: 6)),
+                (month: 9, (month: 9, day: 24), (month: 10, day: 23)),
+                (month: 10, (month: 10, day: 23), (month: 11, day: 14)),
+                (month: 11, (month: 11, day: 14), (month: 11, day: 28))
+            };
 
+            foreach (var (month, stats1, stats2) in data)
+            {
+                MergeWikiStatsIntoMonth(
+                    fs,
+                    cfg.StorageDirPath,
+                    storage,
+                    new DateDay(2021, stats1.month, stats1.day, DateTimeKind.Utc),
+                    new DateDay(2021, stats2.month, stats2.day, DateTimeKind.Utc),
+                    new DateMonth(2021, month));
+            }
         }
 
         private void MergeWikiStatsIntoMonth(
@@ -115,56 +131,7 @@ namespace Wikitools.Tests
             storage.Write(
                 mergedStats.Trim(outputMonth),
                 outputMonth,
-                $"date_{outputMonth:yyyy_MM}_toolmerged2.json").Wait();
-        }
-
-        [Fact(Skip = "Tool to be used manually")]
-        public async Task ToolMerge()
-        {
-            IFileSystem fs = new FileSystem();
-
-            var cfg = new Configuration(fs).Read<WikitoolsCfg>();
-
-            var stats1Path = cfg.StorageDirPath + "/wiki_stats_2021_01_19_30days.json";
-            var stats1endDay = new DateDay(2021, 1, 19, DateTimeKind.Utc);
-            var stats1startDay = stats1endDay.AddDays(-29);
-            var stats2Path = cfg.StorageDirPath + "/wiki_stats_2021_02_06_30days.json";
-            var stats2endDay = new DateDay(2021, 2, 6, DateTimeKind.Utc);
-            var stats2startDay = stats1endDay.AddDays(-29);
-            // var stats3Path = cfg.StorageDirPath + "/wiki_stats_2021_02_19_30days.json";
-            // var stats4Path = cfg.StorageDirPath + "/wiki_stats_2021_02_27_30days.json";
-            // var stats5Path = cfg.StorageDirPath + "/wiki_stats_2021_03_03_30days.json";
-            // var stats6Path = cfg.StorageDirPath + "/wiki_stats_2021_03_17_30days.json";
-
-            await Merge(
-                fs,
-                cfg,
-                new[] { (stats1Path, stats1startDay, stats1endDay), (stats2Path, stats2startDay, stats2endDay) });
-        }
-
-        private static async Task Merge(IFileSystem fs, WikitoolsCfg cfg, (string, DateDay, DateDay)[] statsData)
-        {
-            var storage      = new MonthlyJsonFilesStorage(new Dir(fs, cfg.StorageDirPath));
-            var januaryDate  = new DateMonth(2021, 1);
-            var februaryDate = new DateMonth(2021, 2);
-            var marchDate    = new DateMonth(2021, 3);
-
-            var mergedStats = ValidWikiPagesStats.Merge(statsData.Select(s => DeserializeStats(fs, s)));
-
-            await storage.Write(mergedStats, januaryDate, "merged_stats.json");
-
-            await storage.Write(
-                mergedStats.Trim(januaryDate),
-                januaryDate,
-                "date_2021_01_toolmerged.json");
-            await storage.Write(
-                mergedStats.Trim(februaryDate),
-                februaryDate,
-                "date_2021_02_toolmerged.json");
-            await storage.Write(
-                mergedStats.Trim(marchDate),
-                marchDate,
-                "date_2021_03_toolmerged.json");
+                $"date_{outputMonth:yyyy_MM}.json").Wait();
         }
 
         private static ValidWikiPagesStats DeserializeStats(
