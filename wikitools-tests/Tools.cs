@@ -78,6 +78,47 @@ namespace Wikitools.Tests
         }
 
         [Fact(Skip = "Tool to be used manually")]
+        public void SplitIntoMonthlyStats()
+        {
+            IFileSystem fs = new FileSystem();
+            var cfg = new Configuration(fs).Read<WikitoolsCfg>();
+            var storage = new MonthlyJsonFilesStorage(new Dir(fs, cfg.StorageDirPath));
+
+            MergeWikiStatsIntoMonth(
+                fs,
+                cfg.StorageDirPath,
+                storage,
+                new DateDay(2021, 01, 19, DateTimeKind.Utc),
+                new DateDay(2021, 2, 7, DateTimeKind.Utc),
+                new DateMonth(2021, 1));
+
+        }
+
+        private void MergeWikiStatsIntoMonth(
+            IFileSystem fs,
+            string storageDirPath,
+            MonthlyJsonFilesStorage storage,
+            DateDay stats1EndDay,
+            DateDay stats2EndDay,
+            DateMonth outputMonth)
+        {
+            var stats1Path = storageDirPath + $"/wiki_stats_{stats1EndDay:yyyy_MM_dd}_30days.json";
+            var stats1StartDay = stats1EndDay.AddDays(-29);
+            var stats1 = DeserializeStats(fs, (stats1Path, stats1StartDay, stats1EndDay));
+
+            var stats2Path = storageDirPath + $"/wiki_stats_{stats2EndDay:yyyy_MM_dd}_30days.json";
+            var stats2StartDay = stats2EndDay.AddDays(-29);
+            var stats2 = DeserializeStats(fs, (stats2Path, stats2StartDay, stats2EndDay));
+
+            var mergedStats = ValidWikiPagesStats.Merge(new[] { stats1, stats2 });
+
+            storage.Write(
+                mergedStats.Trim(outputMonth),
+                outputMonth,
+                $"date_{outputMonth:yyyy_MM}_toolmerged2.json").Wait();
+        }
+
+        [Fact(Skip = "Tool to be used manually")]
         public async Task ToolMerge()
         {
             IFileSystem fs = new FileSystem();
@@ -126,9 +167,13 @@ namespace Wikitools.Tests
                 "date_2021_03_toolmerged.json");
         }
 
-        private static ValidWikiPagesStats DeserializeStats(IFileSystem fs, (string stats, DateDay startDay, DateDay endDay) statsData) =>
+        private static ValidWikiPagesStats DeserializeStats(
+            IFileSystem fs,
+            (string statsPath, DateDay startDay, DateDay endDay) statsData) =>
             new(
-                fs.ReadAllText(statsData.stats)
-                    .FromJsonTo<WikiPageStats[]>(), statsData.startDay, statsData.endDay);
+                fs.ReadAllText(statsData.statsPath)
+                    .FromJsonTo<WikiPageStats[]>(),
+                statsData.startDay,
+                statsData.endDay);
     }
 }
