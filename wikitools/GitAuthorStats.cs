@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using MoreLinq;
 using Wikitools.Lib.Data;
 using Wikitools.Lib.Git;
 
@@ -18,11 +19,12 @@ public record GitAuthorStats(
     public static GitAuthorStats[] From(
         GitLogCommit[] commits,
         Func<string, bool>? authorFilter = null,
-        int? top = null)
+        int? top = null,
+        bool addIcons = false)
     {
         authorFilter ??= _ => true;
         var statsSumByAuthor = SumByAuthor(commits)
-            .OrderByDescending(s => s.insertions + s.deletions)
+            .OrderByDescending(s => s.insertions)
             .Where(s => authorFilter(s.author))
             .ToArray();
 
@@ -34,12 +36,25 @@ public record GitAuthorStats(
             .Select(
                 (data, i) => new GitAuthorStats(
                     i + 1,
-                    data.author,
+                    addIcons ? AuthorNameWithIcons(data, i) : data.author,
                     data.filesChanged,
                     data.insertions,
                     data.deletions))
             .ToArray();
+
         return rows;
+    }
+
+    private static string AuthorNameWithIcons(
+        (string author, int filesChanged, int insertions, int deletions) data,
+        int sortOrder)
+    {
+        int fireAmount = Math.Max(3 - sortOrder, 0);
+        return data.author 
+               + (fireAmount > 0 ? " " : "") 
+               // :fire: taken from
+               // https://docs.microsoft.com/en-us/azure/devops/project/wiki/markdown-guidance?view=azure-devops#emoji
+               + string.Join("", ":fire:".Repeat(fireAmount));
     }
 
     public static TabularData TabularData(GitAuthorStats[] rows)

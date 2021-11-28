@@ -36,8 +36,6 @@ public class TopStatsReportIntegrationTests
     {
         // kj2 dedup logic used in this method, and in int tests for other reports using the same data.
 
-        // kja current work - see comment on Wikitools.TopStatsReport
-
         var timeline = new Timeline();
         var dataDays = 28;
         var ago1Day = timeline.DaysFromUtcNow(-1);
@@ -93,7 +91,7 @@ public class TopStatsReportIntegrationTests
         int top)
     {
         bool AuthorFilter(string author) => !cfg.ExcludedAuthors.Any(author.Contains);
-        var authorStats = Wikitools.GitAuthorStats.From(commits, AuthorFilter, top);
+        var authorStats = Wikitools.GitAuthorStats.From(commits, AuthorFilter, top, addIcons: true);
         return authorStats;
     }
 
