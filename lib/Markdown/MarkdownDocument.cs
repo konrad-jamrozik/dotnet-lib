@@ -20,7 +20,8 @@ namespace Wikitools.Lib.Markdown
             (await doc.Content).Select(entry => entry switch
             {
                 TabularData td => new MarkdownTable(td) + Environment.NewLine,
-                _ => entry + Environment.NewLine
+                // The double space here tells markdown to break line.
+                _ => entry + "  " + Environment.NewLine
             })
             .Aggregate(new StringBuilder(), (sb, str) => sb.Append(str))
             .ToString();

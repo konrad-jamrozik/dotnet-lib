@@ -40,8 +40,8 @@ public class TopStatsReportIntegrationTests
 
         var timeline = new Timeline();
         var dataDays = 28;
-        var ago1Day = timeline.DaysFromUtcNow(-1).AddDays(-5); // kja temp. And -5 below.
-        var ago7Days = timeline.DaysFromUtcNow(-7).AddDays(-5);
+        var ago1Day = timeline.DaysFromUtcNow(-1);
+        var ago7Days = timeline.DaysFromUtcNow(-7);
         var ago28Days = timeline.DaysFromUtcNow(-dataDays);
         
         var commits = GitLogCommits(fs, cfg, dataDays);
