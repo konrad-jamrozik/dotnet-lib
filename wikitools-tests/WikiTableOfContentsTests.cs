@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Wikitools.AzureDevOps;
 using Wikitools.AzureDevOps.Tests;
 using Wikitools.Lib.Markdown;
+using Wikitools.Lib.Primitives;
 using Wikitools.Lib.Tests.Markdown;
 using Xunit;
 
@@ -14,6 +15,7 @@ namespace Wikitools.Tests
         [Fact]
         public async Task WritesWikiTableOfContents()
         {
+            var timeline = new SimulatedTimeline();
             var wikiPagesPrefix = AdoWikiPagesPaths.WikiPagesPrefix;
             var gitCloneRootPaths =
                 new List<string> { "foo.md", "foo\\bar.md" }.Select(
@@ -37,14 +39,18 @@ namespace Wikitools.Tests
                         });
 
             var tocUT = new WikiTableOfContents(
+                timeline,
                 adoWikiPagesPaths,
                 Task.FromResult(validWikiPagesStats));
 
             // Arrange expectations
             var expected = new MarkdownDocument(Task.FromResult(new object[]
             {
-                "[/foo](/foo) - 10 views",
-                "[/foo/bar](/foo/bar) - 25 views",
+                string.Format(WikiTableOfContents.PageHeader, timeline.UtcNow)
+                + MarkdownDocument.LineBreakMarker,
+                "" + MarkdownDocument.LineBreakMarker,
+                "[/foo](/foo) - 10 views" + MarkdownDocument.LineBreakMarker ,
+                "[/foo/bar](/foo/bar) - 25 views" + MarkdownDocument.LineBreakMarker
             }));
 
             // Act

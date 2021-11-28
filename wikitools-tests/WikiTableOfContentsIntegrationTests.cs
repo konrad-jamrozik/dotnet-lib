@@ -19,15 +19,18 @@ namespace Wikitools.Tests
         [Test]
         public void WritesWikiTableOfContents()
         {
+            var timeline = new Timeline();
             var fs = new FileSystem();
             var cfg = new Configuration(fs).Read<WikitoolsIntegrationTestsCfg>();
-            var toc = WikiTableOfContents(fs, cfg);
+            var toc = WikiTableOfContents(timeline, fs, cfg);
             var testFile = new TestFile(cfg.TestStorageDir(fs));
 
             // Act
             var readLines = testFile.Write(toc);
 
-            var actualLines = readLines.Select(line => new WikiTableOfContents.Line(line)).ToList();
+            // .Skip(2) to skip the page header and empty line after it.
+            var actualLines = readLines.Skip(2).Select(line => new WikiTableOfContents.Line(line))
+                .ToList();
 
             Assert.That(
                 actualLines.Count,
@@ -39,12 +42,13 @@ namespace Wikitools.Tests
         }
 
         private static WikiTableOfContents WikiTableOfContents(
+            ITimeline timeline,
             IFileSystem fs,
             WikitoolsIntegrationTestsCfg cfg)
         {
             var wikiPagesPaths = AdoWikiPagesPaths(fs, cfg.WikitoolsCfg);
             var pagesStats = ValidWikiPagesStats(fs, cfg);
-            var toc = new WikiTableOfContents(wikiPagesPaths, Task.FromResult(pagesStats));
+            var toc = new WikiTableOfContents(timeline, wikiPagesPaths, Task.FromResult(pagesStats));
             return toc;
         }
 

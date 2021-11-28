@@ -23,7 +23,7 @@ public partial record WikiTableOfContents
             => Regex.Match(line, "^\\[(.*)\\]\\(\\/.*").Groups[1].Value;
 
         private static int ViewCountFromLine(string line)
-            => int.Parse(Regex.Match(line, ".*\\s-\\s(\\d+) views").Groups[1].Value);
+            => int.Parse(Regex.Match(line, ".*\\s-\\s(\\d+) views  ").Groups[1].Value);
 
         public override string ToString()
             => $"[{Path}]({ConvertPathToWikiLink(Path)}) - {Views} views";

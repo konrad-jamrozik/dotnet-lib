@@ -10,12 +10,16 @@ namespace Wikitools
 {
     public partial record WikiTableOfContents : MarkdownDocument
     {
+        public static string PageHeader = "This page was generated on {0} UTC";
+
         public WikiTableOfContents(
-            AdoWikiPagesPaths pagesPaths, 
+            ITimeline timeline,
+        AdoWikiPagesPaths pagesPaths, 
             Task<ValidWikiPagesStats> pageStats) 
-            : base(GetContent(pagesPaths, pageStats)) { }
+            : base(GetContent(timeline, pagesPaths, pageStats)) { }
 
         private static async Task<object[]> GetContent(
+            ITimeline timeline,
             AdoWikiPagesPaths pagesPaths,
             Task<ValidWikiPagesStats> pagesStatsTask)
         {
@@ -47,7 +51,6 @@ namespace Wikitools
                     + "\n"
                     + string.Join("\n", pathsWithoutStats));
 
-            // kja 1.2 add header line, like Wikitools.GitFilesStatsReport.DescriptionFormat
             var tocLines = pathsWithStats.Select(
                 data =>
                 {
@@ -55,7 +58,13 @@ namespace Wikitools
                     return new Line(pageStats);
                 });
 
-            return tocLines.Cast<object>().ToArray();
+            var outputLines = new object[]
+            {
+                string.Format(PageHeader, timeline.UtcNow),
+                ""
+            }.Union(tocLines.Cast<object>().ToArray());
+
+            return outputLines.ToArray();
         }
 
         private static IOrderedEnumerable<string> SortPaths(IEnumerable<string> paths)
