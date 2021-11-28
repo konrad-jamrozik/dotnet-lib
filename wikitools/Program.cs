@@ -61,7 +61,7 @@ public static class Program
 }
 
 // kja 1 high-level todos:
-// a) See to-do in on TopStatsReport
+// a) See to-dos in TopStatsReport
 // b) make Program update all the reports in the local git clone, so that I can write a PS1 script
 // that does:
 //   git pull
@@ -73,6 +73,8 @@ public static class Program
 
 /*
  * Work progress milestones:
+ * 11/28/2021:
+ * - Top stats report ready, with :fire: icons for top authors.
  * 11/21/2021:
  * - Writing out one wiki page TOC data, with stats from storage (>30 days).
  * 2/27/2021:

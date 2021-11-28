@@ -3,9 +3,6 @@ using Wikitools.Lib.Primitives;
 
 namespace Wikitools;
 
-// kja TopStatsReport
-// - Add annotations (icons): Newly added, lots of traffic (use :fire: in the MD)
-//   - Emojis: https://docs.microsoft.com/en-us/azure/devops/project/wiki/markdown-guidance?view=azure-devops#emoji
 public record TopStatsReport : MarkdownDocument
 {
     private const string AuthorDescriptionFormat =
