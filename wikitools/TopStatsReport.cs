@@ -8,14 +8,14 @@ namespace Wikitools;
 //   - Emojis: https://docs.microsoft.com/en-us/azure/devops/project/wiki/markdown-guidance?view=azure-devops#emoji
 public record TopStatsReport : MarkdownDocument
 {
-    public const string AuthorDescriptionFormat =
-        "Top {0} git contributions since {1} days up until EOD {2} UTC";
+    private const string AuthorDescriptionFormat =
+        "# Top {0} contributions since {1} days";
 
-    public const string FileDescriptionFormat =
-        "Top {0} Git files by insertions since {1} days up until EOD {2} UTC";
+    private const string FileDescriptionFormat =
+        "# Top {0} files by insertions since {1} days";
 
-    public const string PageViewDescriptionFormat =
-        "Top {0} pages by views since {1} days up until EOD {2} UTC";
+    private const string PageViewDescriptionFormat =
+        "# Top {0} pages by views since {1} days";
 
     // kja the report itself decides what are the top ranges (7d, 30d, top 10), so it needs to
     // to do the filtering itself, and not get the data as input.
@@ -52,6 +52,9 @@ public record TopStatsReport : MarkdownDocument
             new object[]
             {
                 $"This page was generated on {timeline.UtcNow} UTC",
+                $"All day ranges are up until EOD {timeline.DaysFromUtcNow(-1)} UTC",
+                "",
+                "[[_TOC_]]",
                 "",
                 // kj2 dehardcode magic constants. They should come from the stats collections themselves: both ranges and tops.
                 string.Format(AuthorDescriptionFormat, 5, 7, timeline.DaysFromUtcNow(-1)),
