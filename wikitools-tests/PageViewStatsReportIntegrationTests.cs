@@ -53,13 +53,14 @@ public class PageViewStatsReportIntegrationTests
         // https://github.com/dotnet/roslyn/issues/16160
         // 11/17/2021: Or maybe doing stuff like LINQ IEnumerable is enough? IEnumerable and related
         // collections are lazy after all.
-        var pagesViewsStats = wiki.PagesStats(cfg.AdoWikiPageViewsForDays);
+        var pageViewsForDays = 30 * 10;
+        var pagesViewsStats = wiki.PagesStats(pageViewsForDays);
 
         // kj2 .Result
         var pageViewStats = PageViewStats.From(pagesViewsStats.Result);
         var pagesViewsReport = new PageViewStatsReport(
             timeline,
-            cfg.AdoWikiPageViewsForDays,
+            pageViewsForDays,
             pageViewStats);
 
         return pagesViewsReport;
