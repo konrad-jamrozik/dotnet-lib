@@ -46,18 +46,18 @@ public class TopStatsReportIntegrationTests
         var commitsLast7Days = GitLogCommit.FilterCommits(commits, (ago7Days, ago1Day));
         var commitsLast28Days = GitLogCommit.FilterCommits(commits, (ago28Days, ago1Day));
         
-        var authorStatsLast7Days = GitAuthorStats(cfg, commitsLast7Days, top: 5);
-        var authorStatsLast28Days = GitAuthorStats(cfg, commitsLast28Days, top: 10);
-        var fileStatsLast7Days = GitFileStats(cfg, commitsLast7Days, top: 10);
-        var fileStatsLast28Days = GitFileStats(cfg, commitsLast28Days, top: 20);
+        var authorStatsLast7Days = GitAuthorStats(cfg, commitsLast7Days, top: 3);
+        var authorStatsLast28Days = GitAuthorStats(cfg, commitsLast28Days, top: 5);
+        var fileStatsLast7Days = GitFileStats(cfg, commitsLast7Days, top: 5);
+        var fileStatsLast28Days = GitFileStats(cfg, commitsLast28Days, top: 10);
 
         // Here, The 1 is added to dataDays for pageViewsForDays
         // to account for how ADO REST API interprets the range.
         // For more, see comment on:
         // AdoWikiWithStorageIntegrationTests.ObtainsAndStoresDataFromAdoWikiForToday
         var pagesStats = PagesStats(timeline, fs, cfg, adoCfg, pageViewsForDays: dataDays + 1);
-        var pagesStatsLast7Days = PageViewStats(pagesStats.Trim(ago7Days, ago1Day), top: 10);
-        var pagesStatsLast28Days = PageViewStats(pagesStats.Trim(ago28Days, ago1Day), top: 30);
+        var pagesStatsLast7Days = PageViewStats(pagesStats.Trim(ago7Days, ago1Day), top: 5);
+        var pagesStatsLast28Days = PageViewStats(pagesStats.Trim(ago28Days, ago1Day), top: 10);
 
         var authorsReport = new TopStatsReport(
             timeline,
