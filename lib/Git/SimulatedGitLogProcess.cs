@@ -2,13 +2,16 @@
 using System.Linq;
 using MoreLinq;
 using Wikitools.Lib.OS;
+using Wikitools.Lib.Primitives;
 
 namespace Wikitools.Lib.Git
 {
-    public record SimulatedGitLogProcess(int AfterDays, GitLogCommit[] Commits) : IProcessSimulationSpec
+    public record SimulatedGitLogProcess(ITimeline Timeline, int AfterDays, GitLogCommit[] Commits) : IProcessSimulationSpec
     {
         public bool Matches(string executableFilePath, string workingDirPath, string[] arguments)
-            => arguments.Any(arg => arg.Contains("git log") && arg.Contains($"--after={AfterDays}.days"));
+            => arguments.Any(
+                arg => arg.Contains("git log") && arg.Contains(
+                    $"--after={GitLog.AfterDaysToDate(Timeline, AfterDays):o}"));
 
         public List<string> StdOutLines => Commits
             .Select(GetStdOutLines)

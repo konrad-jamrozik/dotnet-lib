@@ -15,7 +15,7 @@ namespace Wikitools.Tests
         [Fact] // kj2 use everywhere NUnit 
         public async Task ReportsGitAuthorsStats()
         {
-            // Arrange inputs
+            // Arrange inputs and simulations
             var data              = new ReportTestsData();
             var commitsData       = data.CommitsLogs;
             var logDays           = 15;
@@ -23,13 +23,11 @@ namespace Wikitools.Tests
             var gitRepoDir        = fs.NextSimulatedDir();
             var gitExecutablePath = "unused";
             var top               = 5;
-
-            // Arrange simulations
             var timeline = new SimulatedTimeline();
-            var os       = new SimulatedOS(new SimulatedGitLogProcess(logDays, commitsData));
+            var os = new SimulatedOS(new SimulatedGitLogProcess(timeline, logDays, commitsData));
 
             // Arrange SUT declaration
-            var gitLog  = new GitLogDeclare().GitLog(os, gitRepoDir, gitExecutablePath);
+            var gitLog  = new GitLogDeclare().GitLog(timeline, os, gitRepoDir, gitExecutablePath);
             var commits = gitLog.Commits(logDays);
             // kj2 .Result
             var stats   = GitAuthorStats.From(commits.Result, top: top);

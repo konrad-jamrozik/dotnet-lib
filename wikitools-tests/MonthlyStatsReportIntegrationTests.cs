@@ -3,6 +3,7 @@ using NUnit.Framework;
 using Wikitools.AzureDevOps;
 using Wikitools.Lib.Json;
 using Wikitools.Lib.OS;
+using Wikitools.Lib.Primitives;
 using Wikitools.Lib.Tests;
 
 namespace Wikitools.Tests;
@@ -30,9 +31,11 @@ public class MonthlyStatsReportIntegrationTests
         IFileSystem fs,
         WikitoolsCfg cfg)
     {
+        var timeline = new Timeline();
         var os = new WindowsOS();
 
         var gitLog = new GitLogDeclare().GitLog(
+            timeline,
             os,
             cfg.GitRepoCloneDir(fs),
             cfg.GitExecutablePath);

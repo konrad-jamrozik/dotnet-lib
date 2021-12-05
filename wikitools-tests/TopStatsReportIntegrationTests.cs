@@ -41,10 +41,13 @@ public class TopStatsReportIntegrationTests
         var ago1Day = timeline.DaysFromUtcNow(-1);
         var ago7Days = timeline.DaysFromUtcNow(-7);
         var ago28Days = timeline.DaysFromUtcNow(-dataDays);
+        var last7Days = new DaySpan(ago7Days, ago1Day);
+        var last28Days = new DaySpan(ago28Days, ago1Day);
         
-        var commits = GitLogCommits(fs, cfg, dataDays);
-        var commitsLast7Days = GitLogCommit.FilterCommits(commits, (ago7Days, ago1Day));
-        var commitsLast28Days = GitLogCommit.FilterCommits(commits, (ago28Days, ago1Day));
+        var commits = GitLogCommits(timeline, fs, cfg, dataDays);
+        
+        var commitsLast7Days = new GitLogCommits(commits, last7Days);
+        var commitsLast28Days = new GitLogCommits(commits, last28Days);
         
         var authorStatsLast7Days = GitAuthorStats(cfg, commitsLast7Days, top: 3);
         var authorStatsLast28Days = GitAuthorStats(cfg, commitsLast28Days, top: 5);
@@ -71,11 +74,16 @@ public class TopStatsReportIntegrationTests
         return authorsReport;
     }
 
-    private static GitLogCommit[] GitLogCommits(IFileSystem fs, WikitoolsCfg cfg, int gitLogDays)
+    private static GitLogCommit[] GitLogCommits(
+        ITimeline timeline,
+        IFileSystem fs,
+        WikitoolsCfg cfg,
+        int gitLogDays)
     {
         var os = new WindowsOS();
 
         var gitLog = new GitLogDeclare().GitLog(
+            timeline,
             os,
             cfg.GitRepoCloneDir(fs),
             cfg.GitExecutablePath);
@@ -87,7 +95,7 @@ public class TopStatsReportIntegrationTests
 
     private static GitAuthorStats[] GitAuthorStats(
         WikitoolsCfg cfg,
-        GitLogCommit[] commits,
+        GitLogCommits commits,
         int top)
     {
         bool AuthorFilter(string author) => !cfg.ExcludedAuthors.Any(author.Contains);
@@ -95,7 +103,7 @@ public class TopStatsReportIntegrationTests
         return authorStats;
     }
 
-    private static GitFileStats[] GitFileStats(WikitoolsCfg cfg, GitLogCommit[] commits, int top)
+    private static GitFileStats[] GitFileStats(WikitoolsCfg cfg, GitLogCommits commits, int top)
     {
         bool FilePathFilter(string path) => !cfg.ExcludedPaths.Any(path.Contains);
         var fileStats = Wikitools.GitFileStats.From(commits, FilePathFilter, top);

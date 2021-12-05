@@ -2,9 +2,9 @@
 
 namespace Wikitools.Lib.Primitives
 {
-    public record DaySpan(DateDay SinceDay, DateDay UntilDay)
+    public record DaySpan(DateDay AfterDay, DateDay BeforeDay)
     {
         public bool Contains(DateTime date)
-            => SinceDay.CompareTo(date) <= 0 && 0 <= UntilDay.CompareTo(date);
+            => AfterDay.CompareTo(date) <= 0 && 0 <= BeforeDay.CompareTo(date);
     }
 }

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using MoreLinq;
 using Wikitools.Lib.Data;
@@ -16,8 +17,18 @@ public record GitAuthorStats(
     public static readonly object[] HeaderRow =
         { "Place", "Author", "Files changed", "Insertions", "Deletions" };
 
+    // kja At some point will need to use it in TopStatsReport to get commits.DaySpan
+    public static GitAuthorStats[] From2(
+        GitLogCommits commits,
+        Func<string, bool>? authorFilter = null,
+        int? top = null,
+        bool addIcons = false)
+    {
+        return From(commits, authorFilter, top, addIcons);
+    }
+
     public static GitAuthorStats[] From(
-        GitLogCommit[] commits,
+        IEnumerable<GitLogCommit> commits,
         Func<string, bool>? authorFilter = null,
         int? top = null,
         bool addIcons = false)
@@ -68,10 +79,10 @@ public record GitAuthorStats(
     }
 
     private static (string author, int filesChanged, int insertions, int deletions)[]
-        SumByAuthor(GitLogCommit[] commits)
+        SumByAuthor(IEnumerable<GitLogCommit> commits)
     {
         var commitsByAuthor = commits.GroupBy(commit => commit.Author);
-        // kj2 return here AuthorStats with 0ed place that will be changed by the caller.
+        // kj2 To simplify, return here AuthorStats (instead of a tuple). It will have to have 0ed place that will be then overriden by the caller.
         var statsSumByAuthor = commitsByAuthor.Select(authorCommits =>
             (
                 author: authorCommits.Key,

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Wikitools.Lib.Data;
 using Wikitools.Lib.Git;
@@ -13,8 +14,17 @@ public record GitFileStats(
 {
     public static readonly object[] HeaderRow = { "Place", "File Path", "Insertions", "Deletions" };
 
+    // kja At some point will need to use it in TopStatsReport to get commits.DaySpan
+    public static GitFileStats[] From2(
+        GitLogCommits commits,
+        Func<string, bool>? filePathFilter = null,
+        int? top = null)
+    {
+        return From(commits, filePathFilter, top);
+    }
+
     public static GitFileStats[] From(
-        GitLogCommit[] commits,
+        IEnumerable<GitLogCommit> commits,
         Func<string, bool>? filePathFilter = null,
         int? top = null)
     {
@@ -41,7 +51,7 @@ public record GitFileStats(
     }
 
     private static (string filePath, int insertions, int deletions)[] SumByFilePath(
-        GitLogCommit[] commits)
+        IEnumerable<GitLogCommit> commits)
     {
         var fileStats = commits.SelectMany(
             c => c.Stats.Select(s => (s.FilePath, s.Insertions, s.Deletions)));

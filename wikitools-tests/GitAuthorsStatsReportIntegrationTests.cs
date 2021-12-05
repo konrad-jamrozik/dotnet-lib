@@ -35,6 +35,7 @@ public class GitAuthorsStatsReportIntegrationTests
         var os = new WindowsOS();
 
         var gitLog = new GitLogDeclare().GitLog(
+            timeline,
             os,
             cfg.GitRepoCloneDir(fs),
             cfg.GitExecutablePath);
