@@ -20,7 +20,7 @@ namespace Wikitools.Lib.Primitives
         /// a:   typeof(await asyncLazyTarget.Value)
         ///      equivalently: typeof(target)
         /// m a: AsyncLazy typeof(await asyncLazyTarget.Value)
-        /// (a -> a) typeof(f)
+        /// (a -> a): typeof(f)
         ///
         /// If this would be an actual monadic bind operator, function f
         /// would have signature of (a -> m a)
@@ -31,9 +31,9 @@ namespace Wikitools.Lib.Primitives
         /// </summary>
         public static AsyncLazy<T> M<T>(
             this AsyncLazy<T> asyncLazyTarget,
-            Func<T, T> f) => new(async () =>
+            Func<T, T> f) => new AsyncLazy<T>(async () =>
         {
-            T target = await asyncLazyTarget;
+            T target = await asyncLazyTarget; // RHS is same as "await asyncLazyTarget.Value;"
             return f(target);
         });
     }

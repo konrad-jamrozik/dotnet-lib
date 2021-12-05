@@ -51,6 +51,8 @@ namespace Wikitools.Lib.OS
             );
         }
 
+        // kj2 process.GetStdOutLines should just return GetStdOutLines, to avoid triggering eager evaluation.
+        // Then use the AsyncLazyMonad to add additional computations without evaluating
         public Task<List<string>> GetStdOutLines() => _stdOutLines.Value;
     }
 }
