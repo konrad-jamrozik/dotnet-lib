@@ -40,9 +40,10 @@ namespace Wikitools.Lib.Primitives
 
         public override string ToString() => _dateTime.ToString(CultureInfo.InvariantCulture);
 
-        public string ToString(string? format, IFormatProvider? formatProvider) => 
+        public string ToString(string? format, IFormatProvider? formatProvider) =>
             format == null && formatProvider == null
-                ? $"{_dateTime:yyyy/MM/dd}"
+                // https://docs.microsoft.com/en-us/dotnet/standard/base-types/custom-date-and-time-format-strings
+                ? $"{_dateTime:M/d/yyyy}"
                 : _dateTime.ToString(format, formatProvider);
 
         private readonly DateTime _dateTime = DateTime.SpecifyKind(new DateTime(Year, Month, Day), Kind);
