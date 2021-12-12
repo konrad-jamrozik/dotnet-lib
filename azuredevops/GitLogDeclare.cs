@@ -1,4 +1,5 @@
-﻿using Wikitools.Lib.Git;
+﻿using Wikitools.Lib;
+using Wikitools.Lib.Git;
 using Wikitools.Lib.OS;
 using Wikitools.Lib.Primitives;
 
@@ -12,12 +13,8 @@ namespace Wikitools.AzureDevOps
             Dir gitRepoDir,
             string gitExecutablePath)
         {
-            var repo = new GitRepository(
-                new GitBashShell(os, gitExecutablePath),
-                gitRepoDir
-            );
-            var gitLog = new GitLog(timeline, repo);
-            return gitLog;
+            // kja inline
+            return new GitLogDeclare2().GitLog(timeline, os, gitRepoDir, gitExecutablePath);
         }
     }
 }

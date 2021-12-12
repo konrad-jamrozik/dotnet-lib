@@ -20,12 +20,6 @@ namespace Wikitools.Lib.Git
 
         public Task<GitLogCommits> Commits(int days)
         {
-            // kja bug & missing UT: this utcNowDay will end one day too early.
-            // Say the input is 2 days and current day is Jan 10th.
-            // The expectation here is the commits should come from Jan 8th 00:00 to
-            // Jan 11th 00:00 (i.e. end of Jan 10th)
-            // but now it will end at Jan 10th 00:00.
-            // See Wikitools.Lib.Tests.Git.GitLogTests.TestGitLog
             var utcNowDay = new DateDay(Timeline.UtcNow);
             DateDay after = DaysInThePast(utcNowDay, days);
             return GetCommits(daySpan: new DaySpan(after, utcNowDay));
@@ -54,7 +48,9 @@ namespace Wikitools.Lib.Git
                 $"--after={((DateTime)daySpan.AfterDay).ToString(roundtripFormat)} " +
                 $"--before={((DateTime)daySpan.BeforeDay).ToString(roundtripFormat)} " +
                 "--ignore-all-space --ignore-blank-lines " +
+                // https://git-scm.com/docs/pretty-formats
                 $"--pretty=\"%{delimiter}%n%an%n%as\" " +
+                // kja use --date=iso-strict and above instead of %as use %ad
                 "--numstat --date=iso";
             return command;
         }

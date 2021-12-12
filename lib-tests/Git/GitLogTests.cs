@@ -12,7 +12,8 @@ namespace Wikitools.Lib.Tests.Git
 {
     public class GitLogTests
     {
-        // kja currently failing test
+        // kja clean up this test and also prove that 
+        // the commits _out_ of range are not included.
         // For context, see todo in Wikitools.Lib.Git.GitLog.Commits
         [Fact]
         public async void TestGitLog()
@@ -20,17 +21,13 @@ namespace Wikitools.Lib.Tests.Git
             var timeline = new SimulatedTimeline();
             int dayRange = 5;
             var daysAgo = timeline.UtcNow.AddDays(-5);
-            var os = new SimulatedOS(Array.Empty<IProcessSimulationSpec>());
+            var os = new SimulatedOS(GitLogProcess(timeline));
+            var fs = new SimulatedFileSystem();
+            var gitRepoDir        = fs.NextSimulatedDir();
+            var gitExecutablePath = "unused";
 
-            var gitBashShell = new GitBashShell(
-                os,
-                "GitExecutablePath");
-            
-            var gitLog = new GitLog(
-                timeline,
-                new GitRepository(
-                    gitBashShell,
-                    new Dir(new SimulatedFileSystem(), "Path")));
+            var decl = new GitLogDeclare2();
+            var gitLog = decl.GitLog(timeline, os, gitRepoDir, gitExecutablePath);
 
             // Act
             GitLogCommits commits = await gitLog.Commits(dayRange);
@@ -39,7 +36,26 @@ namespace Wikitools.Lib.Tests.Git
             var lastCommit = commits.Last();
 
             Assert.True(firstCommit.Date.CompareTo(daysAgo) < 0);
-            Assert.True(lastCommit.Date.CompareTo(timeline.UtcNow) > 0);
+            Assert.True(lastCommit.Date.CompareTo(new DateDay(timeline.UtcNow)) >= 0);
+        }
+
+        private static SimulatedGitLogProcess GitLogProcess(SimulatedTimeline timeline)
+        {
+            var gitLogProcess = new SimulatedGitLogProcess(
+                timeline,
+                AfterDays: 5,
+                new GitLogCommit[]
+                {
+                    new GitLogCommit(
+                        "FooAuthor",
+                        timeline.UtcNow.AddDays(-5),
+                        new GitLogCommit.Numstat[] { new GitLogCommit.Numstat(1, 2, "FooPath") }),
+                    new GitLogCommit(
+                        "BarAuthor",
+                        timeline.UtcNow,
+                        new GitLogCommit.Numstat[] { new GitLogCommit.Numstat(1, 2, "BarPath") })
+                });
+            return gitLogProcess;
         }
     }
 }
