@@ -41,7 +41,7 @@ public class MonthlyStatsReportIntegrationTests
             cfg.GitExecutablePath);
 
         var monthlyReport = new MonthlyStatsReport(
-            gitLog.Commits(cfg.MonthlyReportStartDate, cfg.MonthlyReportEndDate),
+            gitLog.Commits(cfg.MonthlyReportStartDay, cfg.MonthlyReportEndDay),
             author => !cfg.ExcludedAuthors.Any(author.Contains),
             path => !cfg.ExcludedPaths.Any(path.Contains));
 

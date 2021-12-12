@@ -1,7 +1,7 @@
-﻿using System;
-using Wikitools.AzureDevOps;
+﻿using Wikitools.AzureDevOps;
 using Wikitools.Lib.Json;
 using Wikitools.Lib.OS;
+using Wikitools.Lib.Primitives;
 
 namespace Wikitools
 {
@@ -15,8 +15,8 @@ namespace Wikitools
         int AdoWikiPageViewsForDays,
         string[] ExcludedAuthors,
         string[] ExcludedPaths,
-        DateTime MonthlyReportStartDate,
-        DateTime MonthlyReportEndDate,
+        DateDay MonthlyReportStartDay,
+        DateDay MonthlyReportEndDay,
         int Top,
         string StorageDirPath) : IConfiguration
     {

@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Globalization;
+using System.Text.Json.Serialization;
 
 namespace Wikitools.Lib.Primitives
 {
+    [JsonConverter(typeof(DateDayJsonConverter))]
     public sealed record DateDay(int Year, int Month, int Day, DateTimeKind Kind) : 
         IComparable<DateTime>, IEquatable<DateTime>,
         IComparable<DateDay>,
@@ -33,7 +35,7 @@ namespace Wikitools.Lib.Primitives
 
         public int CompareTo(DateDay? other) => _dateTime.CompareTo(other?._dateTime);
 
-        // returns 1 on null to duplicate behavior of System.DateTime.CompareTo
+        // Returns 1 on null. This is to ensure behavior is the same of System.DateTime.CompareTo.
         public int CompareTo(DateMonth? other) => other == null ? 1 : CompareTo(new DateDay(other));
 
         public override int GetHashCode() => _dateTime.GetHashCode();
