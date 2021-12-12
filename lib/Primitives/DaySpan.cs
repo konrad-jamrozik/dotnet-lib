@@ -33,7 +33,6 @@ namespace Wikitools.Lib.Primitives
         /// and the last accepted date is at midnight from May 15th to May 16th.
         /// </summary>
         /// <param name="date"></param>
-        /// <returns></returns>
         public bool Contains(DateTime date)
             => AfterDay.CompareTo(date) <= 0 && 0 <= BeforeDay.AddDays(1).CompareTo(date);
     }
