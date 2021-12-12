@@ -20,7 +20,7 @@ namespace Wikitools.Lib.Git
 
         public Task<GitLogCommits> Commits(int days)
         {
-            // kja this utcNowDay will end one day too early.
+            // kja bug & missing UT: this utcNowDay will end one day too early.
             // Say the input is 2 days and current day is Jan 10th.
             // The expectation here is the commits should come from Jan 8th 00:00 to
             // Jan 11th 00:00 (i.e. end of Jan 10th)
@@ -30,9 +30,8 @@ namespace Wikitools.Lib.Git
             return GetCommits(daySpan: new DaySpan(after, utcNowDay));
         }
 
-        // kja this should really be DaySpan
-        public Task<GitLogCommits> Commits(DateDay after, DateDay before)
-            => GetCommits(daySpan: new DaySpan(after, before));
+        public Task<GitLogCommits> Commits(DaySpan daySpan) 
+            => GetCommits(daySpan);
 
         private static string GitLogCommand(
             DaySpan daySpan,

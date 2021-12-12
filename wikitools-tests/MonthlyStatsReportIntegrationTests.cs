@@ -40,8 +40,10 @@ public class MonthlyStatsReportIntegrationTests
             cfg.GitRepoCloneDir(fs),
             cfg.GitExecutablePath);
 
+        DateDay after = cfg.MonthlyReportStartDay;
+        DateDay before = cfg.MonthlyReportEndDay;
         var monthlyReport = new MonthlyStatsReport(
-            gitLog.Commits(cfg.MonthlyReportStartDay, cfg.MonthlyReportEndDay),
+            gitLog.Commits(new DaySpan(after, before)),
             author => !cfg.ExcludedAuthors.Any(author.Contains),
             path => !cfg.ExcludedPaths.Any(path.Contains));
 
