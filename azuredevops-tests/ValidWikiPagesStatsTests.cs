@@ -1,5 +1,3 @@
-using System.Linq;
-using Wikitools.Lib.Primitives;
 using Wikitools.Lib.Tests.Json;
 using Xunit;
 using Data = Wikitools.AzureDevOps.Tests.ValidWikiPagesStatsTestDataFixture;
