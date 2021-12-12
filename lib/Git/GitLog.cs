@@ -25,6 +25,7 @@ namespace Wikitools.Lib.Git
             // The expectation here is the commits should come from Jan 8th 00:00 to
             // Jan 11th 00:00 (i.e. end of Jan 10th)
             // but now it will end at Jan 10th 00:00.
+            // See Wikitools.Lib.Tests.Git.GitLogTests.TestGitLog
             var utcNowDay = new DateDay(Timeline.UtcNow);
             DateDay after = DaysInThePast(utcNowDay, days);
             return GetCommits(daySpan: new DaySpan(after, utcNowDay));
