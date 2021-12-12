@@ -6,12 +6,12 @@ using Wikitools.Lib.Primitives;
 
 namespace Wikitools.Lib.Git
 {
-    public record SimulatedGitLogProcess(ITimeline Timeline, int AfterDays, GitLogCommit[] Commits) : IProcessSimulationSpec
+    public record SimulatedGitLogProcess(ITimeline Timeline, DaySpan daySpan, GitLogCommit[] Commits) : IProcessSimulationSpec
     {
         public bool Matches(string executableFilePath, string workingDirPath, string[] arguments)
             => arguments.Any(
                 arg => arg.Contains("git log") && arg.Contains(
-                    $"--after={GitLog.DaysInThePast(new DateDay(Timeline.UtcNow), AfterDays):o}"));
+                    GitLog.GitLogParamsStringCommitRange(daySpan)));
 
         public List<string> StdOutLines => Commits
             .Select(GetStdOutLines)
@@ -25,7 +25,7 @@ namespace Wikitools.Lib.Git
             new List<string>
                 {
                     commit.Author,
-                    commit.Date.ToShortDateString()
+                    commit.Date.ToString("o")
                 }.Union(
                     commit.Stats
                         .Select(stat =>

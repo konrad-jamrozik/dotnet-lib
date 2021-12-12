@@ -11,6 +11,9 @@ namespace Wikitools.Lib.Primitives
         IComparable<DateMonth>, IEquatable<DateMonth>,
         IFormattable
     {
+        public static int Compare(DateTime left, DateTime right)
+            => new DateDay(left).CompareTo(new DateDay(right));
+        
         public static DateDay operator +(DateDay dateDay, int days) => new(dateDay._dateTime.AddDays(days));
 
         public static TimeSpan operator -(DateDay left, DateDay right) => left._dateTime.Subtract(right._dateTime);
@@ -35,7 +38,7 @@ namespace Wikitools.Lib.Primitives
 
         public int CompareTo(DateDay? other) => _dateTime.CompareTo(other?._dateTime);
 
-        // Returns 1 on null. This is to ensure behavior is the same of System.DateTime.CompareTo.
+        // Returns 1 on null. This is to ensure the same behavior as System.DateTime.CompareTo.
         public int CompareTo(DateMonth? other) => other == null ? 1 : CompareTo(new DateDay(other));
 
         public override int GetHashCode() => _dateTime.GetHashCode();

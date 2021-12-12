@@ -18,15 +18,14 @@ namespace Wikitools.Tests
             // Arrange inputs
             var data              = new ReportTestsData();
             var commitsData       = data.CommitsLogs;
+            var timeline          = new SimulatedTimeline();
             var logDays           = 15;
+            var logDaysSpan       = new DaySpan(timeline.UtcNow, logDays);
             var fs                = new SimulatedFileSystem();
             var gitRepoDir        = fs.NextSimulatedDir();
             var gitExecutablePath = "unused";
             var top               = 5;
-
-            // Arrange simulations
-            var timeline = new SimulatedTimeline();
-            var os = new SimulatedOS(new SimulatedGitLogProcess(timeline, logDays, commitsData));
+            var os = new SimulatedOS(new SimulatedGitLogProcess(timeline, logDaysSpan, commitsData));
 
             // Arrange SUT declaration
             var gitLog  = new GitLogDeclare().GitLog(timeline, os, gitRepoDir, gitExecutablePath);
