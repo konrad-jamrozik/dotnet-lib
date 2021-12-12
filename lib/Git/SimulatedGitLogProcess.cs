@@ -11,7 +11,7 @@ namespace Wikitools.Lib.Git
         public bool Matches(string executableFilePath, string workingDirPath, string[] arguments)
             => arguments.Any(
                 arg => arg.Contains("git log") && arg.Contains(
-                    $"--after={GitLog.AfterDaysToDate(Timeline, AfterDays):o}"));
+                    $"--after={GitLog.AfterDaysToDate(Timeline.UtcNow, AfterDays):o}"));
 
         public List<string> StdOutLines => Commits
             .Select(GetStdOutLines)
