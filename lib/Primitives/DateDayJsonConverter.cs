@@ -13,9 +13,10 @@ namespace Wikitools.Lib.Primitives
             ref Utf8JsonReader reader,
             Type typeToConvert,
             JsonSerializerOptions options)
-        // kj2 ensure the DateDay has kind UTC. Write a unit test for this.
         {
             string dateToParse = reader.GetString() ?? string.Empty;
+            // kj2 Write unit test showing that the date is roundtripped with Kind.UTC if
+            // time zone is Z, and otherwise Unspecified.
             DateTime parsedDate = DateTime.ParseExact(
                 dateToParse,
                 Format,

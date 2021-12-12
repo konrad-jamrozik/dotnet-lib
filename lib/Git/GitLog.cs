@@ -18,7 +18,7 @@ namespace Wikitools.Lib.Git
         public static DateDay DaysInThePast(DateDay nowDay, int days)
             => nowDay.AddDays(-days);
 
-        public Task<GitLogCommit[]> Commits(int days)
+        public Task<GitLogCommits> Commits(int days)
         {
             // kja this utcNowDay will end one day too early.
             // Say the input is 2 days and current day is Jan 10th.
@@ -26,20 +26,19 @@ namespace Wikitools.Lib.Git
             // Jan 11th 00:00 (i.e. end of Jan 10th)
             // but now it will end at Jan 10th 00:00.
             var utcNowDay = new DateDay(Timeline.UtcNow);
-            return GetCommits(after: DaysInThePast(utcNowDay, days), before: utcNowDay);
+            DateDay after = DaysInThePast(utcNowDay, days);
+            return GetCommits(daySpan: new DaySpan(after, utcNowDay));
         }
 
         // kja this should really be DaySpan
-        public Task<GitLogCommit[]> Commits(DateDay after, DateDay before)
-            => GetCommits(after: after, before: before);
+        public Task<GitLogCommits> Commits(DateDay after, DateDay before)
+            => GetCommits(daySpan: new DaySpan(after, before));
 
         private static string GitLogCommand(
-            DateDay afterDate,
-            DateDay beforeDate,
+            DaySpan daySpan,
             string delimiter)
         {
-            Contract.Assert(afterDate.Kind == DateTimeKind.Utc);
-            Contract.Assert(beforeDate.Kind == DateTimeKind.Utc);
+            Contract.Assert(daySpan.Kind == DateTimeKind.Utc);
             
             // https://docs.microsoft.com/en-us/dotnet/standard/base-types/standard-date-and-time-format-strings#Roundtrip
             var roundtripFormat = "o";
@@ -52,19 +51,17 @@ namespace Wikitools.Lib.Git
             // A: https://stackoverflow.com/a/2528129/986533
             var command =
                 "git log " +
-                $"--after={((DateTime)afterDate).ToString(roundtripFormat)} " +
-                $"--before={((DateTime)beforeDate).ToString(roundtripFormat)} " +
+                $"--after={((DateTime)daySpan.AfterDay).ToString(roundtripFormat)} " +
+                $"--before={((DateTime)daySpan.BeforeDay).ToString(roundtripFormat)} " +
                 "--ignore-all-space --ignore-blank-lines " +
                 $"--pretty=\"%{delimiter}%n%an%n%as\" " +
                 "--numstat --date=iso";
             return command;
         }
 
-        private async Task<GitLogCommit[]> GetCommits(
-            DateDay after,
-            DateDay before)
+        private async Task<GitLogCommits> GetCommits(DaySpan daySpan)
         {
-            var command = GitLogCommand(after, before, Delimiter);
+            var command = GitLogCommand(daySpan, Delimiter);
             var stdOutLines = await Repo.GetStdOutLines(command);
             var commits = stdOutLines
                 .Where(line => !string.IsNullOrWhiteSpace(line))
@@ -72,9 +69,7 @@ namespace Wikitools.Lib.Git
                 .Where(commitLines => commitLines.Any())
                 .Select(commitLines => new GitLogCommit(commitLines.ToArray()))
                 .ToArray();
-            // kja this should return GitLogCommits, so then there can be made
-            // invariant checks on filtering the commits to dates.
-            return commits;
+            return new GitLogCommits(commits, daySpan);
         }
     }
 }

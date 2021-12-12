@@ -14,7 +14,7 @@ namespace Wikitools
     public record MonthlyStatsReport : MarkdownDocument
     {
         public MonthlyStatsReport(
-            Task<GitLogCommit[]> commits,
+            Task<GitLogCommits> commits,
             Func<string, bool>? authorFilter = null,
             Func<string, bool>? filePathFilter = null) : base(
             GetContent(commits,
@@ -22,7 +22,7 @@ namespace Wikitools
                 filePathFilter ?? (_ => true))) { }
 
         private static async Task<object[]> GetContent(
-            Task<GitLogCommit[]> commits,
+            Task<GitLogCommits> commits,
             Func<string, bool> authorFilter,
             Func<string, bool> filePathFilter) =>
             new object[]
@@ -33,7 +33,7 @@ namespace Wikitools
             };
 
         private static (object[] headerRow, object[][] rows) GetRows(
-            GitLogCommit[] commits,
+            GitLogCommits commits,
             Func<string, bool> authorFilter,
             Func<string, bool> filePathFilter)
         {
