@@ -1,6 +1,7 @@
 using System.Linq;
 using NUnit.Framework;
 using Wikitools.AzureDevOps;
+using Wikitools.Lib;
 using Wikitools.Lib.Git;
 using Wikitools.Lib.Json;
 using Wikitools.Lib.OS;
@@ -83,10 +84,11 @@ public class TopStatsReportIntegrationTests
     {
         var os = new WindowsOS();
 
+        Dir gitRepoDir = cfg.GitRepoCloneDir(fs);
         var gitLog = new GitLogDeclare().GitLog(
             timeline,
             os,
-            cfg.GitRepoCloneDir(fs),
+            gitRepoDir,
             cfg.GitExecutablePath);
 
         var commits = gitLog.Commits(gitLogDays);

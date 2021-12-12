@@ -1,6 +1,8 @@
 using System.Linq;
 using NUnit.Framework;
 using Wikitools.AzureDevOps;
+using Wikitools.Lib;
+using Wikitools.Lib.Git;
 using Wikitools.Lib.Json;
 using Wikitools.Lib.OS;
 using Wikitools.Lib.Primitives;
@@ -34,10 +36,11 @@ public class MonthlyStatsReportIntegrationTests
         var timeline = new Timeline();
         var os = new WindowsOS();
 
+        Dir gitRepoDir = cfg.GitRepoCloneDir(fs);
         var gitLog = new GitLogDeclare().GitLog(
             timeline,
             os,
-            cfg.GitRepoCloneDir(fs),
+            gitRepoDir,
             cfg.GitExecutablePath);
 
         DateDay after = cfg.MonthlyReportStartDay;

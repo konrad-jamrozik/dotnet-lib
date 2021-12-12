@@ -4,7 +4,7 @@ using Wikitools.Lib.Primitives;
 
 namespace Wikitools.Lib
 {
-    public class GitLogDeclare2
+    public class GitLogDeclare
     {
         public GitLog GitLog(
             ITimeline timeline,

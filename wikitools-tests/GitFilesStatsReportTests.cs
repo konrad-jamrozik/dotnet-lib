@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using Wikitools.AzureDevOps;
+using Wikitools.Lib;
 using Wikitools.Lib.Git;
 using Wikitools.Lib.Markdown;
 using Wikitools.Lib.OS;

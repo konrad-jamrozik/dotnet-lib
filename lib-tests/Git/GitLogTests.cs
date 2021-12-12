@@ -26,7 +26,7 @@ namespace Wikitools.Lib.Tests.Git
             var gitRepoDir        = fs.NextSimulatedDir();
             var gitExecutablePath = "unused";
 
-            var decl = new GitLogDeclare2();
+            var decl = new GitLogDeclare();
             var gitLog = decl.GitLog(timeline, os, gitRepoDir, gitExecutablePath);
 
             // Act
