@@ -10,9 +10,10 @@ namespace Wikitools.Lib.Git
     public record GitLog(ITimeline Timeline, GitRepository Repo)
     {
         // Only this delimiter works. Note, it is prepended with % in the command,
-        // so it is --pretty="%%
+        // so it is --pretty="%% [1]
         // I tried other delimiters, like --pretty="; or --pretty="|
         // They work from terminal but here they return no results. I don't know why.
+        // [1] https://git-scm.com/docs/pretty-formats#Documentation/pretty-formats.txt-emem
         public const string Delimiter = "%";
 
         public static DateDay DaysInThePast(DateDay nowDay, int days)
@@ -38,20 +39,23 @@ namespace Wikitools.Lib.Git
             var roundtripFormat = "o";
 
             // Reference:
-            // https://git-scm.com/docs/git-log#_commit_limiting
             // https://git-scm.com/book/en/v2/Git-Basics-Viewing-the-Commit-History
-            // https://git-scm.com/docs/git-log#Documentation/git-log.txt---statltwidthgtltname-widthgtltcountgt
             // SOQ: How can I calculate the number of lines changed between two commits in GIT?
             // A: https://stackoverflow.com/a/2528129/986533
             var command =
+                // https://git-scm.com/docs/git-log
                 "git log " +
+                // https://git-scm.com/docs/git-log#_commit_limiting
                 $"--after={((DateTime)daySpan.AfterDay).ToString(roundtripFormat)} " +
                 $"--before={((DateTime)daySpan.BeforeDay).ToString(roundtripFormat)} " +
                 "--ignore-all-space --ignore-blank-lines " +
+                // https://git-scm.com/docs/git-log#Documentation/git-log.txt---prettyltformatgt
                 // https://git-scm.com/docs/pretty-formats
-                $"--pretty=\"%{delimiter}%n%an%n%as\" " +
-                // kja use --date=iso-strict and above instead of %as use %ad
-                "--numstat --date=iso";
+                $"--pretty=\"%{delimiter}%n%an%n%ad\" " +
+                // https://git-scm.com/docs/git-log#Documentation/git-log.txt---numstat
+                "--numstat " +
+                // https://git-scm.com/docs/git-log#Documentation/git-log.txt---dateltformatgt
+                "--date=iso-strict";
             return command;
         }
 
