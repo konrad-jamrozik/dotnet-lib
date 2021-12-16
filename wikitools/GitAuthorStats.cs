@@ -24,7 +24,7 @@ public record GitAuthorStats(
         bool addIcons = false)
     {
         authorFilter ??= _ => true;
-        var statsSumByAuthor = SumByAuthor(commits)
+        (string author, int filesChanged, int insertions, int deletions)[] statsSumByAuthor = SumByAuthor(commits)
             .OrderByDescending(s => s.insertions)
             .Where(s => authorFilter(s.author))
             .ToArray();
@@ -33,7 +33,7 @@ public record GitAuthorStats(
             ? statsSumByAuthor.Take((int)top).ToArray()
             : statsSumByAuthor;
 
-        GitAuthorStats[] stats = statsSumByAuthor
+        GitAuthorStats[] rankedStats = statsSumByAuthor
             .Select(
                 (data, i) => new GitAuthorStats(
                     i + 1,
@@ -43,7 +43,7 @@ public record GitAuthorStats(
                     data.deletions))
             .ToArray();
 
-        return stats;
+        return rankedStats;
     }
 
     private static string AuthorNameWithIcons(

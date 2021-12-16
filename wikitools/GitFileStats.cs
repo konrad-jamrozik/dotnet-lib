@@ -20,16 +20,17 @@ public record GitFileStats(
         int? top = null)
     {
         filePathFilter ??= _ => true;
-        var statsSumByFilePath = SumByFilePath(commits)
-            .OrderByDescending(stats => stats.insertions)
-            .Where(stat => filePathFilter(stat.filePath))
-            .ToArray();
+        (string filePath, int insertions, int deletions)[] statsSumByFilePath =
+            SumByFilePath(commits)
+                .OrderByDescending(stats => stats.insertions)
+                .Where(stat => filePathFilter(stat.filePath))
+                .ToArray();
 
         statsSumByFilePath = top is not null 
             ? statsSumByFilePath.Take((int) top).ToArray() 
             : statsSumByFilePath;
 
-        var rows = statsSumByFilePath
+        GitFileStats[] rankedStats = statsSumByFilePath
             .Select(
                 (stats, i) => new GitFileStats(
                     i + 1,
@@ -38,7 +39,7 @@ public record GitFileStats(
                     stats.deletions))
             .ToArray();
 
-        return rows;
+        return rankedStats;
     }
 
     private static (string filePath, int insertions, int deletions)[] SumByFilePath(

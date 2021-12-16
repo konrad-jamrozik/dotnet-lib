@@ -13,10 +13,10 @@ public record PageViewStats(
     public static readonly object[] HeaderRow = { "Place", "Path", "Views" };
 
     public static PageViewStats[] From(
-        ValidWikiPagesStats stats,
+        ValidWikiPagesStats pagesStats,
         int? top = null)
     {
-        var pathsStats = stats 
+        (string path, int views)[] pathsStats = pagesStats 
             .Select(pageStats =>
                 (
                     path: pageStats.Path,
@@ -29,11 +29,11 @@ public record PageViewStats(
             .Take(top != null ? new Range(0, (int)top) : Range.All)
             .ToArray();
 
-        var rows = pathsStats
+        PageViewStats[] rankedStats = pathsStats
             .Select((path, i) => new PageViewStats(i + 1, path.path, path.views))
             .ToArray();
 
-        return rows;
+        return rankedStats;
     }
 
     public static TabularData TabularData(PageViewStats[] rows)
