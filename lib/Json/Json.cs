@@ -1,7 +1,6 @@
-﻿namespace Wikitools.Lib.Json
+﻿namespace Wikitools.Lib.Json;
+
+public static class Json
 {
-    public static class Json
-    {
-        public const string Empty = "{}";
-    }
+    public const string Empty = "{}";
 }

@@ -1,9 +1,8 @@
 ﻿using System;
 
-namespace Wikitools.Lib.Primitives
+namespace Wikitools.Lib.Primitives;
+
+public interface ITimeline
 {
-    public interface ITimeline
-    {
-        DateTime UtcNow { get; }
-    }
+    DateTime UtcNow { get; }
 }

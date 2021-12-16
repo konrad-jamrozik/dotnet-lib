@@ -1,9 +1,8 @@
-﻿namespace Wikitools.AzureDevOps
+﻿namespace Wikitools.AzureDevOps;
+
+public enum ExceptionCode
 {
-    public enum ExceptionCode
-    {
-        NotFound,
-        Unauthorized,
-        Other
-    }
+    NotFound,
+    Unauthorized,
+    Other
 }

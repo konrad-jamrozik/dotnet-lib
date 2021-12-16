@@ -1,7 +1,6 @@
-﻿namespace Wikitools.Lib.OS
+﻿namespace Wikitools.Lib.OS;
+
+public interface IEnvironment
 {
-    public interface IEnvironment
-    {
-        string? Value(string varName);
-    }
+    string? Value(string varName);
 }

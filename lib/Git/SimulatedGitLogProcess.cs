@@ -4,33 +4,32 @@ using MoreLinq;
 using Wikitools.Lib.OS;
 using Wikitools.Lib.Primitives;
 
-namespace Wikitools.Lib.Git
+namespace Wikitools.Lib.Git;
+
+public record SimulatedGitLogProcess(ITimeline Timeline, DaySpan daySpan, GitLogCommit[] Commits) : IProcessSimulationSpec
 {
-    public record SimulatedGitLogProcess(ITimeline Timeline, DaySpan daySpan, GitLogCommit[] Commits) : IProcessSimulationSpec
-    {
-        public bool Matches(string executableFilePath, string workingDirPath, string[] arguments)
-            => arguments.Any(
-                arg => arg.Contains("git log") && arg.Contains(
-                    GitLog.GitLogParamsStringCommitRange(daySpan)));
+    public bool Matches(string executableFilePath, string workingDirPath, string[] arguments)
+        => arguments.Any(
+            arg => arg.Contains("git log") && arg.Contains(
+                GitLog.GitLogParamsStringCommitRange(daySpan)));
 
-        public List<string> StdOutLines => Commits
-            .Select(GetStdOutLines)
-            .Aggregate((acc, commitLines) =>
-                acc
-                    .Concat(MoreEnumerable.Return(GitLog.Delimiter))
-                    .Concat(commitLines).ToList()
-            );
+    public List<string> StdOutLines => Commits
+        .Select(GetStdOutLines)
+        .Aggregate((acc, commitLines) =>
+            acc
+                .Concat(MoreEnumerable.Return(GitLog.Delimiter))
+                .Concat(commitLines).ToList()
+        );
 
-        private static List<string> GetStdOutLines(GitLogCommit commit) =>
-            new List<string>
-                {
-                    commit.Author,
-                    commit.Date.ToString("o")
-                }.Union(
-                    commit.Stats
-                        .Select(stat =>
-                            $"{stat.Insertions}\t{stat.Deletions}\t{stat.FilePath}")
-                )
-                .ToList();
-    }
+    private static List<string> GetStdOutLines(GitLogCommit commit) =>
+        new List<string>
+            {
+                commit.Author,
+                commit.Date.ToString("o")
+            }.Union(
+                commit.Stats
+                    .Select(stat =>
+                        $"{stat.Insertions}\t{stat.Deletions}\t{stat.FilePath}")
+            )
+            .ToList();
 }

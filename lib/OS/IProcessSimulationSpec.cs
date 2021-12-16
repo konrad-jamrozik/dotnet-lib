@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
 
-namespace Wikitools.Lib.OS
+namespace Wikitools.Lib.OS;
+
+public interface IProcessSimulationSpec
 {
-    public interface IProcessSimulationSpec
-    {
-        List<string> StdOutLines { get; }
-        bool Matches(string executableFilePath, string workingDirPath, string[] arguments);
-    }
+    List<string> StdOutLines { get; }
+    bool Matches(string executableFilePath, string workingDirPath, string[] arguments);
 }

@@ -1,7 +1,6 @@
-﻿namespace Wikitools.Lib.OS
+﻿namespace Wikitools.Lib.OS;
+
+public class Environment : IEnvironment
 {
-    public class Environment : IEnvironment
-    {
-        public string? Value(string varName) => System.Environment.GetEnvironmentVariable(varName);
-    }
+    public string? Value(string varName) => System.Environment.GetEnvironmentVariable(varName);
 }

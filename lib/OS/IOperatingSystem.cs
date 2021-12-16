@@ -1,7 +1,6 @@
-﻿namespace Wikitools.Lib.OS
+﻿namespace Wikitools.Lib.OS;
+
+public interface IOperatingSystem
 {
-    public interface IOperatingSystem
-    {
-        IProcess Process(string executableFilePath, Dir workingDir, params string[] arguments);
-    }
+    IProcess Process(string executableFilePath, Dir workingDir, params string[] arguments);
 }

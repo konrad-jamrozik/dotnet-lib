@@ -6,12 +6,12 @@ using Wikitools.Lib.Json;
 using Xunit;
 using Xunit.Sdk;
 
-namespace Wikitools.Lib.Tests.Json
+namespace Wikitools.Lib.Tests.Json;
+
+public class JsonDiffTests
 {
-    public class JsonDiffTests
+    private static readonly List<(string baseline, string target, string expectedDiff)> SimpleCases = new()
     {
-        private static readonly List<(string baseline, string target, string expectedDiff)> SimpleCases = new()
-        {
             // @formatter:off
             ("1"          , "1"          , "{}"),
             ("1"          , "2"          , "'! baseline: 1 | target: 2'"),
@@ -32,11 +32,11 @@ namespace Wikitools.Lib.Tests.Json
             ("{ 'e': 'xyz' }"     , "{ 'e': 'xyw' }"     , "{'e':'! baseline: xyz | target: xyw'}"),
             ("{ 'a': 1, 'b': 2 }" , "{ 'b': 2, 'a': 1 }" , "{}"),
 
-            // @formatter:on
-        };
+        // @formatter:on
+    };
 
-        private static readonly List<(string baseline, string target, string expectedDiff)> ComplexCases = new()
-        {
+    private static readonly List<(string baseline, string target, string expectedDiff)> ComplexCases = new()
+    {
             // @formatter:off
             ("[1,'a']","['a',1]","{"+
                 "'0':'! ValueKind baseline: Number (1) | target: String (a)',"+
@@ -51,64 +51,64 @@ namespace Wikitools.Lib.Tests.Json
                 "}"),
 
             (DeeplyNestedJson("",""), DeeplyNestedJson("",""), "{}"),
-            // @formatter:on
-        };
+        // @formatter:on
+    };
 
-        [Fact]
-        public void DiffIsEmptyTrue() => Assert.True(new JsonDiff("{}", "{}").IsEmpty);
+    [Fact]
+    public void DiffIsEmptyTrue() => Assert.True(new JsonDiff("{}", "{}").IsEmpty);
 
-        [Fact]
-        public void DiffIsEmptyFalse() => Assert.False(new JsonDiff("{}", "[]").IsEmpty);
+    [Fact]
+    public void DiffIsEmptyFalse() => Assert.False(new JsonDiff("{}", "[]").IsEmpty);
 
-        [Fact]
-        public void DiffsSimpleCases() => Verify(SimpleCases);
+    [Fact]
+    public void DiffsSimpleCases() => Verify(SimpleCases);
 
-        [Fact]
-        public void DiffsComplexCases() => Verify(ComplexCases);
+    [Fact]
+    public void DiffsComplexCases() => Verify(ComplexCases);
 
-        [Fact]
-        public void DiffsVeryComplexCase() => Verify(
-            0,
-            (DeeplyNestedJson(",'foo'", "'a',"), DeeplyNestedJson("", "'b',"), DeeplyNestedDiff),
-            useReadableString: true);
+    [Fact]
+    public void DiffsVeryComplexCase() => Verify(
+        0,
+        (DeeplyNestedJson(",'foo'", "'a',"), DeeplyNestedJson("", "'b',"), DeeplyNestedDiff),
+        useReadableString: true);
 
-        private static void Verify(List<(string baseline, string target, string expectedDiff)> testsData) =>
-            Enumerable.Range(0, testsData.Count)
-                .ToList()
-                .ForEach(i => { Verify(i + 1, testsData[i]); });
+    private static void Verify(List<(string baseline, string target, string expectedDiff)> testsData) =>
+        Enumerable.Range(0, testsData.Count)
+            .ToList()
+            .ForEach(i => { Verify(i + 1, testsData[i]); });
 
-        private static void Verify(
-            int testIndex,
-            (string baseline, string target, string expectedDiff) testData,
-            bool useReadableString = false)
+    private static void Verify(
+        int testIndex,
+        (string baseline, string target, string expectedDiff) testData,
+        bool useReadableString = false)
+    {
+        var baseline     = testData.baseline.Replace('\'', '"');
+        var target       = testData.target.Replace('\'', '"');
+        var expectedDiff = testData.expectedDiff.Replace('\'', '"');
+
+        // Act
+        var actualDiff = new JsonDiff(
+            JsonDocument.Parse(baseline),
+            JsonDocument.Parse(target));
+
+        var actualDiffStr = useReadableString ? actualDiff.ToString() : actualDiff.ToRawString();
+
+        // Assert
+        if (expectedDiff != actualDiffStr)
         {
-            var baseline     = testData.baseline.Replace('\'', '"');
-            var target       = testData.target.Replace('\'', '"');
-            var expectedDiff = testData.expectedDiff.Replace('\'', '"');
-
-            // Act
-            var actualDiff = new JsonDiff(
-                JsonDocument.Parse(baseline),
-                JsonDocument.Parse(target));
-
-            var actualDiffStr = useReadableString ? actualDiff.ToString() : actualDiff.ToRawString();
-
-            // Assert
-            if (expectedDiff != actualDiffStr)
-            {
-                var exceptionMessage = $"Test no {testIndex} failed." + Environment.NewLine +
-                                       $"Baseline     : {baseline}" + Environment.NewLine +
-                                       $"Target       : {target}" + Environment.NewLine +
-                                       $"Expected diff: {expectedDiff}." + Environment.NewLine +
-                                       $"Actual   diff: {actualDiffStr}";
-                exceptionMessage = exceptionMessage.Replace('"', '\'');
-                throw new XunitException(exceptionMessage);
-            }
+            var exceptionMessage = $"Test no {testIndex} failed." + Environment.NewLine +
+                                   $"Baseline     : {baseline}" + Environment.NewLine +
+                                   $"Target       : {target}" + Environment.NewLine +
+                                   $"Expected diff: {expectedDiff}." + Environment.NewLine +
+                                   $"Actual   diff: {actualDiffStr}";
+            exceptionMessage = exceptionMessage.Replace('"', '\'');
+            throw new XunitException(exceptionMessage);
         }
+    }
 
-        private static string DeeplyNestedJson(string slot1, string slot2)
-        {
-            return @$"{{
+    private static string DeeplyNestedJson(string slot1, string slot2)
+    {
+        return @$"{{
     'arrayProp': [
         10,
         20,
@@ -148,9 +148,9 @@ namespace Wikitools.Lib.Tests.Json
         ]
     }}
 }}";
-        }
+    }
 
-        private const string DeeplyNestedDiff = @"{
+    private const string DeeplyNestedDiff = @"{
   'arrayProp': {
     '2': {
       'arrayProp/3/fooProp': {
@@ -174,5 +174,4 @@ namespace Wikitools.Lib.Tests.Json
     }
   }
 }";
-    }
 }

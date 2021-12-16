@@ -1,8 +1,7 @@
-﻿namespace Wikitools.Lib.Primitives
+﻿namespace Wikitools.Lib.Primitives;
+
+public enum DateTimePrecision
 {
-    public enum DateTimePrecision
-    {
-        Month,
-        Day
-    }
+    Month,
+    Day
 }

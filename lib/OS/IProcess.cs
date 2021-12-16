@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Wikitools.Lib.OS
+namespace Wikitools.Lib.OS;
+
+public interface IProcess
 {
-    public interface IProcess
-    {
-        Task<List<string>> GetStdOutLines();
-    }
+    Task<List<string>> GetStdOutLines();
 }
