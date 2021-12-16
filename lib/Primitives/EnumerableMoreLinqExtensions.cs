@@ -8,10 +8,6 @@ namespace Wikitools.Lib.Primitives
 {
     public static class EnumerableMoreLinqExtensions
     {
-        public static IEnumerable<TSource> DistinctBy<TSource, TKey>(
-            this IEnumerable<TSource> source,
-            Func<TSource, TKey> selectKey) => MoreEnumerable.DistinctBy(source, selectKey);
-
         public static void ForEach<TSource>(
             this IEnumerable<TSource> source,
             Action<TSource> action) => MoreEnumerable.ForEach(source, action);
