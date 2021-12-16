@@ -33,7 +33,7 @@ public record GitAuthorStats(
             ? statsSumByAuthor.Take((int)top).ToArray()
             : statsSumByAuthor;
 
-        var rows = statsSumByAuthor
+        GitAuthorStats[] stats = statsSumByAuthor
             .Select(
                 (data, i) => new GitAuthorStats(
                     i + 1,
@@ -43,7 +43,7 @@ public record GitAuthorStats(
                     data.deletions))
             .ToArray();
 
-        return rows;
+        return stats;
     }
 
     private static string AuthorNameWithIcons(
@@ -76,6 +76,7 @@ public record GitAuthorStats(
         var statsSumByAuthor = commitsByAuthor.Select(authorCommits =>
             (
                 author: authorCommits.Key,
+                // kja this is not true; there may be overlap in the stats, and thus they need to be deduplicated.
                 filesChanged: authorCommits.Sum(c => c.Stats.Length),
                 insertions: authorCommits.Sum(c => c.Stats.Sum(s => s.Insertions)),
                 deletions: authorCommits.Sum(c => c.Stats.Sum(s => s.Deletions))
