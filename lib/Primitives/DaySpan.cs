@@ -35,5 +35,9 @@ namespace Wikitools.Lib.Primitives
         /// <param name="date"></param>
         public bool Contains(DateTime date)
             => AfterDay.CompareTo(date) <= 0 && 0 <= BeforeDay.AddDays(1).CompareTo(date);
+
+        public bool IsSubsetOf(DaySpan daySpan)
+            => AfterDay.CompareTo(daySpan.AfterDay) >= 0 &&
+               BeforeDay.CompareTo(daySpan.BeforeDay) <= 0;
     }
 }
