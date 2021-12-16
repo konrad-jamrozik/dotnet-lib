@@ -45,7 +45,6 @@ public class TopStatsReportIntegrationTests
         var last7Days = new DaySpan(ago7Days, ago1Day);
         var last28Days = new DaySpan(ago28Days, ago1Day);
         
-        // kja now commits is of type GitLogCommits, allowing me to make invariant checks on commit date ranges against 7 days and 28 days below.
         var commits = GitLogCommits(timeline, fs, cfg, dataDays);
         
         var commitsLast7Days = new GitLogCommits(commits, last7Days);

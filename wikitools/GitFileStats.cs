@@ -14,17 +14,8 @@ public record GitFileStats(
 {
     public static readonly object[] HeaderRow = { "Place", "File Path", "Insertions", "Deletions" };
 
-    // kja At some point will need to use it in TopStatsReport to get commits.DaySpan
-    public static GitFileStats[] From2(
-        GitLogCommits commits,
-        Func<string, bool>? filePathFilter = null,
-        int? top = null)
-    {
-        return From(commits, filePathFilter, top);
-    }
-
     public static GitFileStats[] From(
-        IEnumerable<GitLogCommit> commits,
+        GitLogCommits commits,
         Func<string, bool>? filePathFilter = null,
         int? top = null)
     {

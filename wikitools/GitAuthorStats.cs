@@ -17,18 +17,8 @@ public record GitAuthorStats(
     public static readonly object[] HeaderRow =
         { "Place", "Author", "Files changed", "Insertions", "Deletions" };
 
-    // kja At some point will need to use it in TopStatsReport to get commits.DaySpan
-    public static GitAuthorStats[] From2(
-        GitLogCommits commits,
-        Func<string, bool>? authorFilter = null,
-        int? top = null,
-        bool addIcons = false)
-    {
-        return From(commits, authorFilter, top, addIcons);
-    }
-
     public static GitAuthorStats[] From(
-        IEnumerable<GitLogCommit> commits,
+        GitLogCommits commits,
         Func<string, bool>? authorFilter = null,
         int? top = null,
         bool addIcons = false)
