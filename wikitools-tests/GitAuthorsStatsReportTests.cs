@@ -19,8 +19,8 @@ public class GitAuthorsStatsReportTests
         var data              = new ReportTestsData();
         var commitsData       = data.CommitsLogs;
         var timeline          = new SimulatedTimeline();
-        var logDays           = 15;
-        var logDaysSpan        = new DaySpan(timeline.UtcNow, logDays);
+        var commitDays        = 15;
+        var logDaysSpan       = new DaySpan(timeline.UtcNow, commitDays);
         var fs                = new SimulatedFileSystem();
         var gitRepoDir        = fs.NextSimulatedDir();
         var gitExecutablePath = "unused";
@@ -29,15 +29,12 @@ public class GitAuthorsStatsReportTests
 
         // Arrange SUT declaration
         var gitLog  = new GitLogDeclare().GitLog(timeline, os, gitRepoDir, gitExecutablePath);
-        var commits = gitLog.Commits(logDays);
-        // kj2 .Result
-        var stats   = GitAuthorStats.From(commits.Result, top: top);
-        var sut     = new GitAuthorsStatsReport(timeline, logDays, stats);
+        var sut = new GitAuthorsStatsReport(timeline, gitLog, top, commitDays);
 
         // Arrange expectations
         var expected = new MarkdownDocument(Task.FromResult(new object[]
         {
-            string.Format(GitAuthorsStatsReport.DescriptionFormat, logDays, timeline.UtcNow) 
+            string.Format(GitAuthorsStatsReport.DescriptionFormat, commitDays, timeline.UtcNow) 
             + MarkdownDocument.LineBreakMarker,
             "" + MarkdownDocument.LineBreakMarker,
             new TabularData((GitAuthorStats.HeaderRow,

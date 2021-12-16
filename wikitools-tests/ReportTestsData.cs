@@ -18,9 +18,9 @@ public record ReportTestsData
         ExpectedRows = new Dictionary<(string className, object input), object[][]>()
         {
             [(nameof(GitAuthorsStatsReportTests), CommitsLogs)] = new[] {
-                new object[] { 1, "AuthorC", 4, 200+300+601+400, 5+82+7+13 },
-                new object[] { 2, "AuthorA", 1, 100, 10 },
-                new object[] { 3, "AuthorB", 1, 77, 7 },
+                new object[] { 1, "AuthorC :fire::fire::fire:", 4, 200+300+601+400, 5+82+7+13 },
+                new object[] { 2, "AuthorA :fire::fire:", 1, 100, 10 },
+                new object[] { 3, "AuthorB :fire:", 1, 77, 7 },
             },
             [(nameof(GitFilesStatsReportTests), CommitsLogs)] = new[] {
                 new object[] { 1, "/Foo/bar601_7.md", 601, 7 },

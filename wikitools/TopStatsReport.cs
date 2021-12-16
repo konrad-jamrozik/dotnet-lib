@@ -1,4 +1,5 @@
 using Wikitools.Lib.Data;
+using Wikitools.Lib.Git;
 using Wikitools.Lib.Markdown;
 using Wikitools.Lib.Primitives;
 
@@ -38,6 +39,32 @@ public record TopStatsReport : MarkdownDocument
             pageViewDataRowsLast7Days,
             pageViewDataRowsLast28Days)) { }
 
+    // kja migrate the integration test to this ctor. Then gradually fill it up.
+    public TopStatsReport(
+        Timeline timeline,
+        GitLog gitLog,
+        int top,
+        string[]? excludedAuthors) : base(GetContent2(timeline, gitLog, top, excludedAuthors)) {}
+
+
+    private static object[] GetContent2(Timeline timeline, GitLog gitLog, int top, string[]? excludedAuthors)
+    {
+        var commitDays7 = 7;
+        RankedTop<GitAuthorStats> authorStatsLast7Days = GitAuthorStats.From2(gitLog, top, commitDays7, excludedAuthors);
+        return new object[]
+        {
+            $"This page was generated on {timeline.UtcNow} UTC",
+            $"All day ranges are up until EOD {timeline.DaysFromUtcNow(-1)} UTC",
+            "",
+            "[[_TOC_]]",
+            "",
+            string.Format(AuthorDescriptionFormat, authorStatsLast7Days.Top, commitDays7),
+            "",
+            // kj2 would be cool if paths in these tables are hyperlinked, like in WTOC.
+            GitAuthorStats.TabularData(authorStatsLast7Days)
+        };
+    }
+
     private static object[] GetContent(
         Timeline timeline,
         RankedTop<GitAuthorStats> authorDataRowsLast7Days,
@@ -46,38 +73,39 @@ public record TopStatsReport : MarkdownDocument
         GitFileStats[] fileDataRowsLast30Days,
         PageViewStats[] pageViewDataRowsLast7Days,
         PageViewStats[] pageViewDataRowsLast28Days)
-        =>
-            new object[]
-            {
-                $"This page was generated on {timeline.UtcNow} UTC",
-                $"All day ranges are up until EOD {timeline.DaysFromUtcNow(-1)} UTC",
-                "",
-                "[[_TOC_]]",
-                "",
-                // kj2 dehardcode magic constants. They should come from the stats collections themselves: both ranges and tops.
-                string.Format(AuthorDescriptionFormat, authorDataRowsLast7Days.Top, 7),
-                "",
-                // kj2 would be cool if paths in these tables are hyperlinked, like in WTOC.
-                GitAuthorStats.TabularData(authorDataRowsLast7Days), 
-                "",
-                string.Format(AuthorDescriptionFormat, authorDataRowsLast30Days.Top, 28),
-                "",
-                GitAuthorStats.TabularData(authorDataRowsLast30Days),
-                "",
-                string.Format(FileDescriptionFormat, 5, 7),
-                "",
-                GitFileStats.TabularData(fileDataRowsLast7Days),
-                "",
-                string.Format(FileDescriptionFormat, 10, 28),
-                "",
-                GitFileStats.TabularData(fileDataRowsLast30Days),
-                "",
-                string.Format(PageViewDescriptionFormat, 5, 7),
-                "",
-                PageViewStats.TabularData(pageViewDataRowsLast7Days),
-                "",
-                string.Format(PageViewDescriptionFormat, 10, 28),
-                "",
-                PageViewStats.TabularData(pageViewDataRowsLast28Days)
-            };
+    {
+        return new object[]
+        {
+            $"This page was generated on {timeline.UtcNow} UTC",
+            $"All day ranges are up until EOD {timeline.DaysFromUtcNow(-1)} UTC",
+            "",
+            "[[_TOC_]]",
+            "",
+            // kj2 dehardcode magic constants. They should come from the stats collections themselves: both ranges and tops.
+            string.Format(AuthorDescriptionFormat, authorDataRowsLast7Days.Top, 7),
+            "",
+            // kj2 would be cool if paths in these tables are hyperlinked, like in WTOC.
+            GitAuthorStats.TabularData(authorDataRowsLast7Days),
+            "",
+            string.Format(AuthorDescriptionFormat, authorDataRowsLast30Days.Top, 28),
+            "",
+            GitAuthorStats.TabularData(authorDataRowsLast30Days),
+            "",
+            string.Format(FileDescriptionFormat, 5, 7),
+            "",
+            GitFileStats.TabularData(fileDataRowsLast7Days),
+            "",
+            string.Format(FileDescriptionFormat, 10, 28),
+            "",
+            GitFileStats.TabularData(fileDataRowsLast30Days),
+            "",
+            string.Format(PageViewDescriptionFormat, 5, 7),
+            "",
+            PageViewStats.TabularData(pageViewDataRowsLast7Days),
+            "",
+            string.Format(PageViewDescriptionFormat, 10, 28),
+            "",
+            PageViewStats.TabularData(pageViewDataRowsLast28Days)
+        };
+    }
 }

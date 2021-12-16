@@ -16,6 +16,19 @@ public record GitAuthorStats(
     public static readonly object[] HeaderRow =
         { "Place", "Author", "Files changed", "Insertions", "Deletions" };
 
+    // kja migrate away from From. Then delete it. Then rename From2 to From.
+    public static RankedTop<GitAuthorStats> From2(GitLog gitLog, int top, int commitDays, string[]? excludedAuthors)
+    {
+        // kj2 result
+        var commits = gitLog.Commits(commitDays).Result;
+
+        Func<string, bool>? authorFiler = excludedAuthors != null
+            ? author => !excludedAuthors.Any(author.Contains)
+            : null;
+
+        return From(commits, authorFiler, top);
+    }
+
     public static RankedTop<GitAuthorStats> From(
         GitLogCommits commits,
         Func<string, bool>? authorFilter = null,

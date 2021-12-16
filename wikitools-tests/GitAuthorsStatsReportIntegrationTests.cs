@@ -41,15 +41,12 @@ public class GitAuthorsStatsReportIntegrationTests
             gitRepoDir,
             cfg.GitExecutablePath);
 
-        var commits = gitLog.Commits(cfg.GitLogDays);
-        bool AuthorFilter(string author) => !cfg.ExcludedAuthors.Any(author.Contains);
-        // kj2 .Result
-        var stats = GitAuthorStats.From(commits.Result, AuthorFilter, cfg.Top); 
-
         var authorsReport = new GitAuthorsStatsReport(
             timeline,
+            gitLog,
+            cfg.Top,
             cfg.GitLogDays,
-            stats);
+            cfg.ExcludedAuthors);
 
         return authorsReport;
     }

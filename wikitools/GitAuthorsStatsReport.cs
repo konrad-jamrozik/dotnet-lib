@@ -1,4 +1,4 @@
-using Wikitools.Lib.Data;
+using Wikitools.Lib.Git;
 using Wikitools.Lib.Markdown;
 using Wikitools.Lib.Primitives;
 
@@ -10,16 +10,25 @@ public record GitAuthorsStatsReport : MarkdownDocument
 
     public GitAuthorsStatsReport(
         ITimeline timeline,
-        int days,
-        RankedTop<GitAuthorStats> dataRows) : base(
-        GetContent(timeline, days, dataRows)) { }
+        GitLog gitLog,
+        int top,
+        int commitDays,
+        string[]? excludedAuthors = null)
+        : base(GetContent(timeline, gitLog, top, commitDays, excludedAuthors)) { }
 
-    private static object[] GetContent(ITimeline timeline, int days, RankedTop<GitAuthorStats> dataRows)
-        =>
-            new object[]
-            {
-                string.Format(DescriptionFormat, days, timeline.UtcNow),
-                "",
-                GitAuthorStats.TabularData(dataRows)
-            };
+    private static object[] GetContent(
+        ITimeline timeline,
+        GitLog gitLog,
+        int top,
+        int commitDays,
+        string[]? excludedAuthors)
+    {
+        var stats = GitAuthorStats.From2(gitLog, top, commitDays, excludedAuthors);
+        return new object[]
+        {
+            string.Format(DescriptionFormat, commitDays, timeline.UtcNow),
+            "",
+            GitAuthorStats.TabularData(stats)
+        };
+    }
 }
