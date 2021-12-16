@@ -28,6 +28,11 @@ public record GitAuthorStats(
             .Where(s => authorFilter(s.AuthorName))
             .ToArray();
 
+        // kja need to add here GitAuthorsStats, which will add commits daySpan to GitAuthorStats.
+        // Then the RankedTop will be on <GitAuthorsStats> - this will mean it will be on <TColl>  where TColl : IEnumerable<T> (and not only <T>).
+        // Thanks to that in the top stats report I will be able to do RankedTop.Stats.DaySpan.
+        // See GitLogCommits for an idea how to do GitAuthorsStats.
+
         return new RankedTop<GitAuthorStats>(statsSumByAuthor, top);
     }
 
