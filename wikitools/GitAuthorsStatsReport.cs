@@ -1,3 +1,4 @@
+using Wikitools.Lib.Data;
 using Wikitools.Lib.Markdown;
 using Wikitools.Lib.Primitives;
 
@@ -10,10 +11,10 @@ public record GitAuthorsStatsReport : MarkdownDocument
     public GitAuthorsStatsReport(
         ITimeline timeline,
         int days,
-        GitAuthorStats[] dataRows) : base(
+        RankedTop<GitAuthorStats> dataRows) : base(
         GetContent(timeline, days, dataRows)) { }
 
-    private static object[] GetContent(ITimeline timeline, int days, GitAuthorStats[] dataRows)
+    private static object[] GetContent(ITimeline timeline, int days, RankedTop<GitAuthorStats> dataRows)
         =>
             new object[]
             {

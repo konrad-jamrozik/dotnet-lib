@@ -2,6 +2,7 @@ using System.Linq;
 using NUnit.Framework;
 using Wikitools.AzureDevOps;
 using Wikitools.Lib;
+using Wikitools.Lib.Data;
 using Wikitools.Lib.Git;
 using Wikitools.Lib.Json;
 using Wikitools.Lib.OS;
@@ -95,7 +96,7 @@ public class TopStatsReportIntegrationTests
         return commitsResult;
     }
 
-    private static GitAuthorStats[] GitAuthorStats(
+    private static RankedTop<GitAuthorStats> GitAuthorStats(
         WikitoolsCfg cfg,
         GitLogCommits commits,
         int top)

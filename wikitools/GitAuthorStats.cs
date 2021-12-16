@@ -8,7 +8,6 @@ using Wikitools.Lib.Git;
 namespace Wikitools;
 
 public record GitAuthorStats(
-    int Place,
     string AuthorName,
     int FilesChanges,
     int Insertions,
@@ -17,48 +16,34 @@ public record GitAuthorStats(
     public static readonly object[] HeaderRow =
         { "Place", "Author", "Files changed", "Insertions", "Deletions" };
 
-    public static GitAuthorStats[] From(
+    public static RankedTop<GitAuthorStats> From(
         GitLogCommits commits,
         Func<string, bool>? authorFilter = null,
         int? top = null,
         bool addIcons = false)
     {
         authorFilter ??= _ => true;
-        (string author, int filesChanged, int insertions, int deletions)[] statsSumByAuthor = SumByAuthor(commits)
-            .OrderByDescending(s => s.insertions)
-            .Where(s => authorFilter(s.author))
+        GitAuthorStats[] statsSumByAuthor = SumByAuthor(commits)
+            .OrderByDescending(s => s.Insertions)
+            .Where(s => authorFilter(s.AuthorName))
             .ToArray();
 
-        statsSumByAuthor = top is not null
-            ? statsSumByAuthor.Take((int)top).ToArray()
-            : statsSumByAuthor;
-
-        GitAuthorStats[] rankedStats = statsSumByAuthor
-            .Select(
-                (data, i) => new GitAuthorStats(
-                    i + 1,
-                    addIcons ? AuthorNameWithIcons(data, i) : data.author,
-                    data.filesChanged,
-                    data.insertions,
-                    data.deletions))
-            .ToArray();
-
-        return rankedStats;
+        return new RankedTop<GitAuthorStats>(statsSumByAuthor, top);
     }
 
     private static string AuthorNameWithIcons(
-        (string author, int filesChanged, int insertions, int deletions) data,
-        int sortOrder)
+        string authorName,
+        int rank)
     {
-        int fireAmount = Math.Max(3 - sortOrder, 0);
-        return data.author 
+        int fireAmount = Math.Max(4 - rank, 0);
+        return authorName
                + (fireAmount > 0 ? " " : "") 
                // :fire: taken from
                // https://docs.microsoft.com/en-us/azure/devops/project/wiki/markdown-guidance?view=azure-devops#emoji
                + string.Join("", ":fire:".Repeat(fireAmount));
     }
 
-    public static TabularData TabularData(GitAuthorStats[] rows)
+    public static TabularData TabularData(RankedTop<GitAuthorStats> rows)
     {
         // kj2 Rows conversion to object[]: instead of this conversion, TabularData should
         // handle not only object[][], but also arbitrary_record[], and use reflection
@@ -68,26 +53,26 @@ public record GitAuthorStats(
         return new TabularData((headerRow: HeaderRow, rowsAsObjectArrays));
     }
 
-    private static (string author, int filesChanged, int insertions, int deletions)[]
-        SumByAuthor(IEnumerable<GitLogCommit> commits)
+    private static GitAuthorStats[] SumByAuthor(IEnumerable<GitLogCommit> commits)
     {
         var commitsByAuthor = commits.GroupBy(commit => commit.Author);
-        // kj2 To simplify, return here AuthorStats (instead of a tuple). It will have to have 0ed place that will be then overriden by the caller.
-        var statsSumByAuthor = commitsByAuthor.Select(authorCommits =>
-            (
-                author: authorCommits.Key,
-                // kja this is not true; there may be overlap in the stats, and thus they need to be deduplicated.
-                filesChanged: authorCommits.Sum(c => c.Stats.Length),
-                insertions: authorCommits.Sum(c => c.Stats.Sum(s => s.Insertions)),
-                deletions: authorCommits.Sum(c => c.Stats.Sum(s => s.Deletions))
-            )
-        );
+        var statsSumByAuthor = commitsByAuthor.Select(authorCommits => new GitAuthorStats(
+            authorCommits.Key, 
+            // kja this is not true; there may be overlap in the stats, and thus they need to be deduplicated.
+            authorCommits.Sum(c => c.Stats.Length), 
+            authorCommits.Sum(c => c.Stats.Sum(s => s.Insertions)),
+            authorCommits.Sum(c => c.Stats.Sum(s => s.Deletions))
+        ));
         return statsSumByAuthor.ToArray();
     }
 
-    private static object[] AsObjectArray(GitAuthorStats row)
+    private static object[] AsObjectArray((int rank, GitAuthorStats stats) row)
         => new object[]
         {
-            row.Place, row.AuthorName, row.FilesChanges, row.Insertions, row.Deletions
+            row.rank, 
+            AuthorNameWithIcons(row.stats.AuthorName, row.rank), 
+            row.stats.FilesChanges, 
+            row.stats.Insertions,
+            row.stats.Deletions
         };
 }

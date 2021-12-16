@@ -1,3 +1,4 @@
+using Wikitools.Lib.Data;
 using Wikitools.Lib.Markdown;
 using Wikitools.Lib.Primitives;
 
@@ -22,8 +23,8 @@ public record TopStatsReport : MarkdownDocument
     // necessarily come from config; it will be hardcoded in the TopStats type itself.
     public TopStatsReport(
         Timeline timeline,
-        GitAuthorStats[] authorDataRowsLast7Days,
-        GitAuthorStats[] authorDataRowsLast28Days,
+        RankedTop<GitAuthorStats> authorDataRowsLast7Days,
+        RankedTop<GitAuthorStats> authorDataRowsLast28Days,
         GitFileStats[] fileDataRowsLast7Days,
         GitFileStats[] fileDataRowsLast28Days,
         PageViewStats[] pageViewDataRowsLast7Days,
@@ -39,8 +40,8 @@ public record TopStatsReport : MarkdownDocument
 
     private static object[] GetContent(
         Timeline timeline,
-        GitAuthorStats[] authorDataRowsLast7Days,
-        GitAuthorStats[] authorDataRowsLast30Days,
+        RankedTop<GitAuthorStats> authorDataRowsLast7Days,
+        RankedTop<GitAuthorStats> authorDataRowsLast30Days,
         GitFileStats[] fileDataRowsLast7Days,
         GitFileStats[] fileDataRowsLast30Days,
         PageViewStats[] pageViewDataRowsLast7Days,
@@ -54,12 +55,12 @@ public record TopStatsReport : MarkdownDocument
                 "[[_TOC_]]",
                 "",
                 // kj2 dehardcode magic constants. They should come from the stats collections themselves: both ranges and tops.
-                string.Format(AuthorDescriptionFormat, 3, 7),
+                string.Format(AuthorDescriptionFormat, authorDataRowsLast7Days.Top, 7),
                 "",
                 // kj2 would be cool if paths in these tables are hyperlinked, like in WTOC.
                 GitAuthorStats.TabularData(authorDataRowsLast7Days), 
                 "",
-                string.Format(AuthorDescriptionFormat, 5, 28),
+                string.Format(AuthorDescriptionFormat, authorDataRowsLast30Days.Top, 28),
                 "",
                 GitAuthorStats.TabularData(authorDataRowsLast30Days),
                 "",
