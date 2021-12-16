@@ -12,10 +12,16 @@ namespace Wikitools.Lib.Git
 
         public readonly DaySpan DaySpan;
 
+        public GitLogCommits(IEnumerable<GitLogCommit> commits, DaySpan daySpan)
+        {
+            _commits = FilterCommits(commits, daySpan);
+            DaySpan = daySpan;
+        }
+
         public GitLogCommits(GitLogCommits commits, DaySpan daySpan)
         {
             Contract.Assert(daySpan.IsSubsetOf(commits.DaySpan));
-            _commits = commits.Where(commit => daySpan.Contains(commit.Date));
+            _commits = FilterCommits(commits, daySpan);
             DaySpan = daySpan;
         }
 
@@ -24,5 +30,10 @@ namespace Wikitools.Lib.Git
 
         IEnumerator IEnumerable.GetEnumerator()
             => GetEnumerator();
+
+        private static IEnumerable<GitLogCommit> FilterCommits(
+            IEnumerable<GitLogCommit> commits,
+            DaySpan daySpan)
+            => commits.Where(commit => daySpan.Contains(commit.Date));
     }
 }
