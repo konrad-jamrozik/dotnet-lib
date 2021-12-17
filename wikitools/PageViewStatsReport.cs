@@ -1,3 +1,4 @@
+using System.Linq;
 using Wikitools.AzureDevOps;
 using Wikitools.Lib.Markdown;
 using Wikitools.Lib.Primitives;
@@ -34,7 +35,11 @@ public record PageViewStatsReport : MarkdownDocument
         var pageViewStats = PageViewStats.From(wikiStats.Result); // kj2 .Result
         return new object[]
         {
-            string.Format(DescriptionFormat, pageViewsForDays, timeline.UtcNow, pageViewStats.Length),
+            string.Format(
+                DescriptionFormat,
+                pageViewsForDays,
+                timeline.UtcNow,
+                pageViewStats.Count()),
             "",
             PageViewStats.TabularData(pageViewStats)
         };

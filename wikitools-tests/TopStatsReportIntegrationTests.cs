@@ -121,7 +121,7 @@ public class TopStatsReportIntegrationTests
         return fileStats;
     }
 
-    private static PageViewStats[] PageViewStats(
+    private static RankedTop<PageViewStats> PageViewStats(
         ValidWikiPagesStats pagesStats,
         int top)
     {

@@ -24,8 +24,8 @@ public record TopStatsReport : MarkdownDocument
         RankedTop<GitAuthorStats> authorDataRowsLast28Days,
         RankedTop<GitFileStats> fileDataRowsLast7Days,
         RankedTop<GitFileStats> fileDataRowsLast28Days,
-        PageViewStats[] pageViewDataRowsLast7Days,
-        PageViewStats[] pageViewDataRowsLast28Days) : base(
+        RankedTop<PageViewStats> pageViewDataRowsLast7Days,
+        RankedTop<PageViewStats> pageViewDataRowsLast28Days) : base(
         GetContent(
             timeline,
             authorDataRowsLast7Days,
@@ -88,8 +88,8 @@ public record TopStatsReport : MarkdownDocument
         RankedTop<GitAuthorStats> authorDataRowsLast28Days,
         RankedTop<GitFileStats> fileDataRowsLast7Days,
         RankedTop<GitFileStats> fileDataRowsLast28Days,
-        PageViewStats[] pageViewDataRowsLast7Days,
-        PageViewStats[] pageViewDataRowsLast28Days)
+        RankedTop<PageViewStats> pageViewDataRowsLast7Days,
+        RankedTop<PageViewStats> pageViewDataRowsLast28Days)
     {
         return new object[]
         {
