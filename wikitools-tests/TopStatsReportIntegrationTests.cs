@@ -45,8 +45,9 @@ public class TopStatsReportIntegrationTests
         var ago28Days = timeline.DaysFromUtcNow(-dataDays);
         var last7Days = new DaySpan(ago7Days, ago1Day);
         var last28Days = new DaySpan(ago28Days, ago1Day);
-        
-        var commits = GitLogCommits(timeline, fs, cfg, dataDays);
+
+        var gitLog = GitLog(timeline, fs, cfg, dataDays);
+        var commits = gitLog.Commits(dataDays).Result; // kj2 .Result
         
         var commitsLast7Days = new GitLogCommits(commits, last7Days);
         var commitsLast28Days = new GitLogCommits(commits, last28Days);
@@ -73,12 +74,13 @@ public class TopStatsReportIntegrationTests
             pagesStatsLast7Days,
             pagesStatsLast28Days);
 
-        //var newTopStatsReport = new TopStatsReport(timeline, gitLog, top, excludedAuthors);
+        // kja curr work
+        var newTopStatsReport = new TopStatsReport(timeline, gitLog, cfg.ExcludedAuthors);
 
         return topStatsReport;
     }
 
-    private static GitLogCommits GitLogCommits(
+    private static GitLog GitLog(
         ITimeline timeline,
         IFileSystem fs,
         WikitoolsCfg cfg,
@@ -92,10 +94,7 @@ public class TopStatsReportIntegrationTests
             os,
             gitRepoDir,
             cfg.GitExecutablePath);
-
-        var commits = gitLog.Commits(gitLogDays);
-        var commitsResult = commits.Result; // kj2 .Result
-        return commitsResult;
+        return gitLog;
     }
 
     private static RankedTop<GitAuthorStats> GitAuthorStats(
