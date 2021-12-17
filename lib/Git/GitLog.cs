@@ -26,6 +26,7 @@ public record GitLog(ITimeline Timeline, GitRepository Repo)
            // "_including_ commits made during the BeforeDay" vs "_excluding_".
            $"--before={((DateTime)daySpan.BeforeDay.AddDays(1)).ToString(GitLogCommitRangeFormat)} ";
 
+    // kj2 need to memoize stuff from it, now that reports call it themselves.
     public Task<GitLogCommits> Commits(int days)
     {
         var utcNowDay = new DateDay(Timeline.UtcNow);
