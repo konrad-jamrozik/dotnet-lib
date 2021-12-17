@@ -64,7 +64,7 @@ public class TopStatsReportIntegrationTests
         var pagesStatsLast7Days = PageViewStats(pagesStats.Trim(ago7Days, ago1Day), top: 5);
         var pagesStatsLast28Days = PageViewStats(pagesStats.Trim(ago28Days, ago1Day), top: 10);
 
-        var authorsReport = new TopStatsReport(
+        var topStatsReport = new TopStatsReport(
             timeline,
             authorStatsLast7Days, 
             authorStatsLast28Days,
@@ -73,7 +73,7 @@ public class TopStatsReportIntegrationTests
             pagesStatsLast7Days,
             pagesStatsLast28Days);
 
-        return authorsReport;
+        return topStatsReport;
     }
 
     private static GitLogCommits GitLogCommits(

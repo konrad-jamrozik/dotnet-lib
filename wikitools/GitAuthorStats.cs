@@ -18,7 +18,11 @@ public record GitAuthorStats(
 
     // kja migrate away from From. Then delete it. Then rename From2 to From.
     // kja From -> RankedTopFrom
-    public static RankedTop<GitAuthorStats> From2(GitLog gitLog, int top, int commitDays, string[]? excludedAuthors)
+    public static RankedTop<GitAuthorStats> From2(
+        GitLog gitLog,
+        int top,
+        int commitDays,
+        string[]? excludedAuthors)
     {
         // kj2 result
         var commits = gitLog.Commits(commitDays).Result;
