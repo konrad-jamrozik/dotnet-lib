@@ -46,22 +46,12 @@ public class PageViewStatsReportIntegrationTests
             adoCfg.AdoPatEnvVar,
             cfg.StorageDirPath);
 
-        // kj2 this will trigger call to ADO API. Not good. Should be deferred until WriteAll by the caller.
-        // I might need to fix all Tasks to AsyncLazy to make this work, or by using new Task() and then task.Start();
-        // https://docs.microsoft.com/en-us/dotnet/api/system.threading.tasks.task?view=net-5.0#separating-task-creation-and-execution
-        // Maybe source generators could help here. See [Cache] and [Memoize] use cases here:
-        // https://github.com/dotnet/roslyn/issues/16160
-        // 11/17/2021: Or maybe doing stuff like LINQ IEnumerable is enough? IEnumerable and related
-        // collections are lazy after all.
-        var pageViewsForDays = 30 * 10;
-        var pagesViewsStats = wiki.PagesStats(pageViewsForDays);
+        int pageViewsForDays = 30 * 10;
 
-        // kj2 .Result
-        var pageViewStats = PageViewStats.From(pagesViewsStats.Result);
         var pagesViewsReport = new PageViewStatsReport(
             timeline,
-            pageViewsForDays,
-            pageViewStats);
+            wiki,
+            pageViewsForDays);
 
         return pagesViewsReport;
     }

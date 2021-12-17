@@ -21,12 +21,11 @@ public class PageViewStatsReportTests
 
         // Arrange simulations
         var timeline = new SimulatedTimeline();
-        var adoWiki  = new SimulatedAdoWiki(ValidWikiPagesStatsFixture.Build(pagesStatsData));
+        var wiki     = new SimulatedAdoWiki(ValidWikiPagesStatsFixture.Build(pagesStatsData));
 
         // Arrange SUT declaration
-        var pagesStats    = adoWiki.PagesStats(pageViewsForDays);
-        var pageViewStats = PageViewStats.From(pagesStats.Result); // kj2 .Result
-        var sut           = new PageViewStatsReport(timeline, pageViewsForDays, pageViewStats);
+        var pagesStats = wiki.PagesStats(pageViewsForDays);
+        var sut        = new PageViewStatsReport(timeline, wiki, pageViewsForDays);
 
         var expected = new MarkdownDocument(Task.FromResult(new object[]
         {
