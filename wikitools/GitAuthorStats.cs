@@ -13,6 +13,7 @@ public record GitAuthorStats(
     int Insertions,
     int Deletions)
 {
+    // kj2 remove "Place" from here.
     public static readonly object[] HeaderRow =
         { "Place", "Author", "Files changed", "Insertions", "Deletions" };
 
@@ -20,12 +21,11 @@ public record GitAuthorStats(
     // kja From -> RankedTopFrom
     public static RankedTop<GitAuthorStats> From2(
         GitLog gitLog,
-        int top,
         int commitDays,
-        string[]? excludedAuthors)
+        string[]? excludedAuthors,
+        int top)
     {
-        // kj2 result
-        var commits = gitLog.Commits(commitDays).Result;
+        var commits = gitLog.Commits(commitDays).Result; // kj2 .result
 
         Func<string, bool>? authorFiler = excludedAuthors != null
             ? author => !excludedAuthors.Any(author.Contains)

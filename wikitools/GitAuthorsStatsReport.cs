@@ -23,7 +23,7 @@ public record GitAuthorsStatsReport : MarkdownDocument
         int commitDays,
         string[]? excludedAuthors)
     {
-        var stats = GitAuthorStats.From2(gitLog, top, commitDays, excludedAuthors);
+        var stats = GitAuthorStats.From2(gitLog, commitDays, excludedAuthors, top);
         return new object[]
         {
             string.Format(DescriptionFormat, commitDays, timeline.UtcNow),

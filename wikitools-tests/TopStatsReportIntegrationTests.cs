@@ -75,7 +75,11 @@ public class TopStatsReportIntegrationTests
             pagesStatsLast28Days);
 
         // kja curr work
-        var newTopStatsReport = new TopStatsReport(timeline, gitLog, cfg.ExcludedAuthors);
+        var newTopStatsReport = new TopStatsReport(
+            timeline,
+            gitLog,
+            cfg.ExcludedAuthors,
+            cfg.ExcludedPaths);
 
         return topStatsReport;
     }
@@ -107,7 +111,10 @@ public class TopStatsReportIntegrationTests
         return authorStats;
     }
 
-    private static GitFileStats[] GitFileStats(WikitoolsCfg cfg, GitLogCommits commits, int top)
+    private static RankedTop<GitFileStats> GitFileStats(
+        WikitoolsCfg cfg,
+        GitLogCommits commits,
+        int top)
     {
         bool FilePathFilter(string path) => !cfg.ExcludedPaths.Any(path.Contains);
         var fileStats = Wikitools.GitFileStats.From(commits, FilePathFilter, top);

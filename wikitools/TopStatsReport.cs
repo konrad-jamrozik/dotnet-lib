@@ -18,16 +18,12 @@ public record TopStatsReport : MarkdownDocument
 
     // kja the report itself decides what are the top ranges (7d, 30d, top 10), so it needs to
     // to do the filtering itself, and not get the data as input.
-    // UNLESS the data should come from config, like "TopStatsReportSettings" json element.
-    // Then this report just unpacks a bundle of stats, like "TopStats", which has "TopStats.AuthorStatsForLastWeek".
-    // Yeah, I think I will do the "TopStats as input" approach, but perhaps the 7d/30d/top 10 won't 
-    // necessarily come from config; it will be hardcoded in the TopStats type itself.
     public TopStatsReport(
         Timeline timeline,
         RankedTop<GitAuthorStats> authorDataRowsLast7Days,
         RankedTop<GitAuthorStats> authorDataRowsLast28Days,
-        GitFileStats[] fileDataRowsLast7Days,
-        GitFileStats[] fileDataRowsLast28Days,
+        RankedTop<GitFileStats> fileDataRowsLast7Days,
+        RankedTop<GitFileStats> fileDataRowsLast28Days,
         PageViewStats[] pageViewDataRowsLast7Days,
         PageViewStats[] pageViewDataRowsLast28Days) : base(
         GetContent(
@@ -43,14 +39,23 @@ public record TopStatsReport : MarkdownDocument
     public TopStatsReport(
         Timeline timeline,
         GitLog gitLog,
-        string[]? excludedAuthors) : base(GetContent2(timeline, gitLog, excludedAuthors)) {}
+        string[]? excludedAuthors,
+        string[]? excludedPaths) 
+        : base(GetContent2(timeline, gitLog, excludedAuthors, excludedPaths)) {}
 
 
-    private static object[] GetContent2(Timeline timeline, GitLog gitLog, string[]? excludedAuthors)
+    private static object[] GetContent2(Timeline timeline, GitLog gitLog, string[]? excludedAuthors, string[]? excludedPaths)
     {
         var top3 = 3;
-        var commitDays7 = 7;
-        RankedTop<GitAuthorStats> authorStatsLast7Days = GitAuthorStats.From2(gitLog, top3, commitDays7, excludedAuthors);
+        var top5 = 5;
+        var top10 = 10;
+        var days7 = 7;
+        var days28 = 28;
+        var authorStatsLast7Days = GitAuthorStats.From2(gitLog, days7, excludedAuthors, top3);
+        var authorStatsLast28Days = GitAuthorStats.From2(gitLog, days28, excludedAuthors, top5);
+        var fileStatsLast7Days = GitFileStats.From2(gitLog, days7, excludedPaths, top5);
+        var fileStatsLast28Days = GitFileStats.From2(gitLog, days28, excludedPaths, top10);
+
         return new object[]
         {
             $"This page was generated on {timeline.UtcNow} UTC",
@@ -58,19 +63,31 @@ public record TopStatsReport : MarkdownDocument
             "",
             "[[_TOC_]]",
             "",
-            string.Format(AuthorDescriptionFormat, authorStatsLast7Days.Top, commitDays7),
+            string.Format(AuthorDescriptionFormat, authorStatsLast7Days.Top, days7),
             "",
             // kj2 would be cool if paths in these tables are hyperlinked, like in WTOC.
-            GitAuthorStats.TabularData(authorStatsLast7Days)
+            GitAuthorStats.TabularData(authorStatsLast7Days),
+            "",
+            string.Format(AuthorDescriptionFormat, authorStatsLast28Days.Top, days28),
+            "",
+            GitAuthorStats.TabularData(authorStatsLast28Days),
+            "",
+            string.Format(FileDescriptionFormat, fileStatsLast7Days.Top, days7),
+            "",
+            GitFileStats.TabularData(fileStatsLast7Days),
+            "",
+            string.Format(FileDescriptionFormat, fileStatsLast28Days.Top, days28),
+            "",
+            GitFileStats.TabularData(fileStatsLast28Days),
         };
     }
 
     private static object[] GetContent(
         Timeline timeline,
         RankedTop<GitAuthorStats> authorDataRowsLast7Days,
-        RankedTop<GitAuthorStats> authorDataRowsLast30Days,
-        GitFileStats[] fileDataRowsLast7Days,
-        GitFileStats[] fileDataRowsLast30Days,
+        RankedTop<GitAuthorStats> authorDataRowsLast28Days,
+        RankedTop<GitFileStats> fileDataRowsLast7Days,
+        RankedTop<GitFileStats> fileDataRowsLast28Days,
         PageViewStats[] pageViewDataRowsLast7Days,
         PageViewStats[] pageViewDataRowsLast28Days)
     {
@@ -87,9 +104,9 @@ public record TopStatsReport : MarkdownDocument
             // kj2 would be cool if paths in these tables are hyperlinked, like in WTOC.
             GitAuthorStats.TabularData(authorDataRowsLast7Days),
             "",
-            string.Format(AuthorDescriptionFormat, authorDataRowsLast30Days.Top, 28),
+            string.Format(AuthorDescriptionFormat, authorDataRowsLast28Days.Top, 28),
             "",
-            GitAuthorStats.TabularData(authorDataRowsLast30Days),
+            GitAuthorStats.TabularData(authorDataRowsLast28Days),
             "",
             string.Format(FileDescriptionFormat, 5, 7),
             "",
@@ -97,7 +114,7 @@ public record TopStatsReport : MarkdownDocument
             "",
             string.Format(FileDescriptionFormat, 10, 28),
             "",
-            GitFileStats.TabularData(fileDataRowsLast30Days),
+            GitFileStats.TabularData(fileDataRowsLast28Days),
             "",
             string.Format(PageViewDescriptionFormat, 5, 7),
             "",

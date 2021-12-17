@@ -7,60 +7,58 @@ using Wikitools.Lib.Git;
 namespace Wikitools;
 
 public record GitFileStats(
-    int Place,
     string FilePath,
     int Insertions,
     int Deletions)
 {
+    // kj2 remove "Place" from here.
     public static readonly object[] HeaderRow = { "Place", "File Path", "Insertions", "Deletions" };
 
-    public static GitFileStats[] From(
+    public static RankedTop<GitFileStats> From2(
+        GitLog gitLog,
+        int commitDays,
+        string[]? excludedPaths,
+        int top)
+    {
+        var commits = gitLog.Commits(commitDays).Result; // kj2 .result
+
+        Func<string, bool>? filePathFilter = excludedPaths != null
+            ? path => !excludedPaths.Any(path.Contains)
+            : null;
+
+        return From(commits, filePathFilter, top);
+    }
+
+    public static RankedTop<GitFileStats> From(
         GitLogCommits commits,
         Func<string, bool>? filePathFilter = null,
         int? top = null)
     {
         filePathFilter ??= _ => true;
-        (string filePath, int insertions, int deletions)[] statsSumByFilePath =
+        GitFileStats[] statsSumByFilePath =
             SumByFilePath(commits)
-                .OrderByDescending(stats => stats.insertions)
-                .Where(stat => filePathFilter(stat.filePath))
+                .OrderByDescending(stats => stats.Insertions)
+                .Where(stat => filePathFilter(stat.FilePath))
                 .ToArray();
 
-        statsSumByFilePath = top is not null 
-            ? statsSumByFilePath.Take((int) top).ToArray() 
-            : statsSumByFilePath;
-
-        GitFileStats[] rankedStats = statsSumByFilePath
-            .Select(
-                (stats, i) => new GitFileStats(
-                    i + 1,
-                    stats.filePath,
-                    stats.insertions,
-                    stats.deletions))
-            .ToArray();
-
-        return rankedStats;
+        return new RankedTop<GitFileStats>(statsSumByFilePath, top);
     }
 
-    private static (string filePath, int insertions, int deletions)[] SumByFilePath(
-        IEnumerable<GitLogCommit> commits)
+    private static GitFileStats[] SumByFilePath(IEnumerable<GitLogCommit> commits)
     {
         var fileStats = commits.SelectMany(
             c => c.Stats.Select(s => (s.FilePath, s.Insertions, s.Deletions)));
         var statsByFilePath = fileStats.GroupBy(s => s.FilePath);
-        // kj2 return here FileStats with 0ed place that will be changed by the caller.
         var statsSumByFilePath = statsByFilePath.Select(
-            pathStats =>
-            (
-                filePath: pathStats.Key,
-                insertions: pathStats.Sum(s => s.Insertions),
-                deletions: pathStats.Sum(s => s.Deletions)
-            )
+            pathStats => new GitFileStats(
+                pathStats.Key,
+                pathStats.Sum(s => s.Insertions),
+                pathStats.Sum(s => s.Deletions))
         );
         return statsSumByFilePath.ToArray();
     }
 
-    public static TabularData TabularData(GitFileStats[] rows)
+    public static TabularData TabularData(RankedTop<GitFileStats> rows)
     {
         // kj2 same as Wikitools.GitAuthorStats.TabularData
         var rowsAsObjectArrays = rows.Select(AsObjectArray).ToArray();
@@ -68,9 +66,9 @@ public record GitFileStats(
         return new TabularData((headerRow: HeaderRow, rowsAsObjectArrays));
     }
 
-    private static object[] AsObjectArray(GitFileStats row)
+    private static object[] AsObjectArray((int rank, GitFileStats stats) row)
         => new object[]
         {
-            row.Place, row.FilePath, row.Insertions, row.Deletions
+            row.rank, row.stats.FilePath, row.stats.Insertions, row.stats.Deletions
         };
 }
