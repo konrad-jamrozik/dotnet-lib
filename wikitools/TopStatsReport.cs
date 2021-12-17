@@ -1,3 +1,4 @@
+using Wikitools.AzureDevOps;
 using Wikitools.Lib.Data;
 using Wikitools.Lib.Git;
 using Wikitools.Lib.Markdown;
@@ -39,22 +40,42 @@ public record TopStatsReport : MarkdownDocument
     public TopStatsReport(
         Timeline timeline,
         GitLog gitLog,
+        IAdoWiki wiki,
         string[]? excludedAuthors,
         string[]? excludedPaths) 
-        : base(GetContent2(timeline, gitLog, excludedAuthors, excludedPaths)) {}
+        : base(GetContent2(timeline, gitLog, wiki, excludedAuthors, excludedPaths)) {}
 
 
-    private static object[] GetContent2(Timeline timeline, GitLog gitLog, string[]? excludedAuthors, string[]? excludedPaths)
+    private static object[] GetContent2(
+        Timeline timeline,
+        GitLog gitLog,
+        IAdoWiki wiki,
+        string[]? excludedAuthors,
+        string[]? excludedPaths)
     {
         var top3 = 3;
         var top5 = 5;
         var top10 = 10;
         var days7 = 7;
         var days28 = 28;
+        // kj2 currently going up to 8 days back, and including today, which is partial.
+        // Should instead be exactly from 8 days back (inclusive) to 1 day back (inclusive),
+        // but without today.
+        // Need same fix for git file stats. But page stats are already solved.
         var authorStatsLast7Days = GitAuthorStats.From2(gitLog, days7, excludedAuthors, top3);
         var authorStatsLast28Days = GitAuthorStats.From2(gitLog, days28, excludedAuthors, top5);
         var fileStatsLast7Days = GitFileStats.From2(gitLog, days7, excludedPaths, top5);
         var fileStatsLast28Days = GitFileStats.From2(gitLog, days28, excludedPaths, top10);
+
+        var ago1Day = timeline.DaysFromUtcNow(-1);
+        var ago7Days = timeline.DaysFromUtcNow(-7);
+        var ago28Days = timeline.DaysFromUtcNow(-28);
+        var last7Days = new DaySpan(ago7Days, ago1Day);
+        var last28Days = new DaySpan(ago28Days, ago1Day);
+
+        var pagesStatsLast7Days = PageViewStats.From2(timeline, wiki, last7Days, top5);
+        var pagesStatsLast28Days = PageViewStats.From2(timeline, wiki, last28Days, top10);
+
 
         return new object[]
         {
@@ -79,6 +100,14 @@ public record TopStatsReport : MarkdownDocument
             string.Format(FileDescriptionFormat, fileStatsLast28Days.Top, days28),
             "",
             GitFileStats.TabularData(fileStatsLast28Days),
+            "",
+            string.Format(PageViewDescriptionFormat, pagesStatsLast7Days.Top, days7),
+            "",
+            PageViewStats.TabularData(pagesStatsLast7Days),
+            "",
+            string.Format(PageViewDescriptionFormat, pagesStatsLast28Days.Top, days28),
+            "",
+            PageViewStats.TabularData(pagesStatsLast28Days)
         };
     }
 

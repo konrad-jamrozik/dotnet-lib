@@ -46,7 +46,7 @@ public class TopStatsReportIntegrationTests
         var last7Days = new DaySpan(ago7Days, ago1Day);
         var last28Days = new DaySpan(ago28Days, ago1Day);
 
-        var gitLog = GitLog(timeline, fs, cfg, dataDays);
+        var gitLog = GitLog(timeline, fs, cfg);
         var commits = gitLog.Commits(dataDays).Result; // kj2 .Result
         
         var commitsLast7Days = new GitLogCommits(commits, last7Days);
@@ -61,7 +61,10 @@ public class TopStatsReportIntegrationTests
         // to account for how ADO REST API interprets the range.
         // For more, see comment on:
         // AdoWikiWithStorageIntegrationTests.ObtainsAndStoresDataFromAdoWikiForToday
-        var pagesStats = PagesStats(timeline, fs, cfg, adoCfg, pageViewsForDays: dataDays + 1);
+        int pageViewsForDays = dataDays + 1;
+        var wiki = AdoWiki(timeline, fs, cfg, adoCfg);
+
+        var pagesStats = wiki.PagesStats(pageViewsForDays).Result; // kj2 .Result
         var pagesStatsLast7Days = PageViewStats(pagesStats.Trim(ago7Days, ago1Day), top: 5);
         var pagesStatsLast28Days = PageViewStats(pagesStats.Trim(ago28Days, ago1Day), top: 10);
 
@@ -76,10 +79,11 @@ public class TopStatsReportIntegrationTests
 
         // kja curr work
         var newTopStatsReport = new TopStatsReport(
-            timeline,
-            gitLog,
-            cfg.ExcludedAuthors,
-            cfg.ExcludedPaths);
+             timeline,
+             gitLog,
+             wiki,
+             cfg.ExcludedAuthors,
+             cfg.ExcludedPaths);
 
         return topStatsReport;
     }
@@ -87,8 +91,7 @@ public class TopStatsReportIntegrationTests
     private static GitLog GitLog(
         ITimeline timeline,
         IFileSystem fs,
-        WikitoolsCfg cfg,
-        int gitLogDays)
+        WikitoolsCfg cfg)
     {
         var os = new WindowsOS();
 
@@ -129,12 +132,11 @@ public class TopStatsReportIntegrationTests
         return pageViewStats;
     }
 
-    private static ValidWikiPagesStats PagesStats(
+    private static AdoWikiWithStorage AdoWiki(
         ITimeline timeline,
         IFileSystem fs,
         WikitoolsCfg cfg,
-        AzureDevOpsCfg adoCfg,
-        int pageViewsForDays)
+        AzureDevOpsCfg adoCfg)
     {
         var env = new Environment();
 
@@ -145,9 +147,6 @@ public class TopStatsReportIntegrationTests
             adoCfg.AdoWikiUri,
             adoCfg.AdoPatEnvVar,
             cfg.StorageDirPath);
-
-        var pagesStats = wiki.PagesStats(pageViewsForDays);
-        var pagesStatsResult = pagesStats.Result; // kj2 .Result
-        return pagesStatsResult;
+        return wiki;
     }
 }

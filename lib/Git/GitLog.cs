@@ -30,6 +30,11 @@ public record GitLog(ITimeline Timeline, GitRepository Repo)
     {
         var utcNowDay = new DateDay(Timeline.UtcNow);
         DateDay after = DaysInThePast(utcNowDay, days);
+        // kj2 currently this will give different results as current day passes,
+        // because the end of the range is utcNowDay i.e. today. So calling this at
+        // 8 AM UTC will have less commits than 5 PM UTC.
+        // What's worse, the day span is "false" in the sense it doesn't take
+        // into the account the last day is never a full day.
         return GetCommits(daySpan: new DaySpan(after, utcNowDay));
     }
 
