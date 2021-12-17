@@ -26,6 +26,7 @@ public record PageViewStats(string FilePath, int Views)
         return From(pagesStats, top);
     }
 
+    // kja migrate to From2
     public static RankedTop<PageViewStats> From(
         ValidWikiPagesStats pagesStats,
         int? top = null)

@@ -29,6 +29,7 @@ public record GitFileStats(
         return From(commits, filePathFilter, top);
     }
 
+    // kja migrate to From2
     public static RankedTop<GitFileStats> From(
         GitLogCommits commits,
         Func<string, bool>? filePathFilter = null,

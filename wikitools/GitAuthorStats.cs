@@ -27,29 +27,14 @@ public record GitAuthorStats(
     {
         var commits = gitLog.Commits(commitDays).Result; // kj2 .result
 
-        Func<string, bool>? authorFiler = excludedAuthors != null
+        Func<string, bool>? authorFilter = excludedAuthors != null
             ? author => !excludedAuthors.Any(author.Contains)
-            : null;
+            : _ => true;
 
-        return From(commits, authorFiler, top);
-    }
-
-    public static RankedTop<GitAuthorStats> From(
-        GitLogCommits commits,
-        Func<string, bool>? authorFilter = null,
-        int? top = null,
-        bool addIcons = false)
-    {
-        authorFilter ??= _ => true;
         GitAuthorStats[] statsSumByAuthor = SumByAuthor(commits)
             .OrderByDescending(s => s.Insertions)
             .Where(s => authorFilter(s.AuthorName))
             .ToArray();
-
-        // kja need to add here GitAuthorsStats, which will add commits daySpan to GitAuthorStats.
-        // Then the RankedTop will be on <GitAuthorsStats> - this will mean it will be on <TColl>  where TColl : IEnumerable<T> (and not only <T>).
-        // Thanks to that in the top stats report I will be able to do RankedTop.Stats.DaySpan.
-        // See GitLogCommits for an idea how to do GitAuthorsStats.
 
         return new RankedTop<GitAuthorStats>(statsSumByAuthor, top);
     }

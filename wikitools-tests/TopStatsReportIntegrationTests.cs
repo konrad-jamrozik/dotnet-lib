@@ -37,48 +37,10 @@ public class TopStatsReportIntegrationTests
         AzureDevOpsCfg adoCfg)
     {
         // kj2 dedup logic used in this method, and in int tests for other reports using the same data.
-
         var timeline = new Timeline();
-        var dataDays = 28;
-        var ago1Day = timeline.DaysFromUtcNow(-1);
-        var ago7Days = timeline.DaysFromUtcNow(-7);
-        var ago28Days = timeline.DaysFromUtcNow(-dataDays);
-        var last7Days = new DaySpan(ago7Days, ago1Day);
-        var last28Days = new DaySpan(ago28Days, ago1Day);
-
         var gitLog = GitLog(timeline, fs, cfg);
-        var commits = gitLog.Commits(dataDays).Result; // kj2 .Result
-        
-        var commitsLast7Days = new GitLogCommits(commits, last7Days);
-        var commitsLast28Days = new GitLogCommits(commits, last28Days);
-        
-        var authorStatsLast7Days = GitAuthorStats(cfg, commitsLast7Days, top: 3);
-        var authorStatsLast28Days = GitAuthorStats(cfg, commitsLast28Days, top: 5);
-        var fileStatsLast7Days = GitFileStats(cfg, commitsLast7Days, top: 5);
-        var fileStatsLast28Days = GitFileStats(cfg, commitsLast28Days, top: 10);
-
-        // Here, The 1 is added to dataDays for pageViewsForDays
-        // to account for how ADO REST API interprets the range.
-        // For more, see comment on:
-        // AdoWikiWithStorageIntegrationTests.ObtainsAndStoresDataFromAdoWikiForToday
-        int pageViewsForDays = dataDays + 1;
         var wiki = AdoWiki(timeline, fs, cfg, adoCfg);
-
-        var pagesStats = wiki.PagesStats(pageViewsForDays).Result; // kj2 .Result
-        var pagesStatsLast7Days = PageViewStats(pagesStats.Trim(ago7Days, ago1Day), top: 5);
-        var pagesStatsLast28Days = PageViewStats(pagesStats.Trim(ago28Days, ago1Day), top: 10);
-
         var topStatsReport = new TopStatsReport(
-            timeline,
-            authorStatsLast7Days, 
-            authorStatsLast28Days,
-            fileStatsLast7Days,
-            fileStatsLast28Days,
-            pagesStatsLast7Days,
-            pagesStatsLast28Days);
-
-        // kja curr work
-        var newTopStatsReport = new TopStatsReport(
              timeline,
              gitLog,
              wiki,
@@ -94,7 +56,6 @@ public class TopStatsReportIntegrationTests
         WikitoolsCfg cfg)
     {
         var os = new WindowsOS();
-
         Dir gitRepoDir = cfg.GitRepoCloneDir(fs);
         var gitLog = new GitLogDeclare().GitLog(
             timeline,
@@ -104,34 +65,6 @@ public class TopStatsReportIntegrationTests
         return gitLog;
     }
 
-    private static RankedTop<GitAuthorStats> GitAuthorStats(
-        WikitoolsCfg cfg,
-        GitLogCommits commits,
-        int top)
-    {
-        bool AuthorFilter(string author) => !cfg.ExcludedAuthors.Any(author.Contains);
-        var authorStats = Wikitools.GitAuthorStats.From(commits, AuthorFilter, top, addIcons: true);
-        return authorStats;
-    }
-
-    private static RankedTop<GitFileStats> GitFileStats(
-        WikitoolsCfg cfg,
-        GitLogCommits commits,
-        int top)
-    {
-        bool FilePathFilter(string path) => !cfg.ExcludedPaths.Any(path.Contains);
-        var fileStats = Wikitools.GitFileStats.From(commits, FilePathFilter, top);
-        return fileStats;
-    }
-
-    private static RankedTop<PageViewStats> PageViewStats(
-        ValidWikiPagesStats pagesStats,
-        int top)
-    {
-        var pageViewStats = Wikitools.PageViewStats.From(pagesStats, top);
-        return pageViewStats;
-    }
-
     private static AdoWikiWithStorage AdoWiki(
         ITimeline timeline,
         IFileSystem fs,
@@ -139,7 +72,6 @@ public class TopStatsReportIntegrationTests
         AzureDevOpsCfg adoCfg)
     {
         var env = new Environment();
-
         var wiki = new AdoWikiWithStorageDeclare().AdoWikiWithStorage(
             timeline,
             fs,
