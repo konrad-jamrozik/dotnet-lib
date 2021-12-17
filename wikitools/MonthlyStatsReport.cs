@@ -33,7 +33,7 @@ public record MonthlyStatsReport : MarkdownDocument
         };
 
     private static (object[] headerRow, object[][] rows) GetRows(
-        GitLogCommits commits,
+        GitLogCommits commits, // kj2 pass GitLog instead. See TopStatsReport
         Func<string, bool> authorFilter,
         Func<string, bool> filePathFilter)
     {
