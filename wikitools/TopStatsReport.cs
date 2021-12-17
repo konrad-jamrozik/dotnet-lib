@@ -43,14 +43,14 @@ public record TopStatsReport : MarkdownDocument
     public TopStatsReport(
         Timeline timeline,
         GitLog gitLog,
-        int top,
-        string[]? excludedAuthors) : base(GetContent2(timeline, gitLog, top, excludedAuthors)) {}
+        string[]? excludedAuthors) : base(GetContent2(timeline, gitLog, excludedAuthors)) {}
 
 
-    private static object[] GetContent2(Timeline timeline, GitLog gitLog, int top, string[]? excludedAuthors)
+    private static object[] GetContent2(Timeline timeline, GitLog gitLog, string[]? excludedAuthors)
     {
+        var top3 = 3;
         var commitDays7 = 7;
-        RankedTop<GitAuthorStats> authorStatsLast7Days = GitAuthorStats.From2(gitLog, top, commitDays7, excludedAuthors);
+        RankedTop<GitAuthorStats> authorStatsLast7Days = GitAuthorStats.From2(gitLog, top3, commitDays7, excludedAuthors);
         return new object[]
         {
             $"This page was generated on {timeline.UtcNow} UTC",

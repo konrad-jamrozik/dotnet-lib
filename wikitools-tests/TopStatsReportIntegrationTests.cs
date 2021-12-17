@@ -73,6 +73,8 @@ public class TopStatsReportIntegrationTests
             pagesStatsLast7Days,
             pagesStatsLast28Days);
 
+        //var newTopStatsReport = new TopStatsReport(timeline, gitLog, top, excludedAuthors);
+
         return topStatsReport;
     }
 
