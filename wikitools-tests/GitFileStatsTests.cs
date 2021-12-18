@@ -8,7 +8,7 @@ namespace Wikitools.Tests;
 public class GitFileStatsTests
 {
     [Fact]
-    public void SumsByFilePath()
+    public void SumsByFilePathWithRenamePresent()
     {
         var now = new SimulatedTimeline().UtcNow;
         var stats = GitFileStats.SumByFilePath(
@@ -29,6 +29,8 @@ public class GitFileStatsTests
             });
 
         Assert.Single(stats);
-        // Assert.Equal(1, stats[0].FilePath);
+        Assert.Equal("/abc/def/bar.md", stats[0].FilePath);
+        Assert.Equal(36, stats[0].Insertions);
+        Assert.Equal(12, stats[0].Deletions);
     }
 }
