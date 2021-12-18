@@ -43,8 +43,8 @@ public record TopStatsReport : MarkdownDocument
         // Should instead be exactly from 8 days back (inclusive) to 1 day back (inclusive),
         // but without today.
         // Need same fix for git file stats. But page stats are already solved.
-        var authorStatsLast7Days = GitAuthorStats.From2(gitLog, days7, excludedAuthors, top3);
-        var authorStatsLast28Days = GitAuthorStats.From2(gitLog, days28, excludedAuthors, top5);
+        var authorStatsLast7Days = GitAuthorStats.From(gitLog, days7, excludedAuthors, top3);
+        var authorStatsLast28Days = GitAuthorStats.From(gitLog, days28, excludedAuthors, top5);
         var fileStatsLast7Days = GitFileStats.From2(gitLog, days7, excludedPaths, top5);
         var fileStatsLast28Days = GitFileStats.From2(gitLog, days28, excludedPaths, top10);
 
@@ -54,8 +54,8 @@ public record TopStatsReport : MarkdownDocument
         var last7Days = new DaySpan(ago7Days, ago1Day);
         var last28Days = new DaySpan(ago28Days, ago1Day);
 
-        var pagesStatsLast7Days = PageViewStats.From2(timeline, wiki, last7Days, top5);
-        var pagesStatsLast28Days = PageViewStats.From2(timeline, wiki, last28Days, top10);
+        var pagesStatsLast7Days = PageViewStats.From(timeline, wiki, last7Days, top5);
+        var pagesStatsLast28Days = PageViewStats.From(timeline, wiki, last28Days, top10);
 
 
         return new object[]

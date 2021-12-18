@@ -61,6 +61,9 @@ public record AdoWikiPagesStatsStorage(MonthlyJsonFilesStorage Storage, DateTime
     public ValidWikiPagesStats PagesStats(int pageViewsForDays)
     {
         var currentDay = new DateDay(CurrentDate);
+        // Here, the 1 is added to account for how ADO REST API interprets the range.
+        // For more, see comment on:
+        // AdoWikiWithStorageIntegrationTests.ObtainsAndStoresDataFromAdoWikiForToday
         var startDay = currentDay.AddDays(-pageViewsForDays + 1);
             
         IEnumerable<ValidWikiPagesStatsForMonth> statsByMonth = DateMonth

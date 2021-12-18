@@ -10,27 +10,34 @@ public record PageViewStats(string FilePath, int Views)
     // kj2 get rid of Place
     public static readonly object[] HeaderRow = { "Place", "Path", "Views" };
 
-    public static RankedTop<PageViewStats> From2(
+    public static RankedTop<PageViewStats> From(
         ITimeline timeline,
         IAdoWiki wiki,
         DaySpan daySpan,
-        int top)
-    {
-        var pageViewsForDays = (timeline.UtcNow - daySpan.AfterDay).Days;
-        // Here, The 1 is added to dataDays for pageViewsForDays
-        // to account for how ADO REST API interprets the range.
-        // For more, see comment on:
-        // AdoWikiWithStorageIntegrationTests.ObtainsAndStoresDataFromAdoWikiForToday
-        var pagesStats = wiki.PagesStats(pageViewsForDays + 1).Result // kj2 .Result
-            .Trim(daySpan.AfterDay, daySpan.BeforeDay);
-        return From(pagesStats, top);
-    }
-
-    // kja migrate to From2
-    public static RankedTop<PageViewStats> From(
-        ValidWikiPagesStats pagesStats,
         int? top = null)
     {
+        // Here, the 1 is added to account for how ADO REST API interprets the range.
+        // For more, see comment on:
+        // AdoWikiWithStorageIntegrationTests.ObtainsAndStoresDataFromAdoWikiForToday
+        // kj2 this entire funny business with pageViewsForDays should be captured
+        // in PageViewsForDays type.
+        var pageViewsForDays = (timeline.UtcNow - daySpan.AfterDay).Days + 1;
+
+        // kj2 this will trigger call to ADO API.
+        // Here is is OK, as we are in late execution stage, but I need to ensure
+        // this is fixed everywhere, always deferred to the execution stage.
+        //
+        // Below are previous ideas I had, now obsolete:
+        //
+        // I might need to fix all Tasks to AsyncLazy to make this work, or by using new Task() and then task.Start();
+        // https://docs.microsoft.com/en-us/dotnet/api/system.threading.tasks.task?view=net-5.0#separating-task-creation-and-execution
+        // Maybe source generators could help here. See [Cache] and [Memoize] use cases here:
+        // https://github.com/dotnet/roslyn/issues/16160
+        // 11/17/2021: Or maybe doing stuff like LINQ IEnumerable is enough? IEnumerable and related
+        // collections are lazy after all.
+        var pagesStats = wiki.PagesStats(pageViewsForDays).Result // kj2 .Result
+            .Trim(daySpan.AfterDay, daySpan.BeforeDay);
+
         var pathsStats = pagesStats.Select(
                 pageStats => new PageViewStats(
                     pageStats.Path,

@@ -17,20 +17,19 @@ public class PageViewStatsReportTests
         // Arrange inputs
         var data             = new ReportTestsData();
         var pagesStatsData   = data.WikiPagesStats;
-        var pageViewsForDays = 30;
+        var daysAgo          = 29;
 
         // Arrange simulations
         var timeline = new SimulatedTimeline();
         var wiki     = new SimulatedAdoWiki(ValidWikiPagesStatsFixture.Build(pagesStatsData));
 
         // Arrange SUT declaration
-        var pagesStats = wiki.PagesStats(pageViewsForDays);
-        var sut        = new PageViewStatsReport(timeline, wiki, pageViewsForDays);
+        var sut      = new PageViewStatsReport(timeline, wiki, daysAgo);
 
         var expected = new MarkdownDocument(Task.FromResult(new object[]
         {
             string.Format(PageViewStatsReport.DescriptionFormat,
-                pageViewsForDays,
+                daysAgo,
                 timeline.UtcNow,
                 pagesStatsData.Length) + MarkdownDocument.LineBreakMarker,
             "" + MarkdownDocument.LineBreakMarker,
