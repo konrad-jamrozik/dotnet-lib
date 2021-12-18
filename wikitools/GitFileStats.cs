@@ -35,7 +35,7 @@ public record GitFileStats(
         return new RankedTop<GitFileStats>(statsSumByFilePath, top);
     }
 
-    private static GitFileStats[] SumByFilePath(IEnumerable<GitLogCommit> commits)
+    public static GitFileStats[] SumByFilePath(IEnumerable<GitLogCommit> commits)
     {
         var fileStats = commits.SelectMany(
             c => c.Stats.Select(s => (s.FilePath, s.Insertions, s.Deletions)));
