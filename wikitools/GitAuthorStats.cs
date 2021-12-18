@@ -25,7 +25,7 @@ public record GitAuthorStats(
     {
         var commits = gitLog.Commits(commitDays).Result; // kj2 .result
 
-        Func<string, bool>? authorFilter = excludedAuthors != null
+        Func<string, bool> authorFilter = excludedAuthors != null
             ? author => !excludedAuthors.Any(author.Contains)
             : _ => true;
 

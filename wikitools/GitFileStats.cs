@@ -22,7 +22,7 @@ public record GitFileStats(
     {
         var commits = gitLog.Commits(commitDays).Result; // kj2 .result
 
-        Func<string, bool>? filePathFilter = excludedPaths != null
+        Func<string, bool> filePathFilter = excludedPaths != null
             ? path => !excludedPaths.Any(path.Contains)
             : _ => true;
 
