@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using MoreLinq;
 using Wikitools.Lib.Data;
 using Wikitools.Lib.Git;
+using ME = MoreLinq.MoreEnumerable;
 
 namespace Wikitools;
 
@@ -46,7 +46,7 @@ public record GitAuthorStats(
                + (fireAmount > 0 ? " " : "") 
                // :fire: taken from
                // https://docs.microsoft.com/en-us/azure/devops/project/wiki/markdown-guidance?view=azure-devops#emoji
-               + string.Join("", ":fire:".Repeat(fireAmount));
+               + string.Join("", ME.Repeat(":fire:", fireAmount));
     }
 
     public static TabularData TabularData(RankedTop<GitAuthorStats> rows)
@@ -59,13 +59,12 @@ public record GitAuthorStats(
         return new TabularData((headerRow: HeaderRow, rowsAsObjectArrays));
     }
 
-    private static GitAuthorStats[] SumByAuthor(IEnumerable<GitLogCommit> commits)
+    public static GitAuthorStats[] SumByAuthor(IEnumerable<GitLogCommit> commits)
     {
         var commitsByAuthor = commits.GroupBy(commit => commit.Author);
         var statsSumByAuthor = commitsByAuthor.Select(authorCommits => new GitAuthorStats(
             authorCommits.Key, 
-            // kja this is not true; there may be overlap in the stats, and thus they need to be deduplicated.
-            authorCommits.Sum(c => c.Stats.Length), 
+            authorCommits.SelectMany(c => c.Stats).DistinctBy(s => s.FilePath).Count(),
             authorCommits.Sum(c => c.Stats.Sum(s => s.Insertions)),
             authorCommits.Sum(c => c.Stats.Sum(s => s.Deletions))
         ));
