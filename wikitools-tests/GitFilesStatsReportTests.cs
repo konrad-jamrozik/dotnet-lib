@@ -19,8 +19,8 @@ public class GitFilesStatsReportTests
         var data              = new ReportTestsData();
         var commitsData       = data.CommitsLogs;
         var timeline          = new SimulatedTimeline();
-        var logDays           = 15;
-        var logDaysSpan       = new DaySpan(timeline.UtcNow, logDays);
+        var commitDays        = 15;
+        var logDaysSpan       = new DaySpan(timeline.UtcNow, commitDays);
         var fs                = new SimulatedFileSystem();
         var gitRepoDir        = fs.NextSimulatedDir();
         var gitExecutablePath = "unused";
@@ -28,15 +28,14 @@ public class GitFilesStatsReportTests
         var os = new SimulatedOS(new SimulatedGitLogProcess(timeline, logDaysSpan, commitsData));
 
         // Arrange SUT declaration
-        var gitLog  = new GitLogDeclare().GitLog(timeline, os, gitRepoDir, gitExecutablePath);
-        var commits = gitLog.Commits(logDays);
-        var stats   = GitFileStats.From(commits.Result, top: top); // kj2 .Result
-        var sut     = new GitFilesStatsReport(timeline, logDays, stats);
+        var gitLog = new GitLogDeclare().GitLog(timeline, os, gitRepoDir, gitExecutablePath);
+        var stats  = GitFileStats.From(gitLog, commitDays, top: top);
+        var sut    = new GitFilesStatsReport(timeline, commitDays, stats);
 
         // Arrange expectations
         var expected = new MarkdownDocument(Task.FromResult(new object[]
         {
-            string.Format(GitFilesStatsReport.DescriptionFormat, logDays, timeline.UtcNow)
+            string.Format(GitFilesStatsReport.DescriptionFormat, commitDays, timeline.UtcNow)
             + MarkdownDocument.LineBreakMarker,
             "" + MarkdownDocument.LineBreakMarker,
             new TabularData((GitFileStats.HeaderRow,

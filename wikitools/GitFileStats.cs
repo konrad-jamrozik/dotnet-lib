@@ -14,28 +14,18 @@ public record GitFileStats(
     // kj2 remove "Place" from here.
     public static readonly object[] HeaderRow = { "Place", "File Path", "Insertions", "Deletions" };
 
-    public static RankedTop<GitFileStats> From2(
+    public static RankedTop<GitFileStats> From(
         GitLog gitLog,
         int commitDays,
-        string[]? excludedPaths,
-        int top)
+        string[]? excludedPaths = null,
+        int? top = null)
     {
         var commits = gitLog.Commits(commitDays).Result; // kj2 .result
 
         Func<string, bool>? filePathFilter = excludedPaths != null
             ? path => !excludedPaths.Any(path.Contains)
-            : null;
+            : _ => true;
 
-        return From(commits, filePathFilter, top);
-    }
-
-    // kja migrate to From2
-    public static RankedTop<GitFileStats> From(
-        GitLogCommits commits,
-        Func<string, bool>? filePathFilter = null,
-        int? top = null)
-    {
-        filePathFilter ??= _ => true;
         GitFileStats[] statsSumByFilePath =
             SumByFilePath(commits)
                 .OrderByDescending(stats => stats.Insertions)

@@ -5,7 +5,6 @@ using System.Linq;
 
 namespace Wikitools.Lib.Data;
 
-// kja use it in TopStatsReport. So far used in GitAuthorStats. Also need to migrate the other stats.
 public record RankedTop<T>(IEnumerable<T> Seq, int? Top) : IEnumerable<(int rank, T elem)>
 {
     private IEnumerable<(int rank, T elem)> RankedTopSeq

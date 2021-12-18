@@ -41,10 +41,7 @@ public class GitFilesStatsReportIntegrationTests
             gitRepoDir,
             cfg.GitExecutablePath);
 
-        var commits = gitLog.Commits(cfg.GitLogDays);
-        bool FilePathFilter(string path) => !cfg.ExcludedPaths.Any(path.Contains);
-        // kj2 result
-        var stats = GitFileStats.From(commits.Result, FilePathFilter, cfg.Top);
+        var stats = GitFileStats.From(gitLog, cfg.GitLogDays, cfg.ExcludedPaths);
 
         var filesReport = new GitFilesStatsReport(
             timeline,
