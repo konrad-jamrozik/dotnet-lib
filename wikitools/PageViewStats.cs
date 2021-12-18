@@ -59,5 +59,9 @@ public record PageViewStats(string FilePath, int Views)
 
     private static object[] AsObjectArray((int rank, PageViewStats stats) row)
         => new object[]
-        { row.rank, row.stats.FilePath, row.stats.Views };
+        {
+            row.rank,
+            new WikiPageLink(row.stats.FilePath).ToString(),
+            row.stats.Views
+        };
 }

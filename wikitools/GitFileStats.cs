@@ -62,7 +62,7 @@ public record GitFileStats(
         {
             row.rank, 
             // kj2 hardcoded "wiki/" in the .Replace. This is not the only place it is used.
-            //
+            // ----------------
             // kja this won't show correct link for renames. I need to extract it
             // from 'commits' in a call to:
             // var commits = gitLog.Commits(commitDays).Result
@@ -73,6 +73,13 @@ public record GitFileStats(
             //   Possibly I could later consider intermediate type of
             //   GitCommitFilePath.
             // See also: my OneNote, "Debug snippets".
+            //
+            // Complication: one page might have been renamed multiple times, and in-between
+            // the renames, more insertions/deletions might have happened
+            //
+            // Complication: when doing raw "GitFileStatsReport" reporting everything,
+            // it will show the rename entries with 0 insertions and 0 deletions.
+            // They will always be broken links, and probably shouldn't show up at all.
             WikiPageLink.FromFileSystemPath(row.stats.FilePath.Replace("wiki/","")).ToString(),
             row.stats.Insertions, 
             row.stats.Deletions
