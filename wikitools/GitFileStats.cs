@@ -60,6 +60,21 @@ public record GitFileStats(
     private static object[] AsObjectArray((int rank, GitFileStats stats) row)
         => new object[]
         {
-            row.rank, row.stats.FilePath, row.stats.Insertions, row.stats.Deletions
+            row.rank, 
+            // kj2 hardcoded "wiki/" in the .Replace. This is not the only place it is used.
+            //
+            // kja this won't show correct link for renames. I need to extract it
+            // from 'commits' in a call to:
+            // var commits = gitLog.Commits(commitDays).Result
+            // The path is of form path/prefix/{oldName.md => newName.md} 
+            // and so I could build a "rename map" and then based on it,
+            // save it to row.stats.FilePath immediately. So its new type will be
+            // WikiPageLink, not string anymore.
+            //   Possibly I could later consider intermediate type of
+            //   GitCommitFilePath.
+            // See also: my OneNote, "Debug snippets".
+            WikiPageLink.FromFileSystemPath(row.stats.FilePath.Replace("wiki/","")).ToString(),
+            row.stats.Insertions, 
+            row.stats.Deletions
         };
 }

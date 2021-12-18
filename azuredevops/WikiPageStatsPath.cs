@@ -17,8 +17,9 @@ namespace Wikitools.AzureDevOps;
 /// Observed rules:
 /// - The path separators are "/".
 /// - The path always starts with a separator.
-/// - Special characters of "/","\" and "#" withing path segments are not allowed.
-/// - There cannot be any spaces at end of any path segment (they will get trimmed by wiki when saving the path).
+/// - Special characters of "/","\" and "#" within path segments are not allowed.
+/// - There cannot be any spaces at end of any path segment
+///   (they will get trimmed by wiki when saving the path).
 /// - There cannot be periods at the start or end of any path segment (same reason as above).
 /// - A path cannot end with ".md"
 ///   - This is likely because in the repository the pages are saved as .md (markdown) files.

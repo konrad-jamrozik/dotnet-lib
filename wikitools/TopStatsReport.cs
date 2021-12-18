@@ -1,5 +1,4 @@
 using Wikitools.AzureDevOps;
-using Wikitools.Lib.Data;
 using Wikitools.Lib.Git;
 using Wikitools.Lib.Markdown;
 using Wikitools.Lib.Primitives;
