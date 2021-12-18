@@ -80,6 +80,12 @@ public record GitFileStats(
             // Complication: when doing raw "GitFileStatsReport" reporting everything,
             // it will show the rename entries with 0 insertions and 0 deletions.
             // They will always be broken links, and probably shouldn't show up at all.
+            //
+            // Complication: I think
+            // renaming file will cause
+            // Wikitools.GitAuthorStats.SumByAuthor
+            // to count it multiple times in "FilesChanged" column.
+            // Note I can easily test it by hitting the debugger with int test.
             WikiPageLink.FromFileSystemPath(row.stats.FilePath.Replace("wiki/","")).ToString(),
             row.stats.Insertions, 
             row.stats.Deletions
