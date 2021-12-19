@@ -20,9 +20,8 @@ public class GitFileStatsTests
                 }),
                 new GitLogCommit("Author1", now, new[]
                 {
-                    new GitLogCommit.Numstat(0, 0, "/abc/def/{foo.md => bar.md}"),
+                    new GitLogCommit.Numstat(3, 1, "/abc/def/{foo.md => bar.md}")
                 }),
-                // kja interleave in this tests also other rename chain
                 new GitLogCommit("Author1", now, new[]
                 {
                     new GitLogCommit.Numstat(6, 2, "/abc/def/bar.md")
@@ -31,8 +30,8 @@ public class GitFileStatsTests
 
         Assert.Single(stats);
         Assert.Equal("/abc/def/bar.md", stats[0].FilePath);
-        Assert.Equal(36, stats[0].Insertions);
-        Assert.Equal(12, stats[0].Deletions);
+        Assert.Equal(30 + 3 + 6, stats[0].Insertions);
+        Assert.Equal(10 + 1 + 2, stats[0].Deletions);
     }
 
     [Fact]
@@ -48,7 +47,7 @@ public class GitFileStatsTests
                 }),
                 new GitLogCommit("Author1", now, new[]
                 {
-                    new GitLogCommit.Numstat(0, 0, "/abc/def/{foo.md => bar.md}"),
+                    new GitLogCommit.Numstat(25, 15, "/abc/def/{foo.md => bar.md}"),
                 }),
                 // kja interleave in this tests also other rename chain
                 new GitLogCommit("Author1", now, new[]
@@ -58,7 +57,7 @@ public class GitFileStatsTests
                 // kja interleave rename loop
                 new GitLogCommit("Author1", now, new[]
                 {
-                    new GitLogCommit.Numstat(0, 0, "/abc/def/{bar.md => qux.md}")
+                    new GitLogCommit.Numstat(10, 1, "/abc/def/{bar.md => qux.md}")
                 }),
                 new GitLogCommit("Author1", now, new[]
                 {
@@ -68,8 +67,8 @@ public class GitFileStatsTests
 
         Assert.Single(stats);
         Assert.Equal("/abc/def/qux.md", stats[0].FilePath);
-        Assert.Equal(136, stats[0].Insertions);
-        Assert.Equal(412, stats[0].Deletions);
+        Assert.Equal(30 + 25 + 6 + 10 + 100, stats[0].Insertions);
+        Assert.Equal(10 + 15 + 2 + 1 + 400, stats[0].Deletions);
 
     }
 }

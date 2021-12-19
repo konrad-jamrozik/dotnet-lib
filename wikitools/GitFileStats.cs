@@ -68,7 +68,15 @@ public record GitFileStats(
         var fileStats = commits.SelectMany(c => c.Stats).ToList();
 
         var fileStatsLookup = fileStats
-            .Where(stats => stats.FilePath is not GitLogFilePathRename)
+            .Select(
+                stats => stats.FilePath is GitLogFilePathRename filePath
+                    ? stats with
+                    {
+                        // Stats in file rename entries count towards the
+                        // resulting file name (i.e. having "ToPath").
+                        FilePath = new GitLogFilePath(filePath.ToPath)
+                    }
+                    : stats)
             .ToLookup(stats => stats.FilePath.ToString());
 
         fileStatsLookup = RenameMap(fileStats).Apply(fileStatsLookup);

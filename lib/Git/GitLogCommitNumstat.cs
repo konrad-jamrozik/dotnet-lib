@@ -8,7 +8,7 @@ public partial record GitLogCommit
     {
         public int Insertions { get; }
         public int Deletions { get; }
-        public GitLogFilePath FilePath { get; }
+        public GitLogFilePath FilePath { get; init; }
 
         public Numstat(int insertions, int deletions, string filePath) : this(
             insertions,
@@ -19,9 +19,6 @@ public partial record GitLogCommit
         {
             // Note this setup of invariant checks in ctor has some problems.
             // Details here: https://github.com/dotnet/csharplang/issues/4453#issuecomment-782807066
-            // kja fails WritesMonthlyStatsReport on this
-            Contract.Assert(
-                filePath is not GitLogFilePathRename || insertions == 0 && deletions == 0);
             Insertions = insertions;
             Deletions = deletions;
             FilePath = filePath;
