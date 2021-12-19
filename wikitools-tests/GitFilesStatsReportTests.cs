@@ -12,7 +12,6 @@ namespace Wikitools.Tests;
 
 public class GitFilesStatsReportTests
 {
-    // kja 2 test fails! fix!
     [Fact]
     public async Task ReportsFilesChangesStats()
     {
