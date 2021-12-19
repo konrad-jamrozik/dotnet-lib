@@ -14,7 +14,7 @@ public partial record GitLogCommit
         {
             // Note this setup of invariant checks in ctor has some problems.
             // Details here: https://github.com/dotnet/csharplang/issues/4453#issuecomment-782807066
-            Contract.Assert(!filePath.IsRename || insertions == 0 && deletions == 0);
+            Contract.Assert(filePath is not GitLogFilePathRename || insertions == 0 && deletions == 0);
             Insertions = insertions;
             Deletions = deletions;
             FilePath = filePath;

@@ -1,20 +1,12 @@
 ﻿namespace Wikitools.Lib.Git;
 
-// kja to implement
-public record GitLogFilePathRename : GitLogFilePath
+public record GitLogFilePathRename(
+        string Path,
+        string Prefix,
+        string FromFileName,
+        string ToFileName)
+    : GitLogFilePath(Path)
 {
-    public readonly string FromPath;
-    public readonly string ToPath;
-
-    public GitLogFilePathRename(string path) : base(path)
-    {
-        var (from, to) = ParseRename(path);
-        FromPath = from;
-        ToPath = to;
-    }
-
-    private (string from, string to) ParseRename(string path)
-    {
-        throw new System.NotImplementedException();
-    }
+    public string FromPath => Prefix + FromFileName;
+    public string ToPath => Prefix + ToFileName;
 }

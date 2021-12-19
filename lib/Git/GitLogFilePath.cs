@@ -1,4 +1,6 @@
-﻿namespace Wikitools.Lib.Git;
+﻿using System.Text.RegularExpressions;
+
+namespace Wikitools.Lib.Git;
 
 public record GitLogFilePath(string Path)
 {
@@ -8,11 +10,22 @@ public record GitLogFilePath(string Path)
     public static implicit operator string(GitLogFilePath gitLogFilePath) => gitLogFilePath.Path;
 
     public static GitLogFilePath From(string path)
+        => TryParseRename(path) ?? new GitLogFilePath(path);
+
+    public override string ToString()
+        => Path;
+
+    private static GitLogFilePathRename? TryParseRename(string path)
     {
-        var gitLogFilePath = new GitLogFilePath(path);
-        if (gitLogFilePath.IsRename)
-            gitLogFilePath = new GitLogFilePathRename(gitLogFilePath);
-        return gitLogFilePath;
+        // Example input path: "/abc/def/{bar.md => qux.md}"
+        var match = Regex.Match(path, "(.*\\/){(\\S+) => (\\S+)}");
+
+        return match.Success
+            ? new GitLogFilePathRename(
+                path,
+                match.Groups[1].Value,
+                match.Groups[2].Value,
+                match.Groups[3].Value)
+            : null;
     }
-    public bool IsRename = false; // kja to implement. And fixup From to not be silly.
 }
