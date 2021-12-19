@@ -8,7 +8,7 @@ namespace Wikitools.Tests;
 public class GitFileStatsTests
 {
     [Fact]
-    public void SumsByFilePathWithRenamePresent()
+    public void SumsByFilePathsWithRenamePresent()
     {
         var now = new SimulatedTimeline().UtcNow;
         var stats = GitFileStats.SumByFilePath(

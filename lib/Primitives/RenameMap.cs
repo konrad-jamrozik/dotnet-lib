@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Wikitools.Lib.Contracts;
 
 namespace Wikitools.Lib.Primitives;
 
@@ -68,7 +69,17 @@ public record RenameMap(IEnumerable<(string from, string to)> Renames)
         return fromToMap;
     }
 
-    private static Dictionary<string, List<string>> ToFromMap(IEnumerable<(string from, string to)> renames)
+    
+    /// <summary>
+    /// If the input renames where:
+    /// a -> b
+    /// b -> c
+    /// c -> d
+    /// Then the toFromMap will contains "rename chain" like this:
+    /// d -> [c, b, a]
+    /// </summary>
+    private static Dictionary<string, List<string>> ToFromMap(
+        IEnumerable<(string from, string to)> renames)
     {
         // Assert: renames are in order of happening
         // An example INVALID input:
@@ -76,44 +87,59 @@ public record RenameMap(IEnumerable<(string from, string to)> Renames)
         // b -> c
         // c -> d // INVALID rename. d already doesn't exist; it is "e" already.
 
-        // If the input renames where:
-        // a -> b
-        // b -> c
-        // c -> d
-        // Then the toFromMap will contains "rename chain" like this:
-        // d -> [c, b, a]
+        // renamedValues is used for correctness checking.
+        // It is not returned.
+        var renamedValues = new HashSet<string>();
+
         var toFromMap = renames.Aggregate(
             new Dictionary<string, List<string>>(),
             (toFromMap, rename) =>
             {
-                // kja this will not work correctly: analyze runtime of example: a-b, b-c, c-d.
-
                 var (from, to) = rename;
-                // kj2 maybe MoreLinq has a method for "insert if collection exists, otherwise new"
-                // maybe lookup?
+
+                if (renamedValues.Contains(from))
+                    throw new InvariantException(
+                        $"Cannot rename '{from}' as it was already renamed. " +
+                        "This invariant violation possibly denotes violation of following " +
+                        "precondition: 'renames have to be provided in chronological order'.");
+                
+                renamedValues.Add(from);
 
                 // IF (there exists a 'rename chain' whose final 'to' ("existingTo")
                 // is the same as current 'from')
                 // THEN (extend that chain, so that the new final 'to'
                 // is current 'to')
+                //
                 // Example:
-                // existingChain: d <- [c, b, a]
-                // - here the final 'to' is "d"
-                // Current (from, to): d -> e
-                // - here the current 'from' is "d"
+                // existingChain:
+                //   d <- [c, b, a]
+                //   - here the final 'to' (existingTo) is "d"
+                // Current (from, to):
+                //   d -> e
+                //   - here the current 'from' is "d"
                 // newChain:
-                // e <- [d, c, b, a]
-                if (toFromMap.ContainsKey(@from))
+                //   e <- [d, c, b, a]
+                if (toFromMap.ContainsKey(from))
                 {
-                    var existingTo = @from;
+                    var existingTo = from;
                     var existingChain = toFromMap[to];
                     var newChain = new List<string>(existingChain);
-                    newChain.Insert(0, @from);
+                    newChain.Insert(0, from);
                     toFromMap.Add(to, newChain);
                     toFromMap.Remove(existingTo);
+
+                    // We need to remove 'to' as it might have been renamed in the past.
+                    // Consider this example:
+                    // a -> b // "a" is considered renamed after this.
+                    // b -> a // "a", which is "to", is no longer renamed and exists again.
+                    if (!renamedValues.Remove(to))
+                    {
+                        // Do nothing. This just means that the "to" was never
+                        // renamed before.
+                    }
                 }
                 else
-                    toFromMap[to] = new List<string> { @from };
+                    toFromMap[to] = new List<string> { from };
 
                 return toFromMap;
             });

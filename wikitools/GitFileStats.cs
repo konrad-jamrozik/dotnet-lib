@@ -50,7 +50,7 @@ public record GitFileStats(
         );
 
         // kja curr work
-        // statsSumByFilePath = SumByFilePath2(commits);
+        statsSumByFilePath = SumByFilePath2(commits);
 
         return statsSumByFilePath.ToArray();
     }
