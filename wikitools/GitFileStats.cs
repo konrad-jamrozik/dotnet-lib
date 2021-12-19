@@ -36,25 +36,6 @@ public record GitFileStats(
         return new RankedTop<GitFileStats>(statsSumByFilePath, top);
     }
 
-    public static GitFileStats[] SumByFilePath(IEnumerable<GitLogCommit> commits)
-    {
-        // var fileStats = commits.SelectMany(
-        //     c => c.Stats.Select(s => (s.FilePath, s.Insertions, s.Deletions)));
-        // var statsByFilePath = fileStats.GroupBy(s => s.FilePath);
-        //
-        // var statsSumByFilePath = statsByFilePath.Select(
-        //     pathStats => new GitFileStats(
-        //         pathStats.Key,
-        //         pathStats.Sum(s => s.Insertions),
-        //         pathStats.Sum(s => s.Deletions))
-        // );
-
-        // kja curr work
-        var statsSumByFilePath = SumByFilePath2(commits);
-
-        return statsSumByFilePath.ToArray();
-    }
-
     public static TabularData TabularData(RankedTop<GitFileStats> rows)
     {
         // kj2 same as Wikitools.GitAuthorStats.TabularData
@@ -63,7 +44,7 @@ public record GitFileStats(
         return new TabularData((headerRow: HeaderRow, rowsAsObjectArrays));
     }
 
-    private static GitFileStats[] SumByFilePath2(IEnumerable<GitLogCommit> commits)
+    public static GitFileStats[] SumByFilePath(IEnumerable<GitLogCommit> commits)
     {
         var fileStats = commits.SelectMany(c => c.Stats).ToList();
 
@@ -114,30 +95,6 @@ public record GitFileStats(
         {
             row.rank, 
             // kj2 hardcoded "wiki/" in the .Replace. This is not the only place it is used.
-            // ----------------
-            // kja 2 this won't show correct link for renames. I need to extract it
-            // from 'commits' in a call to:
-            // var commits = gitLog.Commits(commitDays).Result
-            // The path is of form path/prefix/{oldName.md => newName.md} 
-            // and so I could build a "rename map" and then based on it,
-            // save it to row.stats.FilePath immediately. So its new type will be
-            // WikiPageLink, not string anymore.
-            //   Possibly I could later consider intermediate type of
-            //   GitCommitFilePath.
-            // See also: my OneNote, "Debug snippets".
-            //
-            // Complication: one page might have been renamed multiple times, and in-between
-            // the renames, more insertions/deletions might have happened
-            //
-            // Complication: when doing raw "GitFileStatsReport" reporting everything,
-            // it will show the rename entries with 0 insertions and 0 deletions.
-            // They will always be broken links, and probably shouldn't show up at all.
-            //
-            // Complication: I think
-            // renaming file will cause
-            // Wikitools.GitAuthorStats.SumByAuthor
-            // to count it multiple times in "FilesChanged" column.
-            // Note I can easily test it by hitting the debugger with int test.
             WikiPageLink.FromFileSystemPath(row.stats.FilePath.Replace("wiki/","")).ToString(),
             row.stats.Insertions, 
             row.stats.Deletions
