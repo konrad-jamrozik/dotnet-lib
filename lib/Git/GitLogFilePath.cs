@@ -19,18 +19,22 @@ public record GitLogFilePath(string Path)
 
     private static GitLogFilePathRename? TryParseRename(string path)
     {
-        // kja the second input currently is not properly handled.
         // Example input paths:
-        // "abc/def/{bar.md => qux.md}"
-        // "wiki/abc/{ => newdir/newsubdir}/foo.md"
-        var match = Regex.Match(path, "(.*\\/){(\\S+) => (\\S+)}");
+        //
+        // abc/def/{bar.md => qux.md}
+        // abc/{to/rem{ove => to/a}dd}/def/foo.md
+        // abc/{to/r{emove => }/def/foo.md
+        // abc/{ => to/a}dd}/def/foo.md
+        // { => to/a}dd}/def/foo.md
+        var match = Regex.Match(path, "(.*?){(\\S*) => (\\S*)}(.*)");
 
         return match.Success
             ? new GitLogFilePathRename(
                 path,
                 match.Groups[1].Value,
                 match.Groups[2].Value,
-                match.Groups[3].Value)
+                match.Groups[3].Value,
+                match.Groups[4].Value)
             : null;
     }
 }
