@@ -50,12 +50,12 @@ public record GitFileStats(
         );
 
         // kja curr work
-        // statsSumByFilePath = SumByFilePath2(statsByFilePath, fileStats);
+        // statsSumByFilePath = SumByFilePath2(commits);
 
         return statsSumByFilePath.ToArray();
     }
 
-    private static IEnumerable<GitFileStats> SumByFilePath2(IEnumerable<GitLogCommit> commits)
+    private static GitFileStats[] SumByFilePath2(IEnumerable<GitLogCommit> commits)
     {
         var fileStats = commits.SelectMany(
             c => c.Stats.Select(s => (s.FilePath, s.Insertions, s.Deletions))).ToList();
@@ -77,7 +77,7 @@ public record GitFileStats(
                 pathStats.Sum(s => s.Deletions)
             )
         );
-        return statsSumByFilePath;
+        return statsSumByFilePath.ToArray();
     }
 
     public static TabularData TabularData(RankedTop<GitFileStats> rows)
