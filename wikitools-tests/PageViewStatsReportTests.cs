@@ -11,6 +11,7 @@ namespace Wikitools.Tests;
 
 public class PageViewStatsReportTests
 {
+    // kja test fails! fix!
     [Fact]
     public async Task ReportsPageViewStats()
     {
