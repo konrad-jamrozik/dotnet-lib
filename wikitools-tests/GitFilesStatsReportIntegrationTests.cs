@@ -17,6 +17,7 @@ public class GitFilesStatsReportIntegrationTests
     {
         var fs = new FileSystem();
         var cfg = new Configuration(fs).Read<WikitoolsIntegrationTestsCfg>();
+        // kja fails on rename invariant violation
         var filesReport = GitFilesStatsReport(fs, cfg.WikitoolsCfg);
         var testFile = new TestFile(cfg.TestStorageDir(fs));
 

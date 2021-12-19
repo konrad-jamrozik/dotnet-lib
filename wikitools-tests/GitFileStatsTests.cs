@@ -4,11 +4,11 @@ using Xunit;
 
 namespace Wikitools.Tests;
 
-// kja curr test
+// kja curr tests
 public class GitFileStatsTests
 {
-    [Fact] // kja temp test for debugging
-    public void SumsByFilePathsWithRenamePresentSimplified()
+    [Fact]
+    public void SumsByFilePathsWithSimpleRename()
     {
         var now = new SimulatedTimeline().UtcNow;
         var stats = GitFileStats.SumByFilePath(
@@ -29,7 +29,10 @@ public class GitFileStatsTests
                 }),
             });
 
+        Assert.Single(stats);
         Assert.Equal("/abc/def/bar.md", stats[0].FilePath);
+        Assert.Equal(36, stats[0].Insertions);
+        Assert.Equal(12, stats[0].Deletions);
     }
 
     [Fact]
@@ -63,8 +66,10 @@ public class GitFileStatsTests
                 }),
             });
 
+        Assert.Single(stats);
         Assert.Equal("/abc/def/qux.md", stats[0].FilePath);
         Assert.Equal(136, stats[0].Insertions);
         Assert.Equal(412, stats[0].Deletions);
+
     }
 }

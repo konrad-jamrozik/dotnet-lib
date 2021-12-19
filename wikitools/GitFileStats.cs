@@ -38,19 +38,19 @@ public record GitFileStats(
 
     public static GitFileStats[] SumByFilePath(IEnumerable<GitLogCommit> commits)
     {
-        var fileStats = commits.SelectMany(
-            c => c.Stats.Select(s => (s.FilePath, s.Insertions, s.Deletions)));
-        var statsByFilePath = fileStats.GroupBy(s => s.FilePath);
-
-        var statsSumByFilePath = statsByFilePath.Select(
-            pathStats => new GitFileStats(
-                pathStats.Key,
-                pathStats.Sum(s => s.Insertions),
-                pathStats.Sum(s => s.Deletions))
-        );
+        // var fileStats = commits.SelectMany(
+        //     c => c.Stats.Select(s => (s.FilePath, s.Insertions, s.Deletions)));
+        // var statsByFilePath = fileStats.GroupBy(s => s.FilePath);
+        //
+        // var statsSumByFilePath = statsByFilePath.Select(
+        //     pathStats => new GitFileStats(
+        //         pathStats.Key,
+        //         pathStats.Sum(s => s.Insertions),
+        //         pathStats.Sum(s => s.Deletions))
+        // );
 
         // kja curr work
-        statsSumByFilePath = SumByFilePath2(commits);
+        var statsSumByFilePath = SumByFilePath2(commits);
 
         return statsSumByFilePath.ToArray();
     }

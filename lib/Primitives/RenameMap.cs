@@ -83,7 +83,7 @@ public record RenameMap(IEnumerable<(string from, string to)> Renames)
                 if (toFromMap.ContainsKey(from))
                 {
                     var existingTo = from;
-                    var existingChain = toFromMap[to];
+                    var existingChain = toFromMap[from];
                     var newChain = new List<string>(existingChain);
                     newChain.Insert(0, from);
                     toFromMap.Add(to, newChain);
