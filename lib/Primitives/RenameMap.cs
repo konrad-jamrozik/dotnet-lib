@@ -1,51 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using MoreLinq;
 using Wikitools.Lib.Contracts;
 
 namespace Wikitools.Lib.Primitives;
 
-// Find all renames
-// If given file path is a 'before' name in any of the renames,
-// then add it to the 'after' group
-//
-// Consider case:
-// a -> b
-// b -> c
-//
-// Here the algorithm will first add a to b. Then it would find rename
-// from b to c, adding b to c, resulting in abc in one group.
-//
-// Optimization idea:
-//
-// Come up with chains like "abc ends up being d", "gh ends up being i".
-// Then go another groupBy on the existing groupBy, where they would be
-// grouped on the new property "finalName".
-//
-// So, algorithm 2:
-//
-// 1. Go through all the renames, build the chain of renames.
-// 2. For each existing group, add the new property of final name;
-// 3. Then group by that new property.
-//
-// Generalization of algorithm 2:
-//
-// 1. Function that takes as input a list of pairs: (string from, string to).
-//    Returns: a hashmap: {key: string from, value: string finalTo }
-// 2. Function that takes as input a hashmap {key: string, value: enumerable }
-//    Returns: hashmap, where all the enumerables having the same finalTo
-//    are merged into one, under the "finalTo" key.
 public record RenameMap(IEnumerable<(string from, string to)> Renames)
 {
     private readonly IDictionary<string, string> _finalNamesMap = FinalNamesMap(Renames);
 
     public ILookup<string, T> Apply<T>(ILookup<string, T> lookup)
     {
-        // kja Apply
-        // 2. Function that takes as input a hashmap {key: string, value: enumerable }
-        //    Returns: hashmap, where all the enumerables having the same finalTo
-        //    are merged into one, under the "finalTo" key.
-        throw new NotImplementedException();
+        ILookup<string, T> applied = lookup.SelectMany(
+            group =>
+            {
+                var groupName = group.Key;
+                var renamedGroup = _finalNamesMap.ContainsKey(groupName)
+                    ? group.Select(e => (_finalNamesMap[groupName], e))
+                    : group.Select(e => (groupName, e));
+                return renamedGroup;
+            }).ToLookup();
+        return applied;
     }
 
     private static IDictionary<string, string> FinalNamesMap(
@@ -53,25 +28,11 @@ public record RenameMap(IEnumerable<(string from, string to)> Renames)
     {
         var toFromMap = ToFromMap(renames);
         var fromToMap = FromToMap(toFromMap);
-
         return fromToMap;
     }
 
-    private static Dictionary<string, string> FromToMap(Dictionary<string, List<string>> toFromMap)
-    {
-        var fromToMap = new Dictionary<string, string>(
-            toFromMap.SelectMany(
-                toFrom =>
-                {
-                    var (to, fromNames) = toFrom;
-                    return fromNames.Select(from => new KeyValuePair<string, string>(from, to));
-                }));
-        return fromToMap;
-    }
-
-    
     /// <summary>
-    /// If the input renames where:
+    /// If the input renames are:
     /// a -> b
     /// b -> c
     /// c -> d
@@ -144,5 +105,37 @@ public record RenameMap(IEnumerable<(string from, string to)> Renames)
                 return toFromMap;
             });
         return toFromMap;
+    }
+
+    private static Dictionary<string, string> FromToMap(Dictionary<string, List<string>> toFromMap)
+    {
+        var fromToMap = new Dictionary<string, string>(
+            toFromMap.SelectMany(
+                toFrom =>
+                {
+                    var (finalTo, fromNames) = toFrom;
+                    
+                    // Creating a HashSet is done here to ensure distinctness.
+                    // This is necessary to handle rename loops.
+                    //
+                    // Consider an example of renames with a rename loop:
+                    //
+                    // a -> b
+                    // b -> c
+                    // c -> a // here we close the rename loop.
+                    // a -> d
+                    //
+                    // Here the finalTo would be "d" and fromNames would be [a, c, b, a].
+                    // Observe "a" appears twice in "fromNames".
+                    // This would result in ArgumentException when constructing Dictionary.
+                    // fromNamesSet instead is {a, b, c}.
+                    //
+                    // We lose the order of renames, but currently this is not needed for anything.
+                    var fromNamesSet = new HashSet<string>(fromNames);
+
+                    return fromNamesSet.Select(
+                        from => new KeyValuePair<string, string>(from, finalTo));
+                }));
+        return fromToMap;
     }
 }
