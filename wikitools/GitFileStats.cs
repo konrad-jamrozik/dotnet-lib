@@ -103,11 +103,8 @@ public record GitFileStats(
             // Reversing here so that renames are in chronological order.
             // This assumes that fileStats were in reverse chronological order.
             .Reverse();
-        var renameMap =
-            new RenameMap(
-                sortedRenames 
-
-                );
+        
+        var renameMap = new RenameMap(sortedRenames);
 
         return renameMap;
     }
