@@ -55,37 +55,43 @@ public record GitFileStats(
         return statsSumByFilePath.ToArray();
     }
 
-    private static GitFileStats[] SumByFilePath2(IEnumerable<GitLogCommit> commits)
-    {
-        var fileStats = commits.SelectMany(
-            c => c.Stats.Select(s => (s.FilePath, s.Insertions, s.Deletions))).ToList();
-        var statsByFilePath = fileStats.GroupBy(s => s.FilePath);
-
-        // kj2 I think statsByFilePath can be avoided altogether / inlined.
-        var gitRenames = statsByFilePath
-            .Where(stats => stats.Key is GitLogFilePathRename)
-            .Select(stats => (GitLogFilePathRename)stats.Key);
-        var renameMap =
-            new RenameMap(gitRenames.Select(rename => (rename.FromPath, rename.ToPath)));
-
-        var fileStatsLookup = fileStats.ToLookup(stats => stats.FilePath.ToString());
-        fileStatsLookup = renameMap.Apply(fileStatsLookup);
-        var statsSumByFilePath = fileStatsLookup.Select(
-            pathStats => new GitFileStats(
-                pathStats.Key,
-                pathStats.Sum(s => s.Insertions),
-                pathStats.Sum(s => s.Deletions)
-            )
-        );
-        return statsSumByFilePath.ToArray();
-    }
-
     public static TabularData TabularData(RankedTop<GitFileStats> rows)
     {
         // kj2 same as Wikitools.GitAuthorStats.TabularData
         var rowsAsObjectArrays = rows.Select(AsObjectArray).ToArray();
 
         return new TabularData((headerRow: HeaderRow, rowsAsObjectArrays));
+    }
+
+    private static GitFileStats[] SumByFilePath2(IEnumerable<GitLogCommit> commits)
+    {
+        var fileStats = commits.SelectMany(c => c.Stats).ToList();
+
+        var fileStatsLookup = fileStats
+            .Where(stats => stats.FilePath is not GitLogFilePathRename)
+            .ToLookup(stats => stats.FilePath.ToString());
+
+        fileStatsLookup = RenameMap(fileStats).Apply(fileStatsLookup);
+
+        var statsSumByFilePath = fileStatsLookup.Select(
+            pathStats => new GitFileStats(
+                pathStats.Key,
+                pathStats.Sum(s => s.Insertions),
+                pathStats.Sum(s => s.Deletions)));
+
+        return statsSumByFilePath.ToArray();
+    }
+
+    private static RenameMap RenameMap(List<GitLogCommit.Numstat> fileStats)
+    {
+        var gitRenames = fileStats
+            .Where(stats => stats.FilePath is GitLogFilePathRename)
+            .Select(stats => (GitLogFilePathRename)stats.FilePath);
+
+        var renameMap =
+            new RenameMap(gitRenames.Select(rename => (rename.FromPath, rename.ToPath)));
+
+        return renameMap;
     }
 
     private static object[] AsObjectArray((int rank, GitFileStats stats) row)

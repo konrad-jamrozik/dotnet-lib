@@ -27,6 +27,7 @@ public class GitFileStatsTests
                 {
                     new GitLogCommit.Numstat(6, 2, "/abc/def/bar.md")
                 }),
+                // kja interleave rename loop
                 new GitLogCommit("Author1", now, new[]
                 {
                     new GitLogCommit.Numstat(0, 0, "/abc/def/{bar.md => qux.md}")
