@@ -25,7 +25,7 @@ public partial record GitLogCommit
         private Numstat((int insertions, int deletions, string filePath) data) : this(
             data.insertions,
             data.deletions,
-            new GitLogFilePath(data.filePath)) { }
+            GitLogFilePath.From(data.filePath)) { }
 
         private static (int insertions, int deletions, string filePath) Parse(string line)
         {
