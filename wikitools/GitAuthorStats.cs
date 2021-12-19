@@ -64,7 +64,7 @@ public record GitAuthorStats(
         var commitsByAuthor = commits.GroupBy(commit => commit.Author);
         var statsSumByAuthor = commitsByAuthor.Select(authorCommits => new GitAuthorStats(
             authorCommits.Key, 
-            // kj2 if file had multiple names along the way, it will count it separately
+            // kja if file had multiple names along the way, it will count it separately
             // for each name and rename.
             // This should be fixed by using RenameMap as applied in GitFileStats.
             authorCommits.SelectMany(c => c.Stats).DistinctBy(s => s.FilePath).Count(),
