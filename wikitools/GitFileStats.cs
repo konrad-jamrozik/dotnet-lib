@@ -115,7 +115,7 @@ public record GitFileStats(
             row.rank, 
             // kj2 hardcoded "wiki/" in the .Replace. This is not the only place it is used.
             // ----------------
-            // kja this won't show correct link for renames. I need to extract it
+            // kja 2 this won't show correct link for renames. I need to extract it
             // from 'commits' in a call to:
             // var commits = gitLog.Commits(commitDays).Result
             // The path is of form path/prefix/{oldName.md => newName.md} 
