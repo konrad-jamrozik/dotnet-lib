@@ -92,12 +92,22 @@ public record GitFileStats(
 
     private static RenameMap RenameMap(List<GitLogCommit.Numstat> fileStats)
     {
+        // Assert: fileStats are in reverse-chronological order.
+
         var gitRenames = fileStats
             .Where(stats => stats.FilePath is GitLogFilePathRename)
             .Select(stats => (GitLogFilePathRename)stats.FilePath);
 
+        var sortedRenames = gitRenames
+            .Select(rename => (rename.FromPath, rename.ToPath))
+            // Reversing here so that renames are in chronological order.
+            // This assumes that fileStats were in reverse chronological order.
+            .Reverse();
         var renameMap =
-            new RenameMap(gitRenames.Select(rename => (rename.FromPath, rename.ToPath)));
+            new RenameMap(
+                sortedRenames 
+
+                );
 
         return renameMap;
     }

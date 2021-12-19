@@ -67,7 +67,9 @@ public record GitLog(ITimeline Timeline, GitRepository Repo)
             $"--pretty=\"%{delimiter}%n%an%n%ad\" " +
             // https://git-scm.com/docs/git-log#Documentation/git-log.txt---dateltformatgt
             "--date=iso-strict";
-        return command; // kja are commits ordered asc or desc? Important for rename logic.
+
+        // Note: the resulting commits are ordered by timestamp descending.
+        return command;
     }
 
     private async Task<GitLogCommits> GetCommits(DaySpan daySpan)
