@@ -24,7 +24,7 @@ public class GitFileStatsTests
             new GitLogCommit("Author1", now, new[]
             {
                 new GitLogCommit.Numstat(6, 2, "abc/def/bar.md")
-            }),
+            })
         }.Reverse());
 
         Assert.Single(stats);

@@ -58,7 +58,8 @@ public record RenameMap(IEnumerable<(string from, string to)> Renames)
             {
                 var (from, to) = rename;
 
-                AssertRenameCorrectness(renamedValues, toFromMap, @from, to);
+                AssertRenameCorrectness(renamedValues, toFromMap, from, to);
+                renamedValues.Add(from);
 
                 // IF (there exists a 'rename chain' whose final 'to' ("existingTo")
                 // is the same as current 'from')
@@ -152,6 +153,15 @@ public record RenameMap(IEnumerable<(string from, string to)> Renames)
             // a -> b // invalid rename of 'from='a' to already renamed 'b'.
             AssertNoRenameOfAlreadyRenamed(renamedValues, to);
         }
+
+        // Note: we do not check for invalid case of renaming into an existing file.
+        // This information is not provided to the RenameMap input.
+        //
+        // Example unchecked case:
+        //
+        // b    // just edit stats on existing file 'b'
+        // a->b // invalid rename; 'b' already exists.
+        // a    // just edit stat on no-longer-existing file 'a'
     }
 
     private static void AssertNoRenameOfAlreadyRenamed(HashSet<string> renamedValues, string name)
