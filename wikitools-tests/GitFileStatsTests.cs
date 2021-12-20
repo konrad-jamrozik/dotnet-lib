@@ -5,7 +5,6 @@ using Xunit;
 
 namespace Wikitools.Tests;
 
-// kja curr tests
 public class GitFileStatsTests
 {
     [Fact]

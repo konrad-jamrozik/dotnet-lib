@@ -58,13 +58,7 @@ public record RenameMap(IEnumerable<(string from, string to)> Renames)
             {
                 var (from, to) = rename;
 
-                if (renamedValues.Contains(from))
-                    throw new InvariantException(
-                        $"Cannot rename '{from}' as it was already renamed. " +
-                        "This invariant violation possibly denotes violation of following " +
-                        "precondition: 'renames have to be provided in chronological order'.");
-                
-                renamedValues.Add(from);
+                AssertRenameCorrectness(renamedValues, toFromMap, @from, to);
 
                 // IF (there exists a 'rename chain' whose final 'to' ("existingTo")
                 // is the same as current 'from')
@@ -105,6 +99,68 @@ public record RenameMap(IEnumerable<(string from, string to)> Renames)
                 return toFromMap;
             });
         return toFromMap;
+    }
+
+    private static void AssertRenameCorrectness(
+        HashSet<string> renamedValues,
+        Dictionary<string, List<string>> toFromMap,
+        string from,
+        string to)
+    {
+        // Cannot rename name more than once, without it first
+        // being renamed back to the original name.
+        // 
+        // This protects against invalid cases like:
+        //
+        // a -> b
+        // a -> x // invalid rename; 'from'='a' is already renamed to 'b'.
+        AssertNoRenameOfAlreadyRenamed(renamedValues, from);
+
+        // If we are renaming current name (i.e. a key in toFromMap)...
+        if (toFromMap.ContainsKey(from))
+        {
+            // ...and if we are renaming the current name to one of the previous names
+            // it had...
+            if (toFromMap[from].Contains(to))
+            {
+                // ...then all is OK.
+                //
+                // Example:
+                // a -> b
+                // b -> c
+                // c -> d
+                // d -> b // here we renamed 'from'='d' to 'to'='b'.
+            }
+            else
+            {
+                // Otherwise need to check if the target name wasn't
+                // already renamed.
+                //
+                // This protects against invalid cases like:
+                // 
+                // x -> y
+                // a -> b
+                // b -> x // invalid rename of 'from'='b' to already renamed 'x'.
+                AssertNoRenameOfAlreadyRenamed(renamedValues, to);
+            }
+        }
+        else
+        {
+            // Protects against invalid cases like:
+            //
+            // b -> c
+            // a -> b // invalid rename of 'from='a' to already renamed 'b'.
+            AssertNoRenameOfAlreadyRenamed(renamedValues, to);
+        }
+    }
+
+    private static void AssertNoRenameOfAlreadyRenamed(HashSet<string> renamedValues, string name)
+    {
+        if (renamedValues.Contains(name))
+            throw new InvariantException(
+                $"Cannot rename '{name}' as it was already renamed. " +
+                "This invariant violation possibly denotes violation of following " +
+                "precondition: 'renames have to be provided in chronological order'.");
     }
 
     private static Dictionary<string, string> FromToMap(Dictionary<string, List<string>> toFromMap)
