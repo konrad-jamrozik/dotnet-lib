@@ -46,48 +46,17 @@ public record GitFileStats(
 
     public static GitFileStats[] SumByFilePath(IEnumerable<GitLogCommit> commits)
     {
-        var fileStats = commits.SelectMany(c => c.Stats).ToList();
+        var numstats = commits.SelectMany(c => c.Stats).ToList();
 
-        var fileStatsLookup = fileStats
-            .Select(
-                stats => stats.FilePath is GitLogFilePathRename filePath
-                    ? stats with
-                    {
-                        // Stats in file rename entries count towards the
-                        // resulting file name (i.e. having "ToPath").
-                        FilePath = new GitLogFilePath(filePath.ToPath)
-                    }
-                    : stats)
-            .ToLookup(stats => stats.FilePath.ToString());
+        var numstatsLookup = GitLogCommit.Numstat.ByFileNameAfterRenames(numstats);
 
-        fileStatsLookup = RenameMap(fileStats).Apply(fileStatsLookup);
-
-        var statsSumByFilePath = fileStatsLookup.Select(
+        var statsSumByFilePath = numstatsLookup.Select(
             pathStats => new GitFileStats(
                 pathStats.Key,
                 pathStats.Sum(s => s.Insertions),
                 pathStats.Sum(s => s.Deletions)));
 
         return statsSumByFilePath.ToArray();
-    }
-
-    private static RenameMap RenameMap(List<GitLogCommit.Numstat> fileStats)
-    {
-        // Assert: fileStats are in reverse-chronological order.
-
-        var gitRenames = fileStats
-            .Where(stats => stats.FilePath is GitLogFilePathRename)
-            .Select(stats => (GitLogFilePathRename)stats.FilePath);
-
-        var sortedRenames = gitRenames
-            .Select(rename => (rename.FromPath, rename.ToPath))
-            // Reversing here so that renames are in chronological order.
-            // This assumes that fileStats were in reverse chronological order.
-            .Reverse();
-        
-        var renameMap = new RenameMap(sortedRenames);
-
-        return renameMap;
     }
 
     private static object[] AsObjectArray((int rank, GitFileStats stats) row)

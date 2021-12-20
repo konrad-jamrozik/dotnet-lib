@@ -62,15 +62,20 @@ public record GitAuthorStats(
     public static GitAuthorStats[] SumByAuthor(IEnumerable<GitLogCommit> commits)
     {
         var commitsByAuthor = commits.GroupBy(commit => commit.Author);
-        var statsSumByAuthor = commitsByAuthor.Select(authorCommits => new GitAuthorStats(
-            authorCommits.Key, 
-            // kja if file had multiple names along the way, it will count it separately
-            // for each name and rename.
-            // This should be fixed by using RenameMap as applied in GitFileStats.
-            authorCommits.SelectMany(c => c.Stats).DistinctBy(s => s.FilePath).Count(),
-            authorCommits.Sum(c => c.Stats.Sum(s => s.Insertions)),
-            authorCommits.Sum(c => c.Stats.Sum(s => s.Deletions))
-        ));
+        var statsSumByAuthor = commitsByAuthor.Select(authorCommits =>
+        {
+            // kja apply here Numstat renaming
+            var authorStats = new GitAuthorStats(
+                authorCommits.Key,
+                // kja if file had multiple names along the way, it will count it separately
+                // for each name and rename.
+                // This should be fixed by using RenameMap as applied in GitFileStats.
+                authorCommits.SelectMany(c => c.Stats).DistinctBy(s => s.FilePath).Count(),
+                authorCommits.Sum(c => c.Stats.Sum(s => s.Insertions)),
+                authorCommits.Sum(c => c.Stats.Sum(s => s.Deletions))
+            );
+            return authorStats;
+        });
         return statsSumByAuthor.ToArray();
     }
 
