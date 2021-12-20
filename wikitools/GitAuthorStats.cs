@@ -20,8 +20,9 @@ public record GitAuthorStats(
     public static RankedTop<GitAuthorStats> From(
         GitLog gitLog,
         int commitDays,
-        string[]? excludedAuthors,
-        int top)
+        int top,
+        string[]? excludedAuthors = null,
+        string[]? excludedPaths = null)
     {
         var commits = gitLog.Commits(commitDays).Result; // kj2 .result
 
@@ -29,7 +30,7 @@ public record GitAuthorStats(
             ? author => !excludedAuthors.Any(author.Contains)
             : _ => true;
 
-        GitAuthorStats[] statsSumByAuthor = SumByAuthor(commits)
+        GitAuthorStats[] statsSumByAuthor = SumByAuthor(commits, excludedPaths)
             .OrderByDescending(s => s.Insertions)
             .Where(s => authorFilter(s.AuthorName))
             .ToArray();
@@ -59,18 +60,26 @@ public record GitAuthorStats(
         return new TabularData((headerRow: HeaderRow, rowsAsObjectArrays));
     }
 
-    public static GitAuthorStats[] SumByAuthor(IEnumerable<GitLogCommit> commits)
+    public static GitAuthorStats[] SumByAuthor(
+        IEnumerable<GitLogCommit> commits,
+        string[]? excludedPaths = null)
     {
+        Func<string, bool> pathFilter = excludedPaths != null
+            ? path => !excludedPaths.Any(path.Contains)
+            : _ => true;
+
         var commitsByAuthor = commits.GroupBy(commit => commit.Author);
         var statsSumByAuthor = commitsByAuthor.Select(authorCommits =>
         {
             var numstats = authorCommits.SelectMany(c => c.Stats).ToList();
             var numstatsLookup = GitLogCommit.Numstat.ByFileNameAfterRenames(numstats);
+            var filteredNumstats = numstatsLookup.Where(stats => pathFilter(stats.Key)).ToList();
+
             var authorStats = new GitAuthorStats(
                 authorCommits.Key,
-                numstatsLookup.Count(),
-                authorCommits.Sum(c => c.Stats.Sum(s => s.Insertions)),
-                authorCommits.Sum(c => c.Stats.Sum(s => s.Deletions))
+                filteredNumstats.Count,
+                filteredNumstats.Sum(fileStats => fileStats.Sum(s => s.Insertions)),
+                filteredNumstats.Sum(fileStats => fileStats.Sum(s => s.Deletions))
             );
             return authorStats;
         });

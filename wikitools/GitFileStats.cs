@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Wikitools.Lib.Data;
 using Wikitools.Lib.Git;
-using Wikitools.Lib.Primitives;
 
 namespace Wikitools;
 
