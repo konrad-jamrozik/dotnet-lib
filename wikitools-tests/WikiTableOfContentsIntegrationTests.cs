@@ -48,7 +48,7 @@ public class WikiTableOfContentsIntegrationTests
     {
         var wikiPagesPaths = AdoWikiPagesPaths(fs, cfg.WikitoolsCfg);
         var pagesStats = ValidWikiPagesStats(fs, cfg);
-        var toc = new WikiTableOfContents(timeline, wikiPagesPaths, Task.FromResult(pagesStats));
+        var toc = new WikiTableOfContents(timeline, wikiPagesPaths, pagesStats);
         return toc;
     }
 
@@ -61,7 +61,7 @@ public class WikiTableOfContentsIntegrationTests
         return wikiPagesPaths;
     }
 
-    private static ValidWikiPagesStats ValidWikiPagesStats(
+    private static async Task<ValidWikiPagesStats> ValidWikiPagesStats(
         IFileSystem fs,
         WikitoolsIntegrationTestsCfg cfg)
     {
@@ -77,8 +77,7 @@ public class WikiTableOfContentsIntegrationTests
             cfg.WikitoolsCfg.StorageDirPath);
 
         // kj2 when the pagesStats input goes beyond what is stored on file system, no exception is thrown, which is not great.
-        // kj2 get rid of all .Result and .Wait() calls in the codebase, if possible.
-        var pagesStats = wiki.PagesStats(PageViewsForDays).Result;
+        var pagesStats = await wiki.PagesStats(PageViewsForDays);
         return pagesStats;
     }
 }

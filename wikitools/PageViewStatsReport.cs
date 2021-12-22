@@ -1,4 +1,5 @@
 using System.Linq;
+using System.Threading.Tasks;
 using Wikitools.AzureDevOps;
 using Wikitools.Lib.Markdown;
 using Wikitools.Lib.Primitives;
@@ -16,12 +17,12 @@ public record PageViewStatsReport : MarkdownDocument
         int daysAgo) : base(
         GetContent(timeline, wiki, daysAgo)) { }
 
-    private static object[] GetContent(
+    private static async Task<object[]> GetContent(
         ITimeline timeline,
         IAdoWiki wiki,
         int daysAgo)
     {
-        var pageViewStats = PageViewStats.From(
+        var pageViewStats = await PageViewStats.From(
             timeline,
             wiki,
             new DaySpan(timeline.UtcNow, daysAgo));

@@ -1,4 +1,5 @@
 using System.Linq;
+using System.Threading.Tasks;
 using Wikitools.AzureDevOps;
 using Wikitools.Lib.Data;
 using Wikitools.Lib.Primitives;
@@ -10,7 +11,7 @@ public record PageViewStats(string FilePath, int Views)
     // kj2 get rid of Place
     public static readonly object[] HeaderRow = { "Place", "Path", "Views" };
 
-    public static RankedTop<PageViewStats> From(
+    public static async Task<RankedTop<PageViewStats>> From(
         ITimeline timeline,
         IAdoWiki wiki,
         DaySpan daySpan,
@@ -35,7 +36,7 @@ public record PageViewStats(string FilePath, int Views)
         // https://github.com/dotnet/roslyn/issues/16160
         // 11/17/2021: Or maybe doing stuff like LINQ IEnumerable is enough? IEnumerable and related
         // collections are lazy after all.
-        var pagesStats = wiki.PagesStats(pageViewsForDays).Result // kj2 .Result
+        var pagesStats = (await wiki.PagesStats(pageViewsForDays))
             .Trim(daySpan.AfterDay, daySpan.BeforeDay);
 
         var pathsStats = pagesStats.Select(

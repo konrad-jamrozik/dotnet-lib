@@ -61,8 +61,8 @@ public record TopStatsReport : MarkdownDocument
         var last7Days = new DaySpan(ago7Days, ago1Day);
         var last28Days = new DaySpan(ago28Days, ago1Day);
 
-        var pagesStatsLast7Days = PageViewStats.From(timeline, wiki, last7Days, top5);
-        var pagesStatsLast28Days = PageViewStats.From(timeline, wiki, last28Days, top10);
+        var pagesStatsLast7Days = await PageViewStats.From(timeline, wiki, last7Days, top5);
+        var pagesStatsLast28Days = await PageViewStats.From(timeline, wiki, last28Days, top10);
 
 
         return new object[]
