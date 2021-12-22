@@ -8,7 +8,7 @@ namespace Wikitools;
 
 public record PageViewStats(string FilePath, int Views)
 {
-    // kj2 get rid of Place
+    // kja get rid of Place
     public static readonly object[] HeaderRow = { "Place", "Path", "Views" };
 
     public static async Task<RankedTop<PageViewStats>> From(

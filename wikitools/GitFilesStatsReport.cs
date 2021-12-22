@@ -6,7 +6,7 @@ namespace Wikitools;
 
 public record GitFilesStatsReport : MarkdownDocument
 {
-    // kj2 rename all "DescriptionFormat" to "PageHeader"
+    // kja rename all "DescriptionFormat" to "PageHeader"
     public const string DescriptionFormat = "Git file changes since last {0} days as of {1}";
 
     public GitFilesStatsReport(

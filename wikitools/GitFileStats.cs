@@ -12,7 +12,7 @@ public record GitFileStats(
     int Insertions,
     int Deletions)
 {
-    // kj2 remove "Place" from here.
+    // kja remove "Place" from here.
     public static readonly object[] HeaderRow = { "Place", "File Path", "Insertions", "Deletions" };
 
     public static async Task<RankedTop<GitFileStats>> From(
