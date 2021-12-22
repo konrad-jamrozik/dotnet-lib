@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using Wikitools.Lib.Git;
 using Wikitools.Lib.Markdown;
 using Wikitools.Lib.Primitives;
@@ -16,14 +17,14 @@ public record GitAuthorsStatsReport : MarkdownDocument
         string[]? excludedAuthors = null)
         : base(GetContent(timeline, gitLog, top, commitDays, excludedAuthors)) { }
 
-    private static object[] GetContent(
+    private static async Task<object[]> GetContent(
         ITimeline timeline,
         GitLog gitLog,
         int top,
         int commitDays,
         string[]? excludedAuthors)
     {
-        var stats = GitAuthorStats.From(gitLog, commitDays, top, excludedAuthors);
+        var stats = await GitAuthorStats.From(gitLog, commitDays, top, excludedAuthors);
         return new object[]
         {
             string.Format(DescriptionFormat, commitDays, timeline.UtcNow),

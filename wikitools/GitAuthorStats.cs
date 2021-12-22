@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Wikitools.Lib.Data;
 using Wikitools.Lib.Git;
 using ME = MoreLinq.MoreEnumerable;
@@ -17,14 +18,14 @@ public record GitAuthorStats(
     public static readonly object[] HeaderRow =
         { "Place", "Author", "Files changed", "Insertions", "Deletions" };
 
-    public static RankedTop<GitAuthorStats> From(
+    public static async Task<RankedTop<GitAuthorStats>> From(
         GitLog gitLog,
         int commitDays,
         int top,
         string[]? excludedAuthors = null,
         string[]? excludedPaths = null)
     {
-        var commits = gitLog.Commits(commitDays).Result; // kj2 .result
+        var commits = await gitLog.Commits(commitDays);
 
         Func<string, bool> authorFilter = excludedAuthors != null
             ? author => !excludedAuthors.Any(author.Contains)

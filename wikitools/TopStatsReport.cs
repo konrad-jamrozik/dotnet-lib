@@ -40,13 +40,13 @@ public record TopStatsReport : MarkdownDocument
         // Should instead be exactly from 8 days back (inclusive) to 1 day back (inclusive),
         // but without today.
         // Need same fix for git file stats. But page stats are already solved.
-        var authorStatsLast7Days = GitAuthorStats.From(
+        var authorStatsLast7Days = await GitAuthorStats.From(
             gitLog,
             days7,
             top3,
             excludedAuthors,
             excludedPaths);
-        var authorStatsLast28Days = GitAuthorStats.From(
+        var authorStatsLast28Days = await GitAuthorStats.From(
             gitLog,
             days28,
             top5,
@@ -74,7 +74,6 @@ public record TopStatsReport : MarkdownDocument
             "",
             string.Format(AuthorDescriptionFormat, authorStatsLast7Days.Top, days7),
             "",
-            // kj would be cool if paths in these tables are hyperlinked, like in WTOC.
             GitAuthorStats.TabularData(authorStatsLast7Days),
             "",
             string.Format(AuthorDescriptionFormat, authorStatsLast28Days.Top, days28),

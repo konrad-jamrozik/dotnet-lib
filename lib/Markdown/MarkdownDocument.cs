@@ -14,7 +14,7 @@ public record MarkdownDocument(Task<object[]> Content) : IWritableToText
     // kj2 JsonDiff doesn't seem to properly show the extra whitespace on assertion failures.
     public const string LineBreakMarker = "  ";
 
-    public MarkdownDocument(object[] content) : this(Task.FromResult(content)) 
+    protected MarkdownDocument(object[] content) : this(Task.FromResult(content)) 
     { }
 
     public async Task WriteAsync(TextWriter textWriter)
