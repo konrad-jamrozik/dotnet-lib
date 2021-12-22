@@ -17,18 +17,16 @@ public static class Program
     public static async Task Main(string[] args)
     {
         ITimeline timeline = new Timeline();
-        IOperatingSystem os = new WindowsOS();
         IFileSystem fs = new FileSystem();
         IEnvironment env = new Environment();
 
-        var docsToWrite = DocsToWrite(timeline, os, fs, env);
+        var docsToWrite = DocsToWrite(timeline, fs, env);
         var outputSink  = Console.Out;
         await WriteAll(docsToWrite, outputSink);
     }
 
     private static MarkdownDocument[] DocsToWrite(
         ITimeline timeline,
-        IOperatingSystem os,
         IFileSystem fs,
         IEnvironment env)
     {
