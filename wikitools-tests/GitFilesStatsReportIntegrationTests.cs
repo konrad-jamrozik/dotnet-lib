@@ -1,4 +1,5 @@
 using System.Linq;
+using System.Threading.Tasks;
 using NUnit.Framework;
 using Wikitools.Lib;
 using Wikitools.Lib.Json;
@@ -13,11 +14,11 @@ namespace Wikitools.Tests;
 public class GitFilesStatsReportIntegrationTests
 {
     [Test]
-    public void WritesFilesStatsReport()
+    public async Task WritesFilesStatsReport()
     {
         var fs = new FileSystem();
         var cfg = new Configuration(fs).Read<WikitoolsIntegrationTestsCfg>();
-        var filesReport = GitFilesStatsReport(fs, cfg.WikitoolsCfg);
+        var filesReport = await GitFilesStatsReport(fs, cfg.WikitoolsCfg);
         var testFile = new TestFile(cfg.TestStorageDir(fs));
 
         // Act
@@ -27,7 +28,7 @@ public class GitFilesStatsReportIntegrationTests
         Assert.That(lines.Count(l => l.StartsWith("| ")), Is.GreaterThanOrEqualTo(3));
     }
 
-    private static GitFilesStatsReport GitFilesStatsReport(
+    private static async Task<GitFilesStatsReport> GitFilesStatsReport(
         IFileSystem fs,
         WikitoolsCfg cfg)
     {
@@ -41,7 +42,7 @@ public class GitFilesStatsReportIntegrationTests
             gitRepoDir,
             cfg.GitExecutablePath);
 
-        var stats = GitFileStats.From(gitLog, cfg.GitLogDays, cfg.ExcludedPaths);
+        var stats = await GitFileStats.From(gitLog, cfg.GitLogDays, cfg.ExcludedPaths);
 
         var filesReport = new GitFilesStatsReport(
             timeline,

@@ -29,7 +29,7 @@ public class GitFilesStatsReportTests
 
         // Arrange SUT declaration
         var gitLog = new GitLogDeclare().GitLog(timeline, os, gitRepoDir, gitExecutablePath);
-        var stats  = GitFileStats.From(gitLog, commitDays, top: top);
+        var stats  = await GitFileStats.From(gitLog, commitDays, top: top);
         var sut    = new GitFilesStatsReport(timeline, commitDays, stats);
 
         // Arrange expectations

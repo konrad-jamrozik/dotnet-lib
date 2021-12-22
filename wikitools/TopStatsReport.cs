@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using Wikitools.AzureDevOps;
 using Wikitools.Lib.Git;
 using Wikitools.Lib.Markdown;
@@ -22,7 +23,7 @@ public record TopStatsReport : MarkdownDocument
         : base(GetContent(timeline, gitLog, wiki, excludedAuthors, excludedPaths)) { }
 
 
-    private static object[] GetContent(
+    private static async Task<object[]> GetContent(
         Timeline timeline,
         GitLog gitLog,
         IAdoWiki wiki,
@@ -51,8 +52,8 @@ public record TopStatsReport : MarkdownDocument
             top5,
             excludedAuthors,
             excludedPaths);
-        var fileStatsLast7Days = GitFileStats.From(gitLog, days7, excludedPaths, top5);
-        var fileStatsLast28Days = GitFileStats.From(gitLog, days28, excludedPaths, top10);
+        var fileStatsLast7Days = await GitFileStats.From(gitLog, days7, excludedPaths, top5);
+        var fileStatsLast28Days = await GitFileStats.From(gitLog, days28, excludedPaths, top10);
 
         var ago1Day = timeline.DaysFromUtcNow(-1);
         var ago7Days = timeline.DaysFromUtcNow(-7);
