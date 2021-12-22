@@ -2,14 +2,11 @@
 
 namespace Wikitools.Lib.Git;
 
-// kj2 make GitLogFilePath ctor private:
+// kja make GitLogFilePath ctor private:
 // https://stackoverflow.com/questions/69283960/is-it-possible-to-create-a-c-sharp-record-with-a-private-constructor
 public record GitLogFilePath(string Path)
 {
     public static implicit operator GitLogFilePath(string filePath) => new GitLogFilePath(filePath);
-
-    // kj2 this op should not be necessary: all users should operate on GitLogFilePath instead.
-    public static implicit operator string(GitLogFilePath gitLogFilePath) => gitLogFilePath.Path;
 
     public static GitLogFilePath From(string path)
         => TryParseRename(path) ?? new GitLogFilePath(path);

@@ -33,7 +33,7 @@ public record MonthlyStatsReport : MarkdownDocument
         };
 
     private static (object[] headerRow, object[][] rows) GetRows(
-        GitLogCommits commits, // kj2 pass GitLog instead. See TopStatsReport
+        GitLogCommits commits, // kja pass GitLog instead. See TopStatsReport
         Func<string, bool> authorFilter,
         Func<string, bool> filePathFilter)
     {
@@ -41,7 +41,7 @@ public record MonthlyStatsReport : MarkdownDocument
             .Where(commit => authorFilter(commit.Author))
             .GroupBy(commit => $"{commit.Date.Year} {commit.Date.Month}");
 
-        bool FilePathFilter(GitLogCommit.Numstat stat) => filePathFilter(stat.FilePath);
+        bool FilePathFilter(GitLogCommit.Numstat stat) => filePathFilter(stat.FilePath.ToString());
 
         var operationsByMonth = commitsByMonth.Select(mcs => (
                 month: mcs.Key,
