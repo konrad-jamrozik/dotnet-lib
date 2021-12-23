@@ -6,8 +6,7 @@ namespace Wikitools;
 
 public record GitFilesStatsReport : MarkdownDocument
 {
-    // kja rename all "DescriptionFormat" to "PageHeader"
-    public const string DescriptionFormat = "Git file changes since last {0} days as of {1}";
+    public const string ReportHeaderFormatString = "Git file changes since last {0} days as of {1}";
 
     public GitFilesStatsReport(
         ITimeline timeline,
@@ -22,7 +21,7 @@ public record GitFilesStatsReport : MarkdownDocument
         =>
             new object[]
             {
-                string.Format(DescriptionFormat, days, timeline.UtcNow),
+                string.Format(ReportHeaderFormatString, days, timeline.UtcNow),
                 "",
                 GitFileStats.TabularData(dataRows)
             };

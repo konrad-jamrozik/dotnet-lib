@@ -7,7 +7,8 @@ namespace Wikitools;
 
 public record GitAuthorsStatsReport : MarkdownDocument
 {
-    public const string DescriptionFormat = "Git contributions since last {0} days as of {1}";
+    public const string ReportHeaderFormatString =
+        "Git contributions since last {0} days as of {1}";
 
     public GitAuthorsStatsReport(
         ITimeline timeline,
@@ -27,7 +28,7 @@ public record GitAuthorsStatsReport : MarkdownDocument
         var stats = await GitAuthorStats.From(gitLog, commitDays, top, excludedAuthors);
         return new object[]
         {
-            string.Format(DescriptionFormat, commitDays, timeline.UtcNow),
+            string.Format(ReportHeaderFormatString, commitDays, timeline.UtcNow),
             "",
             GitAuthorStats.TabularData(stats)
         };

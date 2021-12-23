@@ -28,7 +28,7 @@ public class PageViewStatsReportTests
 
         var expected = new MarkdownDocument(Task.FromResult(new object[]
         {
-            string.Format(PageViewStatsReport.DescriptionFormat,
+            string.Format(PageViewStatsReport.ReportHeaderFormatString,
                 daysAgo,
                 timeline.UtcNow,
                 pagesStatsData.Length) + MarkdownDocument.LineBreakMarker,

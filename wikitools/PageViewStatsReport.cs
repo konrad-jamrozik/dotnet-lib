@@ -8,7 +8,7 @@ namespace Wikitools;
 
 public record PageViewStatsReport : MarkdownDocument
 {
-    public const string DescriptionFormat =
+    public const string ReportHeaderFormatString =
         "Page views since last {0} days as of {1}. Total wiki pages: {2}";
 
     public PageViewStatsReport(
@@ -29,7 +29,7 @@ public record PageViewStatsReport : MarkdownDocument
         return new object[]
         {
             string.Format(
-                DescriptionFormat,
+                ReportHeaderFormatString,
                 daysAgo,
                 timeline.UtcNow,
                 pageViewStats.Count()),

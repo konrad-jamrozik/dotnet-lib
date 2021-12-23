@@ -34,7 +34,10 @@ public class GitAuthorsStatsReportTests
         // Arrange expectations
         var expected = new MarkdownDocument(Task.FromResult(new object[]
         {
-            string.Format(GitAuthorsStatsReport.DescriptionFormat, commitDays, timeline.UtcNow) 
+            string.Format(
+                GitAuthorsStatsReport.ReportHeaderFormatString,
+                commitDays,
+                timeline.UtcNow) 
             + MarkdownDocument.LineBreakMarker,
             "" + MarkdownDocument.LineBreakMarker,
             new TabularData((GitAuthorStats.HeaderRow,
