@@ -29,7 +29,7 @@ public record SimulatedGitLogProcess(ITimeline Timeline, DaySpan daySpan, GitLog
             }.Union(
                 commit.Stats
                     .Select(stat =>
-                        $"{stat.Insertions}\t{stat.Deletions}\t{stat.FilePath}")
+                        $"{stat.Insertions}\t{stat.Deletions}\t{stat.Path}")
             )
             .ToList();
 }

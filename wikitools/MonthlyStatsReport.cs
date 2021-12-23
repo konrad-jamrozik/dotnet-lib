@@ -41,7 +41,7 @@ public record MonthlyStatsReport : MarkdownDocument
             .Where(commit => authorFilter(commit.Author))
             .GroupBy(commit => $"{commit.Date.Year} {commit.Date.Month}");
 
-        bool FilePathFilter(GitLogCommit.Numstat stat) => filePathFilter(stat.FilePath.ToString());
+        bool FilePathFilter(GitLogCommit.Numstat stat) => filePathFilter(stat.Path.ToString());
 
         var operationsByMonth = commitsByMonth.Select(mcs => (
                 month: mcs.Key,

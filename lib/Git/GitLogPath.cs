@@ -4,17 +4,17 @@ namespace Wikitools.Lib.Git;
 
 // kja make GitLogFilePath ctor private:
 // https://stackoverflow.com/questions/69283960/is-it-possible-to-create-a-c-sharp-record-with-a-private-constructor
-public record GitLogFilePath(string Path)
+public record GitLogPath(string Path)
 {
-    public static implicit operator GitLogFilePath(string filePath) => new GitLogFilePath(filePath);
+    public static implicit operator GitLogPath(string filePath) => new GitLogPath(filePath);
 
-    public static GitLogFilePath From(string path)
-        => TryParseRename(path) ?? new GitLogFilePath(path);
+    public static GitLogPath From(string path)
+        => TryParseRename(path) ?? new GitLogPath(path);
 
     public override string ToString()
         => Path;
 
-    private static GitLogFilePathRename? TryParseRename(string path)
+    private static GitLogPathRename? TryParseRename(string path)
     {
         // Example input paths:
         //
@@ -26,7 +26,7 @@ public record GitLogFilePath(string Path)
         var match = Regex.Match(path, "(.*?){(\\S*) => (\\S*)}(.*)");
 
         return match.Success
-            ? new GitLogFilePathRename(
+            ? new GitLogPathRename(
                 path,
                 match.Groups[1].Value,
                 match.Groups[2].Value,

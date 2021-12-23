@@ -10,20 +10,20 @@ public partial record GitLogCommit
     {
         public int Insertions { get; }
         public int Deletions { get; }
-        public GitLogFilePath FilePath { get; init; }
+        public GitLogPath Path { get; init; }
 
         public Numstat(int insertions, int deletions, string filePath) : this(
             insertions,
             deletions,
-            GitLogFilePath.From(filePath)) { }
+            GitLogPath.From(filePath)) { }
 
-        public Numstat(int insertions, int deletions, GitLogFilePath filePath)
+        public Numstat(int insertions, int deletions, GitLogPath path)
         {
             // Note this setup of invariant checks in ctor has some problems.
             // Details here: https://github.com/dotnet/csharplang/issues/4453#issuecomment-782807066
             Insertions = insertions;
             Deletions = deletions;
-            FilePath = filePath;
+            Path = path;
         }
 
         public Numstat(string line) : this(Parse(line)) { }
@@ -32,15 +32,15 @@ public partial record GitLogCommit
         {
             var numstatsLookup = numstats
                 .Select(
-                    stats => stats.FilePath is GitLogFilePathRename filePath
+                    stats => stats.Path is GitLogPathRename filePath
                         ? stats with
                         {
                             // Stats in file rename entries count towards the
                             // resulting file name (i.e. having "ToPath").
-                            FilePath = new GitLogFilePath(filePath.ToPath)
+                            Path = new GitLogPath(filePath.ToPath)
                         }
                         : stats)
-                .ToLookup(stats => stats.FilePath.ToString());
+                .ToLookup(stats => stats.Path.ToString());
 
             numstatsLookup = RenameMap(numstats).Apply(numstatsLookup);
             return numstatsLookup;
@@ -51,8 +51,8 @@ public partial record GitLogCommit
             // Assert: fileStats are in reverse-chronological order.
 
             var gitRenames = numstats
-                .Where(stats => stats.FilePath is GitLogFilePathRename)
-                .Select(stats => (GitLogFilePathRename)stats.FilePath);
+                .Where(stats => stats.Path is GitLogPathRename)
+                .Select(stats => (GitLogPathRename)stats.Path);
 
             var sortedRenames = gitRenames
                 .Select(rename => (rename.FromPath, rename.ToPath))
@@ -68,7 +68,7 @@ public partial record GitLogCommit
         private Numstat((int insertions, int deletions, string filePath) data) : this(
             data.insertions,
             data.deletions,
-            GitLogFilePath.From(data.filePath)) { }
+            GitLogPath.From(data.filePath)) { }
 
         private static (int insertions, int deletions, string filePath) Parse(string line)
         {

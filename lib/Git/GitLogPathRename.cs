@@ -4,13 +4,13 @@ namespace Wikitools.Lib.Git;
 
 // kja make GitLogFilePathRename ctor private:
 // https://stackoverflow.com/questions/69283960/is-it-possible-to-create-a-c-sharp-record-with-a-private-constructor
-public record GitLogFilePathRename(
+public record GitLogPathRename(
         string Path,
         string Prefix,
         string FromFragment,
         string ToFragment,
         string Suffix)
-    : GitLogFilePath(Path)
+    : GitLogPath(Path)
 {
     public string FromPath => Prefix + FromFragment + AdjustedSuffix(FromFragment);
 
