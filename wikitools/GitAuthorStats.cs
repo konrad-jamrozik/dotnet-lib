@@ -14,7 +14,6 @@ public record GitAuthorStats(
     int Insertions,
     int Deletions)
 {
-    // kja remove "Place" from here.
     public static readonly object[] HeaderRow =
         { "Place", "Author", "Files changed", "Insertions", "Deletions" };
 
