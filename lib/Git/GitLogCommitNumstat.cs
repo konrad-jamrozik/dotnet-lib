@@ -10,7 +10,7 @@ public partial record GitLogCommit
     {
         public int Insertions { get; }
         public int Deletions { get; }
-        public GitLogPath Path { get; init; }
+        public GitLogPath Path { get; private init; }
 
         public Numstat(int insertions, int deletions, string filePath) : this(
             insertions,
@@ -32,12 +32,12 @@ public partial record GitLogCommit
         {
             var numstatsLookup = numstats
                 .Select(
-                    stats => stats.Path is GitLogPathRename filePath
+                    stats => stats.Path.IsRename
                         ? stats with
                         {
                             // Stats in file rename entries count towards the
                             // resulting file name (i.e. having "ToPath").
-                            Path = new GitLogPath(filePath.ToPath)
+                            Path = GitLogPath.From(stats.Path.ToPath)
                         }
                         : stats)
                 .ToLookup(stats => stats.Path.ToString());
@@ -51,8 +51,8 @@ public partial record GitLogCommit
             // Assert: fileStats are in reverse-chronological order.
 
             var gitRenames = numstats
-                .Where(stats => stats.Path is GitLogPathRename)
-                .Select(stats => (GitLogPathRename)stats.Path);
+                .Where(stats => stats.Path.IsRename)
+                .Select(stats => stats.Path);
 
             var sortedRenames = gitRenames
                 .Select(rename => (rename.FromPath, rename.ToPath))
