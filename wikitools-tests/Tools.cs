@@ -33,7 +33,7 @@ public class Tools
     // separate projects. So there will be:
     // <project>
     // <project>-tests
-    // <project>-config-def
+    // <project>-config-interface
     // <project>-config // In dotnet-lib-private
     [Fact]
     public void DynamicAssemblyLoadTest()
