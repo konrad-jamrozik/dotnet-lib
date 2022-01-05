@@ -6,30 +6,41 @@ using Wikitools.Lib.OS;
 
 namespace Wikitools.Lib.Json;
 
-// kj2 need to figure out better way of handling configs, as they are not versioned.
+// kja need to figure out better way of handling configs, as they are not versioned.
 // The config values are not strictly speaking secrets, but I cannot share them as this is in public
 // repo yet the config values refer to company-internal artifacts.
-// kj2 problem with config refresh. They refresh in the /bin of owning project, but not in the runtime project, so rebuild doesn't refresh them properly.
+// Idea: create private repo for configs, check it out beside dotnet-lib repo, and in publicly visible
+// "meta-config", point to the path of the clone of the private repo having proper config.
+//
+// While at it, abandon the idea of having "default project" .json config files in the project dirs.
+// Just load it from .dll:
+// https://stackoverflow.com/questions/465488/can-i-load-a-net-assembly-at-runtime-and-instantiate-a-type-knowing-only-the-na
+
+// kja problem with config refresh. They refresh in the /bin of owning project, but not in the runtime project, so rebuild doesn't refresh them properly.
+// Specifically, after purging configs, first build seems to put all configs in the entry project /bin,
+// but successive rebuilds do not update the configs for dependency projects.
 public record Configuration(IFileSystem FS)
 {
     /// <summary>
     /// Reads configuration TCfg from the file system FS.
     ///
     /// ----------------------------------------
-    /// Algorithm
+    /// Algorithm:
     /// 
     /// The TCfg is deserialized from a series of .json configuration files.
     ///
-    /// The root config file is returned by invocation of:
+    /// 1. The root config file is searched in Directory.GetCurrentDirectory().
+    /// It searches for file named TCfg_config.json. If it won't find it, it tries, recursively,
+    /// all parents of the current dir. It throws if the file is not found.
     /// 
-    /// var rootCfgFilePath
-    ///   = FindConfigFilePath(FS, cfgFileName: IConfiguration.FileName(typeof(TCfg));
-    ///
-    /// All TCfg properties are read directly from rootCfgFilePath into TCfg,
-    /// except TCfg properties that end with Cfg.
+    /// 2. All TCfg properties are read directly from the root config file found in step 1.
+    /// into a new instance of TCfg, except TCfg properties that end with Cfg.
     /// 
-    /// For them, a "property config" file is found and read. The algorithm used for the
-    /// "property config" file doesn't allow further nesting of configs.
+    /// 3. For TCfg properties that end with Cfg, they are read from their own json files.
+    /// The algorithm is analogous as in step 1. It also starts from current dir, but searches for
+    /// files named PropCfg_config.json, where PropCfg is the name of the property.
+    /// The algorithm used for the PropCfg_config.json files doesn't allow further nesting
+    /// of configs.
     ///
     /// ----------------------------------------
     /// Rationale
