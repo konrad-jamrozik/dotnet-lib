@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Wikitools.Lib.Git;
 using Wikitools.Lib.Markdown;
 using Wikitools.Lib.Data;
+using Wikitools.Lib.Primitives;
 
 namespace Wikitools;
 
@@ -14,29 +15,45 @@ namespace Wikitools;
 public record MonthlyStatsReport : MarkdownDocument
 {
     public MonthlyStatsReport(
-        Task<GitLogCommits> commits,
-        Func<string, bool>? authorFilter = null,
-        Func<string, bool>? filePathFilter = null) : base(
-        GetContent(commits,
-            authorFilter ?? (_ => true),
-            filePathFilter ?? (_ => true))) { }
+        GitLog gitLog,
+        DaySpan logsDaySpan,
+        string[] excludedAuthors,
+        string[] excludedPaths) : base(
+        GetContent(
+            gitLog,
+            logsDaySpan,
+            excludedAuthors,
+            excludedPaths)) { }
 
     private static async Task<object[]> GetContent(
-        Task<GitLogCommits> commits,
-        Func<string, bool> authorFilter,
-        Func<string, bool> filePathFilter) =>
+        GitLog gitLog,
+        DaySpan logsDaySpan,
+        string[] excludedAuthors,
+        string[] excludedPaths) =>
         new object[]
         {
             "Git file insertions and deletions month over month",
             "",
-            new TabularData(GetRows(await commits, authorFilter, filePathFilter))
+            new TabularData(await GetRows(gitLog, logsDaySpan, excludedAuthors, excludedPaths))
         };
 
-    private static (object[] headerRow, object[][] rows) GetRows(
-        GitLogCommits commits, // kja pass GitLog instead. See TopStatsReport
-        Func<string, bool> authorFilter,
-        Func<string, bool> filePathFilter)
+    private static async Task<(object[] headerRow, object[][] rows)> GetRows(
+        GitLog gitLog,
+        DaySpan logsDaySpan,
+        string[] excludedAuthors,
+        string[] excludedPaths)
     {
+        var commits = await gitLog.Commits(logsDaySpan);
+
+        // kja dedup all filter logic into .WhereNotContains()
+        Func<string, bool> authorFilter = excludedAuthors != null
+            ? author => !excludedAuthors.Any(author.Contains)
+            : _ => true;
+
+        Func<string, bool> filePathFilter = excludedPaths != null
+            ? path => !excludedPaths.Any(path.Contains)
+            : _ => true;
+
         var commitsByMonth = commits
             .Where(commit => authorFilter(commit.Author))
             .GroupBy(commit => $"{commit.Date.Year} {commit.Date.Month}");

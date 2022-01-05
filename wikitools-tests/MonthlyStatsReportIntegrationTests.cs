@@ -41,12 +41,11 @@ public class MonthlyStatsReportIntegrationTests
             gitRepoDir,
             cfg.GitExecutablePath);
 
-        DateDay after = cfg.MonthlyReportStartDay;
-        DateDay before = cfg.MonthlyReportEndDay;
         var monthlyReport = new MonthlyStatsReport(
-            gitLog.Commits(new DaySpan(after, before)),
-            author => !cfg.ExcludedAuthors.Any(author.Contains),
-            path => !cfg.ExcludedPaths.Any(path.Contains));
+            gitLog,
+            new DaySpan(cfg.MonthlyReportStartDay, cfg.MonthlyReportEndDay),
+            cfg.ExcludedAuthors,
+            cfg.ExcludedPaths);
 
         return monthlyReport;
     }
