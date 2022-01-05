@@ -1,4 +1,7 @@
 using System;
+using System.IO;
+using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using Wikitools.AzureDevOps;
 using Wikitools.Lib.Json;
@@ -23,6 +26,32 @@ public class Tools
     [Fact(Skip = "For one-off experiments")]
     public void Scratchpad()
     {
+    }
+    
+    // kja current work: refactor this code, and switch the Config reflection to use this instead.
+    // as part of this work, interfaces for configs need to be added, and extracted into their own
+    // separate projects. So there will be:
+    // <project>
+    // <project>-tests
+    // <project>-config-def
+    // <project>-config // In dotnet-lib-private
+    [Fact]
+    public void DynamicAssemblyLoadTest()
+    {
+        var currentDirectory = Directory.GetCurrentDirectory();
+        // \dotnet-lib\wikitools-tests\bin\Debug\net6.0
+        var traversalToRepoParent = @"..\..\..\..\..";
+        var repoParentDir = Path.GetFullPath(Path.Join(currentDirectory, traversalToRepoParent));
+        // kja rename everywhere wikitools-secrets to wikitools-config
+        var dllPath = Path.Join(
+            repoParentDir,
+            @"dotnet-lib-private\wikitools-secrets\bin\Debug\net6.0\wikitools-secrets.dll");
+        Assembly assembly = Assembly.LoadFrom(dllPath);
+        var typeClassName = string.Concat(nameof(IExperimentalCfg).Skip(1));
+        Type type = assembly.GetType("Wikitools.Secrets."+ typeClassName)!;
+
+        IExperimentalCfg experimentalCfg = (IExperimentalCfg)Activator.CreateInstance(type)!;
+        Assert.Equal("bar", experimentalCfg.ExampleStringProp());
     }
 
     [Fact(Skip = "Tool to be used manually")]
