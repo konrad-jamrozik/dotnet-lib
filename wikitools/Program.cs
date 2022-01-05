@@ -58,7 +58,7 @@ public static class Program
 }
 
 // kja 1 high-level todos:
-// a) See to-dos in TopStatsReport
+// a) address all existing TODOs in the code
 // b) make Program update all the reports in the local git clone, so that I can write a PS1 script
 // that does:
 //   git pull

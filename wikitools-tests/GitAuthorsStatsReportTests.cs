@@ -12,7 +12,7 @@ namespace Wikitools.Tests;
 
 public class GitAuthorsStatsReportTests
 {
-    [Fact] // kj2 use everywhere NUnit 
+    [Fact] // kj2 use everywhere NUnit
     public async Task ReportsGitAuthorsStats()
     {
         // Arrange inputs and simulations
