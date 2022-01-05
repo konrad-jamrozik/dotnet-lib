@@ -1,9 +1,9 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Wikitools.Lib.Data;
 using Wikitools.Lib.Git;
+using Wikitools.Lib.Primitives;
 
 namespace Wikitools;
 
@@ -22,14 +22,10 @@ public record GitFileStats(
     {
         var commits = await gitLog.Commits(commitDays);
 
-        Func<string, bool> filePathFilter = excludedPaths != null
-            ? path => !excludedPaths.Any(path.Contains)
-            : _ => true;
-
         GitFileStats[] statsSumByFilePath =
             SumByFilePath(commits)
                 .OrderByDescending(stats => stats.Insertions)
-                .Where(stat => filePathFilter(stat.FilePath))
+                .WhereNotContains(stats => stats.FilePath, excludedPaths)
                 .ToArray();
 
         return new RankedTop<GitFileStats>(statsSumByFilePath, top);

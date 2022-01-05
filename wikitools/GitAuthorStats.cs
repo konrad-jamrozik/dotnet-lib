@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Wikitools.Lib.Data;
 using Wikitools.Lib.Git;
+using Wikitools.Lib.Primitives;
 using ME = MoreLinq.MoreEnumerable;
 
 namespace Wikitools;
@@ -26,13 +27,9 @@ public record GitAuthorStats(
     {
         var commits = await gitLog.Commits(commitDays);
 
-        Func<string, bool> authorFilter = excludedAuthors != null
-            ? author => !excludedAuthors.Any(author.Contains)
-            : _ => true;
-
         GitAuthorStats[] statsSumByAuthor = SumByAuthor(commits, excludedPaths)
-            .OrderByDescending(s => s.Insertions)
-            .Where(s => authorFilter(s.AuthorName))
+            .OrderByDescending(stats => stats.Insertions)
+            .WhereNotContains(stats => stats.AuthorName, excludedAuthors)
             .ToArray();
 
         return new RankedTop<GitAuthorStats>(statsSumByAuthor, top);
@@ -64,16 +61,14 @@ public record GitAuthorStats(
         IEnumerable<GitLogCommit> commits,
         string[]? excludedPaths = null)
     {
-        Func<string, bool> pathFilter = excludedPaths != null
-            ? path => !excludedPaths.Any(path.Contains)
-            : _ => true;
-
         var commitsByAuthor = commits.GroupBy(commit => commit.Author);
         var statsSumByAuthor = commitsByAuthor.Select(authorCommits =>
         {
             var numstats = authorCommits.SelectMany(c => c.Stats).ToList();
             var numstatsLookup = GitLogCommit.Numstat.ByFileNameAfterRenames(numstats);
-            var filteredNumstats = numstatsLookup.Where(stats => pathFilter(stats.Key)).ToList();
+            var filteredNumstats = numstatsLookup
+                .WhereNotContains(stats => stats.Key, excludedPaths)
+                .ToList();
 
             var authorStats = new GitAuthorStats(
                 authorCommits.Key,
