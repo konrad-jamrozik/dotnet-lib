@@ -45,25 +45,19 @@ public record MonthlyStatsReport : MarkdownDocument
     {
         var commits = await gitLog.Commits(logsDaySpan);
 
-        // kja dedup all filter logic into .WhereNotContains()
-        Func<string, bool> authorFilter = excludedAuthors != null
-            ? author => !excludedAuthors.Any(author.Contains)
-            : _ => true;
-
-        Func<string, bool> filePathFilter = excludedPaths != null
-            ? path => !excludedPaths.Any(path.Contains)
-            : _ => true;
-
         var commitsByMonth = commits
-            .Where(commit => authorFilter(commit.Author))
+            .WhereNotContains(commit => commit.Author, excludedAuthors)
             .GroupBy(commit => $"{commit.Date.Year} {commit.Date.Month}");
 
-        bool FilePathFilter(GitLogCommit.Numstat stat) => filePathFilter(stat.Path.ToString());
 
         var operationsByMonth = commitsByMonth.Select(mcs => (
                 month: mcs.Key,
-                insertions: mcs.Sum(c => c.Stats.Where(FilePathFilter).Sum(ns => ns.Insertions)),
-                deletions: mcs.Sum(c => c.Stats.Where(FilePathFilter).Sum(ns => ns.Deletions))
+                insertions: mcs.Sum(
+                    c => c.Stats.WhereNotContains(stat => stat.Path.ToString(), excludedPaths)
+                        .Sum(ns => ns.Insertions)),
+                deletions: mcs.Sum(
+                    c => c.Stats.WhereNotContains(stat => stat.Path.ToString(), excludedPaths)
+                        .Sum(ns => ns.Deletions))
             )
         );
 

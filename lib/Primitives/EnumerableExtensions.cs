@@ -8,6 +8,23 @@ namespace Wikitools.Lib.Primitives;
 
 public static class EnumerableExtensions
 {
+    /// <summary>
+    /// Returns source filtered to these elements, whose property, of type
+    /// string, doesn't contain any of the excludedSubstrings.
+    /// </summary>
+    public static IEnumerable<T> WhereNotContains<T>(
+        this IEnumerable<T> source,
+        Func<T, string> property,
+        IEnumerable<string>? excludedSubstrings)
+    {
+        var excludedSubstringsArr = excludedSubstrings as string[] ?? excludedSubstrings?.ToArray();
+        return excludedSubstringsArr == null || !excludedSubstringsArr.Any()
+            ? source
+            : source.Where(
+                item => !excludedSubstringsArr.Any(
+                    excludedSubstring => property(item).Contains(excludedSubstring)));
+    }
+
     public static (TGroupKey key, TSource[] items)[] GroupAndOrderBy<TSource, TGroupKey>(
         this IEnumerable<TSource> source,
         Func<TSource, TGroupKey> selectKey)
