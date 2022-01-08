@@ -9,7 +9,7 @@ public interface IWikitoolsCfg : IConfiguration
 {
     public IAzureDevOpsCfg AzureDevOpsCfg();
 
-    // kj2 most of these config values should be pushed down, like StorageDirPath to ADO
+    // kja most of these config values should be pushed down, like StorageDirPath to ADO
     // and GitExecutablePath to lib (because GitLog is using it).
     public string GitExecutablePath();
     public string GitRepoClonePath();
