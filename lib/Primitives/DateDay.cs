@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Globalization;
-using System.Text.Json.Serialization;
 
 namespace Wikitools.Lib.Primitives;
 
-[JsonConverter(typeof(DateDayJsonConverter))]
 public sealed record DateDay(int Year, int Month, int Day, DateTimeKind Kind) : 
     IComparable<DateTime>, IEquatable<DateTime>,
     IComparable<DateDay>,
