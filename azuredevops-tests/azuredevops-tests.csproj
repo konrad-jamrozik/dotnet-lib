@@ -30,10 +30,4 @@
     <ProjectReference Include="..\lib-tests\lib-tests.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <None Update="AzureDevOpsTests_config.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
 </Project>

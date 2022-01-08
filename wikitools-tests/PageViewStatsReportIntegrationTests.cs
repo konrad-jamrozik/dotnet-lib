@@ -42,7 +42,8 @@ public class PageViewStatsReportIntegrationTests
             env,
             // kja instead here there should be cfg.AzureDevOpsCfg.AdoWikiUri,
             // and below cfg.AzureDevOpsCfg.AdoPatEnvVar,
-            // but currently Configuration class doesn't support more than one level of nesting
+            // but currently (<- no longer true, after migration to C# private repo)
+            // Configuration class doesn't support more than one level of nesting
             // of configs. Even worse, it just throws null.
             adoCfg.AdoWikiUri(),
             adoCfg.AdoPatEnvVar(),

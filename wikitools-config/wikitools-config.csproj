@@ -12,10 +12,4 @@
     <ProjectReference Include="..\azuredevops-config\azuredevops-config.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <None Update="wikitools_config.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
 </Project>

@@ -25,20 +25,6 @@ public class Tools
     public void Scratchpad()
     {
     }
-    
-    // kja current work: refactor this code, and switch the Config reflection to use this instead.
-    // as part of this work, interfaces for configs need to be added, and extracted into their own
-    // separate projects. So there will be:
-    // <project>
-    // <project>-tests
-    // <project>-config-interfaces
-    // <project>-config // In dotnet-lib-private
-    [Fact]
-    public void DynamicAssemblyLoadTest()
-    {
-        var cfg = new Configuration(new FileSystem()).ReadFromAssembly<IExperimentalCfg>();
-        Assert.Equal("bar", cfg.ExampleStringProp());
-    }
 
     [Fact(Skip = "Tool to be used manually")]
     public void WriteOutGitRepoClonePaths()
@@ -51,19 +37,6 @@ public class Tools
         foreach (var fileTreePath in filteredPaths)
         {
             _testOut.WriteLine(fileTreePath);
-        }
-    }
-
-    [Fact(Skip = "Scratchpad test")]
-    public void TypeReflectionScratchpad()
-    {
-        foreach (var info in typeof(WikitoolsCfg).GetProperties())
-        {
-            if (info.Name.EndsWith(IConfiguration.ConfigSuffix))
-            {
-                _testOut.WriteLine(
-                    $"{info.Name} {info.MemberType} {info.PropertyType} {IConfiguration.FileName(info.PropertyType)}");
-            }
         }
     }
 
