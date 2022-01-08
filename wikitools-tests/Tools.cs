@@ -33,7 +33,7 @@ public class Tools
     // separate projects. So there will be:
     // <project>
     // <project>-tests
-    // <project>-config-interface
+    // <project>-config-interfaces
     // <project>-config // In dotnet-lib-private
     [Fact]
     public void DynamicAssemblyLoadTest()
@@ -45,10 +45,10 @@ public class Tools
         // kja rename everywhere wikitools-secrets to wikitools-config
         var dllPath = Path.Join(
             repoParentDir,
-            @"dotnet-lib-private\wikitools-secrets\bin\Debug\net6.0\wikitools-secrets.dll");
+            @"dotnet-lib-private\wikitools-configs\bin\Debug\net6.0\wikitools-configs.dll");
         Assembly assembly = Assembly.LoadFrom(dllPath);
         var typeClassName = string.Concat(nameof(IExperimentalCfg).Skip(1));
-        Type type = assembly.GetType("Wikitools.Secrets."+ typeClassName)!;
+        Type type = assembly.GetType("Wikitools.Configs."+ typeClassName)!;
 
         IExperimentalCfg experimentalCfg = (IExperimentalCfg)Activator.CreateInstance(type)!;
         Assert.Equal("bar", experimentalCfg.ExampleStringProp());
