@@ -8,4 +8,4 @@ public interface IAzureDevOpsCfg : IConfiguration
 
     // Assumed to contain a PAT token of a user that has access to the wiki with url AdoWikiUri
     public string AdoPatEnvVar();
-} 
+}

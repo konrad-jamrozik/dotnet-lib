@@ -118,8 +118,8 @@ public class AdoWikiWithStorageIntegrationTests
         var env         = new Environment();
         var cfg         = new Configuration(fs);
         var adoCfg      = cfg.ReadFromAssembly<IAzureDevOpsCfg>();
-        var adoTestsCfg = cfg.Read<AzureDevOpsTestsCfg>();
-        var storageDir  = new Dir(fs, adoTestsCfg.TestStorageDirPath);
+        var adoTestsCfg = cfg.ReadFromAssembly<IAzureDevOpsTestsCfg>();
+        var storageDir  = new Dir(fs, adoTestsCfg.TestStorageDirPath());
         var wikiDecl    = new AdoWikiWithStorageDeclare();
         var storageDecl = new AzureDevOps.AdoWikiPagesStatsStorageDeclare();
         var storage     = storageDecl.AdoWikiPagesStatsStorage(storageDir, utcNow);
@@ -127,7 +127,7 @@ public class AdoWikiWithStorageIntegrationTests
         IAdoWiki adoWiki = new AdoWiki(adoCfg.AdoWikiUri(), adoCfg.AdoPatEnvVar(), env, timeline);
         adoWiki = new AdoWikiWithPreconditionChecks(adoWiki);
 
-        return (wikiDecl, adoTestsCfg.TestAdoWikiPageId, utcNow, adoWiki, storage);
+        return (wikiDecl, adoTestsCfg.TestAdoWikiPageId(), utcNow, adoWiki, storage);
     }
 
     private async Task VerifyDayRangeOfWikiStats(int pageViewsForDays)
