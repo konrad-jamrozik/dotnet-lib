@@ -19,6 +19,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "azuredevops-config", "..\azuredevops-config\azuredevops-config.csproj", "{A9E31703-5E4D-4A67-887E-9B6E0EC6C426}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "wikitools-config", "..\wikitools-config\wikitools-config.csproj", "{5109B68E-64B5-44D5-B996-C395E9CDDD0A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -53,6 +55,10 @@ Global
 		{A9E31703-5E4D-4A67-887E-9B6E0EC6C426}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A9E31703-5E4D-4A67-887E-9B6E0EC6C426}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A9E31703-5E4D-4A67-887E-9B6E0EC6C426}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5109B68E-64B5-44D5-B996-C395E9CDDD0A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5109B68E-64B5-44D5-B996-C395E9CDDD0A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5109B68E-64B5-44D5-B996-C395E9CDDD0A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5109B68E-64B5-44D5-B996-C395E9CDDD0A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

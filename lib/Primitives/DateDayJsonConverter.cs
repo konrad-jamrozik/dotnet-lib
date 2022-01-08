@@ -5,6 +5,7 @@ using System.Text.Json.Serialization;
 
 namespace Wikitools.Lib.Primitives;
 
+// kja delete DateDayJsonConverter once config migrated
 public class DateDayJsonConverter : JsonConverter<DateDay>
 {
     private const string Format = "yyyy-MM-ddK";
