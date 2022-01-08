@@ -1,5 +1,6 @@
 using System.Linq;
 using NUnit.Framework;
+using Wikitools.Config;
 using Wikitools.Lib;
 using Wikitools.Lib.Json;
 using Wikitools.Lib.OS;
@@ -16,8 +17,8 @@ public class GitAuthorsStatsReportIntegrationTests
     public void WritesAuthorsStatsReport()
     {
         var fs = new FileSystem();
-        var cfg = new Configuration(fs).Read<WikitoolsIntegrationTestsCfg>();
-        var authorsReport = GitAuthorsStatsReport(fs, cfg.WikitoolsCfg);
+        var cfg = new Configuration(fs).ReadFromAssembly<IWikitoolsIntegrationTestsCfg>();
+        var authorsReport = GitAuthorsStatsReport(fs, cfg.WikitoolsCfg());
         var testFile = new TestFile(cfg.TestStorageDir(fs));
 
         // Act
@@ -29,7 +30,7 @@ public class GitAuthorsStatsReportIntegrationTests
 
     private static GitAuthorsStatsReport GitAuthorsStatsReport(
         IFileSystem fs,
-        WikitoolsCfg cfg)
+        IWikitoolsCfg cfg)
     {
         var timeline = new Timeline();
         var os = new WindowsOS();
@@ -39,14 +40,14 @@ public class GitAuthorsStatsReportIntegrationTests
             timeline,
             os,
             gitRepoDir,
-            cfg.GitExecutablePath);
+            cfg.GitExecutablePath());
 
         var authorsReport = new GitAuthorsStatsReport(
             timeline,
             gitLog,
-            cfg.Top,
-            cfg.GitLogDays,
-            cfg.ExcludedAuthors);
+            cfg.Top(),
+            cfg.GitLogDays(),
+            cfg.ExcludedAuthors());
 
         return authorsReport;
     }
