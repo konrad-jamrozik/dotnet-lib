@@ -1,5 +1,6 @@
 using System.Linq;
 using NUnit.Framework;
+using Wikitools.Config;
 using Wikitools.Lib;
 using Wikitools.Lib.Json;
 using Wikitools.Lib.OS;
@@ -16,8 +17,8 @@ public class MonthlyStatsReportIntegrationTests
     public void WritesMonthlyStatsReport()
     {
         var fs = new FileSystem();
-        var cfg = new Configuration(fs).Read<WikitoolsIntegrationTestsCfg>();
-        var filesReport = GitMonthlyStatsReport(fs, cfg.WikitoolsCfg);
+        var cfg = new Configuration(fs).ReadFromAssembly<IWikitoolsIntegrationTestsCfg>();
+        var filesReport = GitMonthlyStatsReport(fs, cfg.WikitoolsCfg());
         var testFile = new TestFile(cfg.TestStorageDir(fs));
 
         // Act
@@ -29,7 +30,7 @@ public class MonthlyStatsReportIntegrationTests
 
     private static MonthlyStatsReport GitMonthlyStatsReport(
         IFileSystem fs,
-        WikitoolsCfg cfg)
+        IWikitoolsCfg cfg)
     {
         var timeline = new Timeline();
         var os = new WindowsOS();
@@ -39,13 +40,14 @@ public class MonthlyStatsReportIntegrationTests
             timeline,
             os,
             gitRepoDir,
-            cfg.GitExecutablePath);
+            cfg.GitExecutablePath());
 
         var monthlyReport = new MonthlyStatsReport(
             gitLog,
-            new DaySpan(cfg.MonthlyReportStartDay, cfg.MonthlyReportEndDay),
-            cfg.ExcludedAuthors,
-            cfg.ExcludedPaths);
+            // kja make cfg have DaySpan instead
+            new DaySpan(cfg.MonthlyReportStartDay(), cfg.MonthlyReportEndDay()),
+            cfg.ExcludedAuthors(),
+            cfg.ExcludedPaths());
 
         return monthlyReport;
     }
