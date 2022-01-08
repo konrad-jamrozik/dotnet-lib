@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using NUnit.Framework;
+using Wikitools.AzureDevOps.Config;
 using Wikitools.Lib.Json;
 using Wikitools.Lib.OS;
 using Wikitools.Lib.Primitives;
@@ -116,14 +117,14 @@ public class AdoWikiWithStorageIntegrationTests
         var fs          = new FileSystem();
         var env         = new Environment();
         var cfg         = new Configuration(fs);
-        var adoCfg      = cfg.Read<AzureDevOpsCfg>();
+        var adoCfg      = cfg.ReadFromAssembly<IAzureDevOpsCfg>();
         var adoTestsCfg = cfg.Read<AzureDevOpsTestsCfg>();
         var storageDir  = new Dir(fs, adoTestsCfg.TestStorageDirPath);
         var wikiDecl    = new AdoWikiWithStorageDeclare();
         var storageDecl = new AzureDevOps.AdoWikiPagesStatsStorageDeclare();
         var storage     = storageDecl.AdoWikiPagesStatsStorage(storageDir, utcNow);
 
-        IAdoWiki adoWiki = new AdoWiki(adoCfg.AdoWikiUri, adoCfg.AdoPatEnvVar, env, timeline);
+        IAdoWiki adoWiki = new AdoWiki(adoCfg.AdoWikiUri(), adoCfg.AdoPatEnvVar(), env, timeline);
         adoWiki = new AdoWikiWithPreconditionChecks(adoWiki);
 
         return (wikiDecl, adoTestsCfg.TestAdoWikiPageId, utcNow, adoWiki, storage);
