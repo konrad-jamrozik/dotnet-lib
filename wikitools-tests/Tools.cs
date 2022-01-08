@@ -38,20 +38,8 @@ public class Tools
     [Fact]
     public void DynamicAssemblyLoadTest()
     {
-        var currentDirectory = Directory.GetCurrentDirectory();
-        // \dotnet-lib\wikitools-tests\bin\Debug\net6.0
-        var traversalToRepoParent = @"..\..\..\..\..";
-        var repoParentDir = Path.GetFullPath(Path.Join(currentDirectory, traversalToRepoParent));
-        // kja rename everywhere wikitools-secrets to wikitools-config
-        var dllPath = Path.Join(
-            repoParentDir,
-            @"dotnet-lib-private\wikitools-configs\bin\Debug\net6.0\wikitools-configs.dll");
-        Assembly assembly = Assembly.LoadFrom(dllPath);
-        var typeClassName = string.Concat(nameof(IExperimentalCfg).Skip(1));
-        Type type = assembly.GetType("Wikitools.Configs."+ typeClassName)!;
-
-        IExperimentalCfg experimentalCfg = (IExperimentalCfg)Activator.CreateInstance(type)!;
-        Assert.Equal("bar", experimentalCfg.ExampleStringProp());
+        var cfg = new Configuration(new FileSystem()).ReadFromAssembly<IExperimentalCfg>();
+        Assert.Equal("bar", cfg.ExampleStringProp());
     }
 
     [Fact(Skip = "Tool to be used manually")]

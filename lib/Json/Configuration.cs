@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text.Json;
 using Wikitools.Lib.OS;
 
@@ -82,6 +84,24 @@ public record Configuration(IFileSystem FS)
             mergedJson = mergedJson.Append(propName, propCfgJsonElement);
         }
         return mergedJson.ToObject<TCfg>()!;
+    }
+
+    public TCfg ReadFromAssembly<TCfg>() where TCfg : IConfiguration
+    {
+        var currentDirectory = Directory.GetCurrentDirectory();
+        // \dotnet-lib\wikitools-tests\bin\Debug\net6.0
+        var traversalToRepoParent = @"..\..\..\..\..";
+        var repoParentDir = Path.GetFullPath(Path.Join(currentDirectory, traversalToRepoParent));
+        var dllPath = Path.Join(
+            repoParentDir,
+            @"dotnet-lib-private\wikitools-configs\bin\Debug\net6.0\wikitools-configs.dll");
+        Assembly assembly = Assembly.LoadFrom(dllPath);
+        var interfaceName = typeof(TCfg).Name;
+        var typeClassName = string.Concat(interfaceName.Skip(1));
+        Type type = assembly.GetType("Wikitools.Configs."+ typeClassName)!;
+
+        TCfg cfg = (TCfg)Activator.CreateInstance(type)!;
+        return cfg;
     }
 
     private (string, IDictionary<string, string>) ConfigFilePaths<TCfg>() where TCfg : IConfiguration

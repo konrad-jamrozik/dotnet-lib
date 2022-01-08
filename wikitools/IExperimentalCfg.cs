@@ -1,6 +1,8 @@
-﻿namespace Wikitools;
+﻿using Wikitools.Lib.Json;
 
-public interface IExperimentalCfg
+namespace Wikitools;
+
+public interface IExperimentalCfg : IConfiguration
 {
     public string ExampleStringProp();
 }
