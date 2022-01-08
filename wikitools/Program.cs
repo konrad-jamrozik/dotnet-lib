@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Wikitools.AzureDevOps;
+using Wikitools.Config;
 using Wikitools.Lib.Json;
 using Wikitools.Lib.Markdown;
 using Wikitools.Lib.OS;
@@ -29,21 +30,21 @@ public static class Program
         IFileSystem fs,
         IEnvironment env)
     {
-        var cfg = new Configuration(fs).Read<WikitoolsCfg>();
+        var cfg = new Configuration(fs).ReadFromAssembly<IWikitoolsCfg>();
         var wikiDecl = new AdoWikiWithStorageDeclare();
         var wiki = wikiDecl.AdoWikiWithStorage(
             timeline,
             fs,
             env,
-            cfg.AzureDevOpsCfg.AdoWikiUri,
-            cfg.AzureDevOpsCfg.AdoPatEnvVar,
-            cfg.StorageDirPath);
+            cfg.AzureDevOpsCfg().AdoWikiUri(),
+            cfg.AzureDevOpsCfg().AdoPatEnvVar(),
+            cfg.StorageDirPath());
 
-        var pagesViewsStats = wiki.PagesStats(cfg.AdoWikiPageViewsForDays);
+        var pagesViewsStats = wiki.PagesStats(cfg.AdoWikiPageViewsForDays());
 
         var wikiToc = new WikiTableOfContents(
             timeline,
-            new AdoWikiPagesPaths(fs.FileTree(cfg.GitRepoClonePath).Paths),
+            new AdoWikiPagesPaths(fs.FileTree(cfg.GitRepoClonePath()).Paths),
             pagesViewsStats);
 
         var docsToWrite = new MarkdownDocument[]
