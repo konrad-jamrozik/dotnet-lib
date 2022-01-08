@@ -1,6 +1,8 @@
 using System.Linq;
 using NUnit.Framework;
 using Wikitools.AzureDevOps;
+using Wikitools.AzureDevOps.Config;
+using Wikitools.Config;
 using Wikitools.Lib;
 using Wikitools.Lib.Git;
 using Wikitools.Lib.Json;
@@ -19,8 +21,8 @@ public class TopStatsReportIntegrationTests
     public void WritesTopStatsReport()
     {
         var fs = new FileSystem();
-        var cfg = new Configuration(fs).Read<WikitoolsIntegrationTestsCfg>();
-        var topStatsReport = TopStatsReport(fs, cfg.WikitoolsCfg, cfg.AzureDevOpsCfg);
+        var cfg = new Configuration(fs).ReadFromAssembly<IWikitoolsIntegrationTestsCfg>();
+        var topStatsReport = TopStatsReport(fs, cfg.WikitoolsCfg(), cfg.AzureDevOpsCfg());
         var testFile = new TestFile(cfg.TestStorageDir(fs));
 
         // Act
@@ -32,8 +34,8 @@ public class TopStatsReportIntegrationTests
 
     private static TopStatsReport TopStatsReport(
         IFileSystem fs,
-        WikitoolsCfg cfg,
-        AzureDevOpsCfg adoCfg)
+        IWikitoolsCfg cfg,
+        IAzureDevOpsCfg adoCfg)
     {
         // kj2 dedup logic used in this method, and in int tests for other reports using the same data.
         var timeline = new Timeline();
@@ -43,8 +45,8 @@ public class TopStatsReportIntegrationTests
              timeline,
              gitLog,
              wiki,
-             cfg.ExcludedAuthors,
-             cfg.ExcludedPaths);
+             cfg.ExcludedAuthors(),
+             cfg.ExcludedPaths());
 
         return topStatsReport;
     }
@@ -52,7 +54,7 @@ public class TopStatsReportIntegrationTests
     private static GitLog GitLog(
         ITimeline timeline,
         IFileSystem fs,
-        WikitoolsCfg cfg)
+        IWikitoolsCfg cfg)
     {
         var os = new WindowsOS();
         Dir gitRepoDir = cfg.GitRepoCloneDir(fs);
@@ -60,24 +62,24 @@ public class TopStatsReportIntegrationTests
             timeline,
             os,
             gitRepoDir,
-            cfg.GitExecutablePath);
+            cfg.GitExecutablePath()); // kja pass cfg.GitExecutablePath() as arg
         return gitLog;
     }
 
     private static AdoWikiWithStorage AdoWiki(
         ITimeline timeline,
         IFileSystem fs,
-        WikitoolsCfg cfg,
-        AzureDevOpsCfg adoCfg)
+        IWikitoolsCfg cfg,
+        IAzureDevOpsCfg adoCfg)
     {
         var env = new Environment();
         var wiki = new AdoWikiWithStorageDeclare().AdoWikiWithStorage(
             timeline,
             fs,
             env,
-            adoCfg.AdoWikiUri,
-            adoCfg.AdoPatEnvVar,
-            cfg.StorageDirPath);
+            adoCfg.AdoWikiUri(),
+            adoCfg.AdoPatEnvVar(),
+            cfg.StorageDirPath());
         return wiki;
     }
 }
