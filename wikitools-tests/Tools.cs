@@ -1,9 +1,7 @@
 using System;
-using System.IO;
-using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 using Wikitools.AzureDevOps;
+using Wikitools.Config;
 using Wikitools.Lib.Json;
 using Wikitools.Lib.OS;
 using Wikitools.Lib.Primitives;
@@ -46,8 +44,8 @@ public class Tools
     public void WriteOutGitRepoClonePaths()
     {
         var fs = new FileSystem();
-        WikitoolsCfg cfg = new Configuration(fs).Read<WikitoolsCfg>();
-        var clonePath = cfg.GitRepoClonePath;
+        var cfg = new Configuration(fs).ReadFromAssembly<IWikitoolsCfg>();
+        var clonePath = cfg.GitRepoClonePath();
         _testOut.WriteLine("Clone path: " + clonePath);
         var filteredPaths = new AdoWikiPagesPaths(fs.FileTree(clonePath).Paths);
         foreach (var fileTreePath in filteredPaths)
@@ -75,20 +73,20 @@ public class Tools
         ITimeline    timeline = new Timeline();
         IFileSystem  fs       = new FileSystem();
         IEnvironment env      = new Environment();
-        WikitoolsCfg cfg = new Configuration(fs).Read<WikitoolsCfg>();
+        IWikitoolsCfg cfg     = new Configuration(fs).ReadFromAssembly<IWikitoolsCfg>();
         IAdoWiki adoWiki = new AdoWiki(
-            cfg.AzureDevOpsCfg.AdoWikiUri,
-            cfg.AzureDevOpsCfg.AdoPatEnvVar,
+            cfg.AzureDevOpsCfg().AdoWikiUri(),
+            cfg.AzureDevOpsCfg().AdoPatEnvVar(),
             env,
             timeline);
 
         var pagesViewsStats = adoWiki.PagesStats(pageViewsForDays: AdoWiki.PageViewsForDaysMax);
 
-        var storage = new MonthlyJsonFilesStorage(new Dir(fs, cfg.StorageDirPath));
+        var storage = new MonthlyJsonFilesStorage(new Dir(fs, cfg.StorageDirPath()));
 
         await storage.Write(await pagesViewsStats,
             new DateMonth(timeline.UtcNow),
-            $"wiki_stats_{timeline.UtcNow:yyyy_MM_dd}_{cfg.AdoWikiPageViewsForDays}days.json");
+            $"wiki_stats_{timeline.UtcNow:yyyy_MM_dd}_{cfg.AdoWikiPageViewsForDays()}days.json");
     }
 
     // kj2 I need to ensure this transferring of data scraped from ADO wiki into monthly storage
@@ -97,8 +95,8 @@ public class Tools
     public void SplitIntoMonthlyStats()
     {
         IFileSystem fs = new FileSystem();
-        var cfg = new Configuration(fs).Read<WikitoolsCfg>();
-        var storage = new MonthlyJsonFilesStorage(new Dir(fs, cfg.StorageDirPath));
+        var cfg = new Configuration(fs).ReadFromAssembly<IWikitoolsCfg>();
+        var storage = new MonthlyJsonFilesStorage(new Dir(fs, cfg.StorageDirPath()));
 
         var data = new (int month, (int month, int day) stats1, (int month, int day) stats2)[]
         {
@@ -119,7 +117,7 @@ public class Tools
         {
             MergeWikiStatsIntoMonth(
                 fs,
-                cfg.StorageDirPath,
+                cfg.StorageDirPath(),
                 storage,
                 new DateDay(2021, stats1.month, stats1.day, DateTimeKind.Utc),
                 new DateDay(2021, stats2.month, stats2.day, DateTimeKind.Utc),
