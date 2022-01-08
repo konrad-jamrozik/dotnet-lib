@@ -2,6 +2,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using NUnit.Framework;
 using Wikitools.AzureDevOps;
+using Wikitools.Config;
 using Wikitools.Lib.Json;
 using Wikitools.Lib.OS;
 using Wikitools.Lib.Primitives;
@@ -21,7 +22,7 @@ public class WikiTableOfContentsIntegrationTests
     {
         var timeline = new Timeline();
         var fs = new FileSystem();
-        var cfg = new Configuration(fs).Read<WikitoolsIntegrationTestsCfg>();
+        var cfg = new Configuration(fs).ReadFromAssembly<IWikitoolsIntegrationTestsCfg>();
         var toc = WikiTableOfContents(timeline, fs, cfg);
         var testFile = new TestFile(cfg.TestStorageDir(fs));
 
@@ -34,19 +35,19 @@ public class WikiTableOfContentsIntegrationTests
 
         Assert.That(
             actualLines.Count,
-            Is.GreaterThanOrEqualTo(cfg.TestGitRepoExpectedPathsMinPageCount));
+            Is.GreaterThanOrEqualTo(cfg.TestGitRepoExpectedPathsMinPageCount()));
 
         Assert.That(
             actualLines.Sum(line => line.Views),
-            Is.GreaterThanOrEqualTo(cfg.TestGitRepoExpectedPathsMinPageViewsCount));
+            Is.GreaterThanOrEqualTo(cfg.TestGitRepoExpectedPathsMinPageViewsCount()));
     }
 
     private static WikiTableOfContents WikiTableOfContents(
         ITimeline timeline,
         IFileSystem fs,
-        WikitoolsIntegrationTestsCfg cfg)
+        IWikitoolsIntegrationTestsCfg cfg)
     {
-        var wikiPagesPaths = AdoWikiPagesPaths(fs, cfg.WikitoolsCfg);
+        var wikiPagesPaths = AdoWikiPagesPaths(fs, cfg.WikitoolsCfg());
         var pagesStats = ValidWikiPagesStats(fs, cfg);
         var toc = new WikiTableOfContents(timeline, wikiPagesPaths, pagesStats);
         return toc;
@@ -54,16 +55,16 @@ public class WikiTableOfContentsIntegrationTests
 
     private static AdoWikiPagesPaths AdoWikiPagesPaths(
         IFileSystem fs,
-        WikitoolsCfg cfg)
+        IWikitoolsCfg cfg)
     {
-        var pathsInRepo = fs.FileTree(cfg.GitRepoClonePath).Paths;
+        var pathsInRepo = fs.FileTree(cfg.GitRepoClonePath()).Paths;
         var wikiPagesPaths = new AdoWikiPagesPaths(pathsInRepo);
         return wikiPagesPaths;
     }
 
     private static async Task<ValidWikiPagesStats> ValidWikiPagesStats(
         IFileSystem fs,
-        WikitoolsIntegrationTestsCfg cfg)
+        IWikitoolsIntegrationTestsCfg cfg)
     {
         var timeline = new Timeline();
         var env      = new Environment();
@@ -72,9 +73,9 @@ public class WikiTableOfContentsIntegrationTests
             timeline,
             fs,
             env,
-            cfg.AzureDevOpsCfg.AdoWikiUri,
-            cfg.AzureDevOpsCfg.AdoPatEnvVar,
-            cfg.WikitoolsCfg.StorageDirPath);
+            cfg.AzureDevOpsCfg().AdoWikiUri(),
+            cfg.AzureDevOpsCfg().AdoPatEnvVar(),
+            cfg.WikitoolsCfg().StorageDirPath());
 
         // kj2 when the pagesStats input goes beyond what is stored on file system, no exception is thrown, which is not great.
         var pagesStats = await wiki.PagesStats(PageViewsForDays);
