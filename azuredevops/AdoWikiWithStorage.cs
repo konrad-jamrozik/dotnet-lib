@@ -14,7 +14,7 @@ public record AdoWikiWithStorage(
 
     public Task<ValidWikiPagesStats> PagesStats(int pageViewsForDays)
     {
-        // kj2 Contract.Assert(pageViewsForDays >= 1); / instead strongly type the input
+        // kja Contract.Assert(pageViewsForDays >= 1); / instead strongly type the input
         Contract.Assert(pageViewsForDays >= 1);
         var updatedStorage = Storage.Update(
             AdoWiki,

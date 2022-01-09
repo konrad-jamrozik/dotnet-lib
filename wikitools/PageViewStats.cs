@@ -19,7 +19,7 @@ public record PageViewStats(string FilePath, int Views)
         // Here, the 1 is added to account for how ADO REST API interprets the range.
         // For more, see comment on:
         // AdoWikiWithStorageIntegrationTests.ObtainsAndStoresDataFromAdoWikiForToday
-        // kj2 this entire funny business with pageViewsForDays should be captured
+        // kja this entire funny business with pageViewsForDays should be captured
         // in PageViewsForDays type.
         var pageViewsForDays = (timeline.UtcNow - daySpan.AfterDay).Days + 1;
 

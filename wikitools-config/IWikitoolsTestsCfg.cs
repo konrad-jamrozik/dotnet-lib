@@ -10,9 +10,7 @@ public interface IWikitoolsTestsCfg : IConfiguration
     public IAzureDevOpsTestsCfg AzureDevOpsTestsCfg();
     public int TestGitRepoExpectedPathsMinPageCount();
     public int TestGitRepoExpectedPathsMinPageViewsCount();
-
     public IAzureDevOpsCfg AzureDevOpsCfg => AzureDevOpsTestsCfg().AzureDevOpsCfg();
-
-    public Dir TestStorageDir(IFileSystem fs)
+    public Dir TestStorageDir(IFileSystem fs) 
         => new Dir(fs, AzureDevOpsTestsCfg().TestStorageDirPath());
 }

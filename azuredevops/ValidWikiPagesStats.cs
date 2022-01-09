@@ -62,7 +62,7 @@ public record ValidWikiPagesStats : IEnumerable<WikiPageStats>
         return minDatePerPage.Any() ? new DateDay(minDatePerPage.Min()) : null;
     }
 
-    // kj2 rename everywhere: Visit -> View.
+    // kja rename everywhere: Visit -> View.
     // See also https://docs.microsoft.com/en-us/rest/api/azure/devops/wiki/page-stats/get?view=azure-devops-rest-6.0#wikipagestat
     public DateDay? LastDayWithAnyVisit => LastDayWithAnyVisitStatic(this);
 

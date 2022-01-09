@@ -12,7 +12,7 @@ using Wikitools.Lib.Primitives;
 
 namespace Wikitools.AzureDevOps;
 
-// kj2 Become consistent in naming vars 'wiki' vs 'adoWiki'
+// kja Become consistent in naming vars 'wiki' vs 'adoWiki'
 /// <remarks>
 /// Empirical tests as of 3/27/2021 show that when obtaining wiki page stats with calls to
 /// Wikitools.AzureDevOps.AdoWiki.PagesStats or PageStats:
