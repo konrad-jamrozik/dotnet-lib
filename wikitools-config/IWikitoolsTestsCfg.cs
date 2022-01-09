@@ -4,7 +4,7 @@ using Wikitools.Lib.OS;
 
 namespace Wikitools.Config;
 
-public interface IWikitoolsIntegrationTestsCfg : IConfiguration
+public interface IWikitoolsTestsCfg : IConfiguration
 {
     public IWikitoolsCfg WikitoolsCfg();
     public IAzureDevOpsTestsCfg AzureDevOpsTestsCfg();

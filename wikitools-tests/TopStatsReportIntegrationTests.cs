@@ -21,7 +21,7 @@ public class TopStatsReportIntegrationTests
     public void WritesTopStatsReport()
     {
         var fs = new FileSystem();
-        var cfg = new Configuration(fs).Load<IWikitoolsIntegrationTestsCfg>();
+        var cfg = new Configuration(fs).Load<IWikitoolsTestsCfg>();
         var topStatsReport = TopStatsReport(
             fs,
             cfg.WikitoolsCfg(),

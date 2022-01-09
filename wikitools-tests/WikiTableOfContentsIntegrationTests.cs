@@ -22,7 +22,7 @@ public class WikiTableOfContentsIntegrationTests
     {
         var timeline = new Timeline();
         var fs = new FileSystem();
-        var cfg = new Configuration(fs).Load<IWikitoolsIntegrationTestsCfg>();
+        var cfg = new Configuration(fs).Load<IWikitoolsTestsCfg>();
         var toc = WikiTableOfContents(timeline, fs, cfg);
         var testFile = new TestFile(cfg.TestStorageDir(fs));
 
@@ -45,7 +45,7 @@ public class WikiTableOfContentsIntegrationTests
     private static WikiTableOfContents WikiTableOfContents(
         ITimeline timeline,
         IFileSystem fs,
-        IWikitoolsIntegrationTestsCfg cfg)
+        IWikitoolsTestsCfg cfg)
     {
         var wikiPagesPaths = AdoWikiPagesPaths(fs, cfg.WikitoolsCfg());
         var pagesStats = ValidWikiPagesStats(fs, cfg);
@@ -64,7 +64,7 @@ public class WikiTableOfContentsIntegrationTests
 
     private static async Task<ValidWikiPagesStats> ValidWikiPagesStats(
         IFileSystem fs,
-        IWikitoolsIntegrationTestsCfg cfg)
+        IWikitoolsTestsCfg cfg)
     {
         var timeline = new Timeline();
         var env      = new Environment();
