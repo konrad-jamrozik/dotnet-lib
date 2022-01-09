@@ -17,8 +17,7 @@ public interface IWikitoolsCfg : IConfiguration
     public int AdoWikiPageViewsForDays();
     public string[] ExcludedAuthors();
     public string[] ExcludedPaths();
-    public DateDay MonthlyReportStartDay();
-    public DateDay MonthlyReportEndDay();
+    public DaySpan MonthlyReportDaySpan();
     public int Top();
     public string StorageDirPath();
     public Dir GitRepoCloneDir(IFileSystem fs) => new Dir(fs, GitRepoClonePath());

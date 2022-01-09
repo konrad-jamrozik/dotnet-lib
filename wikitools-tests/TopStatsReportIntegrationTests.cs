@@ -62,7 +62,7 @@ public class TopStatsReportIntegrationTests
             timeline,
             os,
             gitRepoDir,
-            cfg.GitExecutablePath()); // kja pass cfg.GitExecutablePath() as arg
+            cfg.GitExecutablePath());
         return gitLog;
     }
 

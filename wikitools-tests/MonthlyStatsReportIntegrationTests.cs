@@ -44,8 +44,7 @@ public class MonthlyStatsReportIntegrationTests
 
         var monthlyReport = new MonthlyStatsReport(
             gitLog,
-            // kja make cfg have DaySpan instead
-            new DaySpan(cfg.MonthlyReportStartDay(), cfg.MonthlyReportEndDay()),
+            cfg.MonthlyReportDaySpan(),
             cfg.ExcludedAuthors(),
             cfg.ExcludedPaths());
 
