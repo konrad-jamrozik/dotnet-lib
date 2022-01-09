@@ -73,8 +73,8 @@ public class WikiTableOfContentsIntegrationTests
             timeline,
             fs,
             env,
-            cfg.AzureDevOpsCfg().AdoWikiUri(),
-            cfg.AzureDevOpsCfg().AdoPatEnvVar(),
+            cfg.AzureDevOpsCfg.AdoWikiUri(),
+            cfg.AzureDevOpsCfg.AdoPatEnvVar(),
             cfg.WikitoolsCfg().StorageDirPath());
 
         // kj2 when the pagesStats input goes beyond what is stored on file system, no exception is thrown, which is not great.

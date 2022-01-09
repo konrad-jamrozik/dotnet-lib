@@ -7,10 +7,12 @@ namespace Wikitools.Config;
 public interface IWikitoolsIntegrationTestsCfg : IConfiguration
 {
     public IWikitoolsCfg WikitoolsCfg();
-    public IAzureDevOpsCfg AzureDevOpsCfg();
+    public IAzureDevOpsTestsCfg AzureDevOpsTestsCfg();
     public string TestStorageDirPath();
     public int TestGitRepoExpectedPathsMinPageCount();
     public int TestGitRepoExpectedPathsMinPageViewsCount();
+
+    public IAzureDevOpsCfg AzureDevOpsCfg => AzureDevOpsTestsCfg().AzureDevOpsCfg();
 
     // kja make it use AzureDevOpsTestsCfg.TestStorageDir.
     // This will require for this class to use AzureDevOpsTestsCfg instead of AzureDevOpsCfg

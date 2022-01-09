@@ -22,7 +22,10 @@ public class TopStatsReportIntegrationTests
     {
         var fs = new FileSystem();
         var cfg = new Configuration(fs).Load<IWikitoolsIntegrationTestsCfg>();
-        var topStatsReport = TopStatsReport(fs, cfg.WikitoolsCfg(), cfg.AzureDevOpsCfg());
+        var topStatsReport = TopStatsReport(
+            fs,
+            cfg.WikitoolsCfg(),
+            cfg.AzureDevOpsCfg);
         var testFile = new TestFile(cfg.TestStorageDir(fs));
 
         // Act
