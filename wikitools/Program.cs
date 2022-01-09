@@ -30,7 +30,7 @@ public static class Program
         IFileSystem fs,
         IEnvironment env)
     {
-        var cfg = new Configuration(fs).ReadFromAssembly<IWikitoolsCfg>();
+        var cfg = new Configuration(fs).Load<IWikitoolsCfg>();
         var wikiDecl = new AdoWikiWithStorageDeclare();
         var wiki = wikiDecl.AdoWikiWithStorage(
             timeline,

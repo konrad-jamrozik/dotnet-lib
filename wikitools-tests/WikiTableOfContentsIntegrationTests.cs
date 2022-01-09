@@ -22,7 +22,7 @@ public class WikiTableOfContentsIntegrationTests
     {
         var timeline = new Timeline();
         var fs = new FileSystem();
-        var cfg = new Configuration(fs).ReadFromAssembly<IWikitoolsIntegrationTestsCfg>();
+        var cfg = new Configuration(fs).Load<IWikitoolsIntegrationTestsCfg>();
         var toc = WikiTableOfContents(timeline, fs, cfg);
         var testFile = new TestFile(cfg.TestStorageDir(fs));
 

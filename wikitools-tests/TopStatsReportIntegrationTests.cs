@@ -21,7 +21,7 @@ public class TopStatsReportIntegrationTests
     public void WritesTopStatsReport()
     {
         var fs = new FileSystem();
-        var cfg = new Configuration(fs).ReadFromAssembly<IWikitoolsIntegrationTestsCfg>();
+        var cfg = new Configuration(fs).Load<IWikitoolsIntegrationTestsCfg>();
         var topStatsReport = TopStatsReport(fs, cfg.WikitoolsCfg(), cfg.AzureDevOpsCfg());
         var testFile = new TestFile(cfg.TestStorageDir(fs));
 

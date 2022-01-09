@@ -18,7 +18,7 @@ public class PageViewStatsReportIntegrationTests
     public void WritesPageViewStatsReport()
     {
         var fs = new FileSystem();
-        var cfg = new Configuration(fs).ReadFromAssembly<IWikitoolsIntegrationTestsCfg>();
+        var cfg = new Configuration(fs).Load<IWikitoolsIntegrationTestsCfg>();
         var pagesViewsReport = GitPagesViewsReport(fs, cfg.WikitoolsCfg(), cfg.AzureDevOpsCfg());
         var testFile = new TestFile(cfg.TestStorageDir(fs));
 

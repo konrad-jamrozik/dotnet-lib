@@ -18,7 +18,7 @@ public class GitFilesStatsReportIntegrationTests
     public async Task WritesFilesStatsReport()
     {
         var fs = new FileSystem();
-        var cfg = new Configuration(fs).ReadFromAssembly<IWikitoolsIntegrationTestsCfg>();
+        var cfg = new Configuration(fs).Load<IWikitoolsIntegrationTestsCfg>();
         var filesReport = await GitFilesStatsReport(fs, cfg.WikitoolsCfg());
         var testFile = new TestFile(cfg.TestStorageDir(fs));
 

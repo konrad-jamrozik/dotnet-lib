@@ -24,10 +24,18 @@ public record Configuration(IFileSystem FS)
 
     private const string LoadedClassNamespace = "Wikitools.Configs.";
 
-    // Implementation inspired by
-    // https://stackoverflow.com/questions/465488/can-i-load-a-net-assembly-at-runtime-and-instantiate-a-type-knowing-only-the-na
-    // kja rethink the name of this method
-    public TCfg ReadFromAssembly<TCfg>() where TCfg : IConfiguration
+    /// <summary>
+    /// Loads implementation of a configuration interface TCfg from a C# assembly.
+    ///
+    /// Given TCfg interface named IFoo, this method will load class named Foo
+    /// from a .dll file, call the class no-param ctor, and return it.
+    /// Inspect the method implementation for details.
+    /// </summary>
+    /// <remarks>
+    /// Implementation inspired by
+    /// https://stackoverflow.com/questions/465488/can-i-load-a-net-assembly-at-runtime-and-instantiate-a-type-knowing-only-the-na
+    /// </remarks>
+    public TCfg Load<TCfg>() where TCfg : IConfiguration
     {
         var currentDirectory = FS.CurrentDir.Path;
         var dllPath = Path.Join(currentDirectory, RelativeRepoPath, DllToLoadPath);

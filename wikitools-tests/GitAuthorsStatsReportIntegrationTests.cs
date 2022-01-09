@@ -17,7 +17,7 @@ public class GitAuthorsStatsReportIntegrationTests
     public void WritesAuthorsStatsReport()
     {
         var fs = new FileSystem();
-        var cfg = new Configuration(fs).ReadFromAssembly<IWikitoolsIntegrationTestsCfg>();
+        var cfg = new Configuration(fs).Load<IWikitoolsIntegrationTestsCfg>();
         var authorsReport = GitAuthorsStatsReport(fs, cfg.WikitoolsCfg());
         var testFile = new TestFile(cfg.TestStorageDir(fs));
 

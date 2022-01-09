@@ -30,7 +30,7 @@ public class Tools
     public void WriteOutGitRepoClonePaths()
     {
         var fs = new FileSystem();
-        var cfg = new Configuration(fs).ReadFromAssembly<IWikitoolsCfg>();
+        var cfg = new Configuration(fs).Load<IWikitoolsCfg>();
         var clonePath = cfg.GitRepoClonePath();
         _testOut.WriteLine("Clone path: " + clonePath);
         var filteredPaths = new AdoWikiPagesPaths(fs.FileTree(clonePath).Paths);
@@ -46,7 +46,7 @@ public class Tools
         ITimeline    timeline = new Timeline();
         IFileSystem  fs       = new FileSystem();
         IEnvironment env      = new Environment();
-        IWikitoolsCfg cfg     = new Configuration(fs).ReadFromAssembly<IWikitoolsCfg>();
+        IWikitoolsCfg cfg     = new Configuration(fs).Load<IWikitoolsCfg>();
         IAdoWiki adoWiki = new AdoWiki(
             cfg.AzureDevOpsCfg().AdoWikiUri(),
             cfg.AzureDevOpsCfg().AdoPatEnvVar(),
@@ -68,7 +68,7 @@ public class Tools
     public void SplitIntoMonthlyStats()
     {
         IFileSystem fs = new FileSystem();
-        var cfg = new Configuration(fs).ReadFromAssembly<IWikitoolsCfg>();
+        var cfg = new Configuration(fs).Load<IWikitoolsCfg>();
         var storage = new MonthlyJsonFilesStorage(new Dir(fs, cfg.StorageDirPath()));
 
         var data = new (int month, (int month, int day) stats1, (int month, int day) stats2)[]
