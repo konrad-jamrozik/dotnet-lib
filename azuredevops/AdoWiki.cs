@@ -12,7 +12,6 @@ using Wikitools.Lib.Primitives;
 
 namespace Wikitools.AzureDevOps;
 
-// kja Become consistent in naming vars 'wiki' vs 'adoWiki'
 /// <remarks>
 /// Empirical tests as of 3/27/2021 show that when obtaining wiki page stats with calls to
 /// Wikitools.AzureDevOps.AdoWiki.PagesStats or PageStats:
@@ -37,8 +36,8 @@ public record AdoWiki(AdoWikiUri AdoWikiUri, string PatEnvVar, IEnvironment Env,
             upperBoundReason: "ADO API limit");
     }
 
-    public AdoWiki(string adoWikiUriStr, string patEnvVar, IEnvironment env, ITimeline timeline) : this(
-        new AdoWikiUri(adoWikiUriStr), patEnvVar, env, timeline) { }
+    public AdoWiki(string wikiUriStr, string patEnvVar, IEnvironment env, ITimeline timeline) : this(
+        new AdoWikiUri(wikiUriStr), patEnvVar, env, timeline) { }
 
     // Max value supported by https://docs.microsoft.com/en-us/rest/api/azure/devops/wiki/pages%20batch/get?view=azure-devops-rest-6.1
     // Confirmed empirically as of 3/27/2021.
@@ -101,13 +100,13 @@ public record AdoWiki(AdoWikiUri AdoWikiUri, string PatEnvVar, IEnvironment Env,
             pageId,
             pageViewsForDays)).InList();
 
-    private WikiHttpClientWithExceptionWrapping WikiHttpClient(AdoWikiUri adoWikiUri, string patEnvVar)
+    private WikiHttpClientWithExceptionWrapping WikiHttpClient(AdoWikiUri wikiUri, string patEnvVar)
     {
         // Construction of VssConnection with PAT based on
         // https://docs.microsoft.com/en-us/azure/devops/integrate/get-started/client-libraries/samples?view=azure-devops#personal-access-token-authentication-for-rest-services
         // Linked from https://docs.microsoft.com/en-us/azure/devops/integrate/concepts/dotnet-client-libraries?view=azure-devops#samples
         VssConnection connection = new(
-            new Uri(adoWikiUri.CollectionUri),
+            new Uri(wikiUri.CollectionUri),
             new VssBasicCredential(string.Empty, password: Env.Value(patEnvVar)));
 
         // Microsoft.TeamFoundation.Wiki.WebApi Namespace doc:

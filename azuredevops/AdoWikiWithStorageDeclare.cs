@@ -17,22 +17,22 @@ public class AdoWikiWithStorageDeclare
         ITimeline timeline,
         IFileSystem fs,
         IEnvironment env,
-        string adoWikiUri,
+        string wikiUri,
         string adoPatEnvVar,
         string storageDirPath,
         int? pageViewsForDaysMax = null)
     {
-        var adoWiki     = new AdoWiki(adoWikiUri, adoPatEnvVar, env, timeline);
+        var wiki        = new AdoWiki(wikiUri, adoPatEnvVar, env, timeline);
         var storageDir  = new Dir(fs, storageDirPath);
         var storageDecl = new AdoWikiPagesStatsStorageDeclare();
         var storage     = storageDecl.AdoWikiPagesStatsStorage(storageDir, timeline.UtcNow);
-        var wiki        = AdoWikiWithStorage(adoWiki, storage, pageViewsForDaysMax);
-        return wiki;
+        var wikiWithStorage = AdoWikiWithStorage(wiki, storage, pageViewsForDaysMax);
+        return wikiWithStorage;
     }
 
     public AdoWikiWithStorage AdoWikiWithStorage(
-        IAdoWiki adoWiki,
+        IAdoWiki wiki,
         AdoWikiPagesStatsStorage storage,
         int? pageViewsForDaysMax = null) 
-        => new AdoWikiWithStorage(adoWiki, storage, pageViewsForDaysMax);
+        => new AdoWikiWithStorage(wiki, storage, pageViewsForDaysMax);
 }

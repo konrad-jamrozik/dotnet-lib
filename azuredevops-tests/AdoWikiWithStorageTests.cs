@@ -13,10 +13,10 @@ public class AdoWikiWithStorageTests
     [Test]
     public async Task NoData()
     {
-        var adoWikiWithStorage = await AdoWikiWithStorage(UtcNowDay);
+        var wikiWithStorage = await AdoWikiWithStorage(UtcNowDay);
 
         // Act
-        var actualStats = await adoWikiWithStorage.PagesStats(AdoWiki.PageViewsForDaysMax);
+        var actualStats = await wikiWithStorage.PagesStats(AdoWiki.PageViewsForDaysMax);
 
         new JsonDiffAssertion(new string[0], actualStats).Assert();
     }
@@ -24,11 +24,11 @@ public class AdoWikiWithStorageTests
     [Test]
     public async Task DataInWiki()
     {
-        var wikiStats          = new ValidWikiPagesStatsFixture().WikiPagesStats(UtcNowDay);
-        var adoWikiWithStorage = await AdoWikiWithStorage(UtcNowDay, wikiStats: wikiStats);
+        var wikiStats       = new ValidWikiPagesStatsFixture().WikiPagesStats(UtcNowDay);
+        var wikiWithStorage = await AdoWikiWithStorage(UtcNowDay, wikiStats: wikiStats);
 
         // Act
-        var actualStats = await adoWikiWithStorage.PagesStats(AdoWiki.PageViewsForDaysMax);
+        var actualStats = await wikiWithStorage.PagesStats(AdoWiki.PageViewsForDaysMax);
 
         new JsonDiffAssertion(wikiStats, actualStats).Assert();
     }
@@ -36,11 +36,11 @@ public class AdoWikiWithStorageTests
     [Test]
     public async Task DataInStorage()
     {
-        var storedStats        = new ValidWikiPagesStatsFixture().PagesStatsForMonth(new DateDay(UtcNowDay));
-        var adoWikiWithStorage = await AdoWikiWithStorage(UtcNowDay, storedStats);
+        var storedStats     = new ValidWikiPagesStatsFixture().PagesStatsForMonth(new DateDay(UtcNowDay));
+        var wikiWithStorage = await AdoWikiWithStorage(UtcNowDay, storedStats);
 
         // Act
-        var actualStats = await adoWikiWithStorage.PagesStats(AdoWiki.PageViewsForDaysMax);
+        var actualStats = await wikiWithStorage.PagesStats(AdoWiki.PageViewsForDaysMax);
 
         new JsonDiffAssertion(storedStats, actualStats).Assert();
     }
@@ -65,7 +65,10 @@ public class AdoWikiWithStorageTests
         var currStatsDaySpan   = currStats.ViewedDaysSpan;
         var prevStats = fix.PagesStatsForMonth(
             UtcNowDay.AddDays(-pageViewsForDays + currStatsDaySpan));
-        var adoWikiWithStorage = await AdoWikiWithStorage(UtcNowDay, storedStats: prevStats, wikiStats: currStats);
+        var wikiWithStorage = await AdoWikiWithStorage(
+            UtcNowDay,
+            storedStats: prevStats,
+            wikiStats: currStats);
 
         Assert.That(
             currStatsDaySpan,
@@ -83,7 +86,7 @@ public class AdoWikiWithStorageTests
             "Precondition violation: previous month (stored) is different from current month (from wiki)");
 
         // Act
-        var actualStats = await adoWikiWithStorage.PagesStats(pageViewsForDays);
+        var actualStats = await wikiWithStorage.PagesStats(pageViewsForDays);
 
         new JsonDiffAssertion(prevStats.Merge(currStats, allowGaps: true), actualStats).Assert();
     }
@@ -116,10 +119,10 @@ public class AdoWikiWithStorageTests
         Assert.That(storedStats.DaysSpan > 6*31, "Should be more than 6 months");
         Assert.That(storedStats.MonthsSpan == statsInMonthPresence.Length);
 
-        var adoWikiWithStorage = await AdoWikiWithStorage(UtcNowDay, storedStats);
+        var wikiWithStorage = await AdoWikiWithStorage(UtcNowDay, storedStats);
 
         // Act
-        var actualStats = await adoWikiWithStorage.PagesStats(storedStats.DaysSpan);
+        var actualStats = await wikiWithStorage.PagesStats(storedStats.DaysSpan);
 
         new JsonDiffAssertion(storedStats, actualStats).Assert();
 
@@ -157,12 +160,12 @@ public class AdoWikiWithStorageTests
         var wikiDecl    = new AdoWikiWithStorageDeclare();
         var storageDecl = new AdoWikiPagesStatsStorageDeclare();
         var storage     = await storageDecl.AdoWikiPagesStatsStorage(utcNow, storedStats);
-        var adoWiki     = new SimulatedAdoWiki(
+        var wiki     = new SimulatedAdoWiki(
             wikiStats ?? new ValidWikiPagesStats(
                 WikiPageStats.EmptyArray,
                 startDay: utcNow,
                 endDay: utcNow));
-        var wiki = wikiDecl.AdoWikiWithStorage(adoWiki, storage);
-        return wiki;
+        var wikiWithStorage = wikiDecl.AdoWikiWithStorage(wiki, storage);
+        return wikiWithStorage;
     }
 }

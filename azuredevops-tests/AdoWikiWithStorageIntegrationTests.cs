@@ -48,17 +48,17 @@ public class AdoWikiWithStorageIntegrationTests
     [Test]
     public async Task ObtainsAndMergesDataFromAdoWikiApiAndStorage()
     {
-        var (wikiDecl, pageId, utcNow, adoWiki, storage) = ArrangeSut();
+        var (wikiDecl, pageId, utcNow, wiki, storage) = ArrangeSut();
 
         // ReSharper disable CommentTypo
         // Act 1. Obtain 10 days of page stats from wiki (days 1 to 10)
         // WWWWWWWWWW
-        var statsForDays1To10         = await adoWiki.PagesStats(pageViewsForDays: 10);
+        var statsForDays1To10         = await wiki.PagesStats(pageViewsForDays: 10);
 
         // Act 2. Obtain 4 days of page stats from wiki (days 7 to 10)
         // ------WWWW
-        var statsForDays7To10         = await adoWiki.PagesStats(pageViewsForDays: 4);
-        var statsForDays7To10For1Page = await adoWiki.PageStats(pageViewsForDays: 4, pageId);
+        var statsForDays7To10         = await wiki.PagesStats(pageViewsForDays: 4);
+        var statsForDays7To10For1Page = await wiki.PageStats(pageViewsForDays: 4, pageId);
 
         // Act 3. Save to storage page stats for days 3 to 6
         // WWWWWWWWWW
@@ -71,12 +71,12 @@ public class AdoWikiWithStorageIntegrationTests
         // --SSSS----
         // ->
         // --SSSSWWWW
-        var adoWikiWithStorage = wikiDecl.AdoWikiWithStorage(
-            adoWiki,
+        var wikiWithStorage = wikiDecl.AdoWikiWithStorage(
+            wiki,
             storageWithStats,
             pageViewsForDaysMax: 4);
-        var statsForDays3To10 = await adoWikiWithStorage.PagesStats(pageViewsForDays: 8);
-        var statsForDays3To10For1Page = await adoWikiWithStorage.PageStats(pageViewsForDays: 8, pageId);
+        var statsForDays3To10 = await wikiWithStorage.PagesStats(pageViewsForDays: 8);
+        var statsForDays3To10For1Page = await wikiWithStorage.PageStats(pageViewsForDays: 8, pageId);
 
         // Assert 4.1. Assert data from Act 4 corresponds to page stats days of 3 to 10
         // (data from storage for days 3 to 6 merged with data from ADO API for days 7 to 10)
@@ -104,12 +104,16 @@ public class AdoWikiWithStorageIntegrationTests
     /// Arranges integration tests system under tests and relevant dependencies.
     ///
     /// Notes on the external dependencies used:
-    /// - For the adoWiki the wiki to provide meaningful behavior to exercise,
+    /// - For the wiki to provide meaningful behavior to exercise,
     ///   there has to be recent ongoing, daily activity.
     /// - For other assumptions, see comments on WikitoolsConfig members.
     /// </summary>
-    private static (AdoWikiWithStorageDeclare wikiDecl, int pageId, DateTime utcNow, IAdoWiki
-        adoWiki, AdoWikiPagesStatsStorage storage)
+    private static (
+        AdoWikiWithStorageDeclare wikiDecl,
+        int pageId,
+        DateTime utcNow,
+        IAdoWiki wiki,
+        AdoWikiPagesStatsStorage storage)
         ArrangeSut() // kj2 ArrangeSut / refactor. This method has too long return type.
     {
         var timeline    = new Timeline();
@@ -123,25 +127,25 @@ public class AdoWikiWithStorageIntegrationTests
         var storageDecl = new AzureDevOps.AdoWikiPagesStatsStorageDeclare();
         var storage     = storageDecl.AdoWikiPagesStatsStorage(storageDir, utcNow);
 
-        IAdoWiki adoWiki = new AdoWiki(
+        IAdoWiki wiki = new AdoWiki(
             adoTestsCfg.AzureDevOpsCfg().AdoWikiUri(),
             adoTestsCfg.AzureDevOpsCfg().AdoPatEnvVar(),
             env,
             timeline);
-        adoWiki = new AdoWikiWithPreconditionChecks(adoWiki);
+        wiki = new AdoWikiWithPreconditionChecks(wiki);
 
-        return (wikiDecl, adoTestsCfg.TestAdoWikiPageId(), utcNow, adoWiki, storage);
+        return (wikiDecl, adoTestsCfg.TestAdoWikiPageId(), utcNow, wiki, storage);
     }
 
     private async Task VerifyDayRangeOfWikiStats(int pageViewsForDays)
     {
-        var (_, pageId, utcNow, adoWiki, statsStorage) = ArrangeSut();
+        var (_, pageId, utcNow, wiki, statsStorage) = ArrangeSut();
 
         var expectedLastDay  = new DateDay(utcNow);
         var expectedFirstDay = expectedLastDay.AddDays(-pageViewsForDays+1);
 
         // Act
-        var stats = await adoWiki.PageStats(pageViewsForDays, pageId);
+        var stats = await wiki.PageStats(pageViewsForDays, pageId);
 
         statsStorage = await statsStorage.ReplaceWith(stats);
         var storedStats = statsStorage.PagesStats(pageViewsForDays);

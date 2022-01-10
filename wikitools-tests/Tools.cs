@@ -47,13 +47,13 @@ public class Tools
         IFileSystem  fs       = new FileSystem();
         IEnvironment env      = new Environment();
         IWikitoolsCfg cfg     = new Configuration(fs).Load<IWikitoolsCfg>();
-        IAdoWiki adoWiki = new AdoWiki(
+        IAdoWiki wiki = new AdoWiki(
             cfg.AzureDevOpsCfg().AdoWikiUri(),
             cfg.AzureDevOpsCfg().AdoPatEnvVar(),
             env,
             timeline);
 
-        var pagesViewsStats = adoWiki.PagesStats(pageViewsForDays: AdoWiki.PageViewsForDaysMax);
+        var pagesViewsStats = wiki.PagesStats(pageViewsForDays: AdoWiki.PageViewsForDaysMax);
 
         var storage = new MonthlyJsonFilesStorage(new Dir(fs, cfg.StorageDirPath()));
 

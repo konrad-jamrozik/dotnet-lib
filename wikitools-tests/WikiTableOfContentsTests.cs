@@ -20,7 +20,7 @@ public class WikiTableOfContentsTests
         var gitCloneRootPaths =
             new List<string> { "foo.md", "foo\\bar.md" }.Select(
                 path => wikiPagesPrefix + path);
-        var adoWikiPagesPaths = new AdoWikiPagesPaths(gitCloneRootPaths);
+        var wikiPagesPaths = new AdoWikiPagesPaths(gitCloneRootPaths);
 
         var validWikiPagesStats =
             // kj2 WikiTableOfContentsTests fixture building / this could be simplified to
@@ -40,7 +40,7 @@ public class WikiTableOfContentsTests
 
         var tocUT = new WikiTableOfContents(
             timeline,
-            adoWikiPagesPaths,
+            wikiPagesPaths,
             Task.FromResult(validWikiPagesStats));
 
         // Arrange expectations
