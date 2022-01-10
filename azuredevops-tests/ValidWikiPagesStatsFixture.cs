@@ -60,9 +60,9 @@ public class ValidWikiPagesStatsFixture
         DateDay? currentDay = null)
         => new ValidWikiPagesStats(
             stats: pageStats,
-            startDay: ValidWikiPagesStats.FirstDayWithAnyVisitStatic(pageStats) 
+            startDay: ValidWikiPagesStats.FirstDayWithAnyViewStatic(pageStats) 
                       ?? Today,
-            endDay: ValidWikiPagesStats.LastDayWithAnyVisitStatic(pageStats) 
+            endDay: ValidWikiPagesStats.LastDayWithAnyViewStatic(pageStats) 
                     ?? currentDay 
                     ?? Today);
 

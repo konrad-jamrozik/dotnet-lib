@@ -49,11 +49,11 @@ public record ValidWikiPagesStats : IEnumerable<WikiPageStats>
 
     private IEnumerable<WikiPageStats> Data { get; }
 
-    public bool AnyDayVisitsPresent => FirstDayWithAnyVisit != null;
+    public bool AnyDayViewsPresent => FirstDayWithAnyView != null;
 
-    public DateDay? FirstDayWithAnyVisit => FirstDayWithAnyVisitStatic(this);
+    public DateDay? FirstDayWithAnyView => FirstDayWithAnyViewStatic(this);
 
-    public static DateDay? FirstDayWithAnyVisitStatic(IEnumerable<WikiPageStats> stats)
+    public static DateDay? FirstDayWithAnyViewStatic(IEnumerable<WikiPageStats> stats)
     {
         var minDatePerPage = stats
             .Where(ps => ps.DayStats.Any())
@@ -62,11 +62,9 @@ public record ValidWikiPagesStats : IEnumerable<WikiPageStats>
         return minDatePerPage.Any() ? new DateDay(minDatePerPage.Min()) : null;
     }
 
-    // kja rename everywhere: Visit -> View.
-    // See also https://docs.microsoft.com/en-us/rest/api/azure/devops/wiki/page-stats/get?view=azure-devops-rest-6.0#wikipagestat
-    public DateDay? LastDayWithAnyVisit => LastDayWithAnyVisitStatic(this);
+    public DateDay? LastDayWithAnyView => LastDayWithAnyViewStatic(this);
 
-    public static DateDay? LastDayWithAnyVisitStatic(IEnumerable<WikiPageStats> stats)
+    public static DateDay? LastDayWithAnyViewStatic(IEnumerable<WikiPageStats> stats)
     {
         var maxDatePerPage = stats
             .Where(ps => ps.DayStats.Any())
@@ -75,8 +73,8 @@ public record ValidWikiPagesStats : IEnumerable<WikiPageStats>
         return maxDatePerPage.Any() ? new DateDay(maxDatePerPage.Max()) : null;
     }
 
-    public int VisitedDaysSpan => LastDayWithAnyVisit != null
-        ? (int) (LastDayWithAnyVisit - FirstDayWithAnyVisit!).TotalDays + 1
+    public int ViewedDaysSpan => LastDayWithAnyView != null
+        ? (int) (LastDayWithAnyView - FirstDayWithAnyView!).TotalDays + 1
         : 0;
 
     public int DaysSpan => (int) (EndDay - StartDay).TotalDays + 1;
@@ -118,18 +116,18 @@ public record ValidWikiPagesStats : IEnumerable<WikiPageStats>
             // For each day, there is only one stats entry for it.
             dayStats.AssertDistinctBy(ds => ds.Day);
             dayStats.AssertOrderedBy(ds => ds.Day);
-            // Given day has to be visited at least once.
+            // Given day has to be viewed at least once.
             dayStats.Assert(ds => ds.Count >= 1); 
             dayStats.Assert(ds => ds.Day.Kind == DateTimeKind.Utc);
         });
 
         Contract.Assert(startDay.CompareTo(endDay) <= 0);
-        var firstDayWithAnyVisit = FirstDayWithAnyVisitStatic(pagesStatsArray);
-        var lastDayWithAnyVisit = LastDayWithAnyVisitStatic(pagesStatsArray);
+        var firstDayWithAnyView = FirstDayWithAnyViewStatic(pagesStatsArray);
+        var lastDayWithAnyView = LastDayWithAnyViewStatic(pagesStatsArray);
 
             // @formatter:off
-            Contract.Assert(firstDayWithAnyVisit == null || startDay.CompareTo(firstDayWithAnyVisit) <= 0);
-            Contract.Assert(lastDayWithAnyVisit  == null || lastDayWithAnyVisit.CompareTo(endDay   ) <= 0);
+            Contract.Assert(firstDayWithAnyView == null || startDay.CompareTo(firstDayWithAnyView) <= 0);
+            Contract.Assert(lastDayWithAnyView  == null || lastDayWithAnyView.CompareTo(endDay   ) <= 0);
         // @formatter:on
     }
 
@@ -280,7 +278,7 @@ public record ValidWikiPagesStats : IEnumerable<WikiPageStats>
             Contract.Assert(dayStats.Count(), "dayStats.Count()", new Range(1, 2),
                 upperBoundReason: "Given day stat may appear max twice: once for previous stats and once for current stats");
             Contract.Assert(dayStats.Last().Count >= dayStats.First().Count,
-                "Visit count for given day for given page cannot be lower in current stats, as compared to previous stats. " +
+                "View count for given day for given page cannot be lower in current stats, as compared to previous stats. " +
                 "I.e. day stat count for current stats >= day stat count for previous stats. " +
                 $"Instead got: {dayStats.Last().Count} >= {dayStats.First().Count}. For day: {dayStats.Key.ToShortDateString()}");
             return dayStats.Last();

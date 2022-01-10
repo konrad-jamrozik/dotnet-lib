@@ -146,14 +146,14 @@ public class AdoWikiWithStorageIntegrationTests
         statsStorage = await statsStorage.ReplaceWith(stats);
         var storedStats = statsStorage.PagesStats(pageViewsForDays);
 
-        var actualFirstDay = stats.FirstDayWithAnyVisit;
-        var storedFirstDay = storedStats.FirstDayWithAnyVisit;
-        var actualLastDay  = stats.LastDayWithAnyVisit;
-        var storedLastDay  = storedStats.LastDayWithAnyVisit;
+        var actualFirstDay = stats.FirstDayWithAnyView;
+        var storedFirstDay = storedStats.FirstDayWithAnyView;
+        var actualLastDay  = stats.LastDayWithAnyView;
+        var storedLastDay  = storedStats.LastDayWithAnyView;
 
         // Might be null if:
-        // - there were no visits to the wiki in the used pageViewsForDays
-        // - or there were visits but they were not yet ingested.
+        // - there were no views to the wiki in the used pageViewsForDays
+        // - or there were views but they were not yet ingested.
         // For details on the ingestion delay, please see the comment
         // on Wikitools.AzureDevOps.AdoWiki
         Assert.That(actualFirstDay, Is.Null.Or.AtLeast(expectedFirstDay));
@@ -164,7 +164,7 @@ public class AdoWikiWithStorageIntegrationTests
 
         // Assuming, not asserting, because:
         // - the data might be null, due to reasons explained above.
-        // - or nobody might have visited the wiki on these specific days.
+        // - or nobody might have viewed the wiki on these specific days.
         Assume.That(
             actualFirstDay,
             Is.EqualTo(expectedFirstDay),
@@ -177,7 +177,7 @@ public class AdoWikiWithStorageIntegrationTests
         string ExactDayAssumptionViolationMessage(string dayType, int pageViewsForDays)
         {
             return $"{dayType} possible day for pageViewsForDays: {pageViewsForDays}. " +
-                   "Possible lack of visits (null) or ingestion delay (see comment on AdoWiki). " +
+                   "Possible lack of views (null) or ingestion delay (see comment on AdoWiki). " +
                    $"UTC time: {DateTime.UtcNow}";
         }
     }

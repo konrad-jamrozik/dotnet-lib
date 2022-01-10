@@ -28,7 +28,7 @@ public class AdoWikiPagesStatsStorageTests
     /// instead of "today-pageViewsForDays".
     /// </summary>
     [Test]
-    public async Task FirstDayOfVisitsInStorageIsNotOffByOne()
+    public async Task FirstDayOfViewsInStorageIsNotOffByOne()
     {
         var pageViewsForDays = 3;
         var fixture          = new ValidWikiPagesStatsFixture();
@@ -38,10 +38,10 @@ public class AdoWikiPagesStatsStorageTests
         var storage          = await adoDecl.AdoWikiPagesStatsStorage(UtcNowDay, storedStats);
 
         Assert.That(
-            stats.FirstDayWithAnyVisit,
-            Is.LessThanOrEqualTo(stats.LastDayWithAnyVisit?.AddDays(-pageViewsForDays)),
+            stats.FirstDayWithAnyView,
+            Is.LessThanOrEqualTo(stats.LastDayWithAnyView?.AddDays(-pageViewsForDays)),
             "Precondition violation: the off by one error won't be detected by this test as there " +
-            "are no visits in the off (== first) day in the arranged data.");
+            "are no views in the off (== first) day in the arranged data.");
 
         // Act
         var actualStats = storage.PagesStats(pageViewsForDays);

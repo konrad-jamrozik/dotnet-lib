@@ -61,7 +61,7 @@ public record ValidWikiPagesStatsTestData(
                     .ToArray();
 
             var stats = ValidWikiPagesStatsFixture.BuildForMonth(pageStats);
-            if (stats.AnyDayVisitsPresent)
+            if (stats.AnyDayViewsPresent)
             {
                 // Extend the day span to last day of month to avoid violating constraint
                 // forbidding having day span gap when
@@ -119,7 +119,7 @@ public record ValidWikiPagesStatsTestData(
 
             var stats = ValidWikiPagesStatsFixture.BuildForMonth(pageStats);
 
-            if (stats.AnyDayVisitsPresent)
+            if (stats.AnyDayViewsPresent)
             {
                 // Extend the day span to last day of month to avoid violating constraint
                 // forbidding having day span gap when
@@ -133,7 +133,7 @@ public record ValidWikiPagesStatsTestData(
             }
             else 
             {
-                if (PreviousMonthToMerge.AnyDayVisitsPresent)
+                if (PreviousMonthToMerge.AnyDayViewsPresent)
                 {
                     // This case is required to make test
                     // Wikitools.AzureDevOps.Tests.ValidWikiPagesStatsTests.PageStatsPreviousMonthOnly

@@ -62,7 +62,7 @@ public class AdoWikiWithStorageTests
         var pageViewsForDays   = AdoWiki.PageViewsForDaysMax;
         var fix                = new ValidWikiPagesStatsFixture();
         var currStats          = fix.PagesStatsForMonth(UtcNowDay);
-        var currStatsDaySpan   = currStats.VisitedDaysSpan;
+        var currStatsDaySpan   = currStats.ViewedDaysSpan;
         var prevStats = fix.PagesStatsForMonth(
             UtcNowDay.AddDays(-pageViewsForDays + currStatsDaySpan));
         var adoWikiWithStorage = await AdoWikiWithStorage(UtcNowDay, storedStats: prevStats, wikiStats: currStats);
@@ -71,9 +71,9 @@ public class AdoWikiWithStorageTests
             currStatsDaySpan,
             Is.GreaterThanOrEqualTo(2),
             "Precondition violation: the arranged data has to have at least two days span " +
-            "between first and last days with any visits to provide meaningful test data");
+            "between first and last days with any views to provide meaningful test data");
         Assert.That(
-            prevStats.FirstDayWithAnyVisit,
+            prevStats.FirstDayWithAnyView,
             Is.GreaterThanOrEqualTo(UtcNowDay.AddDays(-pageViewsForDays + 1)),
             "Precondition violation: the first day of arranged stats is so much in the past that " +
             "a call to PageStats won't return it.");
@@ -94,17 +94,17 @@ public class AdoWikiWithStorageTests
     /// meaning they cannot be updated from the wiki, as they are beyond
     /// AdoWiki.PageViewsForDaysMax days in the past.
     /// - and assuming the stats have the following characteristics:
-    ///   - first stored month has no page visits at all
-    ///   - last (current) stored month has no page visits at all
-    ///   - there are months with stored visits
+    ///   - first stored month has no page views at all
+    ///   - last (current) stored month has no page views at all
+    ///   - there are months with stored views
     ///   - and there is a "gap" month, i.e. a month chronologically in the middle of the stored
-    ///     months that has no visits, but months before and after have visits.
+    ///     months that has no views, but months before and after have views.
     /// When
     /// - querying AdoWikiWithStorage for page stats for the entire day span of all the stored stats.
     /// Then
     /// - all stored stats are returned, merged.
     ///   - This means stats from beyond AdoWiki.PageViewsForDaysMax were included in the merged stats.
-    ///   - This means the first and last months without any visits were not stripped, i.e.
+    ///   - This means the first and last months without any views were not stripped, i.e.
     ///     their day span was included.
     /// </summary>
     [Test]
@@ -112,7 +112,7 @@ public class AdoWikiWithStorageTests
     {
         var statsInMonthPresence = new[] { false, false, true, false, true, true, false, false };
         var storedStats = ArrangeStatsFromMonths(statsInMonthPresence);
-        Assert.That(storedStats.VisitedDaysSpan > AdoWiki.PageViewsForDaysMax);
+        Assert.That(storedStats.ViewedDaysSpan > AdoWiki.PageViewsForDaysMax);
         Assert.That(storedStats.DaysSpan > 6*31, "Should be more than 6 months");
         Assert.That(storedStats.MonthsSpan == statsInMonthPresence.Length);
 
