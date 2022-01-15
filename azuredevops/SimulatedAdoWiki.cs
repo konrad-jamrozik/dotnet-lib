@@ -19,13 +19,13 @@ public record SimulatedAdoWiki(
 
     public Task<ValidWikiPagesStats> PagesStats(PageViewsForDays pageViewsForDays)
     {
-        AdoWiki.AssertPageViewsForDaysRange(pageViewsForDays);
+        pageViewsForDays.AssertPageViewsForDaysRange();
         return Task.FromResult(new ValidWikiPagesStats(PagesStatsData, StartDay, EndDay));
     }
 
     public Task<ValidWikiPagesStats> PageStats(PageViewsForDays pageViewsForDays, int pageId)
     {
-        AdoWiki.AssertPageViewsForDaysRange(pageViewsForDays);
+        pageViewsForDays.AssertPageViewsForDaysRange();
         return Task.FromResult(
             new ValidWikiPagesStats(PagesStatsData.Where(page => page.Id == pageId), StartDay, EndDay));
     }

@@ -17,7 +17,12 @@ public record WikiHttpClientWithExceptionWrapping(WikiHttpClient Client) : IWiki
         PageViewsForDays pageViewsForDays) =>
         // API reference:
         // https://docs.microsoft.com/en-us/rest/api/azure/devops/wiki/page-stats/get?view=azure-devops-rest-6.0
-        TryInvoke(() => Client.GetPageDataAsync(projectName, wikiName, pageId, pageViewsForDays.Value));
+        TryInvoke(
+            () => Client.GetPageDataAsync(
+                projectName,
+                wikiName,
+                pageId,
+                pageViewsForDays.ValueWithinAdoApiLimit));
 
     public Task<PagedList<WikiPageDetail>> GetPagesBatchAsync(
         WikiPagesBatchRequest request,
