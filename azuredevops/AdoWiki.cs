@@ -6,7 +6,6 @@ using Microsoft.TeamFoundation.Wiki.WebApi;
 using Microsoft.TeamFoundation.Wiki.WebApi.Contracts;
 using Microsoft.VisualStudio.Services.Common;
 using Microsoft.VisualStudio.Services.WebApi;
-using Wikitools.Lib.Contracts;
 using Wikitools.Lib.OS;
 using Wikitools.Lib.Primitives;
 
@@ -27,7 +26,6 @@ namespace Wikitools.AzureDevOps;
 /// </remarks>
 public record AdoWiki(AdoWikiUri AdoWikiUri, string PatEnvVar, IEnvironment Env, ITimeline Timeline) : IAdoWiki
 {
-    // kja inline
     public static void AssertPageViewsForDaysRange(int pageViewsForDays)
         => new PageViewsForDays(pageViewsForDays).AssertPageViewsForDaysRange();
 

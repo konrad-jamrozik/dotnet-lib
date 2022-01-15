@@ -10,7 +10,7 @@ public record AdoWikiWithStorage(
     AdoWikiPagesStatsStorage Storage,
     int? PageViewsForDaysMax = null) : IAdoWiki
 {
-    private const int DefaultPageViewsForDaysMax = AzureDevOps.AdoWiki.PageViewsForDaysMax;
+    private const int DefaultPageViewsForDaysMax = PageViewsForDays.Max;
 
     public Task<ValidWikiPagesStats> PagesStats(int pageViewsForDays)
     {

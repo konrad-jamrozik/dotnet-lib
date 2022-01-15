@@ -53,7 +53,7 @@ public class Tools
             env,
             timeline);
 
-        var pagesViewsStats = wiki.PagesStats(pageViewsForDays: AdoWiki.PageViewsForDaysMax);
+        var pagesViewsStats = wiki.PagesStats(pageViewsForDays: PageViewsForDays.Max);
 
         var storage = new MonthlyJsonFilesStorage(new Dir(fs, cfg.StorageDirPath()));
 

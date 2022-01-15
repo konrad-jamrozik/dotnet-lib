@@ -16,7 +16,7 @@ public class AdoWikiWithStorageTests
         var wikiWithStorage = await AdoWikiWithStorage(UtcNowDay);
 
         // Act
-        var actualStats = await wikiWithStorage.PagesStats(AdoWiki.PageViewsForDaysMax);
+        var actualStats = await wikiWithStorage.PagesStats(PageViewsForDays.Max);
 
         new JsonDiffAssertion(new string[0], actualStats).Assert();
     }
@@ -28,7 +28,7 @@ public class AdoWikiWithStorageTests
         var wikiWithStorage = await AdoWikiWithStorage(UtcNowDay, wikiStats: wikiStats);
 
         // Act
-        var actualStats = await wikiWithStorage.PagesStats(AdoWiki.PageViewsForDaysMax);
+        var actualStats = await wikiWithStorage.PagesStats(PageViewsForDays.Max);
 
         new JsonDiffAssertion(wikiStats, actualStats).Assert();
     }
@@ -40,7 +40,7 @@ public class AdoWikiWithStorageTests
         var wikiWithStorage = await AdoWikiWithStorage(UtcNowDay, storedStats);
 
         // Act
-        var actualStats = await wikiWithStorage.PagesStats(AdoWiki.PageViewsForDaysMax);
+        var actualStats = await wikiWithStorage.PagesStats(PageViewsForDays.Max);
 
         new JsonDiffAssertion(storedStats, actualStats).Assert();
     }
@@ -51,7 +51,7 @@ public class AdoWikiWithStorageTests
     /// - and wiki page stats for previous month coming from storage,
     ///   starting from the earliest available day in the AdoWiki.MaxPageViewsForDays window
     /// When
-    /// - querying AdoWikiWithStorage for page stats for the entire day span of AdoWiki.PageViewsForDaysMax
+    /// - querying AdoWikiWithStorage for page stats for the entire day span of PageViewsForDays.Max
     /// Then
     /// - the merged stats of both previous stats (coming from storage) and current stats (coming from wiki)
     ///   are returned.
@@ -59,7 +59,7 @@ public class AdoWikiWithStorageTests
     [Test]
     public async Task DataInWikiAndStorageWithinWikiPageViewsForDaysMax()
     {
-        var pageViewsForDays   = AdoWiki.PageViewsForDaysMax;
+        var pageViewsForDays   = PageViewsForDays.Max;
         var fix                = new ValidWikiPagesStatsFixture();
         var currStats          = fix.PagesStatsForMonth(UtcNowDay);
         var currStatsDaySpan   = currStats.ViewedDaysSpan;
@@ -93,9 +93,9 @@ public class AdoWikiWithStorageTests
 
     /// <summary>
     /// Given
-    /// - wiki page stats that were stored earlier than AdoWiki.PageViewsForDaysMax days ago,
+    /// - wiki page stats that were stored earlier than PageViewsForDays.Max days ago,
     /// meaning they cannot be updated from the wiki, as they are beyond
-    /// AdoWiki.PageViewsForDaysMax days in the past.
+    /// PageViewsForDays.Max days in the past.
     /// - and assuming the stats have the following characteristics:
     ///   - first stored month has no page views at all
     ///   - last (current) stored month has no page views at all
@@ -106,7 +106,7 @@ public class AdoWikiWithStorageTests
     /// - querying AdoWikiWithStorage for page stats for the entire day span of all the stored stats.
     /// Then
     /// - all stored stats are returned, merged.
-    ///   - This means stats from beyond AdoWiki.PageViewsForDaysMax were included in the merged stats.
+    ///   - This means stats from beyond PageViewsForDays.Max were included in the merged stats.
     ///   - This means the first and last months without any views were not stripped, i.e.
     ///     their day span was included.
     /// </summary>
@@ -115,7 +115,7 @@ public class AdoWikiWithStorageTests
     {
         var statsInMonthPresence = new[] { false, false, true, false, true, true, false, false };
         var storedStats = ArrangeStatsFromMonths(statsInMonthPresence);
-        Assert.That(storedStats.ViewedDaysSpan > AdoWiki.PageViewsForDaysMax);
+        Assert.That(storedStats.ViewedDaysSpan > PageViewsForDays.Max);
         Assert.That(storedStats.DaysSpan > 6*31, "Should be more than 6 months");
         Assert.That(storedStats.MonthsSpan == statsInMonthPresence.Length);
 

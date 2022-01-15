@@ -7,14 +7,14 @@ public record PageViewsForDays()
 {
     // Max value supported by https://docs.microsoft.com/en-us/rest/api/azure/devops/wiki/pages%20batch/get?view=azure-devops-rest-6.1
     // Confirmed empirically as of 3/27/2021.
-    public const int PageViewsForDaysMax = 30;
+    public const int Max = 30;
     // If 0, the call to ADO wiki API still succeeds, but all returned WikiPageDetail will have null ViewStats.
     // Confirmed empirically as of 3/27/2021.
-    public const int PageViewsForDaysMin = 1;
+    public const int Min = 1;
 
     public PageViewsForDays(int value) : this()
     {
-        Contract.Assert(value >= PageViewsForDaysMin);
+        Contract.Assert(value >= Min);
         Value = value;
     }
 
@@ -22,13 +22,13 @@ public record PageViewsForDays()
         => Contract.Assert(
             Value,
             nameof(PageViewsForDays),
-            new Range(PageViewsForDaysMin, PageViewsForDaysMax),
+            new Range(Min, Max),
             upperBoundReason: "ADO API limit");
 
 
     public static implicit operator PageViewsForDays(int value) => new PageViewsForDays(value);
 
-    public bool IsWithinAdoApiLimit => Value <= PageViewsForDaysMax;
+    public bool IsWithinAdoApiLimit => Value <= Max;
 
     public int Value { get; }
 }
