@@ -43,4 +43,6 @@ public record PageViewsForDays()
             return Value;
         }
     }
+
+    public override string ToString() => $"{Value}";
 }
