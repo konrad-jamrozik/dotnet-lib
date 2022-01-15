@@ -11,7 +11,7 @@ public interface IWikiHttpClient
         string projectName,
         string wikiName,
         int pageId,
-        int pageViewsForDays);
+        PageViewsForDays pageViewsForDays);
 
     Task<PagedList<WikiPageDetail>> GetPagesBatchAsync(
         WikiPagesBatchRequest request,

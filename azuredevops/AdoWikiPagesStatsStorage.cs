@@ -9,17 +9,20 @@ namespace Wikitools.AzureDevOps;
 
 public record AdoWikiPagesStatsStorage(MonthlyJsonFilesStorage Storage, DateTime CurrentDate)
 {
-    public Task<AdoWikiPagesStatsStorage> Update(IAdoWiki wiki, int pageViewsForDays) 
+    public Task<AdoWikiPagesStatsStorage> Update(IAdoWiki wiki, PageViewsForDays pageViewsForDays) 
         => Update(pageViewsForDays, wiki.PagesStats);
 
-    public Task<AdoWikiPagesStatsStorage> Update(IAdoWiki wiki, int pageViewsForDays, int pageId)
+    public Task<AdoWikiPagesStatsStorage> Update(
+        IAdoWiki wiki,
+        PageViewsForDays pageViewsForDays,
+        int pageId)
         => Update(
             pageViewsForDays,
             pageViewsForDays => wiki.PageStats(pageViewsForDays, pageId));
 
     private async Task<AdoWikiPagesStatsStorage> Update(
-        int pageViewsForDays,
-        Func<int, Task<ValidWikiPagesStats>> wikiPagesStatsFunc)
+        PageViewsForDays pageViewsForDays,
+        Func<PageViewsForDays, Task<ValidWikiPagesStats>> wikiPagesStatsFunc)
     {
         var pagesStats = await wikiPagesStatsFunc(pageViewsForDays);
 
@@ -58,13 +61,13 @@ public record AdoWikiPagesStatsStorage(MonthlyJsonFilesStorage Storage, DateTime
         return this;
     }
 
-    public ValidWikiPagesStats PagesStats(int pageViewsForDays)
+    public ValidWikiPagesStats PagesStats(PageViewsForDays pageViewsForDays)
     {
         var currentDay = new DateDay(CurrentDate);
         // Here, the 1 is added to account for how ADO REST API interprets the range.
         // For more, see comment on:
         // AdoWikiWithStorageIntegrationTests.ObtainsAndStoresDataFromAdoWikiForToday
-        var startDay = currentDay.AddDays(-pageViewsForDays + 1);
+        var startDay = currentDay.AddDays(-pageViewsForDays.Value + 1);
             
         IEnumerable<ValidWikiPagesStatsForMonth> statsByMonth = DateMonth
             .Range(startDay, currentDay)

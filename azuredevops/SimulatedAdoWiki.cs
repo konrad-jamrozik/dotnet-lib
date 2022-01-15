@@ -17,13 +17,13 @@ public record SimulatedAdoWiki(
     {
     }
 
-    public Task<ValidWikiPagesStats> PagesStats(int pageViewsForDays)
+    public Task<ValidWikiPagesStats> PagesStats(PageViewsForDays pageViewsForDays)
     {
         AdoWiki.AssertPageViewsForDaysRange(pageViewsForDays);
         return Task.FromResult(new ValidWikiPagesStats(PagesStatsData, StartDay, EndDay));
     }
 
-    public Task<ValidWikiPagesStats> PageStats(int pageViewsForDays, int pageId)
+    public Task<ValidWikiPagesStats> PageStats(PageViewsForDays pageViewsForDays, int pageId)
     {
         AdoWiki.AssertPageViewsForDaysRange(pageViewsForDays);
         return Task.FromResult(

@@ -12,21 +12,19 @@ public record AdoWikiWithStorage(
 {
     private const int DefaultPageViewsForDaysMax = PageViewsForDays.Max;
 
-    public Task<ValidWikiPagesStats> PagesStats(int pageViewsForDays)
+    public Task<ValidWikiPagesStats> PagesStats(PageViewsForDays pageViewsForDays)
     {
-        // kja Contract.Assert(pageViewsForDays >= 1); / instead strongly type the input
-        Contract.Assert(pageViewsForDays >= 1);
         var updatedStorage = Storage.Update(
             AdoWiki,
-            pageViewsForDays.MinWith(
+            pageViewsForDays.Value.MinWith(
                 PageViewsForDaysMax ?? DefaultPageViewsForDaysMax));
         var pagesViewsStats = updatedStorage.Select(s => s.PagesStats(pageViewsForDays));
         return pagesViewsStats;
     }
 
-    public Task<ValidWikiPagesStats> PageStats(int pageViewsForDays, int pageId)
+    public Task<ValidWikiPagesStats> PageStats(PageViewsForDays pageViewsForDays, int pageId)
     {
-        var dayRange = pageViewsForDays.MinWith(PageViewsForDaysMax);
+        var dayRange = pageViewsForDays.Value.MinWith(PageViewsForDaysMax);
         var updatedStorage  = Storage.Update(AdoWiki, dayRange, pageId);
         var pagesViewsStats = updatedStorage.Select(
             storage =>

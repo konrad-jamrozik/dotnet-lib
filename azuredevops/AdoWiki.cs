@@ -26,21 +26,22 @@ namespace Wikitools.AzureDevOps;
 /// </remarks>
 public record AdoWiki(AdoWikiUri AdoWikiUri, string PatEnvVar, IEnvironment Env, ITimeline Timeline) : IAdoWiki
 {
-    public static void AssertPageViewsForDaysRange(int pageViewsForDays)
-        => new PageViewsForDays(pageViewsForDays).AssertPageViewsForDaysRange();
+    // kja inline
+    public static void AssertPageViewsForDaysRange(PageViewsForDays pageViewsForDays)
+        => pageViewsForDays.AssertPageViewsForDaysRange();
 
     public AdoWiki(string wikiUriStr, string patEnvVar, IEnvironment env, ITimeline timeline) : this(
         new AdoWikiUri(wikiUriStr), patEnvVar, env, timeline) { }
 
-    public Task<ValidWikiPagesStats> PagesStats(int pageViewsForDays) =>
+    public Task<ValidWikiPagesStats> PagesStats(PageViewsForDays pageViewsForDays) =>
         PagesStats(pageViewsForDays, GetWikiPagesDetails);
 
-    public Task<ValidWikiPagesStats> PageStats(int pageViewsForDays, int pageId) =>
+    public Task<ValidWikiPagesStats> PageStats(PageViewsForDays pageViewsForDays, int pageId) =>
         PagesStats(pageViewsForDays, (wikiHttpClient, pageViewsForDays) =>
             GetWikiPagesDetails(wikiHttpClient, pageViewsForDays, pageId));
 
-    private async Task<ValidWikiPagesStats> PagesStats(int pageViewsForDays,
-        Func<IWikiHttpClient, int, Task<IEnumerable<WikiPageDetail>>> wikiPagesDetailsFunc)
+    private async Task<ValidWikiPagesStats> PagesStats(PageViewsForDays pageViewsForDays,
+        Func<IWikiHttpClient, PageViewsForDays, Task<IEnumerable<WikiPageDetail>>> wikiPagesDetailsFunc)
     {
         AssertPageViewsForDaysRange(pageViewsForDays);
 
@@ -49,16 +50,16 @@ public record AdoWiki(AdoWikiUri AdoWikiUri, string PatEnvVar, IEnvironment Env,
         var wikiPagesDetails = await wikiPagesDetailsFunc(wikiHttpClient, pageViewsForDays);
         var wikiPagesStats   = wikiPagesDetails.Select(WikiPageStats.From);
         return new ValidWikiPagesStats(wikiPagesStats, 
-            startDay: today.AddDays(-pageViewsForDays+1), 
+            startDay: today.AddDays(-pageViewsForDays.Value+1), 
             endDay: today);
     }
 
     private async Task<IEnumerable<WikiPageDetail>> GetWikiPagesDetails(
         IWikiHttpClient wikiHttpClient,
-        int pageViewsForDays)
+        PageViewsForDays pageViewsForDays)
     {
         // The Top value is max on which the API doesn't throw. Determined empirically.
-        var wikiPagesBatchRequest = new WikiPagesBatchRequest { Top = 100, PageViewsForDays = pageViewsForDays };
+        var wikiPagesBatchRequest = new WikiPagesBatchRequest { Top = 100, PageViewsForDays = pageViewsForDays.Value };
         var wikiPagesDetails = new List<WikiPageDetail>();
         string? continuationToken = null;
         do
@@ -78,7 +79,7 @@ public record AdoWiki(AdoWikiUri AdoWikiUri, string PatEnvVar, IEnvironment Env,
 
     private async Task<IEnumerable<WikiPageDetail>> GetWikiPagesDetails(
         IWikiHttpClient wikiHttpClient,
-        int pageViewsForDays,
+        PageViewsForDays pageViewsForDays,
         int pageId) =>
         (await wikiHttpClient.GetPageDataAsync(
             AdoWikiUri.ProjectName,

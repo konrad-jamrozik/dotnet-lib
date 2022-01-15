@@ -137,12 +137,12 @@ public class AdoWikiWithStorageIntegrationTests
         return (wikiDecl, adoTestsCfg.TestAdoWikiPageId(), utcNow, wiki, storage);
     }
 
-    private async Task VerifyDayRangeOfWikiStats(int pageViewsForDays)
+    private async Task VerifyDayRangeOfWikiStats(PageViewsForDays pageViewsForDays)
     {
         var (_, pageId, utcNow, wiki, statsStorage) = ArrangeSut();
 
         var expectedLastDay  = new DateDay(utcNow);
-        var expectedFirstDay = expectedLastDay.AddDays(-pageViewsForDays+1);
+        var expectedFirstDay = expectedLastDay.AddDays(-pageViewsForDays.Value+1);
 
         // Act
         var stats = await wiki.PageStats(pageViewsForDays, pageId);

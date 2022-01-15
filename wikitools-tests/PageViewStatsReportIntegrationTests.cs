@@ -43,12 +43,12 @@ public class PageViewStatsReportIntegrationTests
             cfg.AzureDevOpsCfg().AdoPatEnvVar(),
             cfg.StorageDirPath());
 
-        int pageViewsForDays = 30 * 10;
+        int daysAgo = 30 * 10;
 
         var pagesViewsReport = new PageViewStatsReport(
             timeline,
             wiki,
-            pageViewsForDays);
+            daysAgo);
 
         return pagesViewsReport;
     }
