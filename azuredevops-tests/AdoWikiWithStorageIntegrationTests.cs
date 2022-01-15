@@ -24,7 +24,7 @@ public class AdoWikiWithStorageIntegrationTests
     /// </summary>
     [Test]
     public async Task ObtainsAndStoresDataFromAdoWikiForToday() =>
-        await VerifyDayRangeOfWikiStats(pageViewsForDays: 1);
+        await VerifyDayRangeOfWikiStats(pvfd: 1);
 
     /// <summary>
     /// Like
@@ -33,7 +33,7 @@ public class AdoWikiWithStorageIntegrationTests
     /// </summary>
     [Test]
     public async Task ObtainsAndStoresDataFromAdoWikiFor5Days() =>
-        await VerifyDayRangeOfWikiStats(pageViewsForDays: 5);
+        await VerifyDayRangeOfWikiStats(pvfd: 5);
 
     /// <summary>
     /// This test tests the following:
@@ -53,12 +53,12 @@ public class AdoWikiWithStorageIntegrationTests
         // ReSharper disable CommentTypo
         // Act 1. Obtain 10 days of page stats from wiki (days 1 to 10)
         // WWWWWWWWWW
-        var statsForDays1To10         = await wiki.PagesStats(pageViewsForDays: 10);
+        var statsForDays1To10         = await wiki.PagesStats(pvfd: 10);
 
         // Act 2. Obtain 4 days of page stats from wiki (days 7 to 10)
         // ------WWWW
-        var statsForDays7To10         = await wiki.PagesStats(pageViewsForDays: 4);
-        var statsForDays7To10For1Page = await wiki.PageStats(pageViewsForDays: 4, pageId);
+        var statsForDays7To10         = await wiki.PagesStats(pvfd: 4);
+        var statsForDays7To10For1Page = await wiki.PageStats(pvfd: 4, pageId);
 
         // Act 3. Save to storage page stats for days 3 to 6
         // WWWWWWWWWW
@@ -75,8 +75,8 @@ public class AdoWikiWithStorageIntegrationTests
             wiki,
             storageWithStats,
             pageViewsForDaysMax: 4);
-        var statsForDays3To10 = await wikiWithStorage.PagesStats(pageViewsForDays: 8);
-        var statsForDays3To10For1Page = await wikiWithStorage.PageStats(pageViewsForDays: 8, pageId);
+        var statsForDays3To10 = await wikiWithStorage.PagesStats(pvfd: 8);
+        var statsForDays3To10For1Page = await wikiWithStorage.PageStats(pvfd: 8, pageId);
 
         // Assert 4.1. Assert data from Act 4 corresponds to page stats days of 3 to 10
         // (data from storage for days 3 to 6 merged with data from ADO API for days 7 to 10)
@@ -137,18 +137,18 @@ public class AdoWikiWithStorageIntegrationTests
         return (wikiDecl, adoTestsCfg.TestAdoWikiPageId(), utcNow, wiki, storage);
     }
 
-    private async Task VerifyDayRangeOfWikiStats(PageViewsForDays pageViewsForDays)
+    private async Task VerifyDayRangeOfWikiStats(PageViewsForDays pvfd)
     {
         var (_, pageId, utcNow, wiki, statsStorage) = ArrangeSut();
 
         var expectedLastDay  = new DateDay(utcNow);
-        var expectedFirstDay = expectedLastDay.AddDays(-pageViewsForDays.Value+1);
+        var expectedFirstDay = expectedLastDay.AddDays(-pvfd.Value+1);
 
         // Act
-        var stats = await wiki.PageStats(pageViewsForDays, pageId);
+        var stats = await wiki.PageStats(pvfd, pageId);
 
         statsStorage = await statsStorage.ReplaceWith(stats);
-        var storedStats = statsStorage.PagesStats(pageViewsForDays);
+        var storedStats = statsStorage.PagesStats(pvfd);
 
         var actualFirstDay = stats.FirstDayWithAnyView;
         var storedFirstDay = storedStats.FirstDayWithAnyView;
@@ -172,15 +172,15 @@ public class AdoWikiWithStorageIntegrationTests
         Assume.That(
             actualFirstDay,
             Is.EqualTo(expectedFirstDay),
-            ExactDayAssumptionViolationMessage("Minimum first", pageViewsForDays));
+            ExactDayAssumptionViolationMessage("Minimum first", pvfd));
         Assume.That(
             actualLastDay,
             Is.EqualTo(expectedLastDay),
-            ExactDayAssumptionViolationMessage("Maximum last", pageViewsForDays));
+            ExactDayAssumptionViolationMessage("Maximum last", pvfd));
 
-        string ExactDayAssumptionViolationMessage(string dayType, int pageViewsForDays)
+        string ExactDayAssumptionViolationMessage(string dayType, PageViewsForDays pvfd)
         {
-            return $"{dayType} possible day for pageViewsForDays: {pageViewsForDays}. " +
+            return $"{dayType} possible day for pageViewsForDays: {pvfd}. " +
                    "Possible lack of views (null) or ingestion delay (see comment on AdoWiki). " +
                    $"UTC time: {DateTime.UtcNow}";
         }

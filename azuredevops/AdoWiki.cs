@@ -26,8 +26,6 @@ namespace Wikitools.AzureDevOps;
 /// </remarks>
 public record AdoWiki(AdoWikiUri AdoWikiUri, string PatEnvVar, IEnvironment Env, ITimeline Timeline) : IAdoWiki
 {
-    // kja PageViewsForDays pageViewsForDays -> PageViewsForDays days
-
     public AdoWiki(
         string wikiUriStr,
         string patEnvVar,
@@ -38,41 +36,36 @@ public record AdoWiki(AdoWikiUri AdoWikiUri, string PatEnvVar, IEnvironment Env,
         env,
         timeline) { }
 
-    public Task<ValidWikiPagesStats> PagesStats(PageViewsForDays pageViewsForDays) =>
-        PagesStats(
-            pageViewsForDays,
-            (wikiHttpClient, pageViewsForDays) =>
-                // ReSharper disable once ConvertClosureToMethodGroup
-                GetWikiPagesDetails(wikiHttpClient, pageViewsForDays));
+    public Task<ValidWikiPagesStats> PagesStats(PageViewsForDays pvfd) =>
+        // ReSharper disable once ConvertClosureToMethodGroup
+        PagesStats(pvfd, (wikiHttpClient, pvfd) => GetWikiPagesDetails(wikiHttpClient, pvfd));
 
-    public Task<ValidWikiPagesStats> PageStats(PageViewsForDays pageViewsForDays, int pageId) =>
-        PagesStats(
-            pageViewsForDays,
-            (wikiHttpClient, pageViewsForDays) =>
-                GetWikiPagesDetails(wikiHttpClient, pageViewsForDays, pageId));
+    public Task<ValidWikiPagesStats> PageStats(PageViewsForDays pvfd, int pageId) =>
+        PagesStats(pvfd, (wikiHttpClient, pvfd) 
+            => GetWikiPagesDetails(wikiHttpClient, pvfd, pageId));
 
     private async Task<ValidWikiPagesStats> PagesStats(
-        PageViewsForDays pageViewsForDays,
+        PageViewsForDays pvfd,
         Func<IWikiHttpClient, PageViewsForDays, Task<IEnumerable<WikiPageDetail>>>
             wikiPagesDetailsFunc)
     {
         var wikiHttpClient   = WikiHttpClient(AdoWikiUri, PatEnvVar);
         var today            = new DateDay(Timeline.UtcNow);
-        var wikiPagesDetails = await wikiPagesDetailsFunc(wikiHttpClient, pageViewsForDays);
+        var wikiPagesDetails = await wikiPagesDetailsFunc(wikiHttpClient, pvfd);
         var wikiPagesStats   = wikiPagesDetails.Select(WikiPageStats.From);
         return new ValidWikiPagesStats(wikiPagesStats, 
             // kja get rid of these -days+1 shenanigans
-            startDay: today.AddDays(-pageViewsForDays.Value+1), 
+            startDay: today.AddDays(-pvfd.Value+1), 
             endDay: today);
     }
 
     private async Task<IEnumerable<WikiPageDetail>> GetWikiPagesDetails(
         IWikiHttpClient wikiHttpClient,
-        PageViewsForDays pageViewsForDays)
+        PageViewsForDays pvfd)
     {
         // The Top value is max on which the API doesn't throw. Determined empirically.
         var wikiPagesBatchRequest = new WikiPagesBatchRequest
-            { Top = 100, PageViewsForDays = pageViewsForDays.ValueWithinAdoApiLimit };
+            { Top = 100, PageViewsForDays = pvfd.ValueWithinAdoApiLimit };
         var wikiPagesDetails = new List<WikiPageDetail>();
         string? continuationToken = null;
         do
@@ -92,13 +85,13 @@ public record AdoWiki(AdoWikiUri AdoWikiUri, string PatEnvVar, IEnvironment Env,
 
     private async Task<IEnumerable<WikiPageDetail>> GetWikiPagesDetails(
         IWikiHttpClient wikiHttpClient,
-        PageViewsForDays pageViewsForDays,
+        PageViewsForDays pvfd,
         int pageId) =>
         (await wikiHttpClient.GetPageDataAsync(
             AdoWikiUri.ProjectName,
             AdoWikiUri.WikiName,
             pageId,
-            pageViewsForDays)).InList();
+            pvfd)).InList();
 
     private WikiHttpClientWithExceptionWrapping WikiHttpClient(AdoWikiUri wikiUri, string patEnvVar)
     {

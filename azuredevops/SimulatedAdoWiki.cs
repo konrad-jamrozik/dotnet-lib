@@ -17,15 +17,15 @@ public record SimulatedAdoWiki(
     {
     }
 
-    public Task<ValidWikiPagesStats> PagesStats(PageViewsForDays pageViewsForDays)
+    public Task<ValidWikiPagesStats> PagesStats(PageViewsForDays pvfd)
     {
-        pageViewsForDays.AssertPageViewsForDaysRange();
+        pvfd.AssertPageViewsForDaysRange();
         return Task.FromResult(new ValidWikiPagesStats(PagesStatsData, StartDay, EndDay));
     }
 
-    public Task<ValidWikiPagesStats> PageStats(PageViewsForDays pageViewsForDays, int pageId)
+    public Task<ValidWikiPagesStats> PageStats(PageViewsForDays pvfd, int pageId)
     {
-        pageViewsForDays.AssertPageViewsForDaysRange();
+        pvfd.AssertPageViewsForDaysRange();
         return Task.FromResult(
             new ValidWikiPagesStats(PagesStatsData.Where(page => page.Id == pageId), StartDay, EndDay));
     }

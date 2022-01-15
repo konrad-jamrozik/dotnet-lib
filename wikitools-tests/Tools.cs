@@ -53,7 +53,7 @@ public class Tools
             env,
             timeline);
 
-        var pagesViewsStats = wiki.PagesStats(pageViewsForDays: PageViewsForDays.Max);
+        var pagesViewsStats = wiki.PagesStats(PageViewsForDays.Max);
 
         var storage = new MonthlyJsonFilesStorage(new Dir(fs, cfg.StorageDirPath()));
 

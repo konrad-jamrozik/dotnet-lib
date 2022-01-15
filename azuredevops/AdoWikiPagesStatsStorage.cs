@@ -9,22 +9,22 @@ namespace Wikitools.AzureDevOps;
 
 public record AdoWikiPagesStatsStorage(MonthlyJsonFilesStorage Storage, DateTime CurrentDate)
 {
-    public Task<AdoWikiPagesStatsStorage> Update(IAdoWiki wiki, PageViewsForDays pageViewsForDays) 
-        => Update(pageViewsForDays, wiki.PagesStats);
+    public Task<AdoWikiPagesStatsStorage> Update(IAdoWiki wiki, PageViewsForDays pvfd) 
+        => Update(pvfd, wiki.PagesStats);
 
     public Task<AdoWikiPagesStatsStorage> Update(
         IAdoWiki wiki,
-        PageViewsForDays pageViewsForDays,
+        PageViewsForDays pvfd,
         int pageId)
         => Update(
-            pageViewsForDays,
+            pvfd,
             pageViewsForDays => wiki.PageStats(pageViewsForDays, pageId));
 
     private async Task<AdoWikiPagesStatsStorage> Update(
-        PageViewsForDays pageViewsForDays,
+        PageViewsForDays pvfd,
         Func<PageViewsForDays, Task<ValidWikiPagesStats>> wikiPagesStatsFunc)
     {
-        var pagesStats = await wikiPagesStatsFunc(pageViewsForDays);
+        var pagesStats = await wikiPagesStatsFunc(pvfd);
 
         var (previousMonthStats, currentMonthStats) = pagesStats.SplitIntoTwoMonths();
         if (previousMonthStats != null)
@@ -61,13 +61,13 @@ public record AdoWikiPagesStatsStorage(MonthlyJsonFilesStorage Storage, DateTime
         return this;
     }
 
-    public ValidWikiPagesStats PagesStats(PageViewsForDays pageViewsForDays)
+    public ValidWikiPagesStats PagesStats(PageViewsForDays pvfd)
     {
         var currentDay = new DateDay(CurrentDate);
-        // Here, the 1 is added to account for how ADO REST API interprets the range.
+        // kja Here, the 1 is added to account for how ADO REST API interprets the range.
         // For more, see comment on:
         // AdoWikiWithStorageIntegrationTests.ObtainsAndStoresDataFromAdoWikiForToday
-        var startDay = currentDay.AddDays(-pageViewsForDays.Value + 1);
+        var startDay = currentDay.AddDays(-pvfd.Value + 1);
             
         IEnumerable<ValidWikiPagesStatsForMonth> statsByMonth = DateMonth
             .Range(startDay, currentDay)
