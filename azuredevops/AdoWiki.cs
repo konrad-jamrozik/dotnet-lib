@@ -27,24 +27,12 @@ namespace Wikitools.AzureDevOps;
 /// </remarks>
 public record AdoWiki(AdoWikiUri AdoWikiUri, string PatEnvVar, IEnvironment Env, ITimeline Timeline) : IAdoWiki
 {
+    // kja inline
     public static void AssertPageViewsForDaysRange(int pageViewsForDays)
-    {
-        Contract.Assert(
-            pageViewsForDays,
-            nameof(pageViewsForDays),
-            new Range(PageViewsForDaysMin, PageViewsForDaysMax),
-            upperBoundReason: "ADO API limit");
-    }
+        => new PageViewsForDays(pageViewsForDays).AssertPageViewsForDaysRange();
 
     public AdoWiki(string wikiUriStr, string patEnvVar, IEnvironment env, ITimeline timeline) : this(
         new AdoWikiUri(wikiUriStr), patEnvVar, env, timeline) { }
-
-    // Max value supported by https://docs.microsoft.com/en-us/rest/api/azure/devops/wiki/pages%20batch/get?view=azure-devops-rest-6.1
-    // Confirmed empirically as of 3/27/2021.
-    public const int PageViewsForDaysMax = 30;
-    // If 0, the call to ADO wiki API still succeeds, but all returned WikiPageDetail will have null ViewStats.
-    // Confirmed empirically as of 3/27/2021.
-    private const int PageViewsForDaysMin = 1;
 
     public Task<ValidWikiPagesStats> PagesStats(int pageViewsForDays) =>
         PagesStats(pageViewsForDays, GetWikiPagesDetails);
