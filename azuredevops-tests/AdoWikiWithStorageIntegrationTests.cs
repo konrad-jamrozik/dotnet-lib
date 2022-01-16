@@ -18,7 +18,7 @@ public class AdoWikiWithStorageIntegrationTests
     /// This test tests the following:
     /// - ADO API for Wiki can be successfully queried for single page data
     /// - Querying wiki for 1 day results in it giving data for today only.
-    ///   - The today cutoff is UTC. So if today today UTC time is 2 AM,
+    ///   - The today cutoff is UTC. So if today UTC time is 2 AM,
     ///   it will include only 2 hours.
     /// - The obtained data can be successfully stored and retrieved.
     /// </summary>
