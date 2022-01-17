@@ -19,7 +19,7 @@ namespace OxceTests
         [Test]
         public void ProcessSaveFileBaseSoldiers()
         {
-            var (inputXcfSave, outputDirectory, outputFile) = new Configuration(new FileSystem()).Read<OxceTestsCfg>();
+            var (inputXcfSave, outputDirectory, outputFile) = new Configuration(new FileSystem()).Load<OxceTestsCfg>();
             var basesLines = GetBasesLines(inputXcfSave);
             var soldiers = ParseBaseSoldiers(basesLines);
             WriteBaseSoldiers(soldiers, outputDirectory);
@@ -28,7 +28,7 @@ namespace OxceTests
         [Test]
         public void ProcessSaveFileBaseItemCounts()
         {
-            var (inputXcfSave, outputDirectory, outputFile) = new Configuration(new FileSystem()).Read<OxceTestsCfg>();
+            var (inputXcfSave, outputDirectory, outputFile) = new Configuration(new FileSystem()).Load<OxceTestsCfg>();
             var basesNodesLines = GetBasesLines(inputXcfSave);
             var itemCounts = ParseBaseItemCounts(basesNodesLines);
             WriteBaseItemCounts(itemCounts, outputDirectory);
