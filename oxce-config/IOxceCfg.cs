@@ -1,6 +1,6 @@
 using Wikitools.Lib.Json;
 
-namespace Oxce.Config;
+namespace Oxce.Configs;
 
 public interface IOxceCfg : IConfiguration
 {

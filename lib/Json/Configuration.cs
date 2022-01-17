@@ -18,11 +18,11 @@ public record Configuration(IFileSystem FS)
     // \<repo-dir>\<project-dir>\bin\<configuration>\<net-version>
     private const string RelativeRepoPath = @"..\..\..\..\..";
 
-    private const string DllToLoadPath =
-        $@"{ConfigRepoCloneDirPath}\{ConfigProjectName}\bin\Debug\"
-        + $@"{NetFrameworkVersion}\{ConfigProjectName}.dll";
+    private string DllToLoadPath(string configProjectName) =>
+        $@"{ConfigRepoCloneDirPath}\{configProjectName}\bin\Debug\"
+        + $@"{NetFrameworkVersion}\{configProjectName}.dll";
 
-    private const string LoadedClassNamespace = "Wikitools.Configs.";
+    private const string LoadedClassNamespace = "Wikitools.Configs";
 
     /// <summary>
     /// Loads implementation of a configuration interface TCfg from a C# assembly.
@@ -35,14 +35,16 @@ public record Configuration(IFileSystem FS)
     /// Implementation inspired by
     /// https://stackoverflow.com/questions/465488/can-i-load-a-net-assembly-at-runtime-and-instantiate-a-type-knowing-only-the-na
     /// </remarks>
-    public TCfg Load<TCfg>() where TCfg : IConfiguration
+    public TCfg Load<TCfg>(
+        string configProjectName = ConfigProjectName,
+        string loadedClassNamespace = LoadedClassNamespace) where TCfg : IConfiguration
     {
         var currentDirectory = FS.CurrentDir.Path;
-        var dllPath = Path.Join(currentDirectory, RelativeRepoPath, DllToLoadPath);
+        var dllPath = Path.Join(currentDirectory, RelativeRepoPath, DllToLoadPath(configProjectName));
         Assembly assembly = Assembly.LoadFrom(dllPath);
         var interfaceName = typeof(TCfg).Name;
         var typeClassName = string.Concat(interfaceName.Skip(1));
-        Type type = assembly.GetType(LoadedClassNamespace+ typeClassName)!;
+        Type type = assembly.GetType($"{loadedClassNamespace}.{typeClassName}")!;
         TCfg cfg = (TCfg)Activator.CreateInstance(type)!;
         return cfg;
     }
