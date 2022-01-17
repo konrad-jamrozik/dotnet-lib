@@ -39,11 +39,11 @@ namespace OxceTests
                 Math.Min(soldier.CurrentMana - caps.Mana, 0)
             };
 
-            var trainTotal = values.Sum();
+            var maxTotal = values.Sum();
             var derivedData = new (string, object)[]
             {
-                ("MaxTotal", trainTotal),
-                ("FullyMaxxed", trainTotal == 0 ? "TRUE" : "FALSE")
+                ("MaxTotal", maxTotal),
+                ("FullyMaxxed", maxTotal == 0 ? "TRUE" : "FALSE")
             };
 
             var allData = CsvHeaders().Zip(values)
