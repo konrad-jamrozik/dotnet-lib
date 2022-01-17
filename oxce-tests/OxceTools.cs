@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using NUnit.Framework;
-using Oxce.Config;
+using Oxce.Configs;
 using Wikitools.Lib.Json;
 using Wikitools.Lib.OS;
 using Wikitools.Lib.Primitives;
@@ -20,7 +20,10 @@ namespace OxceTests
         [Test]
         public void ProcessSaveFileBaseSoldiers()
         {
-            var (inputXcfSave, outputDirectory, outputFile) = new Configuration(new FileSystem()).Load<IOxceCfg>();
+            var (inputXcfSave, outputDirectory, outputFile) =
+                new Configuration(new FileSystem()).Load<IOxceCfg>(
+                    configProjectName: "oxce-configs",
+                    loadedClassNamespace: "Oxce.Configs");
             var basesLines = GetBasesLines(inputXcfSave);
             var soldiers = ParseBaseSoldiers(basesLines);
             WriteBaseSoldiers(soldiers, outputDirectory);
@@ -29,7 +32,10 @@ namespace OxceTests
         [Test]
         public void ProcessSaveFileBaseItemCounts()
         {
-            var (inputXcfSave, outputDirectory, outputFile) = new Configuration(new FileSystem()).Load<IOxceCfg>();
+            var (inputXcfSave, outputDirectory, outputFile) =
+                new Configuration(new FileSystem()).Load<IOxceCfg>(
+                    configProjectName: "oxce-configs",
+                    loadedClassNamespace: "Oxce.Configs");
             var basesNodesLines = GetBasesLines(inputXcfSave);
             var itemCounts = ParseBaseItemCounts(basesNodesLines);
             WriteBaseItemCounts(itemCounts, outputDirectory);
