@@ -64,8 +64,16 @@ public record Soldier(
         return allData;
     }
 
+    /// <remarks>
+    /// We do not measure kills per mission for soldiers with few missions,
+    /// as it is too luck dependent and would scramble sorting order.
+    /// </remarks> 
     public float KillsPerMission => Missions >= 5 ? (float) Kills / Missions : 0;
 
+    /// <summary>
+    /// StatGainTotal but without the psi skill of the soldier, as psi skill
+    /// training mode and magnitude is different, and would skew comparisons.
+    /// </summary>
     public int StatGainReal => Math.Max(StatGainTotal - CurrentPsiSkill, 0);
 
     public string Helix => Name.EndsWith("H") ? "TRUE" : "FALSE";
