@@ -2,8 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
-    <RootNamespace>oxce_tests</RootNamespace>
-
+    <RootNamespace>Oxce.Tests</RootNamespace>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
@@ -16,6 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\lib\lib.csproj" />
+    <ProjectReference Include="..\oxce-config\oxce-config.csproj" />
   </ItemGroup>
 
 </Project>
