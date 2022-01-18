@@ -26,9 +26,7 @@ public record Bases(IEnumerable<Base> BaseData) : IEnumerable<Base>
         return new Bases(bases);
     }
 
-    public async Task WriteSoldiers(
-        IFileSystem fs,
-        string soldiersOutputPath)
+    public async Task WriteSoldiers(IFileSystem fs, string soldiersOutputPath)
     {
         string[] csvLines = Soldier.CsvHeaders().InList()
             .Concat(Soldiers.OrderBy(s => s.Id).Select(s => s.CsvString())).ToArray();
@@ -38,9 +36,7 @@ public record Bases(IEnumerable<Base> BaseData) : IEnumerable<Base>
         await Console.Out.WriteLineAsync("Wrote bases soldiers data to " + soldiersOutputPath);
     }
 
-    public async Task WriteItemCounts(
-        IFileSystem fs,
-        string itemCountsOutputPath)
+    public async Task WriteItemCounts(IFileSystem fs, string itemCountsOutputPath)
     {
         string[] csvLines = ItemCount.CsvHeaders().InList()
             .Concat(ItemCounts.Select(s => s.CsvString())).ToArray();
