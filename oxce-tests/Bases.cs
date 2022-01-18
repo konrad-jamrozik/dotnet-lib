@@ -17,6 +17,8 @@ public record Bases(IEnumerable<Base> BaseData) : IEnumerable<Base>
 
     public IEnumerable<Soldier> Soldiers => BaseData.SelectMany(@base => @base.Soldiers);
 
+    public IEnumerable<ItemCount> ItemCounts => BaseData.SelectMany(@base => @base.ItemCounts);
+
     public IEnumerator<Base> GetEnumerator() => BaseData.GetEnumerator();
 
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();

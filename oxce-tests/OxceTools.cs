@@ -18,9 +18,9 @@ namespace OxceTests
         }
 
         [Test]
-        public void ProcessSaveFileBaseSoldiers()
+        public void ProcessSaveFile()
         {
-            var (inputXcfSave, outputDir, outputSoldiersFileName, _) =
+            var (inputXcfSave, outputDir, outputSoldiersFileName, outputItemCountsFileName) =
                 new Configuration(new FileSystem()).Load<IOxceCfg>(
                     configProjectName: "oxce-configs",
                     loadedClassNamespace: "Oxce.Configs");
@@ -29,54 +29,7 @@ namespace OxceTests
             var bases = Bases.FromSaveGameYamlMapping(yamlMapping);
 
             WriteBaseSoldiers(bases.Soldiers.ToList(), outputDir, outputSoldiersFileName);
-        }
-
-        [Test]
-        public void ProcessSaveFileBaseItemCounts()
-        {
-            var (inputXcfSave, outputDir, _, outputItemCountsFileName) =
-                new Configuration(new FileSystem()).Load<IOxceCfg>(
-                    configProjectName: "oxce-configs",
-                    loadedClassNamespace: "Oxce.Configs");
-            var basesNodesLines = GetBasesLines(inputXcfSave);
-            var itemCounts = ParseBaseItemCounts(basesNodesLines);
-            WriteBaseItemCounts(itemCounts, outputDir, outputItemCountsFileName);
-        }
-
-        private static IEnumerable<IEnumerable<string>> GetBasesLines(string inputXcfSave)
-        {
-            var yamlMapping = new YamlMapping(File.ReadAllLines(inputXcfSave));
-            var basesLines = yamlMapping.Lines("bases").ToList();
-            var basesNodesLines = new YamlBlockSequence(basesLines).NodesLines();
-            return basesNodesLines;
-        }
-
-        private static List<ItemCount> ParseBaseItemCounts(IEnumerable<IEnumerable<string>> basesLines)
-        {
-            var items = basesLines.SelectMany(
-                baseLines =>
-                {
-                    var (baseName, itemCountsDataPairs) = ParseBaseItemCounts(baseLines);
-                    var itemCounts = itemCountsDataPairs.Select(pair => new ItemCount(baseName, pair.Key, int.Parse(pair.Value)));
-                    return itemCounts;
-                }).ToList();
-            return items;
-        }
-
-        private static (string baseName, IEnumerable<IEnumerable<string>> soldiersLines) ParseBaseSoldiers(IEnumerable<string> baseLines)
-        {
-            var baseYaml = new YamlMapping(baseLines);
-            var soldiersYaml = new YamlBlockSequence(baseYaml.Lines("soldiers"));
-            var soldiersLines = soldiersYaml.NodesLines();
-            return (baseName: ParseString(baseYaml, "name"), soldiersLines);
-        }
-
-        private static (string baseName, IEnumerable<(string Key, string Value)> itemCountsDataPairs) ParseBaseItemCounts(IEnumerable<string> baseLines)
-        {
-            var baseYaml = new YamlMapping(baseLines);
-            var itemCountsYaml = new YamlMapping(baseYaml.Lines("items"));
-            var itemCountsDataPairs = itemCountsYaml.KeyValuePairs();
-            return (baseName: ParseString(baseYaml, "name"), itemCountsDataPairs);
+            WriteBaseItemCounts(bases.ItemCounts.ToList(), outputDir, outputItemCountsFileName);
         }
 
         private static void WriteBaseSoldiers(
@@ -104,8 +57,5 @@ namespace OxceTests
             File.WriteAllLines(itemCountDataOutputFile, csvLines);
             csvLines.ForEach(line => Console.Out.WriteLine(line));
         }
-
-        private static string ParseString(YamlMapping mapping, string key) 
-            => mapping.Lines(key).Single();
     }
 }
