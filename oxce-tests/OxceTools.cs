@@ -20,41 +20,41 @@ namespace OxceTests
         [Test]
         public void ProcessSaveFile()
         {
+            var fs = new FileSystem();
             var (inputXcfSave, outputDir, outputSoldiersFileName, outputItemCountsFileName) =
-                new Configuration(new FileSystem()).Load<IOxceCfg>(
+                new Configuration(fs).Load<IOxceCfg>(
                     configProjectName: "oxce-configs",
                     loadedClassNamespace: "Oxce.Configs");
 
             var yamlMapping = new YamlMapping(File.ReadAllLines(inputXcfSave));
             var bases = Bases.FromSaveFile(yamlMapping);
 
-            WriteBaseSoldiers(bases.Soldiers.ToList(), outputDir, outputSoldiersFileName);
-            WriteBaseItemCounts(bases.ItemCounts.ToList(), outputDir, outputItemCountsFileName);
+            var soldiersOutputPath = Path.Join(outputDir, outputSoldiersFileName);
+            var itemCountsOutputPath = Path.Join(outputDir, outputItemCountsFileName);
+
+            WriteBaseSoldiers(bases.Soldiers.ToList(), soldiersOutputPath);
+            WriteBaseItemCounts(bases.ItemCounts.ToList(), itemCountsOutputPath);
         }
 
         private static void WriteBaseSoldiers(
             List<Soldier> soldiers,
-            string outputDirectory,
-            string outputSoldiersFileName)
+            string soldiersOutputPath)
         {
             string[] csvLines = Soldier.CsvHeaders().InList()
                 .Concat(soldiers.OrderBy(s => s.Id).Select(s => s.CsvString())).ToArray();
-            var soldierDataOutputFile = Path.Join(outputDirectory, outputSoldiersFileName);
 
-            File.WriteAllLines(soldierDataOutputFile, csvLines);
+            File.WriteAllLines(soldiersOutputPath, csvLines);
             csvLines.ForEach(line => Console.Out.WriteLine(line));
         }
 
         private static void WriteBaseItemCounts(
-            List<ItemCount> items,
-            string outputDir,
-            string outputItemCountsFileName)
+            List<ItemCount> itemCounts,
+            string itemCountsOutputPath)
         {
             string[] csvLines = ItemCount.CsvHeaders().InList()
-                .Concat(items.Select(s => s.CsvString())).ToArray();
-            var itemCountDataOutputFile = Path.Join(outputDir, outputItemCountsFileName);
+                .Concat(itemCounts.Select(s => s.CsvString())).ToArray();
 
-            File.WriteAllLines(itemCountDataOutputFile, csvLines);
+            File.WriteAllLines(itemCountsOutputPath, csvLines);
             csvLines.ForEach(line => Console.Out.WriteLine(line));
         }
     }

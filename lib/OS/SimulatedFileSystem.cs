@@ -49,6 +49,11 @@ public class SimulatedFileSystem : IFileSystem
         return Task.CompletedTask;
     }
 
+    public Task WriteAllLinesAsync(string path, IEnumerable<string> lines)
+    {
+        throw new NotImplementedException();
+    }
+
     public StreamWriter CreateText(string path)
     {
         throw new NotImplementedException();

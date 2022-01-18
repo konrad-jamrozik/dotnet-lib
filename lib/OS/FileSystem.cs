@@ -28,6 +28,9 @@ public class FileSystem : IFileSystem
     public Task WriteAllTextAsync(string path, string contents) 
         => File.WriteAllTextAsync(path, contents);
 
+    public Task WriteAllLinesAsync(string path, IEnumerable<string> lines)
+        => File.WriteAllLinesAsync(path, lines);
+
     public StreamWriter CreateText(string path)
         => File.CreateText(path);
 

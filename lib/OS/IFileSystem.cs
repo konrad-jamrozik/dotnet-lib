@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -9,6 +10,7 @@ public interface IFileSystem
     Dir CurrentDir { get; }
     bool DirectoryExists(string path);
     public Task WriteAllTextAsync(string path, string contents);
+    public Task WriteAllLinesAsync(string path, IEnumerable<string> lines);
     public StreamWriter CreateText(string path);
     public string[] ReadAllLines(string path);
     Dir CreateDirectory(string path);
