@@ -20,7 +20,7 @@ namespace OxceTests
         [Test]
         public void ProcessSaveFileBaseSoldiers()
         {
-            var (inputXcfSave, outputDirectory, outputFile) =
+            var (inputXcfSave, outputDirectory) =
                 new Configuration(new FileSystem()).Load<IOxceCfg>(
                     configProjectName: "oxce-configs",
                     loadedClassNamespace: "Oxce.Configs");
@@ -32,7 +32,7 @@ namespace OxceTests
         [Test]
         public void ProcessSaveFileBaseItemCounts()
         {
-            var (inputXcfSave, outputDirectory, outputFile) =
+            var (inputXcfSave, outputDirectory) =
                 new Configuration(new FileSystem()).Load<IOxceCfg>(
                     configProjectName: "oxce-configs",
                     loadedClassNamespace: "Oxce.Configs");
