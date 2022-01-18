@@ -32,32 +32,10 @@ namespace OxceTests
             var soldiersOutputPath = fs.JoinPath(outputDir, outputSoldiersFileName);
             var itemCountsOutputPath = fs.JoinPath(outputDir, outputItemCountsFileName);
 
-            await WriteBaseSoldiers(fs, bases.Soldiers.ToList(), soldiersOutputPath);
-            await WriteBaseItemCounts(fs, bases.ItemCounts.ToList(), itemCountsOutputPath);
+            await bases.WriteSoldiers(fs, soldiersOutputPath);
+            await bases.WriteItemCounts(fs, itemCountsOutputPath);
         }
 
-        private static async Task WriteBaseSoldiers(
-            IFileSystem fs,
-            List<Soldier> soldiers,
-            string soldiersOutputPath)
-        {
-            string[] csvLines = Soldier.CsvHeaders().InList()
-                .Concat(soldiers.OrderBy(s => s.Id).Select(s => s.CsvString())).ToArray();
 
-            await fs.WriteAllLinesAsync(soldiersOutputPath, csvLines);
-            csvLines.ForEach(line => Console.Out.WriteLine(line));
-        }
-
-        private static async Task WriteBaseItemCounts(
-            IFileSystem fs,
-            List<ItemCount> itemCounts,
-            string itemCountsOutputPath)
-        {
-            string[] csvLines = ItemCount.CsvHeaders().InList()
-                .Concat(itemCounts.Select(s => s.CsvString())).ToArray();
-
-            await fs.WriteAllLinesAsync(itemCountsOutputPath, csvLines);
-            csvLines.ForEach(line => Console.Out.WriteLine(line));
-        }
     }
 }
