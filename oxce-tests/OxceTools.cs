@@ -20,25 +20,25 @@ namespace OxceTests
         [Test]
         public void ProcessSaveFileBaseSoldiers()
         {
-            var (inputXcfSave, outputDirectory) =
+            var (inputXcfSave, outputDir, outputSoldiersFileName, _) =
                 new Configuration(new FileSystem()).Load<IOxceCfg>(
                     configProjectName: "oxce-configs",
                     loadedClassNamespace: "Oxce.Configs");
             var basesLines = GetBasesLines(inputXcfSave);
             var soldiers = ParseBaseSoldiers(basesLines);
-            WriteBaseSoldiers(soldiers, outputDirectory);
+            WriteBaseSoldiers(soldiers, outputDir, outputSoldiersFileName);
         }
 
         [Test]
         public void ProcessSaveFileBaseItemCounts()
         {
-            var (inputXcfSave, outputDirectory) =
+            var (inputXcfSave, outputDir, _, outputItemCountsFileName) =
                 new Configuration(new FileSystem()).Load<IOxceCfg>(
                     configProjectName: "oxce-configs",
                     loadedClassNamespace: "Oxce.Configs");
             var basesNodesLines = GetBasesLines(inputXcfSave);
             var itemCounts = ParseBaseItemCounts(basesNodesLines);
-            WriteBaseItemCounts(itemCounts, outputDirectory);
+            WriteBaseItemCounts(itemCounts, outputDir, outputItemCountsFileName);
         }
 
         private static IEnumerable<IEnumerable<string>> GetBasesLines(string inputXcfSave)
@@ -89,19 +89,27 @@ namespace OxceTests
             return (baseName: ParseString(baseYaml, "name"), itemCountsDataPairs);
         }
 
-        private static void WriteBaseSoldiers(List<Soldier> soldiers, string outputDirectory)
+        private static void WriteBaseSoldiers(
+            List<Soldier> soldiers,
+            string outputDirectory,
+            string outputSoldiersFileName)
         {
-            string[] csvLines = Soldier.CsvHeaders().InList().Concat(soldiers.OrderBy(s => s.Id).Select(s => s.CsvString())).ToArray();
-            var soldierDataOutputFile = Path.Join(outputDirectory, "base_soldiers_query.csv");
+            string[] csvLines = Soldier.CsvHeaders().InList()
+                .Concat(soldiers.OrderBy(s => s.Id).Select(s => s.CsvString())).ToArray();
+            var soldierDataOutputFile = Path.Join(outputDirectory, outputSoldiersFileName);
 
             File.WriteAllLines(soldierDataOutputFile, csvLines);
             csvLines.ForEach(line => Console.Out.WriteLine(line));
         }
 
-        private static void WriteBaseItemCounts(List<ItemCount> items, string outputDirectory)
+        private static void WriteBaseItemCounts(
+            List<ItemCount> items,
+            string outputDir,
+            string outputItemCountsFileName)
         {
-            string[] csvLines = ItemCount.CsvHeaders().InList().Concat(items.Select(s => s.CsvString())).ToArray();
-            var itemCountDataOutputFile = Path.Join(outputDirectory, "base_item_counts_query.csv");
+            string[] csvLines = ItemCount.CsvHeaders().InList()
+                .Concat(items.Select(s => s.CsvString())).ToArray();
+            var itemCountDataOutputFile = Path.Join(outputDir, outputItemCountsFileName);
 
             File.WriteAllLines(itemCountDataOutputFile, csvLines);
             csvLines.ForEach(line => Console.Out.WriteLine(line));
