@@ -7,11 +7,11 @@ namespace OxceTests;
 
 public record Bases(IEnumerable<Base> BaseData) : IEnumerable<Base>
 {
-    public static Bases FromSaveGameYamlMapping(YamlMapping yamlMapping)
+    public static Bases FromSaveFile(YamlMapping saveGameYaml)
     {
-        var basesLines = yamlMapping.Lines("bases").ToList();
+        var basesLines = saveGameYaml.Lines("bases").ToList();
         var basesNodesLines = new YamlBlockSequence(basesLines).NodesLines();
-        var bases = basesNodesLines.Select(Base.FromSaveGameLines);
+        var bases = basesNodesLines.Select(lines => Base.FromSaveFile(new YamlMapping(lines)));
         return new Bases(bases);
     }
 

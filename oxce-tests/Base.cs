@@ -5,22 +5,20 @@ namespace OxceTests;
 
 public record Base(string Name, IEnumerable<Soldier> Soldiers, IEnumerable<ItemCount> ItemCounts)
 {
-    public static Base FromSaveGameLines(IEnumerable<string> lines)
+    public static Base FromSaveFile(YamlMapping baseYaml)
     {
-        var linesList = lines.ToList();
-        var (baseName, soldiersLines) = ParseBaseSoldiers(linesList);
-        var soldiers = soldiersLines.Select(soldierLines => ParseSoldier(soldierLines, baseName));
-        var itemCounts = ParseBaseItemCounts(linesList, baseName);
+        var baseName = ParseString(baseYaml, "name");
+        var soldiers = ParseBaseSoldiers(baseYaml, baseName);
+        var itemCounts = ParseBaseItemCounts(baseYaml, baseName);
         return new Base(baseName, soldiers, itemCounts);
     }
 
-    private static (string baseName, IEnumerable<IEnumerable<string>> soldiersLines)
-        ParseBaseSoldiers(IEnumerable<string> baseLines)
+    private static IEnumerable<Soldier> ParseBaseSoldiers(YamlMapping baseYaml, string baseName)
     {
-        var baseYaml = new YamlMapping(baseLines);
         var soldiersYaml = new YamlBlockSequence(baseYaml.Lines("soldiers"));
         var soldiersLines = soldiersYaml.NodesLines();
-        return (baseName: ParseString(baseYaml, "name"), soldiersLines);
+        var soldiers = soldiersLines.Select(soldierLines => ParseSoldier(soldierLines, baseName));
+        return soldiers;
     }
 
     private static Soldier ParseSoldier(IEnumerable<string> soldierLines, string baseName)
@@ -79,9 +77,8 @@ public record Base(string Name, IEnumerable<Soldier> Soldiers, IEnumerable<ItemC
     }
 
     private static IEnumerable<ItemCount> ParseBaseItemCounts(
-        IEnumerable<string> itemsLines, string baseName)
+        YamlMapping baseYaml, string baseName)
     {
-        var baseYaml = new YamlMapping(itemsLines);
         var itemCountsYaml = new YamlMapping(baseYaml.Lines("items"));
         var itemCountsPairs = itemCountsYaml.KeyValuePairs();
         var itemCounts = itemCountsPairs.Select(

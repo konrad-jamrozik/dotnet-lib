@@ -26,7 +26,7 @@ namespace OxceTests
                     loadedClassNamespace: "Oxce.Configs");
 
             var yamlMapping = new YamlMapping(File.ReadAllLines(inputXcfSave));
-            var bases = Bases.FromSaveGameYamlMapping(yamlMapping);
+            var bases = Bases.FromSaveFile(yamlMapping);
 
             WriteBaseSoldiers(bases.Soldiers.ToList(), outputDir, outputSoldiersFileName);
             WriteBaseItemCounts(bases.ItemCounts.ToList(), outputDir, outputItemCountsFileName);
