@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace OxceTests
 {
-    // Partial parser of Mapping from https://yaml.org/spec/1.2.2/
+    // Limited parser of a mapping from https://yaml.org/spec/1.2.2/
     public class YamlMapping
     {
         private const string Indent = "  ";

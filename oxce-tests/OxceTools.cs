@@ -24,9 +24,11 @@ namespace OxceTests
                 new Configuration(new FileSystem()).Load<IOxceCfg>(
                     configProjectName: "oxce-configs",
                     loadedClassNamespace: "Oxce.Configs");
-            var basesLines = GetBasesLines(inputXcfSave);
-            var soldiers = ParseBaseSoldiers(basesLines);
-            WriteBaseSoldiers(soldiers, outputDir, outputSoldiersFileName);
+
+            var yamlMapping = new YamlMapping(File.ReadAllLines(inputXcfSave));
+            var bases = Bases.FromSaveGameYamlMapping(yamlMapping);
+
+            WriteBaseSoldiers(bases.Soldiers.ToList(), outputDir, outputSoldiersFileName);
         }
 
         [Test]
@@ -47,18 +49,6 @@ namespace OxceTests
             var basesLines = yamlMapping.Lines("bases").ToList();
             var basesNodesLines = new YamlBlockSequence(basesLines).NodesLines();
             return basesNodesLines;
-        }
-
-        private static List<Soldier> ParseBaseSoldiers(IEnumerable<IEnumerable<string>> basesLines)
-        {
-            var soldiers = basesLines.SelectMany(
-                baseLines =>
-                {
-                    var (baseName, soldiersLines) = ParseBaseSoldiers(baseLines);
-                    var soldiers = soldiersLines.Select(soldierLines => ParseSoldier(soldierLines, baseName));
-                    return soldiers;
-                }).ToList();
-            return soldiers;
         }
 
         private static List<ItemCount> ParseBaseItemCounts(IEnumerable<IEnumerable<string>> basesLines)
@@ -115,71 +105,7 @@ namespace OxceTests
             csvLines.ForEach(line => Console.Out.WriteLine(line));
         }
 
-        private static Soldier ParseSoldier(IEnumerable<string> soldierLines, string baseName)
-        {
-            var soldier = new YamlMapping(soldierLines);
-            var id = ParseInt(soldier, "id");
-            var type = ParseString(soldier, "type");
-            var name = ParseString(soldier, "name");
-            var missions = ParseInt(soldier, "missions");
-            var kills = ParseInt(soldier, "kills");
-            var recovery = ParseFloatOrZero(soldier, "recovery");
-            var manaMissing = ParseIntOrZero(soldier, "manaMissing");
-            var rank = ParseInt(soldier, "rank");
-            var soldierDiary = new YamlMapping(soldier.Lines("diary"));
-            var monthsService = ParseIntOrZero(soldierDiary, "monthsService");
-            var statGainTotal = ParseIntOrZero(soldierDiary, "statGainTotal");
-            var initialStats = new YamlMapping(soldier.Lines("initialStats"));
-            var currentStats = new YamlMapping(soldier.Lines("currentStats"));
-            var currentTU = ParseInt(currentStats, "tu");
-            var currentStamina = ParseInt(currentStats, "stamina");
-            var currentHealth = ParseInt(currentStats, "health");
-            var currentBravery = ParseInt(currentStats, "bravery");
-            var currentReactions = ParseInt(currentStats, "reactions");
-            var currentFiring = ParseInt(currentStats, "firing");
-            var currentThrowing = ParseInt(currentStats, "throwing");
-            var currentStrength = ParseInt(currentStats, "strength");
-            var currentPsiStrength = ParseInt(currentStats, "psiStrength");
-            var currentPsiSkill = ParseInt(currentStats, "psiSkill");
-            var currentMelee = ParseInt(currentStats, "melee");
-            var currentMana = ParseInt(currentStats, "mana");
-
-            return new Soldier(
-                id,
-                name,
-                type,
-                baseName,
-                missions,
-                kills,
-                rank,
-                monthsService,
-                recovery,
-                manaMissing,
-                statGainTotal,
-                currentTU,
-                currentStamina,
-                currentHealth,
-                currentBravery,
-                currentReactions,
-                currentFiring,
-                currentThrowing,
-                currentStrength,
-                currentPsiStrength,
-                currentPsiSkill,
-                currentMelee,
-                currentMana);
-        }
-
         private static string ParseString(YamlMapping mapping, string key) 
             => mapping.Lines(key).Single();
-
-        private static int ParseInt(YamlMapping mapping, string key)
-            => int.Parse(mapping.Lines(key).Single());
-
-        private static int ParseIntOrZero(YamlMapping mapping, string key)
-            => int.TryParse(mapping.Lines(key).SingleOrDefault(), out var value) ? value : 0;
-
-        private static float ParseFloatOrZero(YamlMapping mapping, string key)
-            => float.TryParse(mapping.Lines(key).SingleOrDefault(), out var value) ? value : 0;
     }
 }
