@@ -40,9 +40,11 @@ public record Base(string Name, IEnumerable<Soldier> Soldiers, IEnumerable<ItemC
         var transferredItemCountsMap = transfers.ItemCountsMap;
 
         // kja I need here an abstraction: dict1.Merge(dict2, value => value.Sum())
+        // when done, reuse the ToDictionary proposed in transfers.ItemCountsMap
         var combinedItemCountsMap = itemCountsMap.Select(kvp => kvp)
             .Union(transferredItemCountsMap.Select(kvp => kvp))
-            .GroupBy(kvp => kvp.Key, kvp => kvp.Value).ToDictionary(
+            .GroupBy(kvp => kvp.Key, kvp => kvp.Value)
+            .ToDictionary(
                 itemIdCounts => itemIdCounts.Key,
                 itemIdCounts => itemIdCounts.Sum());
 
