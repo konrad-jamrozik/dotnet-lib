@@ -17,4 +17,30 @@ public record Transfers(YamlBlockSequence TransfersYaml, string BaseName)
             .Select(transferYaml => transferYaml.Lines("soldier").ToList())
             .Where(soldierLines => soldierLines.Any())
             .Select(soldierLines => Soldier.Parse(soldierLines, BaseName, inTransfer: true));
+
+    public Dictionary<string, int> ItemCountsMap
+    {
+        get
+        {
+            var lines = TransfersYaml.NodesLines();
+
+            var itemTransfersMappings = lines
+                .Select(transferLines => new YamlMapping(transferLines))
+                .Where(mapping => mapping.Lines("itemId").Any());
+
+            // kja I need here an abstraction: enumerable.ToDictionary(
+            //  mapping => mapping.ParseString("itemId"),
+            //  mapping => mapping.ParseInt("itemQty"),
+            //  values => values.Sum()) // duplicates merge func
+            var itemCountsMap = itemTransfersMappings
+                .GroupBy(
+                    mapping => mapping.ParseString("itemId"),
+                    mapping => mapping.ParseInt("itemQty"))
+                .ToDictionary(
+                    itemIdQts => itemIdQts.Key,
+                    itemIdQts => itemIdQts.Sum());
+
+            return itemCountsMap;
+        }
+    }
 }
