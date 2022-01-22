@@ -17,7 +17,7 @@ namespace OxceTests
 
         public IEnumerable<string> Lines(string key)
         {
-            var valueLines = new List<string>();
+            var outputLines = new List<string>();
             bool appendingLines = false;
             
             foreach (string line in _lines)
@@ -27,17 +27,17 @@ namespace OxceTests
                     if (FinishedAppendingLines(line)) 
                         break;
 
-                    AppendLine(line, valueLines);
+                    AppendLine(line, outputLines);
                 } 
                 else if (FoundKey(key, line))
                 {
                     appendingLines = true;
 
-                    AddValueFromKeyLineIfPresent(key, line, valueLines);
+                    AddValueFromKeyLineIfPresent(key, line, outputLines);
                 }
             }
 
-            var indentedValueLines = valueLines.Select(line => line.Substring(Indent.Length));
+            var indentedValueLines = outputLines.Select(line => line.Substring(Indent.Length));
             return indentedValueLines;
         }
 
@@ -70,5 +70,16 @@ namespace OxceTests
             if (lineWithKeyStripped.Any())
                 valueLines.Add(Indent + lineWithKeyStripped);
         }
+
+
+        public string ParseString(string key) => Lines(key).Single();
+
+        public int ParseInt(string key) => int.Parse(Lines(key).Single());
+
+        public int ParseIntOrZero(string key)
+            => int.TryParse(Lines(key).SingleOrDefault(), out var value) ? value : 0;
+
+        public float ParseFloatOrZero(string key)
+            => float.TryParse(Lines(key).SingleOrDefault(), out var value) ? value : 0;
     }
 }

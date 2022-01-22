@@ -15,6 +15,7 @@ public record Soldier(
     string Name,
     string Type,
     string BaseName,
+    bool InTransfer,
     int Missions,
     int Kills,
     int Rank,
@@ -79,4 +80,64 @@ public record Soldier(
     public string Helix => Name.EndsWith("H") ? "TRUE" : "FALSE";
 
     public string Humanoid => Type is "STR_SOLDIER" or "STR_HYBRID" ? "TRUE" : "FALSE";
+
+    public static Soldier Parse(
+        IEnumerable<string> soldierLines,
+        string baseName,
+        bool inTransfer)
+    {
+        var soldier = new YamlMapping(soldierLines);
+        var id = soldier.ParseInt("id");
+        var type = soldier.ParseString("type");
+        var name = soldier.ParseString("name");
+        var missions = soldier.ParseInt("missions");
+        var kills = soldier.ParseInt("kills");
+        var recovery = soldier.ParseFloatOrZero("recovery");
+        var manaMissing = soldier.ParseIntOrZero("manaMissing");
+        var rank = soldier.ParseInt("rank");
+        var soldierDiary = new YamlMapping(soldier.Lines("diary"));
+        var monthsService = soldierDiary.ParseIntOrZero("monthsService");
+        var statGainTotal = soldierDiary.ParseIntOrZero("statGainTotal");
+        var initialStats = new YamlMapping(soldier.Lines("initialStats"));
+        var currentStats = new YamlMapping(soldier.Lines("currentStats"));
+        var currentTU = currentStats.ParseInt("tu");
+        var currentStamina = currentStats.ParseInt("stamina");
+        var currentHealth = currentStats.ParseInt("health");
+        var currentBravery = currentStats.ParseInt("bravery");
+        var currentReactions = currentStats.ParseInt("reactions");
+        var currentFiring = currentStats.ParseInt("firing");
+        var currentThrowing = currentStats.ParseInt("throwing");
+        var currentStrength = currentStats.ParseInt("strength");
+        var currentPsiStrength = currentStats.ParseInt("psiStrength");
+        var currentPsiSkill = currentStats.ParseInt("psiSkill");
+        var currentMelee = currentStats.ParseInt("melee");
+        var currentMana = currentStats.ParseInt("mana");
+
+        return new Soldier(
+            id,
+            name,
+            type,
+            baseName,
+            inTransfer,
+            missions,
+            kills,
+            rank,
+            monthsService,
+            recovery,
+            manaMissing,
+            statGainTotal,
+            currentTU,
+            currentStamina,
+            currentHealth,
+            currentBravery,
+            currentReactions,
+            currentFiring,
+            currentThrowing,
+            currentStrength,
+            currentPsiStrength,
+            currentPsiSkill,
+            currentMelee,
+            currentMana);
+    }
+
 }
