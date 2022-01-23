@@ -71,7 +71,6 @@ namespace OxceTests
                 valueLines.Add(Indent + lineWithKeyStripped);
         }
 
-
         public string ParseString(string key) => Lines(key).Single();
 
         public string ParseStringOrEmpty(string key)

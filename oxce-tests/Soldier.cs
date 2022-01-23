@@ -23,6 +23,13 @@ public record Soldier(
     float Recovery,
     int ManaMissing,
     int StatGainTotal,
+    bool CombatPilot,
+    bool GunKata,
+    bool Dagon,
+    bool MartialArts,
+    bool BioEnOrLegacy,
+    bool Tni,
+    bool Helix,
     int CurrentTU,
     int CurrentStamina,
     int CurrentHealth,
@@ -77,7 +84,7 @@ public record Soldier(
     /// </summary>
     public int StatGainReal => Math.Max(StatGainTotal - CurrentPsiSkill, 0);
 
-    public string Helix => Name.EndsWith("H") ? "TRUE" : "FALSE";
+    public string HelixName => Name.EndsWith("H") ? "TRUE" : "FALSE";
 
     public string Humanoid => Type is "STR_SOLDIER" or "STR_HYBRID" ? "TRUE" : "FALSE";
 
@@ -130,6 +137,13 @@ public record Soldier(
             recovery,
             manaMissing,
             statGainTotal,
+            transformationBonuses.Contains("STR_COMBAT_PILOT_TRAINING"),
+            transformationBonuses.Contains("STR_GUN_KATA"),
+            transformationBonuses.Contains("STR_DAGONIZATION"),
+            transformationBonuses.Contains("STR_MARTIAL_ARTS_TRAINING"),
+            transformationBonuses.Contains("STR_BIO_ENHANCEMENT") || transformationBonuses.Contains("STR_SECTOID_LEGACY"),
+            transformationBonuses.Contains("STR_TACTICAL_NEURAL_IMPLANT"),
+            transformationBonuses.Contains("STR_HELIX_KNIGHT") || transformationBonuses.Contains("STR_HELIX_PSION"),
             currentTU,
             currentStamina,
             currentHealth,
