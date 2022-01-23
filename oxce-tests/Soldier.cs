@@ -87,6 +87,10 @@ public record Soldier(
         bool inTransfer)
     {
         var soldier = new YamlMapping(soldierLines);
+        // kja to use it
+        var diary = Diary.Parse(soldier.Lines("diary"));
+        var transformationBonuses =
+            TransformationBonuses.Parse(soldier.Lines("transformationBonuses"));
         var id = soldier.ParseInt("id");
         var type = soldier.ParseString("type");
         var name = soldier.ParseString("name");

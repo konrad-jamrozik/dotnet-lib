@@ -74,6 +74,12 @@ namespace OxceTests
 
         public string ParseString(string key) => Lines(key).Single();
 
+        public string ParseStringOrEmpty(string key)
+        {
+            var lines = Lines(key).ToList();
+            return lines.Any() ? lines.Single() : string.Empty;
+        }
+
         public int ParseInt(string key) => int.Parse(Lines(key).Single());
 
         public int ParseIntOrZero(string key)
