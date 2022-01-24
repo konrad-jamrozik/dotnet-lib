@@ -24,6 +24,7 @@ public record Base(string Name, IEnumerable<Soldier> Soldiers, IEnumerable<ItemC
         var soldiers = soldiersLines.Select(
             soldierLines => Soldier.Parse(soldierLines, baseName, inTransfer: false));
         
+        // kja should be Concat instead?
         return soldiers.Union(transfers.Soldiers).OrderBy(soldier => soldier.Id);
     }
 
@@ -43,7 +44,7 @@ public record Base(string Name, IEnumerable<Soldier> Soldiers, IEnumerable<ItemC
         // when done, reuse the ToDictionary proposed in transfers.ItemCountsMap (above)
         // as well as when computing itemCountsMap (even higher above).
         var combinedItemCountsMap = itemCountsMap.Select(kvp => kvp)
-            .Union(transferredItemCountsMap.Select(kvp => kvp))
+            .Concat(transferredItemCountsMap.Select(kvp => kvp))
             .GroupBy(kvp => kvp.Key, kvp => kvp.Value)
             .ToDictionary(
                 itemIdCounts => itemIdCounts.Key,
