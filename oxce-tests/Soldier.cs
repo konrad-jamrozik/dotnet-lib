@@ -48,8 +48,8 @@ public record Soldier(
     public static string CsvHeaders()
         => string.Join(",", 
             Properties.Select(p => p.Name)
-                .Union(TrainingStats.CsvHeaders())
-                .Union(MaxStats.CsvHeaders()));
+                .Union(TrainingStats.CsvHeaders()) // kja should be Concat instead?
+                .Union(MaxStats.CsvHeaders())); // kja should be Concat instead?
 
     public override string ToString()
         => $"{nameof(Soldier)} {{ "
@@ -67,8 +67,8 @@ public record Soldier(
     {
         var propertyData = Properties.Select(p => (p.Name, p.GetValue(this)));
         var allData = propertyData
-            .Union(TrainingStats.Get(this))
-            .Union(MaxStats.Get(this));
+            .Union(TrainingStats.Get(this)) // kja should be Concat instead?
+            .Union(MaxStats.Get(this)); // kja should be Concat instead?
         return allData;
     }
 

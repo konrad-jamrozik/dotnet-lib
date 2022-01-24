@@ -46,7 +46,7 @@ namespace OxceTests
 
             var allData = CsvHeaders().Zip(values)
                 .Select(pair => (pair.First, (object)pair.Second))
-                .Union(derivedData);
+                .Union(derivedData); // kja should be Concat instead?
 
             return allData;
         }
