@@ -61,6 +61,8 @@ public sealed record DateMonth(int Year, int Month, DateTimeKind Kind) :
 
     public DateDay LastDay => new(_dateTime.AddMonths(1).AddDays(-1));
 
+    public DaySpan DaySpan => new(FirstDay, LastDay);
+
     public bool Equals(DateTime other) => _dateTime.Equals(other);
 
     public bool Equals(DateDay? other) => other != null && Equals(new DateMonth(other));

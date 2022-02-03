@@ -30,7 +30,6 @@ namespace Wikitools.AzureDevOps;
 /// </summary>
 public record ValidWikiPagesStats : IEnumerable<WikiPageStats>
 {
-
     public ValidWikiPagesStats(
         IEnumerable<WikiPageStats> stats,
         DateDay startDay,

@@ -138,8 +138,7 @@ public class AdoWikiWithStorageTests
                         ? fix.PagesStatsForMonth(currDay)
                         : new ValidWikiPagesStatsForMonth(
                             WikiPageStats.EmptyArray,
-                            startDay: currDay,
-                            endDay: currDay);
+                            new DaySpan(currDay));
                 });
 
             return ValidWikiPagesStats.Merge(months, allowGaps: true);
