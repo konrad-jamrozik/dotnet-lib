@@ -25,11 +25,12 @@ public record ValidWikiPagesStatsForMonth(ValidWikiPagesStats Stats)
                 currentDate.AddDays(daysFrom),
                 currentDate.AddDays(daysTo)));
 
-    public DateMonth Month => Stats.StartDay.AsDateMonth();
+    public DateMonth Month => Stats.DaySpan.StartDay.AsDateMonth();
 
+    // kja this should be a method on DaySpan instead
     public bool DaySpanIsForEntireMonth
-        => Stats.StartDay == Month.FirstDay
-           && Stats.EndDay == Month.LastDay;
+        => Stats.DaySpan.StartDay == Month.FirstDay
+           && Stats.DaySpan.EndDay == Month.LastDay;
 
     private static ValidWikiPagesStats ValidStatsForMonth(ValidWikiPagesStats stats)
     {

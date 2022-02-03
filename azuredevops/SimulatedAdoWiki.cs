@@ -5,6 +5,7 @@ using Wikitools.Lib.Primitives;
 
 namespace Wikitools.AzureDevOps;
 
+// kja take DaySpan as input instead of StartDay, EndDay
 public record SimulatedAdoWiki(
     IEnumerable<WikiPageStats> PagesStatsData,
     DateDay StartDay,
@@ -12,8 +13,8 @@ public record SimulatedAdoWiki(
 {
     public SimulatedAdoWiki(ValidWikiPagesStats stats) : this(
         stats, 
-        stats.StartDay,
-        stats.EndDay)
+        stats.DaySpan.StartDay,
+        stats.DaySpan.EndDay)
     {
     }
 

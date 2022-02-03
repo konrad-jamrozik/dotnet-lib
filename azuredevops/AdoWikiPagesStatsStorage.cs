@@ -38,7 +38,8 @@ public record AdoWikiPagesStatsStorage(MonthlyJsonFilesStorage Storage, DateTime
         await Storage.With<IEnumerable<WikiPageStats>>(stats.Month,
             storedStats =>
             {
-                var daySpan = new DaySpan(stats.Month.FirstDay, stats.EndDay);
+                // kja can the inputs to DaySpan here be simplified?
+                var daySpan = new DaySpan(stats.Month.FirstDay, stats.DaySpan.EndDay);
                 var validStoredStats = new ValidWikiPagesStatsForMonth(storedStats, daySpan);
                 return new ValidWikiPagesStatsForMonth(validStoredStats.Merge(stats), daySpan);
             });

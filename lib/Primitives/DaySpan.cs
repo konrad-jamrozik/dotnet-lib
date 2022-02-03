@@ -21,9 +21,9 @@ public record DaySpan
         EndDay = endDay;
     }
 
-    public DateDay EndDay { get; }
-
     public DateDay StartDay { get; }
+
+    public DateDay EndDay { get; }
 
     public DateTimeKind Kind => StartDay.Kind;
 

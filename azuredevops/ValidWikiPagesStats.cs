@@ -47,13 +47,10 @@ public record ValidWikiPagesStats : IEnumerable<WikiPageStats>
         var statsArr = stats as WikiPageStats[] ?? stats.ToArray();
         CheckInvariants(statsArr, daySpan);
         Data = statsArr;
-        // kja merge these 2 fields into one, DaySpan
-        StartDay = daySpan.StartDay;
-        EndDay = daySpan.EndDay;
+        DaySpan = daySpan;
     }
 
-    public DateDay StartDay { get; }
-    public DateDay EndDay { get; }
+    public DaySpan DaySpan { get; }
 
     private IEnumerable<WikiPageStats> Data { get; }
 
@@ -85,14 +82,15 @@ public record ValidWikiPagesStats : IEnumerable<WikiPageStats>
         ? (int) (LastDayWithAnyView - FirstDayWithAnyView!).TotalDays + 1
         : 0;
 
-    public int DaysSpan => (int) (EndDay - StartDay).TotalDays + 1;
+    // kja this should be a method on DaySpan type
+    public int DaysSpan => (int) (DaySpan.EndDay - DaySpan.StartDay).TotalDays + 1;
 
-    public int MonthsSpan => DateMonth.Range(StartDay, EndDay).Length;
+    // kja this should be a method on DaySpan type
+    public int MonthsSpan => DateMonth.Range(DaySpan.StartDay, DaySpan.EndDay).Length;
 
     public IEnumerator<WikiPageStats> GetEnumerator() => Data.GetEnumerator();
 
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-
 
     public static ValidWikiPagesStats Merge(IEnumerable<ValidWikiPagesStats> stats, bool allowGaps = false) 
         // kj2 This Merge is O(n^2) while it could be O(n).
@@ -102,8 +100,6 @@ public record ValidWikiPagesStats : IEnumerable<WikiPageStats>
         IEnumerable<WikiPageStats> pagesStats,
         DaySpan dateSpan)
     {
-        DateDay startDay = dateSpan.StartDay;
-        DateDay endDay = dateSpan.EndDay;
         var pagesStatsArray = pagesStats as WikiPageStats[] ?? pagesStats.ToArray();
         pagesStatsArray.AssertDistinctBy(ps => ps.Id); 
         // Pages are expected to generally have unique paths, except the special case of when
@@ -130,13 +126,13 @@ public record ValidWikiPagesStats : IEnumerable<WikiPageStats>
             dayStats.Assert(ds => ds.Day.Kind == DateTimeKind.Utc);
         });
 
-        Contract.Assert(startDay.CompareTo(endDay) <= 0);
+        Contract.Assert(dateSpan.StartDay.CompareTo(dateSpan.EndDay) <= 0);
         var firstDayWithAnyView = FirstDayWithAnyViewStatic(pagesStatsArray);
         var lastDayWithAnyView = LastDayWithAnyViewStatic(pagesStatsArray);
 
         // @formatter:off
-        Contract.Assert(firstDayWithAnyView == null || startDay.CompareTo(firstDayWithAnyView) <= 0);
-        Contract.Assert(lastDayWithAnyView  == null || lastDayWithAnyView.CompareTo(endDay   ) <= 0);
+        Contract.Assert(firstDayWithAnyView == null || dateSpan.StartDay.CompareTo(firstDayWithAnyView) <= 0);
+        Contract.Assert(lastDayWithAnyView  == null || lastDayWithAnyView.CompareTo(dateSpan.EndDay   ) <= 0);
         // @formatter:on
     }
 
@@ -144,8 +140,9 @@ public record ValidWikiPagesStats : IEnumerable<WikiPageStats>
 
     private static IEnumerable<ValidWikiPagesStatsForMonth> SplitByMonth(ValidWikiPagesStats stats) 
     {
-        DateDay startDay = stats.StartDay;
-        DateDay endDay = stats.EndDay;
+        // kja work in this method on DaySpans instead of start,end day pair.
+        DateDay startDay = stats.DaySpan.StartDay;
+        DateDay endDay = stats.DaySpan.EndDay;
 
         Contract.Assert(startDay.CompareTo(endDay) <= 0);
 
@@ -155,8 +152,8 @@ public record ValidWikiPagesStats : IEnumerable<WikiPageStats>
                 ? new List<ValidWikiPagesStatsForMonth> { new(stats.Trim(startDay, endDay)) }
                 : BuildMonthsStats(stats, monthsRange, startDay, endDay);
             
-        Contract.Assert(monthsStats.First().StartDay == startDay);
-        Contract.Assert(monthsStats.Last().EndDay == endDay);
+        Contract.Assert(monthsStats.First().DaySpan.StartDay == startDay);
+        Contract.Assert(monthsStats.Last().DaySpan.EndDay == endDay);
         Contract.Assert(
             monthsStats.Count == 1 ||
             monthsStats.Skip(1).SkipLast(1).All(monthStats => monthStats.DaySpanIsForEntireMonth));
@@ -189,8 +186,10 @@ public record ValidWikiPagesStats : IEnumerable<WikiPageStats>
         if (stats.DaySpanIsWithinOneMonth())
             return (null, new ValidWikiPagesStatsForMonth(stats));
 
-        var startMonth = stats.StartDay.AsDateMonth();
-        var endMonth = stats.EndDay.AsDateMonth();
+        // kja work in this method on DaySpans instead of start,end day pair.
+
+        var startMonth = stats.DaySpan.StartDay.AsDateMonth();
+        var endMonth = stats.DaySpan.EndDay.AsDateMonth();
         Contract.Assert(startMonth.NextMonth == endMonth,
             "Assert: at this point of execution the day span of stats being split into two months " +
             "is expected to span 2 months.");
@@ -198,10 +197,10 @@ public record ValidWikiPagesStats : IEnumerable<WikiPageStats>
         var splitMonths = stats.SplitByMonth().ToArray();
 
         Contract.Assert(splitMonths.Length == 2);
-        Contract.Assert(splitMonths.First().StartDay == stats.StartDay);
-        Contract.Assert(splitMonths.First().EndDay == stats.StartDay.AsDateMonth().LastDay);
-        Contract.Assert(splitMonths.Last().StartDay == stats.EndDay.AsDateMonth().FirstDay);
-        Contract.Assert(splitMonths.Last().EndDay == stats.EndDay);
+        Contract.Assert(splitMonths.First().DaySpan.StartDay == stats.DaySpan.StartDay);
+        Contract.Assert(splitMonths.First().DaySpan.EndDay == stats.DaySpan.StartDay.AsDateMonth().LastDay);
+        Contract.Assert(splitMonths.Last().DaySpan.StartDay == stats.DaySpan.EndDay.AsDateMonth().FirstDay);
+        Contract.Assert(splitMonths.Last().DaySpan.EndDay == stats.DaySpan.EndDay);
 
         return (splitMonths.First(), splitMonths.Last());
     }
@@ -255,14 +254,16 @@ public record ValidWikiPagesStats : IEnumerable<WikiPageStats>
         merged = merged.OrderBy(ps => ps.Id)
             .Select(ps => ps with { DayStats = ps.DayStats.OrderBy(ds => ds.Day).ToArray() });
 
-        Contract.Assert(previousStats.StartDay.CompareTo(currentStats.StartDay) <= 0,
+        // kja work in this method on DaySpans instead of start,end day pair.
+
+        Contract.Assert(previousStats.DaySpan.StartDay.CompareTo(currentStats.DaySpan.StartDay) <= 0,
             "Assert: Previous stats range should start no later than current stats range");
-        Contract.Assert(previousStats.EndDay.CompareTo(currentStats.EndDay) <= 0,
+        Contract.Assert(previousStats.DaySpan.EndDay.CompareTo(currentStats.DaySpan.EndDay) <= 0,
             "Assert: Previous stats range should end no later than current stats range");
         if (!allowGaps) 
-            Contract.Assert(previousStats.EndDay.AddDays(1).CompareTo(currentStats.StartDay) >= 0,
+            Contract.Assert(previousStats.DaySpan.EndDay.AddDays(1).CompareTo(currentStats.DaySpan.StartDay) >= 0,
                 "Assert: There should be no gap in the previous stats range and current stats range");
-        return new ValidWikiPagesStats(merged, previousStats.StartDay, currentStats.EndDay);
+        return new ValidWikiPagesStats(merged, previousStats.DaySpan.StartDay, currentStats.DaySpan.EndDay);
     }
 
     private static WikiPageStats Merge(WikiPageStats previousPageStats, WikiPageStats currentPageStats)
@@ -316,6 +317,7 @@ public record ValidWikiPagesStats : IEnumerable<WikiPageStats>
                 ps with { DayStats = ps.DayStats.Where(s => s.Day >= startDay && s.Day <= endDay).ToArray() })
             .ToArray(), startDay, endDay);
 
+    // kja this should be a method on DaySpan instead.
     public bool DaySpanIsWithinOneMonth() 
-        => StartDay.AsDateMonth() == EndDay.AsDateMonth();
+        => DaySpan.StartDay.AsDateMonth() == DaySpan.EndDay.AsDateMonth();
 }

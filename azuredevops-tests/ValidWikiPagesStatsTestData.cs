@@ -69,7 +69,7 @@ public record ValidWikiPagesStatsTestData(
                 var statsWithDaySpanExtendedToMonthEnd = new ValidWikiPagesStatsForMonth(
                     new ValidWikiPagesStats(
                         stats,
-                        stats.StartDay,
+                        stats.DaySpan.StartDay,
                         stats.Month.LastDay));
                 return statsWithDaySpanExtendedToMonthEnd;
             }
@@ -128,7 +128,7 @@ public record ValidWikiPagesStatsTestData(
                     new ValidWikiPagesStats(
                         stats,
                         stats.Month.FirstDay,
-                        stats.EndDay));
+                        stats.DaySpan.EndDay));
                 return statsWithDaySpanExtendedToMonthStart;
             }
             else 
@@ -140,7 +140,7 @@ public record ValidWikiPagesStatsTestData(
                     // pass when exercising Merge.
                     // Without this, the current month would have day span of one day of new SimulatedTimeline().UtcNow
                     // and that most likely violate the invariant day span rules present in previous month.
-                    var statsSpanDay = PreviousMonthToMerge.EndDay.AddDays(1);
+                    var statsSpanDay = PreviousMonthToMerge.DaySpan.EndDay.AddDays(1);
                     return new ValidWikiPagesStatsForMonth(new ValidWikiPagesStats(WikiPageStats.EmptyArray,
                         statsSpanDay, statsSpanDay));
                 }
