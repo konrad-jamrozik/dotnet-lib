@@ -8,8 +8,12 @@ namespace Wikitools.AzureDevOps;
 public record ValidWikiPagesStatsForMonth(ValidWikiPagesStats Stats) 
     : ValidWikiPagesStats(ValidStatsForMonth(Stats))
 {
+    // kja migrate to the version that uses DaySpan
     public ValidWikiPagesStatsForMonth(IEnumerable<WikiPageStats> stats, DateDay startDay, DateDay endDay)
         : this(new ValidWikiPagesStats(stats, startDay, endDay)) { }
+
+    public ValidWikiPagesStatsForMonth(IEnumerable<WikiPageStats> stats, DaySpan dateSpan)
+        : this(new ValidWikiPagesStats(stats, dateSpan)) { }
 
     public ValidWikiPagesStatsForMonth(IEnumerable<WikiPageStats> stats, DateMonth month) 
         // kja I need to introduce some type like DaySpan, which is a pair of (DateDay start, DateDay end)

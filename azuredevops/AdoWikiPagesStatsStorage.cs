@@ -38,13 +38,9 @@ public record AdoWikiPagesStatsStorage(MonthlyJsonFilesStorage Storage, DateTime
         await Storage.With<IEnumerable<WikiPageStats>>(stats.Month,
             storedStats =>
             {
-                var validStoredStats = new ValidWikiPagesStatsForMonth(
-                    storedStats,
-                    stats.Month.FirstDay,
-                    stats.EndDay);
-                return new ValidWikiPagesStatsForMonth(validStoredStats.Merge(stats),
-                    stats.Month.FirstDay,
-                    stats.EndDay);
+                var dateSpan = new DaySpan(stats.Month.FirstDay, stats.EndDay);
+                var validStoredStats = new ValidWikiPagesStatsForMonth(storedStats, dateSpan);
+                return new ValidWikiPagesStatsForMonth(validStoredStats.Merge(stats), dateSpan);
             });
 
     public async Task<AdoWikiPagesStatsStorage> ReplaceWith(ValidWikiPagesStats stats)

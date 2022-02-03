@@ -9,6 +9,8 @@ public record DaySpan
         new DateDay(now.AddDays(-daysAgo)),
         new DateDay(now)) { }
 
+    public DaySpan(DateDay singleDay) : this(singleDay, singleDay) { }
+
     public DaySpan(DateDay afterDay, DateDay beforeDay)
     {
         // Note this setup of invariant checks in ctor has some problems.
@@ -19,7 +21,6 @@ public record DaySpan
         BeforeDay = beforeDay;
     }
 
-    
     // kja rename to EndDay
     public DateDay BeforeDay { get; }
 
