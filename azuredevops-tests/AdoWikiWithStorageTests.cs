@@ -161,9 +161,7 @@ public class AdoWikiWithStorageTests
         var storageDecl = new AdoWikiPagesStatsStorageDeclare();
         var storage     = await storageDecl.AdoWikiPagesStatsStorage(utcNow, storedStats);
         var wiki     = new SimulatedAdoWiki(
-            wikiStats ?? new ValidWikiPagesStats(
-                WikiPageStats.EmptyArray,
-                dateSpan: new DaySpan(utcNow)));
+            wikiStats ?? new ValidWikiPagesStats(WikiPageStats.EmptyArray, new DaySpan(utcNow)));
         var wikiWithStorage = wikiDecl.AdoWikiWithStorage(wiki, storage);
         return wikiWithStorage;
     }

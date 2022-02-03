@@ -12,8 +12,8 @@ public record ValidWikiPagesStatsForMonth(ValidWikiPagesStats Stats)
     public ValidWikiPagesStatsForMonth(IEnumerable<WikiPageStats> stats, DateDay startDay, DateDay endDay)
         : this(new ValidWikiPagesStats(stats, startDay, endDay)) { }
 
-    public ValidWikiPagesStatsForMonth(IEnumerable<WikiPageStats> stats, DaySpan dateSpan)
-        : this(new ValidWikiPagesStats(stats, dateSpan)) { }
+    public ValidWikiPagesStatsForMonth(IEnumerable<WikiPageStats> stats, DaySpan daySpan)
+        : this(new ValidWikiPagesStats(stats, daySpan)) { }
 
     public ValidWikiPagesStatsForMonth(IEnumerable<WikiPageStats> stats, DateMonth month) 
         // kja I need to introduce some type like DaySpan, which is a pair of (DateDay start, DateDay end)

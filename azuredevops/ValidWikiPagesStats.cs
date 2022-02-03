@@ -43,13 +43,13 @@ public record ValidWikiPagesStats : IEnumerable<WikiPageStats>
     // Details here: https://github.com/dotnet/csharplang/issues/4453#issuecomment-782807066
     public ValidWikiPagesStats(
         IEnumerable<WikiPageStats> stats,
-        DaySpan dateSpan)
+        DaySpan daySpan)
     {
         var statsArr = stats as WikiPageStats[] ?? stats.ToArray();
-        CheckInvariants(statsArr, dateSpan);
+        CheckInvariants(statsArr, daySpan);
         Data = statsArr;
-        StartDay = dateSpan.AfterDay;
-        EndDay = dateSpan.BeforeDay;
+        StartDay = daySpan.AfterDay;
+        EndDay = daySpan.BeforeDay;
     }
 
     public DateDay StartDay { get; }
