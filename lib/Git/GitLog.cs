@@ -21,10 +21,10 @@ public record GitLog(ITimeline Timeline, GitRepository Repo)
 
     // https://git-scm.com/docs/git-log#_commit_limiting
     public static string GitLogParamsStringCommitRange(DaySpan daySpan)
-        => $"--after={((DateTime)daySpan.AfterDay).ToString(GitLogCommitRangeFormat)} " +
+        => $"--after={((DateTime)daySpan.StartDay).ToString(GitLogCommitRangeFormat)} " +
            // Here the ".AddDays(1)" is necessary for the BeforeDay to be interpreted as 
            // "_including_ commits made during the BeforeDay" vs "_excluding_".
-           $"--before={((DateTime)daySpan.BeforeDay.AddDays(1)).ToString(GitLogCommitRangeFormat)} ";
+           $"--before={((DateTime)daySpan.EndDay.AddDays(1)).ToString(GitLogCommitRangeFormat)} ";
 
     // kj2 need to memoize stuff from it, now that reports call it themselves.
     public Task<GitLogCommits> Commits(int days)

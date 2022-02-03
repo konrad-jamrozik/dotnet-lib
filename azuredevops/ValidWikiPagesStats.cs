@@ -47,8 +47,9 @@ public record ValidWikiPagesStats : IEnumerable<WikiPageStats>
         var statsArr = stats as WikiPageStats[] ?? stats.ToArray();
         CheckInvariants(statsArr, daySpan);
         Data = statsArr;
-        StartDay = daySpan.AfterDay;
-        EndDay = daySpan.BeforeDay;
+        // kja merge these 2 fields into one, DaySpan
+        StartDay = daySpan.StartDay;
+        EndDay = daySpan.EndDay;
     }
 
     public DateDay StartDay { get; }
@@ -101,8 +102,8 @@ public record ValidWikiPagesStats : IEnumerable<WikiPageStats>
         IEnumerable<WikiPageStats> pagesStats,
         DaySpan dateSpan)
     {
-        DateDay startDay = dateSpan.AfterDay;
-        DateDay endDay = dateSpan.BeforeDay;
+        DateDay startDay = dateSpan.StartDay;
+        DateDay endDay = dateSpan.EndDay;
         var pagesStatsArray = pagesStats as WikiPageStats[] ?? pagesStats.ToArray();
         pagesStatsArray.AssertDistinctBy(ps => ps.Id); 
         // Pages are expected to generally have unique paths, except the special case of when

@@ -29,7 +29,7 @@ public class GitLogTests
         var lastCommit = commits.Last();
 
         Assert.Equal(2, commits.Count());
-        Assert.Equal(0, DateDay.Compare(firstCommit.Date, daySpan.AfterDay));
+        Assert.Equal(0, DateDay.Compare(firstCommit.Date, daySpan.StartDay));
         Assert.Equal(0, DateDay.Compare(lastCommit.Date, timeline.UtcNow));
     }
 

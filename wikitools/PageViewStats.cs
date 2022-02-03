@@ -21,7 +21,7 @@ public record PageViewStats(string FilePath, int Views)
         // AdoWikiWithStorageIntegrationTests.ObtainsAndStoresDataFromAdoWikiForToday
         // kja this entire funny business with pageViewsForDays should be captured
         // in PageViewsForDays type.
-        var pageViewsForDays = (timeline.UtcNow - daySpan.AfterDay).Days + 1;
+        var pageViewsForDays = (timeline.UtcNow - daySpan.StartDay).Days + 1;
 
         // kj2 this will trigger call to ADO API.
         // Here is is OK, as we are in late execution stage, but I need to ensure
@@ -36,7 +36,7 @@ public record PageViewStats(string FilePath, int Views)
         // 11/17/2021: Or maybe doing stuff like LINQ IEnumerable is enough? IEnumerable and related
         // collections are lazy after all.
         var pagesStats = (await wiki.PagesStats(pageViewsForDays))
-            .Trim(daySpan.AfterDay, daySpan.BeforeDay);
+            .Trim(daySpan.StartDay, daySpan.EndDay);
 
         var pathsStats = pagesStats.Select(
                 pageStats => new PageViewStats(

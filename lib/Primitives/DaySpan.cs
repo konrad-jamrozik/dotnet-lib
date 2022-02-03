@@ -11,23 +11,21 @@ public record DaySpan
 
     public DaySpan(DateDay singleDay) : this(singleDay, singleDay) { }
 
-    public DaySpan(DateDay afterDay, DateDay beforeDay)
+    public DaySpan(DateDay startDay, DateDay endDay)
     {
         // Note this setup of invariant checks in ctor has some problems.
         // Details here: https://github.com/dotnet/csharplang/issues/4453#issuecomment-782807066
-        Contract.Assert(afterDay.Kind == beforeDay.Kind);
-        Contract.Assert(afterDay.CompareTo(beforeDay) <= 0);
-        AfterDay = afterDay;
-        BeforeDay = beforeDay;
+        Contract.Assert(startDay.Kind == endDay.Kind);
+        Contract.Assert(startDay.CompareTo(endDay) <= 0);
+        StartDay = startDay;
+        EndDay = endDay;
     }
 
-    // kja rename to EndDay
-    public DateDay BeforeDay { get; }
+    public DateDay EndDay { get; }
 
-    // kja rename to StartDay
-    public DateDay AfterDay { get; }
+    public DateDay StartDay { get; }
 
-    public DateTimeKind Kind => AfterDay.Kind;
+    public DateTimeKind Kind => StartDay.Kind;
 
     /// <summary>
     /// Check if date is at AfterDay or later, and at BeforeDay or before.
@@ -38,9 +36,9 @@ public record DaySpan
     /// </summary>
     /// <param name="date"></param>
     public bool Contains(DateTime date)
-        => AfterDay.CompareTo(date) <= 0 && 0 <= BeforeDay.AddDays(1).CompareTo(date);
+        => StartDay.CompareTo(date) <= 0 && 0 <= EndDay.AddDays(1).CompareTo(date);
 
     public bool IsSubsetOf(DaySpan daySpan)
-        => AfterDay.CompareTo(daySpan.AfterDay) >= 0 &&
-           BeforeDay.CompareTo(daySpan.BeforeDay) <= 0;
+        => StartDay.CompareTo(daySpan.StartDay) >= 0 &&
+           EndDay.CompareTo(daySpan.EndDay) <= 0;
 }
