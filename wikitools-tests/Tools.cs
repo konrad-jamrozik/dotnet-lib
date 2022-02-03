@@ -94,7 +94,7 @@ public class Tools
                 storage,
                 new DateDay(2021, stats1.month, stats1.day, DateTimeKind.Utc),
                 new DateDay(2021, stats2.month, stats2.day, DateTimeKind.Utc),
-                new DateMonth(2021, month));
+                new DateMonth(2021, month, DateTimeKind.Utc));
         }
     }
 
