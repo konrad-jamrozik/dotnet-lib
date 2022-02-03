@@ -6,7 +6,7 @@ using Wikitools.Lib.Contracts;
 
 namespace Wikitools.Lib.Primitives;
 
-public sealed record DateMonth(int Year, int Month) :
+public sealed record DateMonth(int Year, int Month, DateTimeKind Kind) :
     IComparable<DateTime>, IEquatable<DateTime>,
     IComparable<DateDay>, IEquatable<DateDay>,    
     IComparable<DateMonth>,
@@ -49,7 +49,7 @@ public sealed record DateMonth(int Year, int Month) :
         return output.ToArray();
     }
 
-    public DateMonth(DateTime dateTime) : this(dateTime.Year, dateTime.Month) { }
+    public DateMonth(DateTime dateTime) : this(dateTime.Year, dateTime.Month, dateTime.Kind) { }
 
     public DateMonth PreviousMonth => AddMonths(-1);
 
@@ -59,7 +59,7 @@ public sealed record DateMonth(int Year, int Month) :
 
     public DateDay FirstDay => new(_dateTime);
 
-    public DateDay LastDay => new (_dateTime.AddMonths(1).AddDays(-1));
+    public DateDay LastDay => new(_dateTime.AddMonths(1).AddDays(-1));
 
     public bool Equals(DateTime other) => _dateTime.Equals(other);
 
@@ -83,8 +83,5 @@ public sealed record DateMonth(int Year, int Month) :
             ? $"{_dateTime:yyyy/MM}"
             : _dateTime.ToString(format, formatProvider);
 
-    // kj2 fix as in DateDay Known limitation: this doesn't retain DateTimeKind (e.g. Utc)
-    // Fix it the same way it is fixed in DateDay:
-    // DateTime.SpecifyKind(new DateTime(Year, Month, 1), Kind);
-    private readonly DateTime _dateTime = new(Year, Month, 1);
+    private readonly DateTime _dateTime = DateTime.SpecifyKind(new DateTime(Year, Month, 1), Kind);
 }

@@ -19,8 +19,11 @@ public record DaySpan
         BeforeDay = beforeDay;
     }
 
+    
+    // kja rename to EndDay
     public DateDay BeforeDay { get; }
 
+    // kja rename to StartDay
     public DateDay AfterDay { get; }
 
     public DateTimeKind Kind => AfterDay.Kind;

@@ -30,18 +30,26 @@ namespace Wikitools.AzureDevOps;
 /// </summary>
 public record ValidWikiPagesStats : IEnumerable<WikiPageStats>
 {
+
+    public ValidWikiPagesStats(
+        IEnumerable<WikiPageStats> stats,
+        DateDay startDay,
+        DateDay endDay) : this(stats, new DaySpan(startDay, endDay))
+    {
+        // kja get rid of this ctor by fixing callers
+    }
+
     // Note this setup of invariant checks in ctor has some problems.
     // Details here: https://github.com/dotnet/csharplang/issues/4453#issuecomment-782807066
     public ValidWikiPagesStats(
         IEnumerable<WikiPageStats> stats,
-        DateDay startDay,
-        DateDay endDay)
+        DaySpan dateSpan)
     {
         var statsArr = stats as WikiPageStats[] ?? stats.ToArray();
-        CheckInvariants(statsArr, startDay, endDay);
+        CheckInvariants(statsArr, dateSpan);
         Data = statsArr;
-        StartDay = startDay;
-        EndDay = endDay;
+        StartDay = dateSpan.AfterDay;
+        EndDay = dateSpan.BeforeDay;
     }
 
     public DateDay StartDay { get; }
@@ -91,10 +99,11 @@ public record ValidWikiPagesStats : IEnumerable<WikiPageStats>
         => stats.Aggregate((merged, next) => merged.Merge(next, allowGaps));
 
     private static void CheckInvariants(
-        IEnumerable<WikiPageStats> pagesStats, 
-        DateDay startDay,
-        DateDay endDay)
+        IEnumerable<WikiPageStats> pagesStats,
+        DaySpan dateSpan)
     {
+        DateDay startDay = dateSpan.AfterDay;
+        DateDay endDay = dateSpan.BeforeDay;
         var pagesStatsArray = pagesStats as WikiPageStats[] ?? pagesStats.ToArray();
         pagesStatsArray.AssertDistinctBy(ps => ps.Id); 
         // Pages are expected to generally have unique paths, except the special case of when
@@ -125,9 +134,9 @@ public record ValidWikiPagesStats : IEnumerable<WikiPageStats>
         var firstDayWithAnyView = FirstDayWithAnyViewStatic(pagesStatsArray);
         var lastDayWithAnyView = LastDayWithAnyViewStatic(pagesStatsArray);
 
-            // @formatter:off
-            Contract.Assert(firstDayWithAnyView == null || startDay.CompareTo(firstDayWithAnyView) <= 0);
-            Contract.Assert(lastDayWithAnyView  == null || lastDayWithAnyView.CompareTo(endDay   ) <= 0);
+        // @formatter:off
+        Contract.Assert(firstDayWithAnyView == null || startDay.CompareTo(firstDayWithAnyView) <= 0);
+        Contract.Assert(lastDayWithAnyView  == null || lastDayWithAnyView.CompareTo(endDay   ) <= 0);
         // @formatter:on
     }
 
