@@ -43,4 +43,6 @@ public record DaySpan
            EndDay.CompareTo(daySpan.EndDay) <= 0;
 
     public int Count => (int) (EndDay - StartDay).TotalDays + 1;
+
+    public bool IsWithinOneMonth => StartDay.AsDateMonth() == EndDay.AsDateMonth();
 }

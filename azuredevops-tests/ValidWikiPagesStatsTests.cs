@@ -29,11 +29,11 @@ public class ValidWikiPagesStatsTests
         var split = VerifySplitByMonth(
             target: data.AllPagesStats,
             previousMonthExpectation: 
-            data.AllPagesStats.DaySpanIsWithinOneMonth() 
+            data.AllPagesStats.DaySpan.IsWithinOneMonth 
                 ? null 
                 : data.PreviousMonthWithCurrentMonthPaths,
             currentMonthExpectation: 
-            data.AllPagesStats.DaySpanIsWithinOneMonth() 
+            data.AllPagesStats.DaySpan.IsWithinOneMonth 
                 ? data.PreviousMonthWithCurrentMonthPaths 
                 : data.CurrentMonthAfterSplit);
 

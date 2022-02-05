@@ -34,7 +34,7 @@ public record ValidWikiPagesStatsForMonth(ValidWikiPagesStats Stats)
 
     private static ValidWikiPagesStats ValidStatsForMonth(ValidWikiPagesStats stats)
     {
-        Contract.Assert(stats.DaySpanIsWithinOneMonth());
+        Contract.Assert(stats.DaySpan.IsWithinOneMonth);
         return stats;
     }
 }

@@ -180,7 +180,7 @@ public record ValidWikiPagesStats : IEnumerable<WikiPageStats>
     private static (ValidWikiPagesStatsForMonth? previousMonthStats, ValidWikiPagesStatsForMonth currentMonthStats)
         SplitIntoTwoMonths(ValidWikiPagesStats stats)
     {
-        if (stats.DaySpanIsWithinOneMonth())
+        if (stats.DaySpan.IsWithinOneMonth)
             return (null, new ValidWikiPagesStatsForMonth(stats));
 
         // kja work in this method on DaySpans instead of start,end day pair.
@@ -313,8 +313,4 @@ public record ValidWikiPagesStats : IEnumerable<WikiPageStats>
         new ValidWikiPagesStats(stats.Select(ps =>
                 ps with { DayStats = ps.DayStats.Where(s => s.Day >= startDay && s.Day <= endDay).ToArray() })
             .ToArray(), startDay, endDay);
-
-    // kja this should be a method on DaySpan instead.
-    public bool DaySpanIsWithinOneMonth() 
-        => DaySpan.StartDay.AsDateMonth() == DaySpan.EndDay.AsDateMonth();
 }
