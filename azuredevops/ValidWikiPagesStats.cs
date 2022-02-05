@@ -175,28 +175,30 @@ public record ValidWikiPagesStats : IEnumerable<WikiPageStats>
     }
 
     public (ValidWikiPagesStatsForMonth? previousMonthStats, ValidWikiPagesStatsForMonth currentMonthStats)
-        SplitIntoTwoMonths() => SplitIntoTwoMonths(this);
+        SplitIntoTwoMonths() => SplitIntoUpToTwoMonths(this);
 
     private static (ValidWikiPagesStatsForMonth? previousMonthStats, ValidWikiPagesStatsForMonth currentMonthStats)
-        SplitIntoTwoMonths(ValidWikiPagesStats stats)
+        SplitIntoUpToTwoMonths(ValidWikiPagesStats stats)
+        => stats.DaySpan.IsWithinOneMonth
+            ? (null, new ValidWikiPagesStatsForMonth(stats))
+            : SplitIntoExactlyTwoMonths(stats);
+
+    private static (ValidWikiPagesStatsForMonth? previousMonthStats, ValidWikiPagesStatsForMonth
+        currentMonthStats) SplitIntoExactlyTwoMonths(ValidWikiPagesStats stats)
     {
-        if (stats.DaySpan.IsWithinOneMonth)
-            return (null, new ValidWikiPagesStatsForMonth(stats));
-
-        // kja work in this method on DaySpans instead of start,end day pair.
-
-        var startMonth = stats.DaySpan.StartDay.AsDateMonth();
-        var endMonth = stats.DaySpan.EndDay.AsDateMonth();
-        Contract.Assert(startMonth.NextMonth == endMonth,
+        var monthRange = stats.DaySpan.MonthsRange;
+        Contract.Assert(monthRange.Length == 2);
+        Contract.Assert(
+            monthRange.First().NextMonth == monthRange.Last(),
             "Assert: at this point of execution the day span of stats being split into two months " +
-            "is expected to span 2 months.");
+            "is expected to span exactly 2 months.");
 
         var splitMonths = stats.SplitByMonth().ToArray();
 
         Contract.Assert(splitMonths.Length == 2);
         Contract.Assert(splitMonths.First().DaySpan.StartDay == stats.DaySpan.StartDay);
-        Contract.Assert(splitMonths.First().DaySpan.EndDay == stats.DaySpan.StartDay.AsDateMonth().LastDay);
-        Contract.Assert(splitMonths.Last().DaySpan.StartDay == stats.DaySpan.EndDay.AsDateMonth().FirstDay);
+        Contract.Assert(splitMonths.First().DaySpan.EndDay == monthRange.First().LastDay);
+        Contract.Assert(splitMonths.Last().DaySpan.StartDay == monthRange.Last().FirstDay);
         Contract.Assert(splitMonths.Last().DaySpan.EndDay == stats.DaySpan.EndDay);
 
         return (splitMonths.First(), splitMonths.Last());
