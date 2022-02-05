@@ -18,7 +18,7 @@ public sealed record DateMonth(int Year, int Month, DateTimeKind Kind) :
 
     public static implicit operator DateTime(DateMonth dateDay) => dateDay._dateTime;
 
-    public static DateMonth[] Range(DateDay startDay, DateDay endDay)
+    public static DateMonth[] Span(DateDay startDay, DateDay endDay)
     {
         Contract.Assert(startDay.CompareTo(endDay) <= 0);
         DateMonth iteratedMonth = startDay.AsDateMonth();

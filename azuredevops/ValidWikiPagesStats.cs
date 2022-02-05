@@ -82,9 +82,6 @@ public record ValidWikiPagesStats : IEnumerable<WikiPageStats>
         ? (int) (LastDayWithAnyView - FirstDayWithAnyView!).TotalDays + 1
         : 0;
 
-    // kja this should be a method on DaySpan type
-    public int MonthsSpan => DateMonth.Range(DaySpan.StartDay, DaySpan.EndDay).Length;
-
     public IEnumerator<WikiPageStats> GetEnumerator() => Data.GetEnumerator();
 
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
@@ -151,19 +148,19 @@ public record ValidWikiPagesStats : IEnumerable<WikiPageStats>
 
     private static List<ValidWikiPagesStatsForMonth> MonthsStats(ValidWikiPagesStats stats)
     {
-        var monthsRange = stats.DaySpan.MonthsRange;
-        Contract.Assert(monthsRange.Length >= 2);
+        var monthsSpan = stats.DaySpan.MonthsSpan;
+        Contract.Assert(monthsSpan.Length >= 2);
 
         var firstMonthStats =
-            new ValidWikiPagesStatsForMonth(stats.TrimUntil(monthsRange.First()));
+            new ValidWikiPagesStatsForMonth(stats.TrimUntil(monthsSpan.First()));
 
-        var middleMonths = monthsRange.Skip(1).SkipLast(1).ToList();
+        var middleMonths = monthsSpan.Skip(1).SkipLast(1).ToList();
         var middleMonthsStats = middleMonths
             .Select(month => new ValidWikiPagesStatsForMonth(stats.Trim(month)))
             .ToList();
 
         var lastMonthStats =
-            new ValidWikiPagesStatsForMonth(stats.TrimFrom(monthsRange.Last()));
+            new ValidWikiPagesStatsForMonth(stats.TrimFrom(monthsSpan.Last()));
 
         var monthsStats = 
             firstMonthStats.WrapInList()
@@ -186,10 +183,10 @@ public record ValidWikiPagesStats : IEnumerable<WikiPageStats>
     private static (ValidWikiPagesStatsForMonth? previousMonthStats, ValidWikiPagesStatsForMonth
         currentMonthStats) SplitIntoExactlyTwoMonths(ValidWikiPagesStats stats)
     {
-        var monthRange = stats.DaySpan.MonthsRange;
-        Contract.Assert(monthRange.Length == 2);
+        var monthsSpan = stats.DaySpan.MonthsSpan;
+        Contract.Assert(monthsSpan.Length == 2);
         Contract.Assert(
-            monthRange.First().NextMonth == monthRange.Last(),
+            monthsSpan.First().NextMonth == monthsSpan.Last(),
             "Assert: at this point of execution the day span of stats being split into two months " +
             "is expected to span exactly 2 months.");
 
@@ -197,8 +194,8 @@ public record ValidWikiPagesStats : IEnumerable<WikiPageStats>
 
         Contract.Assert(splitMonths.Length == 2);
         Contract.Assert(splitMonths.First().DaySpan.StartDay == stats.DaySpan.StartDay);
-        Contract.Assert(splitMonths.First().DaySpan.EndDay == monthRange.First().LastDay);
-        Contract.Assert(splitMonths.Last().DaySpan.StartDay == monthRange.Last().FirstDay);
+        Contract.Assert(splitMonths.First().DaySpan.EndDay == monthsSpan.First().LastDay);
+        Contract.Assert(splitMonths.Last().DaySpan.StartDay == monthsSpan.Last().FirstDay);
         Contract.Assert(splitMonths.Last().DaySpan.EndDay == stats.DaySpan.EndDay);
 
         return (splitMonths.First(), splitMonths.Last());

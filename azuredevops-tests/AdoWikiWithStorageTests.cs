@@ -117,7 +117,7 @@ public class AdoWikiWithStorageTests
         var storedStats = ArrangeStatsFromMonths(statsInMonthPresence);
         Assert.That(storedStats.ViewedDaysSpan > PageViewsForDays.Max);
         Assert.That(storedStats.DaySpan.Count > 6*31, "Should be more than 6 months");
-        Assert.That(storedStats.MonthsSpan == statsInMonthPresence.Length);
+        Assert.That(storedStats.DaySpan.MonthsCount == statsInMonthPresence.Length);
 
         var wikiWithStorage = await AdoWikiWithStorage(UtcNowDay, storedStats);
 

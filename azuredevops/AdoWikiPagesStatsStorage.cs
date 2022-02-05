@@ -67,7 +67,7 @@ public record AdoWikiPagesStatsStorage(MonthlyJsonFilesStorage Storage, DateTime
         var startDay = currentDay.AddDays(-pvfd.Value + 1);
             
         IEnumerable<ValidWikiPagesStatsForMonth> statsByMonth = DateMonth
-            .Range(startDay, currentDay)
+            .Span(startDay, currentDay)
             .Select(month =>
             {
                 var pageStats = Storage.Read<IEnumerable<WikiPageStats>>(month);
