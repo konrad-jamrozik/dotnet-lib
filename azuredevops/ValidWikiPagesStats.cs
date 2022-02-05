@@ -95,7 +95,7 @@ public record ValidWikiPagesStats : IEnumerable<WikiPageStats>
 
     private static void CheckInvariants(
         IEnumerable<WikiPageStats> pagesStats,
-        DaySpan dateSpan)
+        DaySpan daySpan)
     {
         var pagesStatsArray = pagesStats as WikiPageStats[] ?? pagesStats.ToArray();
         pagesStatsArray.AssertDistinctBy(ps => ps.Id); 
@@ -123,13 +123,13 @@ public record ValidWikiPagesStats : IEnumerable<WikiPageStats>
             dayStats.Assert(ds => ds.Day.Kind == DateTimeKind.Utc);
         });
 
-        Contract.Assert(dateSpan.StartDay.CompareTo(dateSpan.EndDay) <= 0);
+        Contract.Assert(daySpan.StartDay.CompareTo(daySpan.EndDay) <= 0);
         var firstDayWithAnyView = FirstDayWithAnyViewStatic(pagesStatsArray);
         var lastDayWithAnyView = LastDayWithAnyViewStatic(pagesStatsArray);
 
         // @formatter:off
-        Contract.Assert(firstDayWithAnyView == null || dateSpan.StartDay.CompareTo(firstDayWithAnyView) <= 0);
-        Contract.Assert(lastDayWithAnyView  == null || lastDayWithAnyView.CompareTo(dateSpan.EndDay   ) <= 0);
+        Contract.Assert(firstDayWithAnyView == null || daySpan.StartDay.CompareTo(firstDayWithAnyView) <= 0);
+        Contract.Assert(lastDayWithAnyView  == null || lastDayWithAnyView.CompareTo(daySpan.EndDay   ) <= 0);
         // @formatter:on
     }
 
@@ -137,40 +137,40 @@ public record ValidWikiPagesStats : IEnumerable<WikiPageStats>
 
     private static IEnumerable<ValidWikiPagesStatsForMonth> SplitByMonth(ValidWikiPagesStats stats) 
     {
-        // kja work in this method on DaySpans instead of start,end day pair.
-        DateDay startDay = stats.DaySpan.StartDay;
-        DateDay endDay = stats.DaySpan.EndDay;
+        var monthsStats = stats.DaySpan.IsWithinOneMonth
+            ? new List<ValidWikiPagesStatsForMonth>{new(stats)}
+            : MonthsStats(stats);
 
-        Contract.Assert(startDay.CompareTo(endDay) <= 0);
-
-        var monthsRange = DateMonth.Range(startDay, endDay);
-        List<ValidWikiPagesStatsForMonth> monthsStats =
-            monthsRange.Length == 1
-                ? new List<ValidWikiPagesStatsForMonth> { new(stats.Trim(startDay, endDay)) }
-                : BuildMonthsStats(stats, monthsRange, startDay, endDay);
-            
-        Contract.Assert(monthsStats.First().DaySpan.StartDay == startDay);
-        Contract.Assert(monthsStats.Last().DaySpan.EndDay == endDay);
+        Contract.Assert(monthsStats.First().DaySpan.StartDay == stats.DaySpan.StartDay);
+        Contract.Assert(monthsStats.Last().DaySpan.EndDay == stats.DaySpan.EndDay);
         Contract.Assert(
-            monthsStats.Count == 1 ||
             monthsStats.Skip(1).SkipLast(1).All(monthStats => monthStats.DaySpanIsForEntireMonth));
 
         return monthsStats;
     }
 
-    private static List<ValidWikiPagesStatsForMonth> BuildMonthsStats(
-        ValidWikiPagesStats stats,
-        DateMonth[] monthsRange,
-        DateDay startDay,
-        DateDay endDay)
+    private static List<ValidWikiPagesStatsForMonth> MonthsStats(ValidWikiPagesStats stats)
     {
-        var firstMonthStats = new ValidWikiPagesStatsForMonth(stats.Trim(startDay, monthsRange.First().LastDay));
-        var lastMonthStats = new ValidWikiPagesStatsForMonth(stats.Trim(monthsRange.Last().FirstDay, endDay));
+        var monthsRange = stats.DaySpan.MonthsRange;
+        Contract.Assert(monthsRange.Length >= 2);
+
+        var firstMonthStats =
+            new ValidWikiPagesStatsForMonth(stats.TrimUntil(monthsRange.First()));
+
         var middleMonths = monthsRange.Skip(1).SkipLast(1).ToList();
         var middleMonthsStats = middleMonths
             .Select(month => new ValidWikiPagesStatsForMonth(stats.Trim(month)))
             .ToList();
-        var monthsStats = firstMonthStats.InList().Concat(middleMonthsStats).Append(lastMonthStats).ToList();
+
+        var lastMonthStats =
+            new ValidWikiPagesStatsForMonth(stats.TrimFrom(monthsRange.Last()));
+
+        var monthsStats = 
+            firstMonthStats.WrapInList()
+            .Concat(middleMonthsStats)
+            .Append(lastMonthStats)
+            .ToList();
+
         return monthsStats;
     }
 
@@ -295,9 +295,9 @@ public record ValidWikiPagesStats : IEnumerable<WikiPageStats>
 
     public ValidWikiPagesStats Trim(DateMonth month) => Trim(month.FirstDay, month.LastDay);
 
-    public ValidWikiPagesStats TrimUntil(DateMonth month) => Trim(DateTime.MinValue, month.LastDay);
+    public ValidWikiPagesStats TrimUntil(DateMonth month) => Trim(DaySpan.StartDay, month.LastDay);
 
-    public ValidWikiPagesStats TrimFrom(DateMonth month) => Trim(month.FirstDay, DateTime.MaxValue);
+    public ValidWikiPagesStats TrimFrom(DateMonth month) => Trim(month.FirstDay, DaySpan.EndDay);
 
     public ValidWikiPagesStats Trim(DateTime currentDate, int daysFrom, int daysTo) => Trim(
         currentDate.AddDays(daysFrom),

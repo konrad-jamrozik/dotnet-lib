@@ -33,7 +33,7 @@ public abstract record Trie<TValue>(PathPart<TValue> RootPathPart)
         var pathParts = traversedSuffixes.Select(prefixPathPart.Concat);
         // The .Concat here ensure the prefixPathPart itself is prepended to the list
         // of returned path parts.
-        return prefixPathPart.InList().Concat(pathParts);
+        return prefixPathPart.WrapInList().Concat(pathParts);
     }
 
     private static IEnumerable<PathPart<TValue>> PreorderTraversal(IEnumerable<PathPart<TValue>> pathParts)

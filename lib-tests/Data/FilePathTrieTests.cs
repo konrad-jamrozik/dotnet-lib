@@ -192,7 +192,7 @@ public class FilePathTrieTests
 
 
     private static void VerifyPreorderTraversal(string[] pathsUT, string[] expectedPathSegments)
-        => VerifyPreorderTraversal(pathsUT, expectedPathSegments.InList());
+        => VerifyPreorderTraversal(pathsUT, expectedPathSegments.WrapInList());
 
     private static void VerifyPreorderTraversal(
         string[] pathsUT,

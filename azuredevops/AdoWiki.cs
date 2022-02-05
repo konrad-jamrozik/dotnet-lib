@@ -91,7 +91,7 @@ public record AdoWiki(AdoWikiUri AdoWikiUri, string PatEnvVar, IEnvironment Env,
             AdoWikiUri.ProjectName,
             AdoWikiUri.WikiName,
             pageId,
-            pvfd)).InList();
+            pvfd)).WrapInList();
 
     private WikiHttpClientWithExceptionWrapping WikiHttpClient(AdoWikiUri wikiUri, string patEnvVar)
     {
