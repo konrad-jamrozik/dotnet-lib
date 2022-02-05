@@ -83,9 +83,6 @@ public record ValidWikiPagesStats : IEnumerable<WikiPageStats>
         : 0;
 
     // kja this should be a method on DaySpan type
-    public int DaysSpan => (int) (DaySpan.EndDay - DaySpan.StartDay).TotalDays + 1;
-
-    // kja this should be a method on DaySpan type
     public int MonthsSpan => DateMonth.Range(DaySpan.StartDay, DaySpan.EndDay).Length;
 
     public IEnumerator<WikiPageStats> GetEnumerator() => Data.GetEnumerator();

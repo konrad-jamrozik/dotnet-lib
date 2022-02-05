@@ -41,4 +41,6 @@ public record DaySpan
     public bool IsSubsetOf(DaySpan daySpan)
         => StartDay.CompareTo(daySpan.StartDay) >= 0 &&
            EndDay.CompareTo(daySpan.EndDay) <= 0;
+
+    public int Count => (int) (EndDay - StartDay).TotalDays + 1;
 }

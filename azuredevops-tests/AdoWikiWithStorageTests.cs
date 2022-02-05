@@ -116,13 +116,13 @@ public class AdoWikiWithStorageTests
         var statsInMonthPresence = new[] { false, false, true, false, true, true, false, false };
         var storedStats = ArrangeStatsFromMonths(statsInMonthPresence);
         Assert.That(storedStats.ViewedDaysSpan > PageViewsForDays.Max);
-        Assert.That(storedStats.DaysSpan > 6*31, "Should be more than 6 months");
+        Assert.That(storedStats.DaySpan.Count > 6*31, "Should be more than 6 months");
         Assert.That(storedStats.MonthsSpan == statsInMonthPresence.Length);
 
         var wikiWithStorage = await AdoWikiWithStorage(UtcNowDay, storedStats);
 
         // Act
-        var actualStats = await wikiWithStorage.PagesStats(storedStats.DaysSpan);
+        var actualStats = await wikiWithStorage.PagesStats(storedStats.DaySpan.Count);
 
         new JsonDiffAssertion(storedStats, actualStats).Assert();
 
