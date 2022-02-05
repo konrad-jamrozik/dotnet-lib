@@ -5,29 +5,22 @@ using Wikitools.Lib.Primitives;
 
 namespace Wikitools.AzureDevOps;
 
-// kja take DaySpan as input instead of StartDay, EndDay
 public record SimulatedAdoWiki(
     IEnumerable<WikiPageStats> PagesStatsData,
-    DateDay StartDay,
-    DateDay EndDay) : IAdoWiki
+    DaySpan DaySpan) : IAdoWiki
 {
-    public SimulatedAdoWiki(ValidWikiPagesStats stats) : this(
-        stats, 
-        stats.DaySpan.StartDay,
-        stats.DaySpan.EndDay)
-    {
-    }
+    public SimulatedAdoWiki(ValidWikiPagesStats stats) : this(stats, stats.DaySpan) { }
 
     public Task<ValidWikiPagesStats> PagesStats(PageViewsForDays pvfd)
     {
         pvfd.AssertPageViewsForDaysRange();
-        return Task.FromResult(new ValidWikiPagesStats(PagesStatsData, StartDay, EndDay));
+        return Task.FromResult(new ValidWikiPagesStats(PagesStatsData, DaySpan));
     }
 
     public Task<ValidWikiPagesStats> PageStats(PageViewsForDays pvfd, int pageId)
     {
         pvfd.AssertPageViewsForDaysRange();
         return Task.FromResult(
-            new ValidWikiPagesStats(PagesStatsData.Where(page => page.Id == pageId), StartDay, EndDay));
+            new ValidWikiPagesStats(PagesStatsData.Where(page => page.Id == pageId), DaySpan));
     }
 }
