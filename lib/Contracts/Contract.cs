@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace Wikitools.Lib.Contracts;
 
@@ -17,10 +18,10 @@ public static class Contract
                 $"Reason: {upperBoundReason}");
     }
 
-    public static void Assert(bool condition, string? message = null)
+    public static void Assert(bool condition, [CallerArgumentExpression("condition")] string? message=null)
     {
         if (!condition)
-            throw message != null ? new InvariantException(message!) : new InvariantException();
+            throw message != null ? new InvariantException(message) : new InvariantException();
     }
 
     public static void AssertEqual<T>(IEnumerable<T> first, IEnumerable<T> second)

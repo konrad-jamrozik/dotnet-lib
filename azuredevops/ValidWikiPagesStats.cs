@@ -250,15 +250,9 @@ public record ValidWikiPagesStats : IEnumerable<WikiPageStats>
         merged = merged.OrderBy(ps => ps.Id)
             .Select(ps => ps with { DayStats = ps.DayStats.OrderBy(ds => ds.Day).ToArray() });
 
-        // kja work in this method on DaySpans instead of start,end day pair.
-
-        Contract.Assert(previousStats.DaySpan.StartDay.CompareTo(currentStats.DaySpan.StartDay) <= 0,
-            "Assert: Previous stats range should start no later than current stats range");
-        Contract.Assert(previousStats.DaySpan.EndDay.CompareTo(currentStats.DaySpan.EndDay) <= 0,
-            "Assert: Previous stats range should end no later than current stats range");
+        previousStats.DaySpan.AssertNoLaterThan(currentStats.DaySpan);
         if (!allowGaps) 
-            Contract.Assert(previousStats.DaySpan.EndDay.AddDays(1).CompareTo(currentStats.DaySpan.StartDay) >= 0,
-                "Assert: There should be no gap in the previous stats range and current stats range");
+            previousStats.DaySpan.AssertNoGap(currentStats.DaySpan);
         return new ValidWikiPagesStats(merged, previousStats.DaySpan.StartDay, currentStats.DaySpan.EndDay);
     }
 
