@@ -62,14 +62,24 @@ public record DaySpan
     public bool IsExactlyForEntireMonth(DateMonth month)
         => StartDay == month.FirstDay && EndDay == month.LastDay;
 
-    public void AssertNoLaterThan(DaySpan other)
+    public DaySpan Merge(DaySpan other, bool allowGap = false)
+    {
+        AssertNoLaterThan(other);
+        if (!allowGap)
+            AssertNoGap(other);
+
+        return new DaySpan(StartDay, other.EndDay);
+    }
+
+    private void AssertNoLaterThan(DaySpan other)
     {
         Contract.Assert(StartDay.CompareTo(other.StartDay) <= 0);
         Contract.Assert(EndDay.CompareTo(other.EndDay) <= 0);
     }
 
-    public void AssertNoGap(DaySpan other)
+    private void AssertNoGap(DaySpan other)
     {
         Contract.Assert(EndDay.AddDays(1).CompareTo(other.StartDay) >= 0);
     }
+
 }

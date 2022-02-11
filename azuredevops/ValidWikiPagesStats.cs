@@ -250,10 +250,8 @@ public record ValidWikiPagesStats : IEnumerable<WikiPageStats>
         merged = merged.OrderBy(ps => ps.Id)
             .Select(ps => ps with { DayStats = ps.DayStats.OrderBy(ds => ds.Day).ToArray() });
 
-        previousStats.DaySpan.AssertNoLaterThan(currentStats.DaySpan);
-        if (!allowGaps) 
-            previousStats.DaySpan.AssertNoGap(currentStats.DaySpan);
-        return new ValidWikiPagesStats(merged, previousStats.DaySpan.StartDay, currentStats.DaySpan.EndDay);
+        var mergedDaySpan = previousStats.DaySpan.Merge(currentStats.DaySpan, allowGaps);
+        return new ValidWikiPagesStats(merged, mergedDaySpan);
     }
 
     private static WikiPageStats Merge(WikiPageStats previousPageStats, WikiPageStats currentPageStats)
@@ -286,7 +284,7 @@ public record ValidWikiPagesStats : IEnumerable<WikiPageStats>
         return mergedStats;
     }
 
-    public ValidWikiPagesStats Trim(DateMonth month) => Trim(month.FirstDay, month.LastDay);
+    public ValidWikiPagesStats Trim(DateMonth month) => Trim(month.DaySpan);
 
     public ValidWikiPagesStats TrimUntil(DateMonth month) => Trim(DaySpan.StartDay, month.LastDay);
 
@@ -298,6 +296,9 @@ public record ValidWikiPagesStats : IEnumerable<WikiPageStats>
 
     public ValidWikiPagesStats Trim(DateTime startDate, DateTime endDate)
         => Trim(this, new DateDay(startDate), new DateDay(endDate));
+
+    public ValidWikiPagesStats Trim(DaySpan daySpan)
+        => Trim(this, daySpan.StartDay, daySpan.EndDay);
 
     public ValidWikiPagesStats Trim(DateDay startDay, DateDay endDay)
         => Trim(this, startDay, endDay);

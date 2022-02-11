@@ -29,7 +29,7 @@ public record AdoWikiWithStorage(
             storage =>
             {
                 var endDay = new DateDay(Storage.CurrentDate);
-                var startDay = endDay.AddDays(-dayRange + 1);
+                var startDay = endDay.AddDays(-dayRange + 1); // kja -dayRange +1
                 return new ValidWikiPagesStats(
                     storage.PagesStats(dayRange).Where(page => page.Id == pageId),
                     startDay, 
