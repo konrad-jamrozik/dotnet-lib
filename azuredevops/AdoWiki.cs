@@ -24,16 +24,24 @@ namespace Wikitools.AzureDevOps;
 /// - When it appeared, it was counted as 3/28/2021, not 3/27/2021.
 ///   - Presumably because the dates are in UTC, not PDT.
 /// </remarks>
-public record AdoWiki(AdoWikiUri AdoWikiUri, string PatEnvVar, IEnvironment Env, ITimeline Timeline) : IAdoWiki
+public record AdoWiki(
+    AdoWikiClient Client,
+    AdoWikiUri AdoWikiUri,
+    ITimeline Timeline) : IAdoWiki
 {
+    // kja CURR WORK: extracting WikiHttpClient to be param of AdoWiki, so it can be simulated
+    // Currently lots of redundancy in "this(" call below.
+    // Also the WikiHttpClient method needs to move to AdoWikiHttpClient
+    // And AdoWikiHttpClient needs to get an interface.
     public AdoWiki(
         string wikiUriStr,
         string patEnvVar,
         IEnvironment env,
         ITimeline timeline) : this(
+        new AdoWikiClient(
+            WikiHttpClient(new AdoWikiUri(wikiUriStr), patEnvVar, env),
+            new AdoWikiUri(wikiUriStr)), 
         new AdoWikiUri(wikiUriStr),
-        patEnvVar,
-        env,
         timeline) { }
 
     public Task<ValidWikiPagesStats> PagesStats(PageViewsForDays pvfd) =>
@@ -46,12 +54,12 @@ public record AdoWiki(AdoWikiUri AdoWikiUri, string PatEnvVar, IEnvironment Env,
 
     private async Task<ValidWikiPagesStats> PagesStats(
         PageViewsForDays pvfd,
-        Func<IWikiHttpClient, PageViewsForDays, Task<IEnumerable<WikiPageDetail>>>
+        Func<AdoWikiClient, PageViewsForDays, Task<IEnumerable<WikiPageDetail>>>
             wikiPagesDetailsFunc)
     {
         // kja inject WikiHttpClient, so I can test AdoWiki with it simulated
         // Then, stop using SimulatedAdoWiki - instead use SimulatedWikiHttpClient
-        var wikiHttpClient   = WikiHttpClient(AdoWikiUri, PatEnvVar);
+        var wikiHttpClient   = Client;
         var today            = new DateDay(Timeline.UtcNow);
         var wikiPagesDetails = await wikiPagesDetailsFunc(wikiHttpClient, pvfd);
         var wikiPagesStats   = wikiPagesDetails.Select(WikiPageStats.From);
@@ -70,7 +78,7 @@ public record AdoWiki(AdoWikiUri AdoWikiUri, string PatEnvVar, IEnvironment Env,
     }
 
     private async Task<IEnumerable<WikiPageDetail>> GetWikiPagesDetails(
-        IWikiHttpClient wikiHttpClient,
+        AdoWikiClient wikiClient,
         PageViewsForDays pvfd)
     {
         // The Top value is max on which the API doesn't throw. Determined empirically.
@@ -82,7 +90,7 @@ public record AdoWiki(AdoWikiUri AdoWikiUri, string PatEnvVar, IEnvironment Env,
         {
             wikiPagesBatchRequest.ContinuationToken = continuationToken;
                 
-            var wikiPagesDetailsPage = await wikiHttpClient.GetPagesBatchAsync(
+            var wikiPagesDetailsPage = await wikiClient.HttpClient.GetPagesBatchAsync(
                 wikiPagesBatchRequest,
                 AdoWikiUri.ProjectName,
                 AdoWikiUri.WikiName);
@@ -94,23 +102,23 @@ public record AdoWiki(AdoWikiUri AdoWikiUri, string PatEnvVar, IEnvironment Env,
     }
 
     private async Task<IEnumerable<WikiPageDetail>> GetWikiPagesDetails(
-        IWikiHttpClient wikiHttpClient,
+        AdoWikiClient wikiClient,
         PageViewsForDays pvfd,
         int pageId) =>
-        (await wikiHttpClient.GetPageDataAsync(
+        (await wikiClient.HttpClient.GetPageDataAsync(
             AdoWikiUri.ProjectName,
             AdoWikiUri.WikiName,
             pageId,
             pvfd)).WrapInList();
 
-    private WikiHttpClientWithExceptionWrapping WikiHttpClient(AdoWikiUri wikiUri, string patEnvVar)
+    private static WikiHttpClientWithExceptionWrapping WikiHttpClient(AdoWikiUri wikiUri, string patEnvVar, IEnvironment env)
     {
         // Construction of VssConnection with PAT based on
         // https://docs.microsoft.com/en-us/azure/devops/integrate/get-started/client-libraries/samples?view=azure-devops#personal-access-token-authentication-for-rest-services
         // Linked from https://docs.microsoft.com/en-us/azure/devops/integrate/concepts/dotnet-client-libraries?view=azure-devops#samples
         VssConnection connection = new(
             new Uri(wikiUri.CollectionUri),
-            new VssBasicCredential(string.Empty, password: Env.Value(patEnvVar)));
+            new VssBasicCredential(string.Empty, password: env.Value(patEnvVar)));
 
         // Microsoft.TeamFoundation.Wiki.WebApi Namespace doc:
         // https://docs.microsoft.com/en-us/dotnet/api/?term=Wiki
