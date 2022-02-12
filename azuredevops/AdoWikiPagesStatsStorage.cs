@@ -70,7 +70,7 @@ public record AdoWikiPagesStatsStorage(MonthlyJsonFilesStorage Storage, DateDay 
     {
         var daySpan = pvfd.AsDaySpanUntil(CurrentDay);
         IEnumerable<ValidWikiPagesStatsForMonth> statsByMonth = DateMonth
-            .Span(daySpan)
+            .MonthSpan(daySpan)
             .Select(month =>
             {
                 var pageStats = Storage.Read<IEnumerable<WikiPageStats>>(month);

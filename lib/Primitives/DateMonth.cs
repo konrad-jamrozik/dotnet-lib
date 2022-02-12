@@ -19,10 +19,10 @@ public sealed record DateMonth(int Year, int Month, DateTimeKind Kind) :
     public static implicit operator DateTime(DateMonth dateDay) => dateDay._dateTime;
 
     // kj2-DaySpan dedup the Span startDay / endDay method.
-    public static DateMonth[] Span(DaySpan daySpan)
-        => Span(daySpan.StartDay, daySpan.EndDay);
+    public static DateMonth[] MonthSpan(DaySpan daySpan)
+        => MonthSpan(daySpan.StartDay, daySpan.EndDay);
 
-    public static DateMonth[] Span(DateDay startDay, DateDay endDay)
+    public static DateMonth[] MonthSpan(DateDay startDay, DateDay endDay)
     {
         Contract.Assert(startDay.CompareTo(endDay) <= 0);
         DateMonth iteratedMonth = startDay.AsDateMonth();
