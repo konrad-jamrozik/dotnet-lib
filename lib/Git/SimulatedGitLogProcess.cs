@@ -26,7 +26,7 @@ public record SimulatedGitLogProcess(ITimeline Timeline, DaySpan daySpan, GitLog
             {
                 commit.Author,
                 commit.Date.ToString("o")
-            }.Union( // kja should be Concat instead?
+            }.Union( // kj2-Concat should be Concat instead?
                 commit.Stats
                     .Select(stat =>
                         $"{stat.Insertions}\t{stat.Deletions}\t{stat.Path}")

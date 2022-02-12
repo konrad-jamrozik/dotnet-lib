@@ -47,7 +47,7 @@ public record PageViewsForDays()
 
     public override string ToString() => $"{Value}";
 
-    // kja to attach to code
+    // kj2-DaySpan to attach to code
     public DaySpan AsDaySpanUntil(DateDay endDate)
         => new DaySpan(endDate.AddDays(-Value + 1), endDate);
 }

@@ -19,7 +19,7 @@ internal record MarkdownTable(TabularData Data)
         {
             headerRow,
             headerDelimiterRow
-        }.Union(rows); // kja should be Concat instead?
+        }.Union(rows); // kj2-Concat should be Concat instead?
 
         return string.Join(Environment.NewLine, rowsToWrite);
     }

@@ -55,7 +55,7 @@ public static class EnumerableExtensions
         var secondExceptFirst = secondKeySet.Except(firstKeySet).Select(key => secondByKey[key]);
         var overlapping       = overlappingKeys.Select(key => merge(firstByKey[key], secondByKey[key]));
 
-        // kja should be Concat instead?
+        // kj2-Concat should be Concat instead?
         var union = firstExceptSecond.Union(overlapping).Union(secondExceptFirst).ToArray();
 
         union.AssertDistinctBy(selectKey);

@@ -49,11 +49,13 @@ public record AdoWiki(AdoWikiUri AdoWikiUri, string PatEnvVar, IEnvironment Env,
         Func<IWikiHttpClient, PageViewsForDays, Task<IEnumerable<WikiPageDetail>>>
             wikiPagesDetailsFunc)
     {
+        // kja inject WikiHttpClient, so I can test AdoWiki with it simulated
+        // Then, stop using SimulatedAdoWiki - instead use SimulatedWikiHttpClient
         var wikiHttpClient   = WikiHttpClient(AdoWikiUri, PatEnvVar);
         var today            = new DateDay(Timeline.UtcNow);
         var wikiPagesDetails = await wikiPagesDetailsFunc(wikiHttpClient, pvfd);
         var wikiPagesStats   = wikiPagesDetails.Select(WikiPageStats.From);
-        // kja replace the startDay, endDay with this below, but first test it
+        // kj2-DaySpan replace the startDay, endDay with this below, but first test it
         // var daySpan = pvfd.AsDaySpanUntil(today);
         // Possible tests:
         // Prove that when getting PagesStats and getting stats for full range of
@@ -62,7 +64,7 @@ public record AdoWiki(AdoWikiUri AdoWikiUri, string PatEnvVar, IEnvironment Env,
         // (b) no smaller than that. The (b) should be caught by assertions.
         // See also AdoWikiWithStorageTests
         return new ValidWikiPagesStats(wikiPagesStats, 
-            // kja get rid of these -days+1 shenanigans
+            // kj2-DaySpan get rid of these -days+1 shenanigans
             startDay: today.AddDays(-pvfd.Value+1), 
             endDay: today);
     }

@@ -12,11 +12,11 @@ public record ValidWikiPagesStatsForMonth(ValidWikiPagesStats Stats)
         : this(new ValidWikiPagesStats(stats, daySpan)) { }
 
     public ValidWikiPagesStatsForMonth(IEnumerable<WikiPageStats> stats, DateMonth month) 
-        // kja I need to introduce some type like DaySpan, which is a pair of (DateDay start, DateDay end)
+        // kj2-DaySpan I need to introduce some type like DaySpan, which is a pair of (DateDay start, DateDay end)
         // use it here (ALREADY DONE)
         // and in many places including computations that do things like "-pageViewsForDays+1".
         // In fact, pageViewsForDays should be of that type itself.
-        // kja also: rename existing DayRange substrings to DaySpan.
+        // kj2-DaySpan also: rename existing DayRange substrings to DaySpan.
         : this(new ValidWikiPagesStats(stats, month.DaySpan)) { }
 
     public new ValidWikiPagesStatsForMonth Trim(DateTime currentDate, int daysFrom, int daysTo)

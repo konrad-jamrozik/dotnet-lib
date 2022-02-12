@@ -40,7 +40,7 @@ public record AdoWikiPagesStatsStorage(MonthlyJsonFilesStorage Storage, DateTime
         await Storage.With<IEnumerable<WikiPageStats>>(stats.Month,
             storedStats =>
             {
-                // kja can the inputs to DaySpan here be simplified?
+                // kj2-DaySpan can the inputs to DaySpan here be simplified?
                 var daySpan = new DaySpan(stats.Month.FirstDay, stats.DaySpan.EndDay);
                 var validStoredStats = new ValidWikiPagesStatsForMonth(storedStats, daySpan);
                 return new ValidWikiPagesStatsForMonth(validStoredStats.Merge(stats), daySpan);
@@ -63,7 +63,7 @@ public record AdoWikiPagesStatsStorage(MonthlyJsonFilesStorage Storage, DateTime
     public ValidWikiPagesStats PagesStats(PageViewsForDays pvfd)
     {
         var currentDay = new DateDay(CurrentDate);
-        // kja Here, the 1 is added to account for how ADO REST API interprets the range.
+        // kj2-DaySpan Here, the 1 is added to account for how ADO REST API interprets the range.
         // For more, see comment on:
         // AdoWikiWithStorageIntegrationTests.ObtainsAndStoresDataFromAdoWikiForToday
         var startDay = currentDay.AddDays(-pvfd.Value + 1);

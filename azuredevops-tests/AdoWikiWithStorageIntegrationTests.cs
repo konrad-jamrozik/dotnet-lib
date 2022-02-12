@@ -144,6 +144,15 @@ public class AdoWikiWithStorageIntegrationTests
         var expectedLastDay  = new DateDay(utcNow);
         var expectedFirstDay = expectedLastDay.AddDays(-pvfd.Value+1);
 
+        // kja Also test for wiki.PagesStats
+        // Currently wiki.PagesStats and wiki.PageStats seems to have
+        // redundant logic for wiki=AdoWikiWithStorage,
+        // which could be deduped.
+        // But for that these int tests need to be improved,
+        // including:
+        // - simplifying logic of this test
+        // - refactoring the ArrangeSut() stuff.
+
         // Act
         var stats = await wiki.PageStats(pvfd, pageId);
 
