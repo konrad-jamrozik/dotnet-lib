@@ -90,9 +90,7 @@ public record ValidWikiPagesStats : IEnumerable<WikiPageStats>
         // kj2 This Merge is O(n^2) while it could be O(n).
         => stats.Aggregate((merged, next) => merged.Merge(next, allowGaps));
 
-    private static void CheckInvariants(
-        IEnumerable<WikiPageStats> pagesStats,
-        DaySpan daySpan)
+    private static void CheckInvariants(IEnumerable<WikiPageStats> pagesStats, DaySpan daySpan)
     {
         var pagesStatsArray = pagesStats as WikiPageStats[] ?? pagesStats.ToArray();
         pagesStatsArray.AssertDistinctBy(ps => ps.Id); 

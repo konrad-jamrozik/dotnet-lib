@@ -15,7 +15,7 @@ namespace Wikitools.AzureDevOps;
 /// Empirical tests as of 3/27/2021 show that when obtaining wiki page stats with calls to
 /// Wikitools.AzureDevOps.AdoWiki.PagesStats or PageStats:
 /// - the wiki page view ingestion delay is 4-6 hours.
-/// - the dates are counted in UTC.
+/// - the dates are shown formatted as UTC time zone.
 /// How I conducted the empirical tests:
 /// - I created and immediately viewed kojamroz_test page on 3/27/2021 9:04 PM PDT.
 /// - The page has shown up immediately in the list returned from ADO REST API call, but with null views.
@@ -55,6 +55,12 @@ public record AdoWiki(AdoWikiUri AdoWikiUri, string PatEnvVar, IEnvironment Env,
         var wikiPagesStats   = wikiPagesDetails.Select(WikiPageStats.From);
         // kja replace the startDay, endDay with this below, but first test it
         // var daySpan = pvfd.AsDaySpanUntil(today);
+        // Possible tests:
+        // Prove that when getting PagesStats and getting stats for full range of
+        // Wikitools.AzureDevOps.PageViewsForDays.Max
+        // then (a) the Valid stats range is not larger than that, and
+        // (b) no smaller than that. The (b) should be caught by assertions.
+        // See also AdoWikiWithStorageTests
         return new ValidWikiPagesStats(wikiPagesStats, 
             // kja get rid of these -days+1 shenanigans
             startDay: today.AddDays(-pvfd.Value+1), 
