@@ -1,5 +1,6 @@
 ﻿using System;
 using Wikitools.Lib.Contracts;
+using Wikitools.Lib.Primitives;
 
 namespace Wikitools.AzureDevOps;
 
@@ -45,4 +46,8 @@ public record PageViewsForDays()
     }
 
     public override string ToString() => $"{Value}";
+
+    // kja to attach to code
+    public DaySpan AsDaySpanUntil(DateDay endDate)
+        => new DaySpan(endDate.AddDays(-Value + 1), endDate);
 }

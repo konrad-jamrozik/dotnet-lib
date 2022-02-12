@@ -53,6 +53,8 @@ public record AdoWiki(AdoWikiUri AdoWikiUri, string PatEnvVar, IEnvironment Env,
         var today            = new DateDay(Timeline.UtcNow);
         var wikiPagesDetails = await wikiPagesDetailsFunc(wikiHttpClient, pvfd);
         var wikiPagesStats   = wikiPagesDetails.Select(WikiPageStats.From);
+        // kja replace the startDay, endDay with this below, but first test it
+        // var daySpan = pvfd.AsDaySpanUntil(today);
         return new ValidWikiPagesStats(wikiPagesStats, 
             // kja get rid of these -days+1 shenanigans
             startDay: today.AddDays(-pvfd.Value+1), 

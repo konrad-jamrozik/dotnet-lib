@@ -95,7 +95,7 @@ public class AdoWikiWithStorageTests
     /// Given
     /// - wiki page stats that were stored earlier than PageViewsForDays.Max days ago,
     /// meaning they cannot be updated from the wiki, as they are beyond
-    /// PageViewsForDays.Max days in the past.
+    /// PageViewsForDays.Max days into the past.
     /// - and assuming the stats have the following characteristics:
     ///   - first stored month has no page views at all
     ///   - last (current) stored month has no page views at all

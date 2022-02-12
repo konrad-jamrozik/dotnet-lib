@@ -18,8 +18,10 @@ public record AdoWikiPagesStatsStorage(MonthlyJsonFilesStorage Storage, DateTime
         int pageId)
         => Update(
             pvfd,
-            pageViewsForDays => wiki.PageStats(pageViewsForDays, pageId));
+            pageViewsForDays => wiki.PageStats(pageViewsForDays, pageId)); // kj2 rename to pvfd
 
+    // kj2 instead of taking pvfd, it could take Action() instead of Func().
+    // That action will have pvfd already bound.
     private async Task<AdoWikiPagesStatsStorage> Update(
         PageViewsForDays pvfd,
         Func<PageViewsForDays, Task<ValidWikiPagesStats>> wikiPagesStatsFunc)

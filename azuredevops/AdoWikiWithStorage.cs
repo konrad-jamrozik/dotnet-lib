@@ -1,5 +1,4 @@
-﻿using System.Diagnostics.Contracts;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Wikitools.Lib.Primitives;
 
@@ -23,6 +22,8 @@ public record AdoWikiWithStorage(
 
     public Task<ValidWikiPagesStats> PageStats(PageViewsForDays pvfd, int pageId)
     {
+        // kja write test showing that lack of "?? DefaultPageViewsForDaysMax" here causes problems.
+        // Then add it.
         var dayRange = pvfd.Value.MinWith(PageViewsForDaysMax);
         var updatedStorage  = Storage.Update(AdoWiki, dayRange, pageId);
         var pagesViewsStats = updatedStorage.Select(
