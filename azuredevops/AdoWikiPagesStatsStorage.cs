@@ -7,6 +7,12 @@ using Wikitools.Lib.Storage;
 
 namespace Wikitools.AzureDevOps;
 
+/// <summary>
+/// Represents a MonthlyJsonFilesStorage that stores stats data originating from IAdoWiki.
+/// i.e. the data of type ValidWikiPagesStats.
+///
+/// For a class abstracting IAdoWiki backed by this storage, see AdoWikiWithStorage.
+/// </summary>
 public record AdoWikiPagesStatsStorage(MonthlyJsonFilesStorage Storage, DateTime CurrentDate)
 {
     public Task<AdoWikiPagesStatsStorage> Update(IAdoWiki wiki, PageViewsForDays pvfd) 
