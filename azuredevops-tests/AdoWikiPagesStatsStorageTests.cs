@@ -41,7 +41,7 @@ public class AdoWikiPagesStatsStorageTests
             stats.FirstDayWithAnyView,
             Is.LessThanOrEqualTo(stats.LastDayWithAnyView?.AddDays(-pageViewsForDays)),
             "Precondition violation: the off by one error won't be detected by this test as there " +
-            "are no views in the off (== first) day in the arranged data.");
+            "are no views in the \"one before expected first\" day in the arranged data.");
 
         // Act
         var actualStats = storage.PagesStats(pageViewsForDays);

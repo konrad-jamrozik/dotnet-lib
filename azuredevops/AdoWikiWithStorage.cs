@@ -29,7 +29,7 @@ public record AdoWikiWithStorage(
         var pagesViewsStats = updatedStorage.Select(
             storage =>
             {
-                var endDay = new DateDay(Storage.CurrentDate);
+                var endDay = new DateDay(Storage.CurrentDay);
                 //var daySpan = pvfd.ToDaySpanUpUntil(endDay, PageViewsForDaysMax); // kj2-DaySpan
                 var startDay = endDay.AddDays(-dayRange + 1); // kj2-DaySpan -dayRange +1. UNTESTED.
                 return new ValidWikiPagesStats(

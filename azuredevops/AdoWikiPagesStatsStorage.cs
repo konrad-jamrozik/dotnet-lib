@@ -13,7 +13,7 @@ namespace Wikitools.AzureDevOps;
 ///
 /// For a class abstracting IAdoWiki backed by this storage, see AdoWikiWithStorage.
 /// </summary>
-public record AdoWikiPagesStatsStorage(MonthlyJsonFilesStorage Storage, DateTime CurrentDate)
+public record AdoWikiPagesStatsStorage(MonthlyJsonFilesStorage Storage, DateDay CurrentDay)
 {
     public Task<AdoWikiPagesStatsStorage> Update(IAdoWiki wiki, PageViewsForDays pvfd) 
         => Update(pvfd, wiki.PagesStats);
@@ -68,20 +68,15 @@ public record AdoWikiPagesStatsStorage(MonthlyJsonFilesStorage Storage, DateTime
 
     public ValidWikiPagesStats PagesStats(PageViewsForDays pvfd)
     {
-        var currentDay = new DateDay(CurrentDate);
-        // kj2-DaySpan Here, the 1 is added to account for how ADO REST API interprets the range.
-        // For more, see comment on:
-        // AdoWikiWithStorageIntegrationTests.ObtainsAndStoresDataFromAdoWikiForToday
-        var startDay = currentDay.AddDays(-pvfd.Value + 1);
-            
+        var daySpan = pvfd.AsDaySpanUntil(CurrentDay);
         IEnumerable<ValidWikiPagesStatsForMonth> statsByMonth = DateMonth
-            .Span(startDay, currentDay)
+            .Span(daySpan)
             .Select(month =>
             {
                 var pageStats = Storage.Read<IEnumerable<WikiPageStats>>(month);
                 return new ValidWikiPagesStatsForMonth(pageStats, month);
             });
 
-        return ValidWikiPagesStats.Merge(statsByMonth).Trim(startDay, CurrentDate);
+        return ValidWikiPagesStats.Merge(statsByMonth).Trim(daySpan);
     }
 }
