@@ -63,7 +63,7 @@ public record AdoWiki(IWikiHttpClient Client, DateDay Today) : IAdoWiki
         // (b) no smaller than that. The (b) should be caught by assertions.
         // See also AdoWikiWithStorageTests
         return new ValidWikiPagesStats(wikiPagesStats, 
-            // kja-DaySpan Write a test for this, then get rid of these -days+1 shenanigans
+            // kja-DaySpan Arithmetic Write a test for this, then get rid of these -days+1 shenanigans
             startDay: Today.AddDays(-pvfd.Value+1), 
             endDay: Today);
     }

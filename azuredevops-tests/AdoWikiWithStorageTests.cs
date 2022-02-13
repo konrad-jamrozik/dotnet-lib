@@ -146,7 +146,8 @@ public class AdoWikiWithStorageTests
             var months = pageStatsInMonthPresence.Select(
                 (statsPresent, i) =>
                 {
-                    DateDay currDay = UtcNowDay.AddMonths(-monthsCount + 1 + i); // kja-DaySpan
+                    int earliestMonthOffset = -(monthsCount - 1);
+                    DateDay currDay = UtcNowDay.AddMonths(earliestMonthOffset + i);
                     return statsPresent
                         ? fix.PagesStatsForMonth(currDay)
                         : new ValidWikiPagesStatsForMonth(
