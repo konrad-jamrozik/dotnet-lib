@@ -24,16 +24,6 @@ public record PageViewsForDays()
         Value = value;
     }
 
-    public void AssertPageViewsForDaysRange() // kj2 rename: AssertWithinAdoApiLimit
-        => Contract.Assert(
-            Value,
-            nameof(PageViewsForDays),
-            new Range(Min, Max),
-            upperBoundReason: "ADO API limit");
-
-
-    public static implicit operator PageViewsForDays(int value) => new PageViewsForDays(value);
-
     public int Value { get; }
 
     public int ValueWithinAdoApiLimit
@@ -44,6 +34,18 @@ public record PageViewsForDays()
             return Value;
         }
     }
+
+    public static implicit operator PageViewsForDays(int value) => new PageViewsForDays(value);
+
+    public static DaySpan AsMaxDaySpanUntil(DateDay endDate)
+        => new PageViewsForDays(Max).AsDaySpanUntil(endDate);
+
+    public void AssertPageViewsForDaysRange() // kj2 rename: AssertWithinAdoApiLimit
+        => Contract.Assert(
+            Value,
+            nameof(PageViewsForDays),
+            new Range(Min, Max),
+            upperBoundReason: "ADO API limit");
 
     public override string ToString() => $"{Value}";
 

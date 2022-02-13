@@ -91,7 +91,8 @@ public class AdoWikiWithStorageTests
         new JsonDiffAssertion(prevStats.Merge(currStats, allowGaps: true), actualStats).Assert();
 
         // Act 2/2
-        // Same as Act 1/2, but instead of exercising PagesStats, exercises PageStats for page with ID 1.
+        // Same as Act 1/2, but instead of exercising PagesStats,
+        // exercises PageStats for page with ID 1.
         actualStats = await wikiWithStorage.PageStats(pvfd, 1);
 
         // kj2 add new method like ValidWikiPageStats.FilterToPages({1});
