@@ -24,6 +24,11 @@ namespace Wikitools.AzureDevOps;
 /// </remarks>
 public record AdoWiki(IWikiHttpClient Client, ITimeline Timeline) : IAdoWiki
 {
+    /// <summary>
+    /// The Top value is max on which the API doesn't throw. Determined empirically.
+    /// </summary>
+    public const int MaxApiTop = 100;
+
     public AdoWiki(
         string wikiUriStr,
         string patEnvVar,
@@ -70,9 +75,8 @@ public record AdoWiki(IWikiHttpClient Client, ITimeline Timeline) : IAdoWiki
         IWikiHttpClient wikiClient,
         PageViewsForDays pvfd)
     {
-        // The Top value is max on which the API doesn't throw. Determined empirically.
         var wikiPagesBatchRequest = new WikiPagesBatchRequest
-            { Top = 100, PageViewsForDays = pvfd.ValueWithinAdoApiLimit };
+            { Top = MaxApiTop, PageViewsForDays = pvfd.ValueWithinAdoApiLimit };
         var wikiPagesDetails = new List<WikiPageDetail>();
         string? continuationToken = null;
         do

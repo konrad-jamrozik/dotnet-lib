@@ -28,6 +28,12 @@ public record WikiPageStats(string Path, int Id, WikiPageStats.DayStat[] DayStat
     public static WikiPageStats From(WikiPageDetail pageDetail) =>
         new(pageDetail.Path, pageDetail.Id, DayStatsFrom(pageDetail));
 
+    public WikiPageDetail ToWikiPageDetail()
+        => new WikiPageDetail(Id, Path)
+        {
+            ViewStats = DayStats.Select(dayStat => new WikiPageStat(dayStat.Day, dayStat.Count))
+        };
+
     private static DayStat[] DayStatsFrom(WikiPageDetail pageDetail) =>
         // Using .Utc() as confirmed empirically the dayStat counts views in UTC days, not local time days.
         // For example, if you viewed page at 10 PM PST on day X, it will count
