@@ -8,29 +8,25 @@ using Microsoft.VisualStudio.Services.WebApi;
 
 namespace Wikitools.AzureDevOps;
 
-public record WikiHttpClientWithExceptionWrapping(WikiHttpClient Client) : IWikiHttpClient
+public record WikiHttpClientWithExceptionWrapping
+    (WikiHttpClient Client, AdoWikiUri Uri) : IWikiHttpClient
 {
     public Task<WikiPageDetail> GetPageDataAsync(
-        string projectName,
-        string wikiName,
         int pageId,
         PageViewsForDays pvfd) =>
         // API reference:
         // https://docs.microsoft.com/en-us/rest/api/azure/devops/wiki/page-stats/get?view=azure-devops-rest-6.0
         TryInvoke(
             () => Client.GetPageDataAsync(
-                projectName,
-                wikiName,
+                Uri.ProjectName,
+                Uri.WikiName,
                 pageId,
                 pvfd.ValueWithinAdoApiLimit));
 
-    public Task<PagedList<WikiPageDetail>> GetPagesBatchAsync(
-        WikiPagesBatchRequest request,
-        string projectName,
-        string wikiName) =>
+    public Task<PagedList<WikiPageDetail>> GetPagesBatchAsync(WikiPagesBatchRequest request) =>
         // API reference:
         // https://docs.microsoft.com/en-us/rest/api/azure/devops/wiki/pages-batch/get?view=azure-devops-rest-6.0
-        TryInvoke(() => Client.GetPagesBatchAsync(request, projectName, wikiName));
+        TryInvoke(() => Client.GetPagesBatchAsync(request, Uri.ProjectName, Uri.WikiName));
 
     private async Task<T> TryInvoke<T>(Func<Task<T>> func)
     {
