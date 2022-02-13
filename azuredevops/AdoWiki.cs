@@ -54,7 +54,7 @@ public record AdoWiki(IWikiHttpClient Client, DateDay Today) : IAdoWiki
         var wikiHttpClient   = Client;
         var wikiPagesDetails = await wikiPagesDetailsFunc(wikiHttpClient, pvfd);
         var wikiPagesStats   = wikiPagesDetails.Select(WikiPageStats.From);
-        // kj2-DaySpan replace the startDay, endDay with this below, but first test it
+        // kja-DaySpan replace the startDay, endDay with this below, but first test it
         // var daySpan = pvfd.AsDaySpanUntil(today);
         // Possible tests:
         // Prove that when getting PagesStats and getting stats for full range of
@@ -63,7 +63,7 @@ public record AdoWiki(IWikiHttpClient Client, DateDay Today) : IAdoWiki
         // (b) no smaller than that. The (b) should be caught by assertions.
         // See also AdoWikiWithStorageTests
         return new ValidWikiPagesStats(wikiPagesStats, 
-            // kj2-DaySpan get rid of these -days+1 shenanigans
+            // kja-DaySpan Write a test for this, then get rid of these -days+1 shenanigans
             startDay: Today.AddDays(-pvfd.Value+1), 
             endDay: Today);
     }

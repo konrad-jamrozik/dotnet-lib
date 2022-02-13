@@ -35,7 +35,7 @@ public record ValidWikiPagesStats : IEnumerable<WikiPageStats>
         DateDay startDay,
         DateDay endDay) : this(stats, new DaySpan(startDay, endDay))
     {
-        // kj2-DaySpan get rid of this ctor by fixing callers to call the delegated-to ctor instead.
+        // kja-DaySpan get rid of this ctor by fixing callers to call the delegated-to ctor instead.
     }
 
     // Note this setup of invariant checks in ctor has some problems.

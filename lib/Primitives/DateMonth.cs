@@ -18,7 +18,7 @@ public sealed record DateMonth(int Year, int Month, DateTimeKind Kind) :
 
     public static implicit operator DateTime(DateMonth dateDay) => dateDay._dateTime;
 
-    // kj2-DaySpan dedup the Span startDay / endDay method.
+    // kja-DaySpan dedup the Span startDay / endDay method.
     public static DateMonth[] MonthSpan(DaySpan daySpan)
         => MonthSpan(daySpan.StartDay, daySpan.EndDay);
 
