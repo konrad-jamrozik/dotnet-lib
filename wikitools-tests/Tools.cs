@@ -51,7 +51,7 @@ public class Tools
             cfg.AzureDevOpsCfg().AdoWikiUri(),
             cfg.AzureDevOpsCfg().AdoPatEnvVar(),
             env,
-            timeline);
+            new DateDay(timeline.UtcNow));
 
         var pagesViewsStats = wiki.PagesStats(PageViewsForDays.Max);
 

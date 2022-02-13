@@ -21,6 +21,9 @@ namespace Wikitools.AzureDevOps;
 public record SimulatedWikiHttpClient(
     IEnumerable<WikiPageStats> PagesStatsData) : IWikiHttpClient
 {
+    public SimulatedWikiHttpClient(ValidWikiPagesStats stats) : this(
+        (IEnumerable<WikiPageStats>)stats) { }
+
     public Task<WikiPageDetail> GetPageDataAsync(int pageId, PageViewsForDays pvfd)
     {
         pvfd.AssertPageViewsForDaysRange();

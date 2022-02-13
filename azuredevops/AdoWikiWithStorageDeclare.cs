@@ -22,7 +22,7 @@ public class AdoWikiWithStorageDeclare
         string storageDirPath,
         int? pageViewsForDaysMax = null)
     {
-        var wiki        = new AdoWiki(wikiUri, adoPatEnvVar, env, timeline);
+        var wiki        = new AdoWiki(wikiUri, adoPatEnvVar, env, new DateDay(timeline.UtcNow));
         var storageDir  = new Dir(fs, storageDirPath);
         var storageDecl = new AdoWikiPagesStatsStorageDeclare();
         var storage     = storageDecl.AdoWikiPagesStatsStorage(storageDir, timeline.UtcNow);

@@ -22,7 +22,7 @@ namespace Wikitools.AzureDevOps;
 /// - When it appeared, it was counted as 3/28/2021, not 3/27/2021.
 ///   - Presumably because the dates are in UTC, not PDT.
 /// </remarks>
-public record AdoWiki(IWikiHttpClient Client, ITimeline Timeline) : IAdoWiki
+public record AdoWiki(IWikiHttpClient Client, DateDay Today) : IAdoWiki
 {
     /// <summary>
     /// The Top value is max on which the API doesn't throw. Determined empirically.
@@ -33,9 +33,9 @@ public record AdoWiki(IWikiHttpClient Client, ITimeline Timeline) : IAdoWiki
         string wikiUriStr,
         string patEnvVar,
         IEnvironment env,
-        ITimeline timeline) : this(
+        DateDay today) : this(
         IWikiHttpClient.WithExceptionWrapping(new AdoWikiUri(wikiUriStr), patEnvVar, env), 
-        timeline) { }
+        today) { }
 
     public Task<ValidWikiPagesStats> PagesStats(PageViewsForDays pvfd) 
         // ReSharper disable once ConvertClosureToMethodGroup
@@ -54,7 +54,6 @@ public record AdoWiki(IWikiHttpClient Client, ITimeline Timeline) : IAdoWiki
         // kja inject WikiHttpClient, so I can test AdoWiki with it simulated
         // Then, stop using SimulatedAdoWiki - instead use SimulatedWikiHttpClient
         var wikiHttpClient   = Client;
-        var today            = new DateDay(Timeline.UtcNow);
         var wikiPagesDetails = await wikiPagesDetailsFunc(wikiHttpClient, pvfd);
         var wikiPagesStats   = wikiPagesDetails.Select(WikiPageStats.From);
         // kj2-DaySpan replace the startDay, endDay with this below, but first test it
@@ -67,8 +66,8 @@ public record AdoWiki(IWikiHttpClient Client, ITimeline Timeline) : IAdoWiki
         // See also AdoWikiWithStorageTests
         return new ValidWikiPagesStats(wikiPagesStats, 
             // kj2-DaySpan get rid of these -days+1 shenanigans
-            startDay: today.AddDays(-pvfd.Value+1), 
-            endDay: today);
+            startDay: Today.AddDays(-pvfd.Value+1), 
+            endDay: Today);
     }
 
     private async Task<IEnumerable<WikiPageDetail>> GetWikiPagesDetails(

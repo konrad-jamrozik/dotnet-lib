@@ -59,12 +59,11 @@ public class AdoWikiWithStorageTests
     [Test]
     public async Task DataInWikiAndStorageWithinWikiPageViewsForDaysMax()
     {
-        var pageViewsForDays   = PageViewsForDays.Max;
+        var pvfd               = PageViewsForDays.Max;
         var fix                = new ValidWikiPagesStatsFixture();
         var currStats          = fix.PagesStatsForMonth(UtcNowDay);
         var currStatsDaySpan   = currStats.ViewedDaysSpan;
-        var prevStats = fix.PagesStatsForMonth(
-            UtcNowDay.AddDays(-pageViewsForDays + currStatsDaySpan));
+        var prevStats = fix.PagesStatsForMonth(UtcNowDay.AddDays(-pvfd + currStatsDaySpan));
         var wikiWithStorage = await AdoWikiWithStorage(
             UtcNowDay,
             storedStats: prevStats,
@@ -77,18 +76,28 @@ public class AdoWikiWithStorageTests
             "between first and last days with any views to provide meaningful test data");
         Assert.That(
             prevStats.FirstDayWithAnyView,
-            Is.GreaterThanOrEqualTo(UtcNowDay.AddDays(-pageViewsForDays + 1)),
+            Is.GreaterThanOrEqualTo(UtcNowDay.AddDays(-pvfd + 1)),
             "Precondition violation: the first day of arranged stats is so much in the past that " +
             "a call to PageStats won't return it.");
         Assert.That(
             prevStats.Month,
             Is.Not.EqualTo(currStats.Month),
-            "Precondition violation: previous month (stored) is different from current month (from wiki)");
+            "Precondition violation: previous month (stored) " +
+            "is different from current month (from wiki)");
 
-        // Act
-        var actualStats = await wikiWithStorage.PagesStats(pageViewsForDays);
+        // Act 1/2
+        var actualStats = await wikiWithStorage.PagesStats(pvfd);
 
         new JsonDiffAssertion(prevStats.Merge(currStats, allowGaps: true), actualStats).Assert();
+
+        // Act 2/2
+        // Same as Act 1/2, but instead of exercising PagesStats, exercises PageStats for page with ID 1.
+        actualStats = await wikiWithStorage.PageStats(pvfd, 1);
+
+        // kj2 add new method like ValidWikiPageStats.FilterToPages({1});
+        var prevStatsPage1 = new ValidWikiPagesStats(prevStats.Where(pageStats => pageStats.Id == 1), prevStats.DaySpan);
+        var currStatsPage1 = new ValidWikiPagesStats(currStats.Where(pageStats => pageStats.Id == 1), currStats.DaySpan);
+        new JsonDiffAssertion(prevStatsPage1.Merge(currStatsPage1, allowGaps: true), actualStats).Assert();
     }
 
     /// <summary>
@@ -159,8 +168,11 @@ public class AdoWikiWithStorageTests
         var wikiDecl    = new AdoWikiWithStorageDeclare();
         var storageDecl = new AdoWikiPagesStatsStorageDeclare();
         var storage     = await storageDecl.AdoWikiPagesStatsStorage(utcNow, storedStats);
-        var wiki     = new SimulatedAdoWiki(
-            wikiStats ?? new ValidWikiPagesStats(WikiPageStats.EmptyArray, new DaySpan(utcNow)));
+        var httpClient =
+            new SimulatedWikiHttpClient(
+                wikiStats
+                ?? new ValidWikiPagesStats(WikiPageStats.EmptyArray, new DaySpan(utcNow)));
+        var wiki = new AdoWiki(httpClient, utcNow);
         var wikiWithStorage = wikiDecl.AdoWikiWithStorage(wiki, storage);
         return wikiWithStorage;
     }

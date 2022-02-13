@@ -21,7 +21,9 @@ public class PageViewStatsReportTests
 
         // Arrange simulations
         var timeline = new SimulatedTimeline();
-        var wiki     = new SimulatedAdoWiki(ValidWikiPagesStatsFixture.Build(pagesStatsData));
+        var wikiClient =
+            new SimulatedWikiHttpClient(ValidWikiPagesStatsFixture.Build(pagesStatsData));
+        var wiki = new AdoWiki(wikiClient, new DateDay(timeline.UtcNow));
 
         // Arrange SUT declaration
         var sut      = new PageViewStatsReport(timeline, wiki, daysAgo);

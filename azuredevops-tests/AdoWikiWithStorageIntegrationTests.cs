@@ -131,7 +131,7 @@ public class AdoWikiWithStorageIntegrationTests
             adoTestsCfg.AzureDevOpsCfg().AdoWikiUri(),
             adoTestsCfg.AzureDevOpsCfg().AdoPatEnvVar(),
             env,
-            timeline);
+            new DateDay(timeline.UtcNow));
         wiki = new AdoWikiWithPreconditionChecks(wiki);
 
         return (wikiDecl, adoTestsCfg.TestAdoWikiPageId(), utcNow, wiki, storage);
