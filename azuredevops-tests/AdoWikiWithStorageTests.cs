@@ -95,10 +95,13 @@ public class AdoWikiWithStorageTests
         // exercises PageStats for page with ID 1.
         actualStats = await wikiWithStorage.PageStats(pvfd, 1);
 
-        // kj2 add new method like ValidWikiPageStats.FilterToPages({1});
-        var prevStatsPage1 = new ValidWikiPagesStats(prevStats.Where(pageStats => pageStats.Id == 1), prevStats.DaySpan);
-        var currStatsPage1 = new ValidWikiPagesStats(currStats.Where(pageStats => pageStats.Id == 1), currStats.DaySpan);
-        new JsonDiffAssertion(prevStatsPage1.Merge(currStatsPage1, allowGaps: true), actualStats).Assert();
+        new JsonDiffAssertion(
+                prevStats.WherePages(ps => ps.Id == 1)
+                    .Merge(
+                        currStats.WherePages(ps => ps.Id == 1),
+                        allowGaps: true), 
+                actualStats)
+            .Assert();
     }
 
     /// <summary>
