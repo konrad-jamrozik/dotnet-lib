@@ -22,20 +22,15 @@ public record AdoWikiWithStorage(
 
     public Task<ValidWikiPagesStats> PageStats(PageViewsForDays pvfd, int pageId)
     {
-        // kj2-DaySpan write test showing that lack of "?? DefaultPageViewsForDaysMax" here causes problems.
-        // Then add it.
-        var dayRange = pvfd.Value.MinWith(PageViewsForDaysMax);
-        var updatedStorage  = Storage.Update(AdoWiki, dayRange, pageId);
+        pvfd = pvfd.MinWith(PageViewsForDaysMax);
+        var updatedStorage  = Storage.Update(AdoWiki, pvfd, pageId);
         var pagesViewsStats = updatedStorage.Select(
             storage =>
             {
                 var endDay = new DateDay(Storage.CurrentDay);
-                //var daySpan = pvfd.ToDaySpanUpUntil(endDay, PageViewsForDaysMax); // kj2-DaySpan
-                var startDay = endDay.AddDays(-dayRange + 1); // kj2-DaySpan -dayRange +1. UNTESTED.
                 return new ValidWikiPagesStats(
-                    storage.PagesStats(dayRange).Where(page => page.Id == pageId),
-                    startDay, 
-                    endDay);
+                    storage.PagesStats(pvfd).Where(page => page.Id == pageId),
+                    daySpan: pvfd.AsDaySpanUntil(endDay));
             });
         return pagesViewsStats;
     }

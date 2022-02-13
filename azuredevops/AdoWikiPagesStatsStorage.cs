@@ -22,9 +22,7 @@ public record AdoWikiPagesStatsStorage(MonthlyJsonFilesStorage Storage, DateDay 
         IAdoWiki wiki,
         PageViewsForDays pvfd,
         int pageId)
-        => Update(
-            pvfd,
-            pageViewsForDays => wiki.PageStats(pageViewsForDays, pageId)); // kj2 rename to pvfd
+        => Update(pvfd, pvfd => wiki.PageStats(pvfd, pageId));
 
     // kj2 instead of taking pvfd, it could take Action() instead of Func().
     // That action will have pvfd already bound.
@@ -46,7 +44,7 @@ public record AdoWikiPagesStatsStorage(MonthlyJsonFilesStorage Storage, DateDay 
         await Storage.With<IEnumerable<WikiPageStats>>(stats.Month,
             storedStats =>
             {
-                // kj2-DaySpan can the inputs to DaySpan here be simplified?
+                // kja-DaySpan can the inputs to DaySpan here be simplified?
                 var daySpan = new DaySpan(stats.Month.FirstDay, stats.DaySpan.EndDay);
                 var validStoredStats = new ValidWikiPagesStatsForMonth(storedStats, daySpan);
                 return new ValidWikiPagesStatsForMonth(validStoredStats.Merge(stats), daySpan);
