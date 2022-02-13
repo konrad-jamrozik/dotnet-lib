@@ -15,14 +15,17 @@ namespace Wikitools.AzureDevOps;
 /// </summary>
 public record AdoWikiPagesStatsStorage(MonthlyJsonFilesStorage Storage, DateDay CurrentDay)
 {
-    public Task<AdoWikiPagesStatsStorage> Update(IAdoWiki wiki, PageViewsForDays pvfd) 
-        => Update(pvfd, wiki.PagesStats);
-
     public Task<AdoWikiPagesStatsStorage> Update(
         IAdoWiki wiki,
         PageViewsForDays pvfd,
-        int pageId)
-        => Update(pvfd, pvfd => wiki.PageStats(pvfd, pageId));
+        int? pageId = null)
+    {
+        Func<PageViewsForDays, Task<ValidWikiPagesStats>> wikiPagesStatsFunc =
+            pageId == null
+                ? pvfd => wiki.PagesStats(pvfd)
+                : pvfd => wiki.PageStats(pvfd, (int)pageId);
+        return Update(pvfd, wikiPagesStatsFunc);
+    }
 
     // kj2 instead of taking pvfd, it could take Action() instead of Func().
     // That action will have pvfd already bound.
