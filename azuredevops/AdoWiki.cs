@@ -22,9 +22,7 @@ namespace Wikitools.AzureDevOps;
 /// - When it appeared, it was counted as 3/28/2021, not 3/27/2021.
 ///   - Presumably because the dates are in UTC, not PDT.
 /// </remarks>
-public record AdoWiki(
-    IWikiHttpClient Client,
-    ITimeline Timeline) : IAdoWiki
+public record AdoWiki(IWikiHttpClient Client, ITimeline Timeline) : IAdoWiki
 {
     public AdoWiki(
         string wikiUriStr,

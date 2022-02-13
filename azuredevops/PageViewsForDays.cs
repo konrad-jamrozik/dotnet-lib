@@ -24,7 +24,7 @@ public record PageViewsForDays()
         Value = value;
     }
 
-    public void AssertPageViewsForDaysRange()
+    public void AssertPageViewsForDaysRange() // kj2 rename: AssertWithinAdoApiLimit
         => Contract.Assert(
             Value,
             nameof(PageViewsForDays),
