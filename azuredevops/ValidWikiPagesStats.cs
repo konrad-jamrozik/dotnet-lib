@@ -58,6 +58,16 @@ public record ValidWikiPagesStats : IEnumerable<WikiPageStats>
 
     public DateDay? FirstDayWithAnyView => FirstDayWithAnyViewStatic(this);
 
+    public DateDay? LastDayWithAnyView => LastDayWithAnyViewStatic(this);
+
+    public int ViewedDaysSpan => LastDayWithAnyView != null
+        ? (int) (LastDayWithAnyView - FirstDayWithAnyView!).TotalDays + 1
+        : 0;
+
+    public IEnumerator<WikiPageStats> GetEnumerator() => Data.GetEnumerator();
+
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
     public static DateDay? FirstDayWithAnyViewStatic(IEnumerable<WikiPageStats> stats)
     {
         var minDatePerPage = stats
@@ -66,8 +76,6 @@ public record ValidWikiPagesStats : IEnumerable<WikiPageStats>
             .ToList();
         return minDatePerPage.Any() ? new DateDay(minDatePerPage.Min()) : null;
     }
-
-    public DateDay? LastDayWithAnyView => LastDayWithAnyViewStatic(this);
 
     public static DateDay? LastDayWithAnyViewStatic(IEnumerable<WikiPageStats> stats)
     {
@@ -78,17 +86,36 @@ public record ValidWikiPagesStats : IEnumerable<WikiPageStats>
         return maxDatePerPage.Any() ? new DateDay(maxDatePerPage.Max()) : null;
     }
 
-    public int ViewedDaysSpan => LastDayWithAnyView != null
-        ? (int) (LastDayWithAnyView - FirstDayWithAnyView!).TotalDays + 1
-        : 0;
-
-    public IEnumerator<WikiPageStats> GetEnumerator() => Data.GetEnumerator();
-
-    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-
     public static ValidWikiPagesStats Merge(IEnumerable<ValidWikiPagesStats> stats, bool allowGaps = false) 
         // kj2 This Merge is O(n^2) while it could be O(n).
         => stats.Aggregate((merged, next) => merged.Merge(next, allowGaps));
+
+    public IEnumerable<ValidWikiPagesStatsForMonth> SplitByMonth() => SplitByMonth(this);
+
+    public (ValidWikiPagesStatsForMonth? previousMonthStats, ValidWikiPagesStatsForMonth currentMonthStats)
+        SplitIntoTwoMonths() => SplitIntoUpToTwoMonths(this);
+
+    public ValidWikiPagesStats Merge(ValidWikiPagesStats validCurrentStats, bool allowGaps = false)
+        => Merge(this, validCurrentStats, allowGaps);
+
+    public ValidWikiPagesStats Trim(DateMonth month) => Trim(month.DaySpan);
+
+    public ValidWikiPagesStats TrimUntil(DateMonth month) => Trim(DaySpan.StartDay, month.LastDay);
+
+    public ValidWikiPagesStats TrimFrom(DateMonth month) => Trim(month.FirstDay, DaySpan.EndDay);
+
+    public ValidWikiPagesStats Trim(DateTime currentDate, int daysFrom, int daysTo) => Trim(
+        currentDate.AddDays(daysFrom),
+        currentDate.AddDays(daysTo));
+
+    public ValidWikiPagesStats Trim(DateTime startDate, DateTime endDate)
+        => Trim(this, new DateDay(startDate), new DateDay(endDate));
+
+    public ValidWikiPagesStats Trim(DaySpan daySpan)
+        => Trim(this, daySpan.StartDay, daySpan.EndDay);
+
+    public ValidWikiPagesStats Trim(DateDay startDay, DateDay endDay)
+        => Trim(this, startDay, endDay);
 
     private static void CheckInvariants(IEnumerable<WikiPageStats> pagesStats, DaySpan daySpan)
     {
@@ -127,8 +154,6 @@ public record ValidWikiPagesStats : IEnumerable<WikiPageStats>
         Contract.Assert(lastDayWithAnyView  == null || lastDayWithAnyView.CompareTo(daySpan.EndDay   ) <= 0);
         // @formatter:on
     }
-
-    public IEnumerable<ValidWikiPagesStatsForMonth> SplitByMonth() => SplitByMonth(this);
 
     private static IEnumerable<ValidWikiPagesStatsForMonth> SplitByMonth(ValidWikiPagesStats stats) 
     {
@@ -169,9 +194,6 @@ public record ValidWikiPagesStats : IEnumerable<WikiPageStats>
         return monthsStats;
     }
 
-    public (ValidWikiPagesStatsForMonth? previousMonthStats, ValidWikiPagesStatsForMonth currentMonthStats)
-        SplitIntoTwoMonths() => SplitIntoUpToTwoMonths(this);
-
     private static (ValidWikiPagesStatsForMonth? previousMonthStats, ValidWikiPagesStatsForMonth currentMonthStats)
         SplitIntoUpToTwoMonths(ValidWikiPagesStats stats)
         => stats.DaySpan.IsWithinOneMonth
@@ -198,9 +220,6 @@ public record ValidWikiPagesStats : IEnumerable<WikiPageStats>
 
         return (splitMonths.First(), splitMonths.Last());
     }
-
-    public ValidWikiPagesStats Merge(ValidWikiPagesStats validCurrentStats, bool allowGaps = false)
-        => Merge(this, validCurrentStats, allowGaps);
 
     /// <summary>
     /// Merges ADO Wiki page stats. previousStats with currentStats.
@@ -281,25 +300,6 @@ public record ValidWikiPagesStats : IEnumerable<WikiPageStats>
         }).ToArray();
         return mergedStats;
     }
-
-    public ValidWikiPagesStats Trim(DateMonth month) => Trim(month.DaySpan);
-
-    public ValidWikiPagesStats TrimUntil(DateMonth month) => Trim(DaySpan.StartDay, month.LastDay);
-
-    public ValidWikiPagesStats TrimFrom(DateMonth month) => Trim(month.FirstDay, DaySpan.EndDay);
-
-    public ValidWikiPagesStats Trim(DateTime currentDate, int daysFrom, int daysTo) => Trim(
-        currentDate.AddDays(daysFrom),
-        currentDate.AddDays(daysTo));
-
-    public ValidWikiPagesStats Trim(DateTime startDate, DateTime endDate)
-        => Trim(this, new DateDay(startDate), new DateDay(endDate));
-
-    public ValidWikiPagesStats Trim(DaySpan daySpan)
-        => Trim(this, daySpan.StartDay, daySpan.EndDay);
-
-    public ValidWikiPagesStats Trim(DateDay startDay, DateDay endDay)
-        => Trim(this, startDay, endDay);
 
     private static ValidWikiPagesStats Trim(ValidWikiPagesStats stats, DateDay startDay, DateDay endDay) =>
         new ValidWikiPagesStats(stats.Select(ps =>
