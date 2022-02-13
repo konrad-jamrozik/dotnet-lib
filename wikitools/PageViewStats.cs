@@ -1,3 +1,4 @@
+using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Threading.Tasks;
 using Wikitools.AzureDevOps;
@@ -16,12 +17,9 @@ public record PageViewStats(string FilePath, int Views)
         DaySpan daySpan,
         int? top = null)
     {
-        // Here, the 1 is added to account for how ADO REST API interprets the range.
-        // For more, see comment on:
-        // AdoWikiWithStorageIntegrationTests.ObtainsAndStoresDataFromAdoWikiForToday
-        // kja-DaySpan this entire funny business with pageViewsForDays should be captured
-        // in PageViewsForDays type.
-        var pageViewsForDays = (timeline.UtcNow - daySpan.StartDay).Days + 1; // kja-DaySpan Days+1
+        var pvfd = new PageViewsForDays((timeline.UtcNow - daySpan.StartDay).Days + 1);
+        Contract.Assert(
+            pvfd.AsDaySpanUntil(new DateDay(timeline.UtcNow)).StartDay == daySpan.StartDay);
 
         // kj2 this will trigger call to ADO API.
         // Here is is OK, as we are in late execution stage, but I need to ensure
@@ -35,8 +33,7 @@ public record PageViewStats(string FilePath, int Views)
         // https://github.com/dotnet/roslyn/issues/16160
         // 11/17/2021: Or maybe doing stuff like LINQ IEnumerable is enough? IEnumerable and related
         // collections are lazy after all.
-        var pagesStats = (await wiki.PagesStats(pageViewsForDays))
-            .Trim(daySpan.StartDay, daySpan.EndDay); // kja-DaySpan can pass DaySpan
+        var pagesStats = (await wiki.PagesStats(pvfd)).Trim(daySpan);
 
         var pathsStats = pagesStats.Select(
                 pageStats => new PageViewStats(

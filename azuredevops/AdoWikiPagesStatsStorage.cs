@@ -22,6 +22,7 @@ public record AdoWikiPagesStatsStorage(MonthlyJsonFilesStorage Storage, DateDay 
     {
         Func<PageViewsForDays, Task<ValidWikiPagesStats>> wikiPagesStatsFunc =
             pageId == null
+                // ReSharper disable once ConvertClosureToMethodGroup
                 ? pvfd => wiki.PagesStats(pvfd)
                 : pvfd => wiki.PageStats(pvfd, (int)pageId);
         return Update(pvfd, wikiPagesStatsFunc);
