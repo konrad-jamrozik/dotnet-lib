@@ -23,7 +23,7 @@ namespace Wikitools.AzureDevOps;
 /// </summary>
 public record WikiPageStats(string Path, int Id, WikiPageStats.DayStat[] DayStats)
 {
-    public static readonly WikiPageStats[] EmptyArray = { };
+    public static readonly WikiPageStats[] EmptyArray = Array.Empty<WikiPageStats>();
 
     public static WikiPageStats From(WikiPageDetail pageDetail) =>
         new(pageDetail.Path, pageDetail.Id, DayStatsFrom(pageDetail));
@@ -32,7 +32,7 @@ public record WikiPageStats(string Path, int Id, WikiPageStats.DayStat[] DayStat
         // Using .Utc() as confirmed empirically the dayStat counts views in UTC days, not local time days.
         // For example, if you viewed page at 10 PM PST on day X, it will count
         // towards the day X+1, as 10 PM PST is 6 AM UTC the next day.
-        // For details, please see comment on Wikitools.AzureDevOps.AdoWiki
+        // For details, see comment on Wikitools.AzureDevOps.AdoWiki
         pageDetail.ViewStats?.Select(dayStat => new DayStat(dayStat.Count, dayStat.Day.Utc()))
             .OrderBy(ds => ds.Day)
             .ToArray()
