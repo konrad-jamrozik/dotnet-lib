@@ -51,8 +51,6 @@ public record AdoWiki(IWikiHttpClient Client, DateDay Today) : IAdoWiki
         Func<IWikiHttpClient, PageViewsForDays, Task<IEnumerable<WikiPageDetail>>>
             wikiPagesDetailsFunc)
     {
-        // kja inject WikiHttpClient, so I can test AdoWiki with it simulated
-        // Then, stop using SimulatedAdoWiki - instead use SimulatedWikiHttpClient
         var wikiHttpClient   = Client;
         var wikiPagesDetails = await wikiPagesDetailsFunc(wikiHttpClient, pvfd);
         var wikiPagesStats   = wikiPagesDetails.Select(WikiPageStats.From);

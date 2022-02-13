@@ -7,17 +7,6 @@ using Microsoft.VisualStudio.Services.WebApi;
 
 namespace Wikitools.AzureDevOps;
 
-// kja replace SimulatedAdoWiki with SimulatedWikiHttpClient:
-// Currently I am using SimulatedAdoWiki instead of this class.
-// AdoWiki depends on WikiHttpClient, so using SimulatedAdoWiki means weaker tests.
-// In particular, if I would replace SimulatedAdoWiki with this, the
-// AdoWikiWithStorageTests would also exercise AdoWiki,
-// including the arithmetic logic for PageViewsForDays.
-//
-// The main challenge of migration of the simulations is data:
-// I have various hardcoded fixtures for SimulatedAdoWiki input data;
-// I need to convert thm to WikiPageDetails lists
-// I also need to implement continuation token.
 public record SimulatedWikiHttpClient(
     IEnumerable<WikiPageStats> PagesStatsData) : IWikiHttpClient
 {
