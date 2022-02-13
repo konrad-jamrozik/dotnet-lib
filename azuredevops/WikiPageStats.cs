@@ -33,10 +33,12 @@ public record WikiPageStats(string Path, int Id, WikiPageStats.DayStat[] DayStat
         // For example, if you viewed page at 10 PM PST on day X, it will count
         // towards the day X+1, as 10 PM PST is 6 AM UTC the next day.
         // For details, see comment on Wikitools.AzureDevOps.AdoWiki
-        pageDetail.ViewStats?.Select(dayStat => new DayStat(dayStat.Count, dayStat.Day.Utc()))
+        pageDetail.ViewStats?
+            .Select(pageStat => new DayStat(pageStat.Count, pageStat.Day.Utc()))
             .OrderBy(ds => ds.Day)
             .ToArray()
         ?? Array.Empty<DayStat>();
 
-    public record DayStat(int Count, DateTime Day) { }
+    // kj2 Day could be of type DateDay
+    public record DayStat(int Count, DateTime Day);
 }
