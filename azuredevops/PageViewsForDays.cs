@@ -22,6 +22,9 @@ public record PageViewsForDays()
     {
         Contract.Assert(value >= Min);
         Value = value;
+        // kj2 have this here instead of the Min check above, but note it makes a test fail:
+        // Wikitools.AzureDevOps.Tests.AdoWikiWithStorageTests.DataFromStorageFromManyMonths
+        //AssertPageViewsForDaysRange();
     }
 
     public int Value { get; }
@@ -34,6 +37,10 @@ public record PageViewsForDays()
             return Value;
         }
     }
+
+    public static readonly PageViewsForDays Today = new PageViewsForDays(1);
+
+    public static PageViewsForDays ForLastDays(int days) => new PageViewsForDays(days);
 
     public static implicit operator PageViewsForDays(int value) => new PageViewsForDays(value);
 
