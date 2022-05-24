@@ -54,7 +54,7 @@ public record AdoWiki(IWikiHttpClient Client, DateDay Today) : IAdoWiki
         var wikiHttpClient   = Client;
         var wikiPagesDetails = await wikiPagesDetailsFunc(wikiHttpClient, pvfd);
         var wikiPagesStats   = wikiPagesDetails.Select(WikiPageStats.From);
-        // kja-DaySpan replace the startDay, endDay with this below, but first test it
+        // kja-DaySpan CURR GOAL replace the startDay, endDay with this below, but first test it
         // var daySpan = pvfd.AsDaySpanUntil(today);
         // Possible tests:
         // Prove that when getting PagesStats and getting stats for full range of
