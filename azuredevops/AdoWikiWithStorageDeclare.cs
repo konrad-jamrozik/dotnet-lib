@@ -2,7 +2,8 @@
 using Wikitools.Lib.Primitives;
 
 namespace Wikitools.AzureDevOps;
-// kj2 Other possible suffixes: Ctor, Def, Scaffolding, Blueprint, Chart (a'la Helm Chart), Factory, DI (for Dep. Inj).
+// kj2 Other possible suffixes for Declare:
+// Ctor, Def, Scaffolding, Blueprint, Recipe, Chart (a'la Helm Chart), Factory, DI (for Dep. Inj).
 //
 // From https://helm.sh/docs/topics/architecture/
 // "The chart is a bundle of information necessary to create an instance of a Kubernetes application."
