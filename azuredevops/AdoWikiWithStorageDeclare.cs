@@ -2,7 +2,7 @@
 using Wikitools.Lib.Primitives;
 
 namespace Wikitools.AzureDevOps;
-// kj2 Other possible suffixes for Declare:
+// kj2 Other possible suffixes for Declare (update README.md):
 // Ctor, Def, Scaffolding, Blueprint, Recipe, Chart (a'la Helm Chart), Factory, DI (for Dep. Inj).
 //
 // From https://helm.sh/docs/topics/architecture/

@@ -60,3 +60,21 @@
 - [Seven Virtues of a Good Object - Yegor Bugayenko](https://www.yegor256.com/2014/11/20/seven-virtues-of-good-object.html)
 - [Don't Create Objects That End With -ER - Yegor Bugayenko](https://www.yegor256.com/2015/03/09/objects-end-with-er.html)
 - [OP Alternative to Utility Classes - Yegor Bugayenko](https://www.yegor256.com/2014/05/05/oop-alternative-to-utility-classes.html)
+
+## Class naming patterns
+
+- Foo: the subject class  
+- FooDeclare: class capturing common / default set of dependencies required to construct Foo  
+  - This class can recurisvely depend on *Declare classes of Foo ctor param types.
+- FooTests: unit tests for the class  
+- FooIntegrationTests: integration tests for the class
+- FooFixture: a class providing Foo instances, to be used by tests that require data of type Foo as input
+  - This class can recurisvely depend on *Fixture classes of Foo ctor param types.
+- FooTestData: to be removed
+- FooTestDataFixture: to be removed
+
+## Assertion conventions
+
+Any objects requiring deep nested structural equality shall be asserted as follows:
+
+`new JsonDiffAssertion(expected, actual).Assert();`
