@@ -44,16 +44,6 @@ public record AdoWikiPagesStatsStorage(MonthlyJsonFilesStorage Storage, DateDay 
         return this;
     }
 
-    private async Task MergeIntoStoredMonthStats(ValidWikiPagesStatsForMonth stats) =>
-        await Storage.With<IEnumerable<WikiPageStats>>(stats.Month,
-            storedStats =>
-            {
-                // kja-DaySpan can the inputs to DaySpan here be simplified?
-                var daySpan = new DaySpan(stats.Month.FirstDay, stats.DaySpan.EndDay);
-                var validStoredStats = new ValidWikiPagesStatsForMonth(storedStats, daySpan);
-                return new ValidWikiPagesStatsForMonth(validStoredStats.Merge(stats), daySpan);
-            });
-
     public async Task<AdoWikiPagesStatsStorage> ReplaceWith(ValidWikiPagesStats stats)
     {
         IEnumerable<ValidWikiPagesStatsForMonth> statsByMonth = stats.SplitByMonth();
@@ -81,4 +71,14 @@ public record AdoWikiPagesStatsStorage(MonthlyJsonFilesStorage Storage, DateDay 
 
         return ValidWikiPagesStats.Merge(statsByMonth).Trim(daySpan);
     }
+
+    private async Task MergeIntoStoredMonthStats(ValidWikiPagesStatsForMonth stats) =>
+        await Storage.With<IEnumerable<WikiPageStats>>(stats.Month,
+            storedStats =>
+            {
+                // kja-DaySpan can the inputs to DaySpan here be simplified?
+                var daySpan = new DaySpan(stats.Month.FirstDay, stats.DaySpan.EndDay);
+                var validStoredStats = new ValidWikiPagesStatsForMonth(storedStats, daySpan);
+                return new ValidWikiPagesStatsForMonth(validStoredStats.Merge(stats), daySpan);
+            });
 }
