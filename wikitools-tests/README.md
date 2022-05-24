@@ -64,12 +64,12 @@
 ## Class naming patterns
 
 - `Foo`: the subject class  
-- `FooDeclare`: class capturing common / default set of dependencies required to construct Foo  
-  - This class can recurisvely depend on *Declare classes of Foo ctor param types.
+- `FooDeclare`: class capturing common / default set of dependencies required to construct `Foo`
+  - This class can recurisvely depend on `*`Declare classes of `Foo` ctor param types.
 - `FooTests`: unit tests for the class  
 - `FooIntegrationTests`: integration tests for the class. Must have the `[Category("integration")]` attribute.
-- `FooFixture`: a class providing Foo instances, to be used by tests that require data of type Foo as input
-  - This class can recurisvely depend on *Fixture classes of Foo ctor param types.
+- `FooFixture`: a class providing `Foo` instances, to be used by tests that require data of type `Foo` as input
+  - This class can recurisvely depend on `*Fixture` classes of `Foo` ctor param types.
 - `FooTestData`: to be removed
 - `FooTestDataFixture`: to be removed
 
