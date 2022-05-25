@@ -12,7 +12,6 @@ public record ValidWikiPagesStatsForMonth(ValidWikiPagesStats Stats)
         : this(new ValidWikiPagesStats(stats, daySpan)) { }
 
     public ValidWikiPagesStatsForMonth(IEnumerable<WikiPageStats> stats, DateMonth month) 
-        // kja-DaySpan rename existing DayRange substrings to DaySpan.
         : this(new ValidWikiPagesStats(stats, month.DaySpan)) { }
 
     public new ValidWikiPagesStatsForMonth Trim(DateTime currentDate, int daysFrom, int daysTo)

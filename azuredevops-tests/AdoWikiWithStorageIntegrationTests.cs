@@ -24,7 +24,7 @@ public class AdoWikiWithStorageIntegrationTests
     /// </summary>
     [Test]
     public async Task ObtainsAndStoresDataFromAdoWikiForToday() =>
-        await VerifyDayRangeOfWikiStats(pvfd: 1);
+        await VerifyDaySpanOfWikiStats(pvfd: 1);
 
     /// <summary>
     /// Like
@@ -33,7 +33,7 @@ public class AdoWikiWithStorageIntegrationTests
     /// </summary>
     [Test]
     public async Task ObtainsAndStoresDataFromAdoWikiFor5Days() =>
-        await VerifyDayRangeOfWikiStats(pvfd: 5);
+        await VerifyDaySpanOfWikiStats(pvfd: 5);
 
     /// <summary>
     /// This test tests the following:
@@ -137,7 +137,7 @@ public class AdoWikiWithStorageIntegrationTests
         return (wikiDecl, adoTestsCfg.TestAdoWikiPageId(), utcNow, wiki, storage);
     }
 
-    private async Task VerifyDayRangeOfWikiStats(PageViewsForDays pvfd)
+    private async Task VerifyDaySpanOfWikiStats(PageViewsForDays pvfd)
     {
         var (_, pageId, utcNow, wiki, statsStorage) = ArrangeSut();
 
