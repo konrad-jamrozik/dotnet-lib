@@ -304,8 +304,11 @@ public record ValidWikiPagesStats : IEnumerable<WikiPageStats>
         return mergedStats;
     }
 
-    private static ValidWikiPagesStats Trim(ValidWikiPagesStats stats, DateDay startDay, DateDay endDay) =>
-        new ValidWikiPagesStats(stats.Select(ps =>
+    private static ValidWikiPagesStats Trim(ValidWikiPagesStats stats, DateDay startDay, DateDay endDay) 
+        => new ValidWikiPagesStats(stats.Select(ps =>
                 ps with { DayStats = ps.DayStats.Where(s => s.Day >= startDay && s.Day <= endDay).ToArray() })
             .ToArray(), startDay, endDay);
+
+    public ValidWikiPagesStats TrimTo(PageViewsForDays pvfd)
+        => Trim(pvfd.AsDaySpanUntil(DaySpan.EndDay));
 }

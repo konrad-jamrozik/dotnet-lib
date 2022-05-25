@@ -8,6 +8,10 @@ using Wikitools.Lib.OS;
 
 namespace Wikitools.AzureDevOps;
 
+/// <summary>
+/// Interface for Microsoft.TeamFoundation.Wiki.WebApi.WikiHttpClient
+/// https://docs.microsoft.com/en-us/dotnet/api/microsoft.teamfoundation.wiki.webapi.wikihttpclient?view=azure-devops-dotnet
+/// </summary>
 public interface IWikiHttpClient
 {
     Task<WikiPageDetail> GetPageDataAsync(int pageId, PageViewsForDays pvfd);

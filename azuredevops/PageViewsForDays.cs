@@ -18,6 +18,10 @@ public record PageViewsForDays()
     // Confirmed empirically as of 3/27/2021.
     public const int Max = 30;
 
+    public PageViewsForDays(int? value) : this(value ?? 0)
+    {
+    }
+
     public PageViewsForDays(int value) : this()
     {
         Contract.Assert(value >= Min);

@@ -7,17 +7,15 @@ using Microsoft.VisualStudio.Services.WebApi;
 
 namespace Wikitools.AzureDevOps;
 
-public record SimulatedWikiHttpClient(
-    IEnumerable<WikiPageStats> PagesStatsData) : IWikiHttpClient
+public record SimulatedWikiHttpClient(ValidWikiPagesStats PagesStatsData) : IWikiHttpClient
 {
-    public SimulatedWikiHttpClient(ValidWikiPagesStats stats) : this(
-        (IEnumerable<WikiPageStats>)stats) { }
-
     public Task<WikiPageDetail> GetPageDataAsync(int pageId, PageViewsForDays pvfd)
     {
+        // kj2 redundant once to-do here is fixed: Wikitools.AzureDevOps.PageViewsForDays.PageViewsForDays
         pvfd.AssertPageViewsForDaysRange();
 
-        var pageDetail = PagesStatsData
+        var trimmedStats = PagesStatsData.TrimTo(pvfd);
+        var pageDetail = trimmedStats
             .Single(pageStats => pageStats.Id == pageId)
             .ToWikiPageDetail();
 
@@ -26,12 +24,15 @@ public record SimulatedWikiHttpClient(
 
     public Task<PagedList<WikiPageDetail>> GetPagesBatchAsync(WikiPagesBatchRequest request)
     {
-        new PageViewsForDays(request.PageViewsForDays ?? 0).AssertPageViewsForDaysRange();
+        var pvfd = new PageViewsForDays(request.PageViewsForDays);
+        // kj2 redundant once to-do here is fixed: Wikitools.AzureDevOps.PageViewsForDays.PageViewsForDays
+        pvfd.AssertPageViewsForDaysRange();
+        var trimmedStats = PagesStatsData.TrimTo(pvfd);
 
         var pageIndex = int.Parse(request.ContinuationToken ?? "0");
-        var dataPage = PagesStatsData.Skip(pageIndex * AdoWiki.MaxApiTop).Take(AdoWiki.MaxApiTop);
+        var dataPage = trimmedStats.Skip(pageIndex * AdoWiki.MaxApiTop).Take(AdoWiki.MaxApiTop);
         var pageDetailsPage = dataPage.Select(pageStats => pageStats.ToWikiPageDetail());
-        bool itemsToPageLeft = PagesStatsData.Count() > (pageIndex + 1) * AdoWiki.MaxApiTop;
+        bool itemsToPageLeft = trimmedStats.Count() > (pageIndex + 1) * AdoWiki.MaxApiTop;
         var continuationToken = itemsToPageLeft ? (pageIndex + 1).ToString() : null;
 
         return Task.FromResult(
