@@ -8,23 +8,34 @@ namespace Wikitools.AzureDevOps.Tests;
 [TestFixture]
 public class AdoWikiTests
 {
-    // kja CURR TEST
     [Test]
-    [Ignore("WIP")]
-    public async Task Test()
+    public async Task GetsPagesStats()
     {
-        DateDay today = SimulatedTimeline.UtcNowDay;
-        int pageId = 1;
-        // TO-DO use builder pattern to create stats with a page with pageId.
-        var expected = new ValidWikiPagesStatsFixture().WikiPagesStats();
-        var simulatedWikiHttpClient = new SimulatedWikiHttpClient(expected);
-        
-        var adoWiki = new AdoWiki(simulatedWikiHttpClient, today);
+        var input = new ValidWikiPagesStatsFixture().WikiPagesStats();
+        var pageViewsForDays = new PageViewsForDays(3);
+        var expected = input.Trim(pageViewsForDays);
+
+        var adoWiki = new AdoWiki(new SimulatedWikiHttpClient(input), SimulatedTimeline.UtcNowDay);
 
         // Act
-        var actual = await adoWiki.PageStats(PageViewsForDays.ForLastDays(1), pageId);
+        var actual = await adoWiki.PagesStats(pageViewsForDays);
 
         new JsonDiffAssertion(expected, actual).Assert();
+    }
 
+    [Test]
+    public async Task GetsPageStatsForPage()
+    {
+        int pageId = 1;
+        var input = new ValidWikiPagesStatsFixture().WikiPagesStats();
+        var pageViewsForDays = new PageViewsForDays(3);
+        var expected = input.Trim(pageViewsForDays).Trim(pageId);
+
+        var adoWiki = new AdoWiki(new SimulatedWikiHttpClient(input), SimulatedTimeline.UtcNowDay);
+
+        // Act
+        var actual = await adoWiki.PageStats(pageViewsForDays, pageId);
+
+        new JsonDiffAssertion(expected, actual).Assert();
     }
 }

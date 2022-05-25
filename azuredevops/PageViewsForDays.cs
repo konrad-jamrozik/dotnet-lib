@@ -44,8 +44,6 @@ public record PageViewsForDays()
 
     public static readonly PageViewsForDays Today = new PageViewsForDays(1);
 
-    public static PageViewsForDays ForLastDays(int days) => new PageViewsForDays(days);
-
     public static implicit operator PageViewsForDays(int value) => new PageViewsForDays(value);
 
     public PageViewsForDays MinWith(int? value) => new PageViewsForDays(Value.MinWith(value));
@@ -63,6 +61,6 @@ public record PageViewsForDays()
     public override string ToString() => $"{Value}";
 
     // kja-DaySpan to attach to code
-    public DaySpan AsDaySpanUntil(DateDay endDate)
-        => new DaySpan(endDate.AddDays(-Value + 1), endDate);
+    public DaySpan AsDaySpanUntil(DateDay endDay)
+        => new DaySpan(endDay.AddDays(-Value + 1), endDay);
 }

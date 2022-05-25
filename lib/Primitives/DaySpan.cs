@@ -81,5 +81,4 @@ public record DaySpan
     {
         Contract.Assert(EndDay.AddDays(1).CompareTo(other.StartDay) >= 0);
     }
-
 }

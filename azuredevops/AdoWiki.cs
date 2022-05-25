@@ -54,27 +54,7 @@ public record AdoWiki(IWikiHttpClient Client, DateDay Today) : IAdoWiki
         var wikiHttpClient   = Client;
         var wikiPagesDetails = await wikiPagesDetailsFunc(wikiHttpClient, pvfd);
         var wikiPagesStats   = wikiPagesDetails.Select(WikiPageStats.From);
-        // kja-DaySpan CURR GOAL replace the startDay, endDay with this below, but first test it
-        // var daySpan = pvfd.AsDaySpanUntil(today);
-        // Possible tests:
-        // Prove that when getting PagesStats and getting stats for full range of
-        // Wikitools.AzureDevOps.PageViewsForDays.Max
-        // then (a) the Valid stats range is not larger than that, and
-        // (b) no smaller than that. The (b) should be caught by assertions.
-        // See also AdoWikiWithStorageTests
-        return new ValidWikiPagesStats(wikiPagesStats, 
-            // kja-DaySpan Arithmetic Write a test for this, then get rid of these -days+1 shenanigans
-            // kja CURR WORK currently fails because the current tests uses hardcoded fixture data going
-            // more days in the past than this startDay, thus violating bounds-check assertion.
-            // Need to create multiple tests, like:
-            // - "The returned data matches pvfd exactly, all days"
-            // - "The returned data has one day extra in the past than pvfd"
-            // - "The pvfd is more than max", or "less than min". (assertion checks)
-            // Similar tests that can be possibly consolidated (?):
-            // Wikitools.AzureDevOps.Tests.AdoWikiPagesStatsStorageTests.FirstDayOfViewsInStorageIsNotOffByOne
-
-            startDay: Today.AddDays(-pvfd.Value+1), 
-            endDay: Today);
+        return new ValidWikiPagesStats(wikiPagesStats, pvfd, Today);
     }
 
     private async Task<IEnumerable<WikiPageDetail>> GetWikiPagesDetails(

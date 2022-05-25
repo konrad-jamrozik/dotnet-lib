@@ -38,6 +38,13 @@ public record ValidWikiPagesStats : IEnumerable<WikiPageStats>
         // kja-DaySpan get rid of this ctor by fixing callers to call the delegated-to ctor instead.
     }
 
+    public ValidWikiPagesStats(
+        IEnumerable<WikiPageStats> stats,
+        PageViewsForDays pvfd,
+        DateDay endDay) : this(stats, pvfd.AsDaySpanUntil(endDay))
+    {
+    }
+
     // Note this setup of invariant checks in ctor has some problems.
     // Details here: https://github.com/dotnet/csharplang/issues/4453#issuecomment-782807066
     public ValidWikiPagesStats(
@@ -309,6 +316,12 @@ public record ValidWikiPagesStats : IEnumerable<WikiPageStats>
                 ps with { DayStats = ps.DayStats.Where(s => s.Day >= startDay && s.Day <= endDay).ToArray() })
             .ToArray(), startDay, endDay);
 
-    public ValidWikiPagesStats TrimTo(PageViewsForDays pvfd)
+    public ValidWikiPagesStats Trim(PageViewsForDays pvfd)
         => Trim(pvfd.AsDaySpanUntil(DaySpan.EndDay));
+
+    public ValidWikiPagesStats Trim(int pageId)
+    {
+        var wikiPageStats = this.Single(pageStats => pageStats.Id == pageId).WrapInList();
+        return new ValidWikiPagesStats(wikiPageStats, this.DaySpan);
+    }
 }

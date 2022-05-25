@@ -14,10 +14,8 @@ public record SimulatedWikiHttpClient(ValidWikiPagesStats PagesStatsData) : IWik
         // kj2 redundant once to-do here is fixed: Wikitools.AzureDevOps.PageViewsForDays.PageViewsForDays
         pvfd.AssertPageViewsForDaysRange();
 
-        var trimmedStats = PagesStatsData.TrimTo(pvfd);
-        var pageDetail = trimmedStats
-            .Single(pageStats => pageStats.Id == pageId)
-            .ToWikiPageDetail();
+        var trimmedStats = PagesStatsData.Trim(pvfd).Trim(pageId);
+        var pageDetail = trimmedStats.Single().ToWikiPageDetail();
 
         return Task.FromResult(pageDetail);
     }
@@ -27,7 +25,7 @@ public record SimulatedWikiHttpClient(ValidWikiPagesStats PagesStatsData) : IWik
         var pvfd = new PageViewsForDays(request.PageViewsForDays);
         // kj2 redundant once to-do here is fixed: Wikitools.AzureDevOps.PageViewsForDays.PageViewsForDays
         pvfd.AssertPageViewsForDaysRange();
-        var trimmedStats = PagesStatsData.TrimTo(pvfd);
+        var trimmedStats = PagesStatsData.Trim(pvfd);
 
         var pageIndex = int.Parse(request.ContinuationToken ?? "0");
         var dataPage = trimmedStats.Skip(pageIndex * AdoWiki.MaxApiTop).Take(AdoWiki.MaxApiTop);
