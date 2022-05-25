@@ -34,7 +34,6 @@ public record DaySpan
     /// the first accepted date is at midnight from May 10th to May 11th,
     /// and the last accepted date is at midnight from May 15th to May 16th.
     /// </summary>
-    /// <param name="date"></param>
     public bool Contains(DateTime date)
         => StartDay.CompareTo(date) <= 0 && 0 <= EndDay.AddDays(1).CompareTo(date);
 
