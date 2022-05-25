@@ -22,7 +22,7 @@ public record PageViewStats(string FilePath, int Views)
             pvfd.AsDaySpanUntil(new DateDay(timeline.UtcNow)).StartDay == daySpan.StartDay);
 
         // kj2 this will trigger call to ADO API.
-        // Here is is OK, as we are in late execution stage, but I need to ensure
+        // Here it is OK, as we are in late execution stage, but I need to ensure
         // this is fixed everywhere, always deferred to the execution stage.
         //
         // Below are previous ideas I had, now obsolete:

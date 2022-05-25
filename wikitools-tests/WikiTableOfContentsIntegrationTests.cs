@@ -77,7 +77,7 @@ public class WikiTableOfContentsIntegrationTests
             cfg.AzureDevOpsCfg.AdoPatEnvVar(),
             cfg.WikitoolsCfg().StorageDirPath());
 
-        // kj2 when the pagesStats input goes beyond what is stored on file system, no exception is thrown, which is not great.
+        // kj2 when the PageViewsForDays input goes beyond what is stored on file system, no exception is thrown, which is not great.
         var pagesStats = await wiki.PagesStats(PageViewsForDays);
         return pagesStats;
     }
