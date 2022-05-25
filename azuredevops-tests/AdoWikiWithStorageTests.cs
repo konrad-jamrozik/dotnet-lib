@@ -76,7 +76,7 @@ public class AdoWikiWithStorageTests
             "between first and last days with any views to provide meaningful test data");
         Assert.That(
             prevStats.FirstDayWithAnyView,
-            Is.GreaterThanOrEqualTo(UtcNowDay.AddDays(-pvfd + 1)),
+            Is.GreaterThanOrEqualTo(UtcNowDay.AddDays(-pvfd+1)),
             "Precondition violation: the first day of arranged stats is so much in the past that " +
             "a call to PageStats won't return it.");
         Assert.That(
