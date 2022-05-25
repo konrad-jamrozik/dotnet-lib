@@ -72,13 +72,28 @@ public record AdoWikiPagesStatsStorage(MonthlyJsonFilesStorage Storage, DateDay 
         return ValidWikiPagesStats.Merge(statsByMonth).Trim(daySpan);
     }
 
-    private async Task MergeIntoStoredMonthStats(ValidWikiPagesStatsForMonth stats) =>
-        await Storage.With<IEnumerable<WikiPageStats>>(stats.Month,
-            storedStats =>
-            {
-                // kja-DaySpan can the inputs to DaySpan here be simplified?
-                var daySpan = new DaySpan(stats.Month.FirstDay, stats.DaySpan.EndDay);
-                var validStoredStats = new ValidWikiPagesStatsForMonth(storedStats, daySpan);
-                return new ValidWikiPagesStatsForMonth(validStoredStats.Merge(stats), daySpan);
-            });
+    /// <summary>
+    /// Merge 'stats', which pertain to given month, with the stored stats
+    /// for that month, and store the result, replacing the previous
+    /// stored stats for given month with the merged stats.
+    ///
+    /// Assumptions & preconditions:
+    /// (1) the stored stats for given month can have stats for an earlier day
+    /// than the earliest day present in 'stats'.
+    /// (2) the stored stats for given month can not have stats for any day later
+    /// than the latest day present in 'stats'.
+    /// </summary>
+    private async Task MergeIntoStoredMonthStats(ValidWikiPagesStatsForMonth stats)
+        =>
+            await Storage.With<IEnumerable<WikiPageStats>>(
+                stats.Month,
+                storedStats =>
+                {
+                    // The daySpan starts at the beginning of the month instead of stats.DaySpan.StartDay,
+                    // to ensure that (1) holds.
+                    // The daySpan ends at stats.DaySpan.EndDay, to ensure (2) holds.
+                    var daySpan = new DaySpan(stats.Month.FirstDay, stats.DaySpan.EndDay);
+                    var validStoredStats = new ValidWikiPagesStatsForMonth(storedStats, daySpan);
+                    return new ValidWikiPagesStatsForMonth(validStoredStats.Merge(stats), daySpan);
+                });
 }
