@@ -44,7 +44,7 @@ public record DaySpan
 
     public int Count => (int) (EndDay - StartDay).TotalDays + 1;
 
-    public int MonthsCount => DateMonth.MonthSpan(StartDay, EndDay).Length;
+    public int MonthsCount => DateMonth.MonthSpan(this).Length;
 
     public bool IsWithinOneMonth => StartDay.AsDateMonth() == EndDay.AsDateMonth();
 
@@ -57,7 +57,7 @@ public record DaySpan
         }
     }
 
-    public DateMonth[] MonthsSpan => DateMonth.MonthSpan(StartDay, EndDay);
+    public DateMonth[] MonthsSpan => DateMonth.MonthSpan(this);
 
     public bool IsExactlyForEntireMonth(DateMonth month)
         => StartDay == month.FirstDay && EndDay == month.LastDay;

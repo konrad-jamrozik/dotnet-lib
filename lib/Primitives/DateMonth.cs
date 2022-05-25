@@ -18,14 +18,9 @@ public sealed record DateMonth(int Year, int Month, DateTimeKind Kind) :
 
     public static implicit operator DateTime(DateMonth dateDay) => dateDay._dateTime;
 
-    // kja-DaySpan dedup the Span startDay / endDay method.
     public static DateMonth[] MonthSpan(DaySpan daySpan)
-        => MonthSpan(daySpan.StartDay, daySpan.EndDay);
-
-    public static DateMonth[] MonthSpan(DateDay startDay, DateDay endDay)
     {
-        Contract.Assert(startDay.CompareTo(endDay) <= 0);
-        DateMonth iteratedMonth = startDay.AsDateMonth();
+        DateMonth iteratedMonth = daySpan.StartDay.AsDateMonth();
         var output = new List<DateMonth>();
         // kj2 to get rid of this 'while' I need something like "AggregateWhile"
         // on a lazy stream of (month, month.NextMonth, month.NextMonth.NextMonth)  
@@ -43,7 +38,7 @@ public sealed record DateMonth(int Year, int Month, DateTimeKind Kind) :
         //   predicate: month.CompareTo(endDay) <= 0
         //   func: (months, month) => months.Add(month)
         // );
-        while (iteratedMonth.CompareTo(endDay) <= 0)
+        while (iteratedMonth.CompareTo(daySpan.EndDay) <= 0)
         {
             output.Add(iteratedMonth);
             iteratedMonth = iteratedMonth.NextMonth;
