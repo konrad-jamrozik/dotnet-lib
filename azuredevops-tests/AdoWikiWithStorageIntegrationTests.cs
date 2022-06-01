@@ -142,7 +142,6 @@ public class AdoWikiWithStorageIntegrationTests
         var (_, pageId, utcNow, wiki, statsStorage) = ArrangeSut();
 
         var expectedLastDay  = new DateDay(utcNow);
-        // kja review and dedup all -pvfd+1 shenanigans
         var expectedFirstDay = pvfd.AsDaySpanUntil(expectedLastDay).StartDay;
 
         // kja Do integration test for wiki.PagesStats, in addition to wiki.PageStats

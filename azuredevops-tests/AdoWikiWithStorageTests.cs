@@ -47,9 +47,9 @@ public class AdoWikiWithStorageTests
 
     /// <summary>
     /// Given
-    /// - wiki page stats for current month coming from wiki via API
+    /// - wiki page stats for current month coming from ADO wiki API
     /// - and wiki page stats for previous month coming from storage,
-    ///   starting from the earliest available day in the AdoWiki.MaxPageViewsForDays window
+    ///   starting from the earliest valid day in the AdoWiki.MaxPageViewsForDays window
     /// When
     /// - querying AdoWikiWithStorage for page stats for the entire day span of PageViewsForDays.Max
     /// Then
@@ -59,36 +59,46 @@ public class AdoWikiWithStorageTests
     [Test]
     public async Task DataInWikiAndStorageWithinWikiPageViewsForDaysMax()
     {
-        var pvfd               = PageViewsForDays.Max;
-        var fix                = new ValidWikiPagesStatsFixture();
-        var currStats          = fix.PagesStatsForMonth(UtcNowDay);
-        var currStatsDaySpan   = currStats.ViewedDaysSpan;
-        var prevStats = fix.PagesStatsForMonth(UtcNowDay.AddDays(-pvfd + currStatsDaySpan));
-        var wikiWithStorage = await AdoWikiWithStorage(
-            UtcNowDay,
-            storedStats: prevStats,
-            wikiStats: currStats);
+        var pvfd             = PageViewsForDays.Max;
+        var pvfdDaySpan      = new PageViewsForDays(pvfd).AsDaySpanUntil(UtcNowDay);
+        var fix              = new ValidWikiPagesStatsFixture();
+        var currMonthStats   = fix.PagesStatsForMonth(UtcNowDay);
+        var currMonthStatsDaySpan = currMonthStats.ViewedDaysSpan;
 
         Assert.That(
-            currStatsDaySpan,
+            currMonthStatsDaySpan,
             Is.GreaterThanOrEqualTo(2),
             "Precondition violation: the arranged data has to have at least two days span " +
             "between first and last days with any views to provide meaningful test data");
+
+        // The prevMonthStatsShift is chosen in such a way that the input assumptions as captured
+        // by assertions below are obeyed. The exact acceptable values depend on
+        // currMonthStats content.
+        DateDay prevMonthStatsShift = UtcNowDay.AddDays(-26);
+        var prevMonthStats = fix.PagesStatsForMonth(prevMonthStatsShift)
+            .TrimFrom(pvfdDaySpan.StartDay)
+            .Trim(currMonthStats.Month.AddMonths(-1));
+        
         Assert.That(
-            prevStats.FirstDayWithAnyView,
-            Is.GreaterThanOrEqualTo(UtcNowDay.AddDays(-pvfd+1)),
-            "Precondition violation: the first day of arranged stats is so much in the past that " +
-            "a call to PageStats won't return it.");
+            prevMonthStats.FirstDayWithAnyView,
+            Is.EqualTo(pvfdDaySpan.StartDay),
+            "Precondition violation: the first day of arranged stats has to be exactly at the " +
+            "start day boundary of PageViewsForDays.Max.");
         Assert.That(
-            prevStats.Month,
-            Is.Not.EqualTo(currStats.Month),
+            prevMonthStats.Month,
+            Is.Not.EqualTo(currMonthStats.Month),
             "Precondition violation: previous month (stored) " +
             "is different from current month (from wiki)");
+
+        var wikiWithStorage = await AdoWikiWithStorage(
+            UtcNowDay,
+            storedStats: prevMonthStats,
+            wikiStats: currMonthStats);
 
         // Act 1/2
         var actualStats = await wikiWithStorage.PagesStats(pvfd);
 
-        new JsonDiffAssertion(prevStats.Merge(currStats, allowGaps: true), actualStats).Assert();
+        new JsonDiffAssertion(prevMonthStats.Merge(currMonthStats, allowGaps: true), actualStats).Assert();
 
         // Act 2/2
         // Same as Act 1/2, but instead of exercising PagesStats,
@@ -96,9 +106,9 @@ public class AdoWikiWithStorageTests
         actualStats = await wikiWithStorage.PageStats(pvfd, 1);
 
         new JsonDiffAssertion(
-                prevStats.WherePages(ps => ps.Id == 1)
+                prevMonthStats.WherePages(ps => ps.Id == 1)
                     .Merge(
-                        currStats.WherePages(ps => ps.Id == 1),
+                        currMonthStats.WherePages(ps => ps.Id == 1),
                         allowGaps: true), 
                 actualStats)
             .Assert();

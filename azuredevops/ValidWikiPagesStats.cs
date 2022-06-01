@@ -108,11 +108,13 @@ public record ValidWikiPagesStats : IEnumerable<WikiPageStats>
     public ValidWikiPagesStats Merge(ValidWikiPagesStats validCurrentStats, bool allowGaps = false)
         => Merge(this, validCurrentStats, allowGaps);
 
-    public ValidWikiPagesStats Trim(DateMonth month) => Trim(month.DaySpan);
+    public ValidWikiPagesStatsForMonth Trim(DateMonth month) => new ValidWikiPagesStatsForMonth(Trim(month.DaySpan));
 
     public ValidWikiPagesStats TrimUntil(DateMonth month) => Trim(DaySpan.StartDay, month.LastDay);
 
     public ValidWikiPagesStats TrimFrom(DateMonth month) => Trim(month.FirstDay, DaySpan.EndDay);
+
+    public ValidWikiPagesStats TrimFrom(DateDay day) => Trim(day, DaySpan.EndDay);
 
     public ValidWikiPagesStats Trim(DateTime currentDate, int daysFrom, int daysTo) => Trim(
         currentDate.AddDays(daysFrom),
