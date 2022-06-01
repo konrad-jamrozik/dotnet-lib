@@ -108,11 +108,11 @@ public class Tools
     {
         var stats1Path = storageDirPath + $"/wiki_stats_{stats1EndDay:yyyy_MM_dd}_30days.json";
         var stats1StartDay = stats1EndDay.AddDays(-29);
-        var stats1 = DeserializeStats(fs, (stats1Path, stats1StartDay, stats1EndDay));
+        var stats1 = DeserializeStats(fs, (stats1Path, new DaySpan(stats1StartDay, stats1EndDay)));
 
         var stats2Path = storageDirPath + $"/wiki_stats_{stats2EndDay:yyyy_MM_dd}_30days.json";
         var stats2StartDay = stats2EndDay.AddDays(-29);
-        var stats2 = DeserializeStats(fs, (stats2Path, stats2StartDay, stats2EndDay));
+        var stats2 = DeserializeStats(fs, (stats2Path, new DaySpan(stats2StartDay, stats2EndDay)));
 
         var mergedStats = ValidWikiPagesStats.Merge(new[] { stats1, stats2 });
 
@@ -124,10 +124,9 @@ public class Tools
 
     private static ValidWikiPagesStats DeserializeStats(
         IFileSystem fs,
-        (string statsPath, DateDay startDay, DateDay endDay) statsData) =>
+        (string statsPath, DaySpan daySpan) statsData) =>
         new(
             fs.ReadAllText(statsData.statsPath)
                 .FromJsonTo<WikiPageStats[]>(),
-            statsData.startDay,
-            statsData.endDay);
+            statsData.daySpan);
 }

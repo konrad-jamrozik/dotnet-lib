@@ -60,11 +60,12 @@ public class ValidWikiPagesStatsFixture
         DateDay? currentDay = null)
         => new ValidWikiPagesStats(
             stats: pageStats,
-            startDay: ValidWikiPagesStats.FirstDayWithAnyViewStatic(pageStats) 
-                      ?? Today,
-            endDay: ValidWikiPagesStats.LastDayWithAnyViewStatic(pageStats) 
-                    ?? currentDay 
-                    ?? Today);
+            new DaySpan(
+                startDay: ValidWikiPagesStats.FirstDayWithAnyViewStatic(pageStats)
+                          ?? Today,
+                endDay: ValidWikiPagesStats.LastDayWithAnyViewStatic(pageStats)
+                        ?? currentDay
+                        ?? Today));
 
     public static ValidWikiPagesStatsForMonth BuildForMonth(
         IEnumerable<WikiPageStats> pageStats)

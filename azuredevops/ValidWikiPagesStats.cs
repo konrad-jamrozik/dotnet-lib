@@ -32,14 +32,6 @@ public record ValidWikiPagesStats : IEnumerable<WikiPageStats>
 {
     public ValidWikiPagesStats(
         IEnumerable<WikiPageStats> stats,
-        DateDay startDay,
-        DateDay endDay) : this(stats, new DaySpan(startDay, endDay))
-    {
-        // kja-DaySpan get rid of this ctor by fixing callers to call the delegated-to ctor instead.
-    }
-
-    public ValidWikiPagesStats(
-        IEnumerable<WikiPageStats> stats,
         PageViewsForDays pvfd,
         DateDay endDay) : this(stats, pvfd.AsDaySpanUntil(endDay))
     {
@@ -110,24 +102,23 @@ public record ValidWikiPagesStats : IEnumerable<WikiPageStats>
 
     public ValidWikiPagesStatsForMonth Trim(DateMonth month) => new ValidWikiPagesStatsForMonth(Trim(month.DaySpan));
 
-    public ValidWikiPagesStats TrimUntil(DateMonth month) => Trim(DaySpan.StartDay, month.LastDay);
+    public ValidWikiPagesStats TrimUntil(DateMonth month) => Trim(new DaySpan(DaySpan.StartDay, month.LastDay));
 
-    public ValidWikiPagesStats TrimFrom(DateMonth month) => Trim(month.FirstDay, DaySpan.EndDay);
+    public ValidWikiPagesStats TrimFrom(DateMonth month) => Trim(new DaySpan(month.FirstDay, DaySpan.EndDay));
 
-    public ValidWikiPagesStats TrimFrom(DateDay day) => Trim(day, DaySpan.EndDay);
+    public ValidWikiPagesStats TrimFrom(DateDay day) => Trim(new DaySpan(day, DaySpan.EndDay));
 
     public ValidWikiPagesStats Trim(DateTime currentDate, int daysFrom, int daysTo) => Trim(
         currentDate.AddDays(daysFrom),
         currentDate.AddDays(daysTo));
 
     public ValidWikiPagesStats Trim(DateTime startDate, DateTime endDate)
-        => Trim(this, new DateDay(startDate), new DateDay(endDate));
-
-    public ValidWikiPagesStats Trim(DaySpan daySpan)
-        => Trim(this, daySpan.StartDay, daySpan.EndDay);
+        => Trim(new DateDay(startDate), new DateDay(endDate));
 
     public ValidWikiPagesStats Trim(DateDay startDay, DateDay endDay)
-        => Trim(this, startDay, endDay);
+        => Trim(new DaySpan(startDay, endDay));
+
+    public ValidWikiPagesStats Trim(DaySpan daySpan) => Trim(this, daySpan);
 
     private static void CheckInvariants(IEnumerable<WikiPageStats> pagesStats, DaySpan daySpan)
     {
@@ -313,10 +304,14 @@ public record ValidWikiPagesStats : IEnumerable<WikiPageStats>
         return mergedStats;
     }
 
-    private static ValidWikiPagesStats Trim(ValidWikiPagesStats stats, DateDay startDay, DateDay endDay) 
+    private static ValidWikiPagesStats Trim(ValidWikiPagesStats stats, DaySpan daySpan) 
         => new ValidWikiPagesStats(stats.Select(ps =>
-                ps with { DayStats = ps.DayStats.Where(s => s.Day >= startDay && s.Day <= endDay).ToArray() })
-            .ToArray(), startDay, endDay);
+                ps with
+                {
+                    DayStats = ps.DayStats.Where(
+                        s => s.Day >= daySpan.StartDay && s.Day <= daySpan.EndDay).ToArray()
+                })
+            .ToArray(), daySpan);
 
     public ValidWikiPagesStats Trim(PageViewsForDays pvfd)
         => Trim(pvfd.AsDaySpanUntil(DaySpan.EndDay));
