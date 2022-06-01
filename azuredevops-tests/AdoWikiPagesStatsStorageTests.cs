@@ -20,7 +20,7 @@ public class AdoWikiPagesStatsStorageTests
     /// 
     ///   [today - pageViewsForDays, today]
     /// 
-    /// e.g for pageViewsForDays = 3 it would be [today - 3, today].
+    /// e.g for pageViewsForDays = 3 this would be [today - 3, today].
     ///
     /// This is achieved by arranging in storage stats from day "today-pageViewsForDays"
     /// and then showing that when calling storage.PagesStats(pageViewsForDays)
@@ -30,23 +30,31 @@ public class AdoWikiPagesStatsStorageTests
     [Test]
     public async Task FirstDayOfViewsInStorageIsNotOffByOne()
     {
-        var pageViewsForDays = 3;
+        var pageViewsForDays = new PageViewsForDays(3);
+        var pageViewsForDaysSpan = pageViewsForDays.AsDaySpanUntil(UtcNowDay);
         var fixture          = new ValidWikiPagesStatsFixture();
         var stats            = fixture.PagesStatsForMonth(UtcNowDay);
-        var storedStats      = stats.Trim(UtcNowDay, -pageViewsForDays, 0);
-        var adoDecl          = new AdoWikiPagesStatsStorageDeclare();
-        var storage          = await adoDecl.AdoWikiPagesStatsStorage(UtcNowDay, storedStats);
 
         Assert.That(
             stats.FirstDayWithAnyView,
-            Is.LessThan(stats.LastDayWithAnyView?.AddDays(-pageViewsForDays+1)),
+            Is.EqualTo(pageViewsForDaysSpan.StartDay.AddDays(-1)),
             "Precondition violation: the off by one error won't be detected by this test as " +
             "there are no views in the \"one before expected first\" day in the arranged data.");
+
+        var expectedStats = stats.Trim(pageViewsForDaysSpan);
+
+        Assert.That(
+            expectedStats.FirstDayWithAnyView,
+            Is.EqualTo(pageViewsForDaysSpan.StartDay),
+            "Precondition violation: the expected stats should start exactly at the beginning" +
+            "PageViewsForDays day span, otherwise the test won't catch the off by one error.");
+
+        var adoDecl = new AdoWikiPagesStatsStorageDeclare();
+        var storage = await adoDecl.AdoWikiPagesStatsStorage(UtcNowDay, stats);
 
         // Act
         var actualStats = storage.PagesStats(pageViewsForDays);
 
-        var expectedStats = storedStats.Trim(UtcNowDay, -pageViewsForDays+1, 0);
         new JsonDiffAssertion(expectedStats, actualStats).Assert();
     }
 }
