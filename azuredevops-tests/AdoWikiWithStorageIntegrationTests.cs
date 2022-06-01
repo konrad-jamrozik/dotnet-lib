@@ -17,27 +17,27 @@ public class AdoWikiWithStorageIntegrationTests
     /// <summary>
     /// This test tests the following:
     /// - ADO API for Wiki can be successfully queried for single page data
-    /// - Querying wiki for 1 day results in it giving data for today only.
+    /// - Querying wiki for 5 days results in it giving data for today
+    /// and four days in the past.
     ///   - The today cutoff is UTC. So if today UTC time is 2 AM,
-    ///   it will include only 2 hours.
+    ///     the stats for today will include only 2 hours.
     /// - The obtained data can be successfully stored and retrieved.
     /// </summary>
     [Test]
-    public async Task ObtainsAndStoresDataFromAdoWikiForToday() =>
-        await VerifyDaySpanOfWikiStats(pvfd: 1);
+    public async Task ObtainsAndStoresDataFromAdoWikiFor5DaysBySinglePage() =>
+        await VerifyDaySpanOfWikiStats(
+            pvfd: 5,
+            statsFromAdoApi: WikiPageStatsForSinglePage);
 
-    /// <summary>
-    /// Like
-    /// Wikitools.AzureDevOps.Tests.AdoWikiWithStorageIntegrationTests.ObtainsAndStoresDataFromAdoWikiForToday
-    /// but goes four more days into the past.
-    /// </summary>
     [Test]
-    public async Task ObtainsAndStoresDataFromAdoWikiFor5Days() =>
-        await VerifyDaySpanOfWikiStats(pvfd: 5);
+    public async Task ObtainsAndStoresDataFromAdoWikiFor5DaysByMultiplePages() =>
+        await VerifyDaySpanOfWikiStats(
+            pvfd: 5,
+            statsFromAdoApi: WikiPageStatsForAllPages);
 
     /// <summary>
     /// This test tests the following:
-    /// - ADO API for Wiki can be successfully queried for single and also all pages data
+    /// - ADO API for Wiki can be successfully queried for single page stats
     /// - The obtained data can be successfully stored
     /// - The stored data is then properly merged into wiki data from ADO API,
     ///   when "wiki with storage" is used to retrieve ADO wiki data both from
@@ -53,12 +53,11 @@ public class AdoWikiWithStorageIntegrationTests
         // ReSharper disable CommentTypo
         // Act 1. Obtain 10 days of page stats from wiki (days 1 to 10)
         // WWWWWWWWWW
-        var statsForDays1To10         = await wiki.PagesStats(pvfd: 10);
+        var statsForDays1To10         = await wiki.PageStats(pvfd: 10, pageId);
 
         // Act 2. Obtain 4 days of page stats from wiki (days 7 to 10)
         // ------WWWW
-        var statsForDays7To10         = await wiki.PagesStats(pvfd: 4);
-        var statsForDays7To10For1Page = await wiki.PageStats(pvfd: 4, pageId);
+        var statsForDays7To10 = await wiki.PageStats(pvfd: 4, pageId);
 
         // Act 3. Save to storage page stats for days 3 to 6
         // WWWWWWWWWW
@@ -67,7 +66,8 @@ public class AdoWikiWithStorageIntegrationTests
         var statsForDays3To6 = statsForDays1To10.Trim(utcNow, -7, -4);
         var storageWithStats = await storage.ReplaceWith(statsForDays3To6);
 
-        // Act 4. Obtain last 8 days (days 3 to 10), with last 4 days (days 7 to 10) of page stats from wiki
+        // Act 4. Obtain last 8 days (days 3 to 10) of stats,
+        // while assuming that wiki can provide stats at most from last 4 days (days 7 to 10)
         // --SSSS----
         // ->
         // --SSSSWWWW
@@ -75,29 +75,21 @@ public class AdoWikiWithStorageIntegrationTests
             wiki,
             storageWithStats,
             pageViewsForDaysMax: 4);
-        var statsForDays3To10 = await wikiWithStorage.PagesStats(pvfd: 8);
-        var statsForDays3To10For1Page = await wikiWithStorage.PageStats(pvfd: 8, pageId);
+        var statsForDays3To10 = await wikiWithStorage.PageStats(pvfd: 8, pageId);
 
         // Assert 4.1. Assert data from Act 4 corresponds to page stats days of 3 to 10
         // (data from storage for days 3 to 6 merged with data from ADO API for days 7 to 10)
-        // --SSSSWWWW (Act 4)
-        // ==
-        // --SSSS---- (Act 3)
-        // merged
-        // ------WWWW (Act 2)
+        // actual:
+        // --SSSSWWWW // Act 4, actual
+        var actual = statsForDays3To10;
+        // == // equals to
+        // expected:
+        // --SSSS---- // Act 3
+        // merged with
+        // ------WWWW // Act 2
+        var expected = statsForDays3To6.Merge(statsForDays7To10);
         // ReSharper restore CommentTypo
-        var data = new[]
-        {
-            (
-                expected: statsForDays3To10For1Page.Merge(statsForDays7To10For1Page),
-                actual: statsForDays3To10For1Page
-            ),
-            (
-                expected: statsForDays3To6.Merge(statsForDays7To10),
-                actual: statsForDays3To10
-            )
-        };
-        data.ForEach(test => new JsonDiffAssertion(test.expected, test.actual).Assert());
+        new JsonDiffAssertion(expected, actual).Assert();
     }
 
     /// <summary>
@@ -114,7 +106,7 @@ public class AdoWikiWithStorageIntegrationTests
         DateTime utcNow,
         IAdoWiki wiki,
         AdoWikiPagesStatsStorage storage)
-        ArrangeSut() // kj2 ArrangeSut / refactor. This method has too long return type.
+        ArrangeSut() // kja ArrangeSut / refactor. This method has too long return type.
     {
         var timeline    = new Timeline();
         var utcNow      = timeline.UtcNow;
@@ -137,26 +129,34 @@ public class AdoWikiWithStorageIntegrationTests
         return (wikiDecl, adoTestsCfg.TestAdoWikiPageId(), utcNow, wiki, storage);
     }
 
-    private async Task VerifyDaySpanOfWikiStats(PageViewsForDays pvfd)
+    private Task<ValidWikiPagesStats> WikiPageStatsForSinglePage(
+        IAdoWiki wiki,
+        PageViewsForDays pvfd,
+        int pageId)
+        => wiki.PageStats(pvfd, pageId);
+
+    private async Task<ValidWikiPagesStats> WikiPageStatsForAllPages(
+        IAdoWiki wiki,
+        PageViewsForDays pvfd,
+        int pageId)
+        => (await wiki.PagesStats(pvfd)).WhereStats(stats => stats.Id == pageId);
+
+    private async Task VerifyDaySpanOfWikiStats(
+        PageViewsForDays pvfd,
+        Func<IAdoWiki, PageViewsForDays, int, Task<ValidWikiPagesStats>> statsFromAdoApi)
     {
         var (_, pageId, utcNow, wiki, statsStorage) = ArrangeSut();
 
         var expectedLastDay  = new DateDay(utcNow);
         var expectedFirstDay = pvfd.AsDaySpanUntil(expectedLastDay).StartDay;
 
-        // kja Do integration test for wiki.PagesStats, in addition to wiki.PageStats
-        // Currently wiki.PagesStats and wiki.PageStats seems to have
-        // redundant logic for wiki=AdoWikiWithStorage,
-        // which could be deduped.
-        // But for that these int tests need to be improved,
-        // including:
-        // - simplifying logic of this test
-        // - refactoring the ArrangeSut() stuff.
+        // Act: obtain the data from the ADO API for wiki
+        var stats = await statsFromAdoApi(wiki, pvfd, pageId);
 
-        // Act
-        var stats = await wiki.PageStats(pvfd, pageId);
-
+        // Act: store the data
         statsStorage = await statsStorage.ReplaceWith(stats);
+
+        // Act: read the stored data
         var storedStats = statsStorage.PagesStats(pvfd);
 
         var actualFirstDay = stats.FirstDayWithAnyView;

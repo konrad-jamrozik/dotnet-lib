@@ -106,9 +106,9 @@ public class AdoWikiWithStorageTests
         actualStats = await wikiWithStorage.PageStats(pvfd, 1);
 
         new JsonDiffAssertion(
-                prevMonthStats.WherePages(ps => ps.Id == 1)
+                prevMonthStats.WhereStats(ps => ps.Id == 1)
                     .Merge(
-                        currMonthStats.WherePages(ps => ps.Id == 1),
+                        currMonthStats.WhereStats(ps => ps.Id == 1),
                         allowGaps: true), 
                 actualStats)
             .Assert();

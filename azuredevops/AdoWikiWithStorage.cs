@@ -26,7 +26,7 @@ public record AdoWikiWithStorage(
 
         var pvfdForApi = pvfd.MinWith(PageViewsForDaysMax ?? DefaultPageViewsForDaysMax);
         var updatedStorage = Storage.Update(AdoWiki, pvfdForApi, pageId);
-        var pagesViewsStats = updatedStorage.Select(s => s.PagesStats(pvfd).WherePages(pageFilter));
+        var pagesViewsStats = updatedStorage.Select(s => s.PagesStats(pvfd).WhereStats(pageFilter));
         return pagesViewsStats;
     }
 }

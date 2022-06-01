@@ -91,7 +91,7 @@ public record ValidWikiPagesStats : IEnumerable<WikiPageStats>
 
     public IEnumerable<ValidWikiPagesStatsForMonth> SplitByMonth() => SplitByMonth(this);
 
-    public ValidWikiPagesStats WherePages(Func<WikiPageStats, bool> predicate)
+    public ValidWikiPagesStats WhereStats(Func<WikiPageStats, bool> predicate)
         => new ValidWikiPagesStats(Data.Where(predicate), DaySpan);
 
     public (ValidWikiPagesStatsForMonth? previousMonthStats, ValidWikiPagesStatsForMonth currentMonthStats)
