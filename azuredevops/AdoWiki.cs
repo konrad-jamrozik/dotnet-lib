@@ -82,6 +82,4 @@ public record AdoWiki(IWikiHttpClient Client, DateDay Today) : IAdoWiki
         PageViewsForDays pvfd,
         int pageId) 
         => (await wikiClient.GetPageDataAsync(pageId, pvfd)).WrapInList();
-
-
 }
