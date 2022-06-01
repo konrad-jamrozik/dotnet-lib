@@ -143,8 +143,7 @@ public class AdoWikiWithStorageIntegrationTests
 
         var expectedLastDay  = new DateDay(utcNow);
         // kja review and dedup all -pvfd.Value+1 and -pageViewsForDays+1 and -pvfd+1 shenanigans
-        // Probably replace with Wikitools.AzureDevOps.PageViewsForDays.AsDaySpanUntil
-        var expectedFirstDay = expectedLastDay.AddDays(-pvfd.Value+1); 
+        var expectedFirstDay = pvfd.AsDaySpanUntil(expectedLastDay).StartDay;
 
         // kja Do integration test for wiki.PagesStats, in addition to wiki.PageStats
         // Currently wiki.PagesStats and wiki.PageStats seems to have
