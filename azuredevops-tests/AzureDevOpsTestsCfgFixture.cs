@@ -6,7 +6,7 @@ namespace Wikitools.AzureDevOps.Tests;
 
 internal static class AzureDevOpsTestsCfgFixture
 {
-    public static IAzureDevOpsTestsCfg Cfg
+    public static IAzureDevOpsTestsCfg New
     {
         get
         {
