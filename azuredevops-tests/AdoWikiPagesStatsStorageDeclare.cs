@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using Wikitools.AzureDevOps.Config;
 using Wikitools.Lib.OS;
 using Wikitools.Lib.Primitives;
 
@@ -6,6 +7,17 @@ namespace Wikitools.AzureDevOps.Tests;
 
 public class AdoWikiPagesStatsStorageDeclare
 {
+    public static AdoWikiPagesStatsStorage New(
+        IAzureDevOpsTestsCfg adoTestsCfg,
+        DateDay currentDay)
+    {
+        var storageDecl = new AzureDevOps.AdoWikiPagesStatsStorageDeclare();
+        var storage = storageDecl.AdoWikiPagesStatsStorage(
+            adoTestsCfg.TestStorageDir(),
+            currentDay);
+        return storage;
+    }
+
     public Task<AdoWikiPagesStatsStorage> AdoWikiPagesStatsStorage(
         DateDay utcNow,
         ValidWikiPagesStatsForMonth? storedStats = null)

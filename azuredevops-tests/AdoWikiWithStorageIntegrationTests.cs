@@ -49,7 +49,7 @@ public class AdoWikiWithStorageIntegrationTests
     {
         var currentDay  = TimelineFixture.CurrentDay;
         var adoTestsCfg = AzureDevOpsTestsCfgFixture.Cfg;
-        var storage     = AdoWikiPagesStatsStorage(adoTestsCfg, currentDay);
+        var storage     = AdoWikiPagesStatsStorageDeclare.New(adoTestsCfg, currentDay);
         var wiki        = AdoWiki(adoTestsCfg, currentDay);
         var pageId      = adoTestsCfg.TestAdoWikiPageId();
 
@@ -107,17 +107,6 @@ public class AdoWikiWithStorageIntegrationTests
         return wiki;
     }
 
-    private static AdoWikiPagesStatsStorage AdoWikiPagesStatsStorage(
-        IAzureDevOpsTestsCfg adoTestsCfg,
-        DateDay currentDay)
-    {
-        var storageDecl = new AzureDevOps.AdoWikiPagesStatsStorageDeclare();
-        var storage = storageDecl.AdoWikiPagesStatsStorage(
-            adoTestsCfg.TestStorageDir(),
-            currentDay);
-        return storage;
-    }
-
     private Task<ValidWikiPagesStats> WikiPageStatsForSinglePage(
         IAdoWiki wiki,
         PageViewsForDays pvfd,
@@ -136,7 +125,7 @@ public class AdoWikiWithStorageIntegrationTests
     {
         var currentDay  = TimelineFixture.CurrentDay;
         var adoTestsCfg = AzureDevOpsTestsCfgFixture.Cfg;
-        var storage     = AdoWikiPagesStatsStorage(adoTestsCfg, currentDay);
+        var storage     = AdoWikiPagesStatsStorageDeclare.New(adoTestsCfg, currentDay);
         var wiki        = AdoWiki(adoTestsCfg, currentDay);
         var pageId      = adoTestsCfg.TestAdoWikiPageId();
 
