@@ -28,4 +28,8 @@
     <ProjectReference Include="..\lib\lib.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Primitives\" />
+  </ItemGroup>
+
 </Project>

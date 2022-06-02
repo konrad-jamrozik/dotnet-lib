@@ -1,11 +1,8 @@
 using System;
 using System.Threading.Tasks;
 using NUnit.Framework;
-using Wikitools.AzureDevOps.Config;
 using Wikitools.Lib.Primitives;
 using Wikitools.Lib.Tests.Json;
-using Wikitools.Lib.Tests.Primitives;
-using Environment = Wikitools.Lib.OS.Environment;
 
 namespace Wikitools.AzureDevOps.Tests;
 
@@ -47,10 +44,10 @@ public class AdoWikiWithStorageIntegrationTests
     [Test]
     public async Task ObtainsAndMergesDataFromAdoWikiApiAndStorage()
     {
-        var currentDay  = TimelineFixture.CurrentDay;
+        var today       = new Timeline().Today;
         var adoTestsCfg = AzureDevOpsTestsCfgFixture.LoadCfg;
-        var storage     = AdoWikiPagesStatsStorageDeclare.New(adoTestsCfg, currentDay);
-        var wiki        = AdoWiki(adoTestsCfg, currentDay);
+        var storage     = AdoWikiPagesStatsStorageDeclare.New(adoTestsCfg, today);
+        var wiki        = AdoWikiDeclare.New(adoTestsCfg, today);
         var pageId      = adoTestsCfg.TestAdoWikiPageId();
 
         // ReSharper disable CommentTypo
@@ -95,18 +92,6 @@ public class AdoWikiWithStorageIntegrationTests
         new JsonDiffAssertion(expected, actual).Assert();
     }
 
-    private static IAdoWiki AdoWiki(IAzureDevOpsTestsCfg adoTestsCfg, DateDay currentDay)
-    {
-        var env = new Environment();
-        IAdoWiki wiki = new AdoWiki(
-            adoTestsCfg.AzureDevOpsCfg().AdoWikiUri(),
-            adoTestsCfg.AzureDevOpsCfg().AdoPatEnvVar(),
-            env,
-            currentDay);
-        wiki = new AdoWikiWithPreconditionChecks(wiki);
-        return wiki;
-    }
-
     private Task<ValidWikiPagesStats> WikiPageStatsForSinglePage(
         IAdoWiki wiki,
         PageViewsForDays pvfd,
@@ -123,10 +108,10 @@ public class AdoWikiWithStorageIntegrationTests
         PageViewsForDays pvfd,
         Func<IAdoWiki, PageViewsForDays, int, Task<ValidWikiPagesStats>> statsFromAdoApi)
     {
-        var currentDay  = TimelineFixture.CurrentDay;
+        var today       = new Timeline().Today;
         var adoTestsCfg = AzureDevOpsTestsCfgFixture.LoadCfg;
-        var storage     = AdoWikiPagesStatsStorageDeclare.New(adoTestsCfg, currentDay);
-        var wiki        = AdoWiki(adoTestsCfg, currentDay);
+        var storage     = AdoWikiPagesStatsStorageDeclare.New(adoTestsCfg, today);
+        var wiki        = AdoWikiDeclare.New(adoTestsCfg, today);
         var pageId      = adoTestsCfg.TestAdoWikiPageId();
 
         var lastDay = wiki.Today();
