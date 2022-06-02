@@ -48,12 +48,13 @@ public class AdoWikiWithStorageIntegrationTests
     [Test]
     public async Task ObtainsAndMergesDataFromAdoWikiApiAndStorage()
     {
-        var (wikiDecl, pageId, utcNow, wiki, storage) = ArrangeSut();
+        var wikiDecl = new AdoWikiWithStorageDeclare();
+        var (pageId, utcNow, wiki, storage) = ArrangeSut();
 
         // ReSharper disable CommentTypo
         // Act 1. Obtain 10 days of page stats from wiki (days 1 to 10)
         // WWWWWWWWWW
-        var statsForDays1To10         = await wiki.PageStats(pvfd: 10, pageId);
+        var statsForDays1To10 = await wiki.PageStats(pvfd: 10, pageId);
 
         // Act 2. Obtain 4 days of page stats from wiki (days 7 to 10)
         // ------WWWW
@@ -100,12 +101,7 @@ public class AdoWikiWithStorageIntegrationTests
     ///   there has to be recent ongoing, daily activity.
     /// - For other assumptions, see comments on WikitoolsConfig members.
     /// </summary>
-    private static (
-        AdoWikiWithStorageDeclare wikiDecl,
-        int pageId,
-        DateTime utcNow,
-        IAdoWiki wiki,
-        AdoWikiPagesStatsStorage storage)
+    private static (int pageId, DateTime utcNow, IAdoWiki wiki, AdoWikiPagesStatsStorage storage)
         ArrangeSut() // kja ArrangeSut / refactor. This method has too long return type.
     {
         var timeline    = new Timeline();
@@ -126,7 +122,7 @@ public class AdoWikiWithStorageIntegrationTests
             new DateDay(utcNow));
         wiki = new AdoWikiWithPreconditionChecks(wiki);
 
-        return (wikiDecl, adoTestsCfg.TestAdoWikiPageId(), utcNow, wiki, storage);
+        return (adoTestsCfg.TestAdoWikiPageId(), utcNow, wiki, storage);
     }
 
     private Task<ValidWikiPagesStats> WikiPageStatsForSinglePage(
@@ -145,7 +141,7 @@ public class AdoWikiWithStorageIntegrationTests
         PageViewsForDays pvfd,
         Func<IAdoWiki, PageViewsForDays, int, Task<ValidWikiPagesStats>> statsFromAdoApi)
     {
-        var (_, pageId, utcNow, wiki, statsStorage) = ArrangeSut();
+        var (pageId, utcNow, wiki, statsStorage) = ArrangeSut();
 
         var expectedLastDay  = new DateDay(utcNow);
         var expectedFirstDay = pvfd.AsDaySpanUntil(expectedLastDay).StartDay;
