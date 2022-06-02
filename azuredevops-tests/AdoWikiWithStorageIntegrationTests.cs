@@ -24,13 +24,13 @@ public class AdoWikiWithStorageIntegrationTests
     /// - The obtained data can be successfully stored and retrieved.
     /// </summary>
     [Test]
-    public async Task ObtainsAndStoresDataFromAdoWikiFor5DaysBySinglePage() =>
+    public async Task ObtainsAndStoresDataFromAdoWikiFor5DaysFromSinglePageApi() =>
         await VerifyDaySpanOfWikiStats(
             pvfd: 5,
             statsFromAdoApi: WikiPageStatsForSinglePage);
 
     [Test]
-    public async Task ObtainsAndStoresDataFromAdoWikiFor5DaysByMultiplePages() =>
+    public async Task ObtainsAndStoresDataFromAdoWikiFor5DaysFromManyPagesApi() =>
         await VerifyDaySpanOfWikiStats(
             pvfd: 5,
             statsFromAdoApi: WikiPageStatsForAllPages);
