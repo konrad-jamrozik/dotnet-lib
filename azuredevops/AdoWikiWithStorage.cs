@@ -21,14 +21,14 @@ public record AdoWikiWithStorage(
 
     private Task<ValidWikiPagesStats> PagesStats(PageViewsForDays pvfd, int? pageId)
     {
-        Func<WikiPageStats, bool> pageFilter =
+        Func<WikiPageStats, bool> statsFilter =
             pageId != null 
                 ? page => page.Id == pageId 
                 : _ => true;
 
         var pvfdForApi = pvfd.MinWith(PageViewsForDaysMax ?? DefaultPageViewsForDaysMax);
         var updatedStorage = Storage.Update(AdoWiki, pvfdForApi, pageId);
-        var pagesViewsStats = updatedStorage.Select(s => s.PagesStats(pvfd).WhereStats(pageFilter));
+        var pagesViewsStats = updatedStorage.Select(s => s.PagesStats(pvfd).WhereStats(statsFilter));
         return pagesViewsStats;
     }
 }
