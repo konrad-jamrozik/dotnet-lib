@@ -18,18 +18,24 @@ public record Configuration(IFileSystem FS)
     // \<repo-dir>\<project-dir>\bin\<configuration>\<net-version>
     private const string RelativeRepoPath = @"..\..\..\..\..";
 
-    private string DllToLoadPath(string configProjectName) =>
-        $@"{ConfigRepoCloneDirPath}\{configProjectName}\bin\Debug\"
-        + $@"{NetFrameworkVersion}\{configProjectName}.dll";
+    private string DllToLoadPath(string configProjectName) 
+        => $@"{ConfigRepoCloneDirPath}\{configProjectName}\bin\Debug\"
+           + $@"{NetFrameworkVersion}\{configProjectName}.dll";
 
-    private const string LoadedClassNamespace = "Wikitools.Configs";
+    private const string LoadedTypeNamespace = "Wikitools.Configs";
 
     /// <summary>
     /// Loads implementation of a configuration interface TCfg from a C# assembly.
     ///
     /// Given TCfg interface named IFoo, this method will load class named Foo
-    /// from a .dll file, call the class no-param ctor, and return it.
-    /// Inspect the method implementation for details.
+    /// from a .dll file, call the class' no-param ctor, and return it.
+    ///
+    /// By default, the .dll file is expected to have a path of:
+    ///
+    ///   ./dotnet-lib-private/wikitools-configs/bin/Debug/net6.0/wikitools-configs.dll
+    /// 
+    /// where "." is a parent directory of local repo clone root dir, containing within its
+    /// descendants .dll with this file.
     /// </summary>
     /// <remarks>
     /// Implementation inspired by
@@ -37,15 +43,28 @@ public record Configuration(IFileSystem FS)
     /// </remarks>
     public TCfg Load<TCfg>(
         string configProjectName = ConfigProjectName,
-        string loadedClassNamespace = LoadedClassNamespace) where TCfg : IConfiguration
+        string loadedTypeNamespace = LoadedTypeNamespace) where TCfg : IConfiguration
+    {
+        var assemblyWithTypeToLoad = AssemblyWithTypeToLoad(configProjectName);
+        var nameOfTypeToLoad = LoadedTypeName<TCfg>(loadedTypeNamespace);
+        Type type = assemblyWithTypeToLoad.GetType(nameOfTypeToLoad)!;
+        TCfg cfg = (TCfg)Activator.CreateInstance(type)!;
+        return cfg;
+    }
+
+    private Assembly AssemblyWithTypeToLoad(string configProjectName)
     {
         var currentDirectory = FS.CurrentDir.Path;
         var dllPath = Path.Join(currentDirectory, RelativeRepoPath, DllToLoadPath(configProjectName));
-        Assembly assembly = Assembly.LoadFrom(dllPath);
+        Assembly assemblyWithTypeToLoad = Assembly.LoadFrom(dllPath);
+        return assemblyWithTypeToLoad;
+    }
+
+    private static string LoadedTypeName<TCfg>(string loadedTypeNamespace) where TCfg : IConfiguration
+    {
         var interfaceName = typeof(TCfg).Name;
-        var typeClassName = string.Concat(interfaceName.Skip(1));
-        Type type = assembly.GetType($"{loadedClassNamespace}.{typeClassName}")!;
-        TCfg cfg = (TCfg)Activator.CreateInstance(type)!;
-        return cfg;
+        var typeClassName = string.Concat(interfaceName.Skip(1)); // Remove the "I" from "IFoo".
+        var loadedTypeName = $"{loadedTypeNamespace}.{typeClassName}";
+        return loadedTypeName;
     }
 }
