@@ -2,8 +2,6 @@ using System;
 using System.Threading.Tasks;
 using NUnit.Framework;
 using Wikitools.AzureDevOps.Config;
-using Wikitools.Lib.Json;
-using Wikitools.Lib.OS;
 using Wikitools.Lib.Primitives;
 using Wikitools.Lib.Tests.Json;
 using Environment = Wikitools.Lib.OS.Environment;
@@ -49,7 +47,7 @@ public class AdoWikiWithStorageIntegrationTests
     public async Task ObtainsAndMergesDataFromAdoWikiApiAndStorage()
     {
         var currentDay  = CurrentDay;
-        var adoTestsCfg = AzureDevOpsTestsCfg;
+        var adoTestsCfg = AzureDevOpsTestsCfgFixture.Cfg;
         var storage     = AdoWikiPagesStatsStorage(adoTestsCfg, currentDay);
         var wiki        = AdoWiki(adoTestsCfg, currentDay);
         var pageId      = adoTestsCfg.TestAdoWikiPageId();
@@ -129,17 +127,6 @@ public class AdoWikiWithStorageIntegrationTests
         }
     }
 
-    private static IAzureDevOpsTestsCfg AzureDevOpsTestsCfg
-    {
-        get
-        {
-            var fs = new FileSystem();
-            var cfg = new Configuration(fs);
-            var adoTestsCfg = cfg.Load<IAzureDevOpsTestsCfg>();
-            return adoTestsCfg;
-        }
-    }
-
     private Task<ValidWikiPagesStats> WikiPageStatsForSinglePage(
         IAdoWiki wiki,
         PageViewsForDays pvfd,
@@ -157,7 +144,7 @@ public class AdoWikiWithStorageIntegrationTests
         Func<IAdoWiki, PageViewsForDays, int, Task<ValidWikiPagesStats>> statsFromAdoApi)
     {
         var currentDay  = CurrentDay;
-        var adoTestsCfg = AzureDevOpsTestsCfg;
+        var adoTestsCfg = AzureDevOpsTestsCfgFixture.Cfg;
         var storage     = AdoWikiPagesStatsStorage(adoTestsCfg, currentDay);
         var wiki        = AdoWiki(adoTestsCfg, currentDay);
         var pageId      = adoTestsCfg.TestAdoWikiPageId();
