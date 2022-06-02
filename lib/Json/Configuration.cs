@@ -6,7 +6,7 @@ using Wikitools.Lib.OS;
 
 namespace Wikitools.Lib.Json;
 
-public record Configuration(IFileSystem FS)
+public record Configuration(IFileSystem FileSystem)
 {
     private const string ConfigRepoCloneDirPath = "dotnet-lib-private";
 
@@ -48,13 +48,13 @@ public record Configuration(IFileSystem FS)
         var assemblyWithTypeToLoad = AssemblyWithTypeToLoad(configProjectName);
         var nameOfTypeToLoad = LoadedTypeName<TCfg>(loadedTypeNamespace);
         Type type = assemblyWithTypeToLoad.GetType(nameOfTypeToLoad)!;
-        TCfg cfg = (TCfg)Activator.CreateInstance(type)!;
+        TCfg cfg = (TCfg)Activator.CreateInstance(type, FileSystem)!;
         return cfg;
     }
 
     private Assembly AssemblyWithTypeToLoad(string configProjectName)
     {
-        var currentDirectory = FS.CurrentDir.Path;
+        var currentDirectory = FileSystem.CurrentDir.Path;
         var dllPath = Path.Join(currentDirectory, RelativeRepoPath, DllToLoadPath(configProjectName));
         Assembly assemblyWithTypeToLoad = Assembly.LoadFrom(dllPath);
         return assemblyWithTypeToLoad;
