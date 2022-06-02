@@ -48,8 +48,11 @@ public class AdoWikiWithStorageIntegrationTests
     [Test]
     public async Task ObtainsAndMergesDataFromAdoWikiApiAndStorage()
     {
-        var wikiDecl = new AdoWikiWithStorageDeclare();
-        var (pageId, wiki, storage) = ArrangeSut();
+        var currentDay  = CurrentDay;
+        var adoTestsCfg = AzureDevOpsTestsCfg;
+        var storage     = AdoWikiPagesStatsStorage(adoTestsCfg, currentDay);
+        var wiki        = AdoWiki(adoTestsCfg, currentDay);
+        var pageId      = adoTestsCfg.TestAdoWikiPageId();
 
         // ReSharper disable CommentTypo
         // Act 1. Obtain 10 days of page stats from wiki (days 1 to 10)
@@ -72,7 +75,7 @@ public class AdoWikiWithStorageIntegrationTests
         // --SSSS----
         // ->
         // --SSSSWWWW
-        var wikiWithStorage = wikiDecl.AdoWikiWithStorage(
+        var wikiWithStorage = new AdoWikiWithStorageDeclare().AdoWikiWithStorage(
             wiki,
             storageWithStats,
             pageViewsForDaysMax: 4);
@@ -91,25 +94,6 @@ public class AdoWikiWithStorageIntegrationTests
         var expected = statsForDays3To6.Merge(statsForDays7To10);
         // ReSharper restore CommentTypo
         new JsonDiffAssertion(expected, actual).Assert();
-    }
-
-    /// <summary>
-    /// Arranges integration tests system under tests and relevant dependencies.
-    ///
-    /// Notes on the external dependencies used:
-    /// - For the wiki to provide meaningful behavior to exercise,
-    ///   there has to be recent ongoing, daily activity.
-    /// - For other assumptions, see comments on WikitoolsConfig members.
-    /// </summary>
-    private static (int pageId, IAdoWiki wiki, AdoWikiPagesStatsStorage storage)
-        ArrangeSut() // kja ArrangeSut / refactor. This method has too long return type.
-    {
-        var currentDay  = CurrentDay;
-        var adoTestsCfg = AzureDevOpsTestsCfg;
-        var storage     = AdoWikiPagesStatsStorage(adoTestsCfg, currentDay);
-        var wiki        = AdoWiki(adoTestsCfg, currentDay);
-
-        return (adoTestsCfg.TestAdoWikiPageId(), wiki, storage);
     }
 
     private static IAdoWiki AdoWiki(IAzureDevOpsTestsCfg adoTestsCfg, DateDay currentDay)
@@ -172,7 +156,11 @@ public class AdoWikiWithStorageIntegrationTests
         PageViewsForDays pvfd,
         Func<IAdoWiki, PageViewsForDays, int, Task<ValidWikiPagesStats>> statsFromAdoApi)
     {
-        var (pageId, wiki, statsStorage) = ArrangeSut();
+        var currentDay  = CurrentDay;
+        var adoTestsCfg = AzureDevOpsTestsCfg;
+        var storage     = AdoWikiPagesStatsStorage(adoTestsCfg, currentDay);
+        var wiki        = AdoWiki(adoTestsCfg, currentDay);
+        var pageId      = adoTestsCfg.TestAdoWikiPageId();
 
         var lastDay = wiki.Today();
         var expectedLastDaySpan = new DaySpan(lastDay.AddDays(-1), lastDay);
@@ -182,10 +170,10 @@ public class AdoWikiWithStorageIntegrationTests
         var stats = await statsFromAdoApi(wiki, pvfd, pageId);
 
         // Act: store the data
-        statsStorage = await statsStorage.ReplaceWith(stats);
+        storage = await storage.ReplaceWith(stats);
 
         // Act: read the stored data
-        var storedStats = statsStorage.PagesStats(pvfd);
+        var storedStats = storage.PagesStats(pvfd);
 
         var actualFirstDay = stats.FirstDayWithAnyView;
         var storedFirstDay = storedStats.FirstDayWithAnyView;
