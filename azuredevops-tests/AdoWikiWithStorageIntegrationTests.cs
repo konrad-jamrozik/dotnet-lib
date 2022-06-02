@@ -48,7 +48,7 @@ public class AdoWikiWithStorageIntegrationTests
     public async Task ObtainsAndMergesDataFromAdoWikiApiAndStorage()
     {
         var currentDay  = TimelineFixture.CurrentDay;
-        var adoTestsCfg = AzureDevOpsTestsCfgFixture.New;
+        var adoTestsCfg = AzureDevOpsTestsCfgFixture.LoadCfg;
         var storage     = AdoWikiPagesStatsStorageDeclare.New(adoTestsCfg, currentDay);
         var wiki        = AdoWiki(adoTestsCfg, currentDay);
         var pageId      = adoTestsCfg.TestAdoWikiPageId();
@@ -124,7 +124,7 @@ public class AdoWikiWithStorageIntegrationTests
         Func<IAdoWiki, PageViewsForDays, int, Task<ValidWikiPagesStats>> statsFromAdoApi)
     {
         var currentDay  = TimelineFixture.CurrentDay;
-        var adoTestsCfg = AzureDevOpsTestsCfgFixture.New;
+        var adoTestsCfg = AzureDevOpsTestsCfgFixture.LoadCfg;
         var storage     = AdoWikiPagesStatsStorageDeclare.New(adoTestsCfg, currentDay);
         var wiki        = AdoWiki(adoTestsCfg, currentDay);
         var pageId      = adoTestsCfg.TestAdoWikiPageId();
