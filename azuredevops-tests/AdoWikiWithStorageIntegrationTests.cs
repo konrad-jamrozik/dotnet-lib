@@ -104,24 +104,37 @@ public class AdoWikiWithStorageIntegrationTests
     private static (int pageId, IAdoWiki wiki, AdoWikiPagesStatsStorage storage)
         ArrangeSut() // kja ArrangeSut / refactor. This method has too long return type.
     {
-        var timeline    = new Timeline();
-        var utcNow      = timeline.UtcNow;
-        var fs          = new FileSystem();
+        var currentDay  = CurrentDay();
         var env         = new Environment();
-        var cfg         = new Configuration(fs);
-        var adoTestsCfg = cfg.Load<IAzureDevOpsTestsCfg>();
-        var storageDir  = adoTestsCfg.TestStorageDir();
+        var adoTestsCfg = AzureDevOpsTestsCfg();
         var storageDecl = new AzureDevOps.AdoWikiPagesStatsStorageDeclare();
-        var storage     = storageDecl.AdoWikiPagesStatsStorage(storageDir, utcNow);
+        var storage     = storageDecl.AdoWikiPagesStatsStorage(
+            adoTestsCfg.TestStorageDir(), 
+            currentDay);
 
         IAdoWiki wiki = new AdoWiki(
             adoTestsCfg.AzureDevOpsCfg().AdoWikiUri(),
             adoTestsCfg.AzureDevOpsCfg().AdoPatEnvVar(),
             env,
-            new DateDay(utcNow));
+            currentDay);
         wiki = new AdoWikiWithPreconditionChecks(wiki);
 
         return (adoTestsCfg.TestAdoWikiPageId(), wiki, storage);
+    }
+
+    private static DateDay CurrentDay()
+    {
+        var timeline = new Timeline();
+        var utcNow = timeline.UtcNow;
+        return new DateDay(utcNow);
+    }
+
+    private static IAzureDevOpsTestsCfg AzureDevOpsTestsCfg()
+    {
+        var fs = new FileSystem();
+        var cfg = new Configuration(fs);
+        var adoTestsCfg = cfg.Load<IAzureDevOpsTestsCfg>();
+        return adoTestsCfg;
     }
 
     private Task<ValidWikiPagesStats> WikiPageStatsForSinglePage(
