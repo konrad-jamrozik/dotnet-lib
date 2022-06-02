@@ -111,7 +111,6 @@ public class AdoWikiWithStorageIntegrationTests
         var cfg         = new Configuration(fs);
         var adoTestsCfg = cfg.Load<IAzureDevOpsTestsCfg>();
         var storageDir  = adoTestsCfg.TestStorageDir(fs);
-        var wikiDecl    = new AdoWikiWithStorageDeclare();
         var storageDecl = new AzureDevOps.AdoWikiPagesStatsStorageDeclare();
         var storage     = storageDecl.AdoWikiPagesStatsStorage(storageDir, utcNow);
 
