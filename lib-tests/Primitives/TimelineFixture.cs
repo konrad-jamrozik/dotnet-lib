@@ -13,5 +13,4 @@ public static class TimelineFixture
             return new DateDay(utcNow);
         }
     }
-
 }
