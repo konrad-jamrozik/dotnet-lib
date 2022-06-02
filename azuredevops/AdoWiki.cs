@@ -56,6 +56,11 @@ public record AdoWiki(IWikiHttpClient Client, DateDay Today) : IAdoWiki
         var wikiHttpClient   = Client;
         var wikiPagesDetails = await wikiPagesDetailsFunc(wikiHttpClient, pvfd);
         var wikiPagesStats   = wikiPagesDetails.Select(WikiPageStats.From);
+        // kja observe that here Today comes from this class ctor, but in reality
+        // the Today is enforced by IWikiHttpClient: either actual one, with actual today's date,
+        // or simulated one. Hence the property DateDay IAdoWiki.Today() should
+        // take Today from the IWikiHttpClient, and NOT from this class ctor.
+        // ALSO, looks like the callers always pass Today set to actual UtcNow.
         return new ValidWikiPagesStats(wikiPagesStats, pvfd, Today);
     }
 
