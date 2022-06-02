@@ -112,6 +112,7 @@ public class AdoWikiWithStorageIntegrationTests
         var adoTestsCfg = AzureDevOpsTestsCfgFixture.LoadCfg;
         var storage     = AdoWikiPagesStatsStorageDeclare.New(adoTestsCfg, today);
         var wiki        = AdoWikiDeclare.New(adoTestsCfg, today);
+        // kja idea: instead of having pageId independently, obtain it from wiki.HomePageId
         var pageId      = adoTestsCfg.TestAdoWikiPageId();
 
         var lastDay = wiki.Today();
