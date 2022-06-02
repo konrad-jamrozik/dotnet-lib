@@ -50,7 +50,7 @@ public class AdoWikiPagesStatsStorageTests
             "PageViewsForDays day span, otherwise the test won't catch the off by one error.");
 
         var adoDecl = new AdoWikiPagesStatsStorageDeclare();
-        var storage = await adoDecl.AdoWikiPagesStatsStorage(UtcNowDay, stats);
+        var storage = await adoDecl.New(UtcNowDay, stats);
 
         // Act
         var actualStats = storage.PagesStats(pageViewsForDays);

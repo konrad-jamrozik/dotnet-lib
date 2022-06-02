@@ -26,7 +26,7 @@ public class AdoWikiWithStorageDeclare
         var wiki        = new AdoWiki(wikiUri, adoPatEnvVar, env, currentDay);
         var storageDir  = new Dir(fs, storageDirPath);
         var storageDecl = new AdoWikiPagesStatsStorageDeclare();
-        var storage     = storageDecl.AdoWikiPagesStatsStorage(storageDir, currentDay);
+        var storage     = storageDecl.New(storageDir, currentDay);
         var wikiWithStorage = AdoWikiWithStorage(wiki, storage);
         return wikiWithStorage;
     }

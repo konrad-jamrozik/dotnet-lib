@@ -12,25 +12,25 @@ public class AdoWikiPagesStatsStorageDeclare
         DateDay currentDay)
     {
         var storageDecl = new AzureDevOps.AdoWikiPagesStatsStorageDeclare();
-        var storage = storageDecl.AdoWikiPagesStatsStorage(
+        var storage = storageDecl.New(
             adoTestsCfg.TestStorageDir(),
             currentDay);
         return storage;
     }
 
-    public Task<AdoWikiPagesStatsStorage> AdoWikiPagesStatsStorage(
+    public Task<AdoWikiPagesStatsStorage> New(
         DateDay utcNow,
         ValidWikiPagesStatsForMonth? storedStats = null)
-        => AdoWikiPagesStatsStorage(utcNow, (ValidWikiPagesStats?) storedStats);
+        => New(utcNow, (ValidWikiPagesStats?) storedStats);
 
-    public async Task<AdoWikiPagesStatsStorage> AdoWikiPagesStatsStorage(
+    public async Task<AdoWikiPagesStatsStorage> New(
         DateDay utcNow,
         ValidWikiPagesStats? storedStats = null)
     {
         var fs         = new SimulatedFileSystem();
         var storageDir = fs.NextSimulatedDir();
         var decl       = new AzureDevOps.AdoWikiPagesStatsStorageDeclare();
-        var storage    = decl.AdoWikiPagesStatsStorage(storageDir, utcNow);
+        var storage    = decl.New(storageDir, utcNow);
         if (storedStats != null)
             storage = await storage.ReplaceWith(storedStats);
         return storage;

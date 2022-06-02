@@ -6,7 +6,7 @@ namespace Wikitools.AzureDevOps;
 
 public class AdoWikiPagesStatsStorageDeclare
 {
-    public AdoWikiPagesStatsStorage AdoWikiPagesStatsStorage(Dir storageDir, DateDay currentDay)
+    public AdoWikiPagesStatsStorage New(Dir storageDir, DateDay currentDay)
         => new AdoWikiPagesStatsStorage(
             new MonthlyJsonFilesStorage(storageDir),
             currentDay);
