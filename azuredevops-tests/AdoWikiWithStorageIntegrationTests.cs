@@ -4,6 +4,7 @@ using NUnit.Framework;
 using Wikitools.AzureDevOps.Config;
 using Wikitools.Lib.Primitives;
 using Wikitools.Lib.Tests.Json;
+using Wikitools.Lib.Tests.Primitives;
 using Environment = Wikitools.Lib.OS.Environment;
 
 namespace Wikitools.AzureDevOps.Tests;
@@ -46,7 +47,7 @@ public class AdoWikiWithStorageIntegrationTests
     [Test]
     public async Task ObtainsAndMergesDataFromAdoWikiApiAndStorage()
     {
-        var currentDay  = CurrentDay;
+        var currentDay  = TimelineFixture.CurrentDay;
         var adoTestsCfg = AzureDevOpsTestsCfgFixture.Cfg;
         var storage     = AdoWikiPagesStatsStorage(adoTestsCfg, currentDay);
         var wiki        = AdoWiki(adoTestsCfg, currentDay);
@@ -117,16 +118,6 @@ public class AdoWikiWithStorageIntegrationTests
         return storage;
     }
 
-    private static DateDay CurrentDay
-    {
-        get
-        {
-            var timeline = new Timeline();
-            var utcNow = timeline.UtcNow;
-            return new DateDay(utcNow);
-        }
-    }
-
     private Task<ValidWikiPagesStats> WikiPageStatsForSinglePage(
         IAdoWiki wiki,
         PageViewsForDays pvfd,
@@ -143,7 +134,7 @@ public class AdoWikiWithStorageIntegrationTests
         PageViewsForDays pvfd,
         Func<IAdoWiki, PageViewsForDays, int, Task<ValidWikiPagesStats>> statsFromAdoApi)
     {
-        var currentDay  = CurrentDay;
+        var currentDay  = TimelineFixture.CurrentDay;
         var adoTestsCfg = AzureDevOpsTestsCfgFixture.Cfg;
         var storage     = AdoWikiPagesStatsStorage(adoTestsCfg, currentDay);
         var wiki        = AdoWiki(adoTestsCfg, currentDay);
