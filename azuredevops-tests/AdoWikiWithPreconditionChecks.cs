@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using NUnit.Framework;
+using Wikitools.Lib.Primitives;
 
 namespace Wikitools.AzureDevOps.Tests;
 
@@ -11,6 +12,8 @@ public record AdoWikiWithPreconditionChecks(IAdoWiki AdoWiki) : IAdoWiki
 
     public Task<ValidWikiPagesStats> PageStats(PageViewsForDays pvfd, int pageId) => 
         TryInvoke(() => AdoWiki.PageStats(pvfd, pageId));
+
+    public DateDay Today() => AdoWiki.Today();
 
     private async Task<T> TryInvoke<T>(Func<Task<T>> func)
     {

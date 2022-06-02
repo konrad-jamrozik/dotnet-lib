@@ -46,6 +46,8 @@ public record AdoWiki(IWikiHttpClient Client, DateDay Today) : IAdoWiki
         => PagesStats(pvfd, (wikiHttpClient, pvfd) 
             => GetWikiPagesDetails(wikiHttpClient, pvfd, pageId));
 
+    DateDay IAdoWiki.Today() => Today;
+
     private async Task<ValidWikiPagesStats> PagesStats(
         PageViewsForDays pvfd,
         Func<IWikiHttpClient, PageViewsForDays, Task<IEnumerable<WikiPageDetail>>>

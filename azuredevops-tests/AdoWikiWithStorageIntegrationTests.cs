@@ -49,7 +49,7 @@ public class AdoWikiWithStorageIntegrationTests
     public async Task ObtainsAndMergesDataFromAdoWikiApiAndStorage()
     {
         var wikiDecl = new AdoWikiWithStorageDeclare();
-        var (pageId, utcNow, wiki, storage) = ArrangeSut();
+        var (pageId, wiki, storage) = ArrangeSut();
 
         // ReSharper disable CommentTypo
         // Act 1. Obtain 10 days of page stats from wiki (days 1 to 10)
@@ -64,7 +64,7 @@ public class AdoWikiWithStorageIntegrationTests
         // WWWWWWWWWW
         // ->
         // --SSSS----
-        var statsForDays3To6 = statsForDays1To10.Trim(utcNow, -7, -4);
+        var statsForDays3To6 = statsForDays1To10.Trim(statsForDays1To10.DaySpan.EndDay, -7, -4);
         var storageWithStats = await storage.ReplaceWith(statsForDays3To6);
 
         // Act 4. Obtain last 8 days (days 3 to 10) of stats,
@@ -101,7 +101,7 @@ public class AdoWikiWithStorageIntegrationTests
     ///   there has to be recent ongoing, daily activity.
     /// - For other assumptions, see comments on WikitoolsConfig members.
     /// </summary>
-    private static (int pageId, DateTime utcNow, IAdoWiki wiki, AdoWikiPagesStatsStorage storage)
+    private static (int pageId, IAdoWiki wiki, AdoWikiPagesStatsStorage storage)
         ArrangeSut() // kja ArrangeSut / refactor. This method has too long return type.
     {
         var timeline    = new Timeline();
@@ -121,7 +121,7 @@ public class AdoWikiWithStorageIntegrationTests
             new DateDay(utcNow));
         wiki = new AdoWikiWithPreconditionChecks(wiki);
 
-        return (adoTestsCfg.TestAdoWikiPageId(), utcNow, wiki, storage);
+        return (adoTestsCfg.TestAdoWikiPageId(), wiki, storage);
     }
 
     private Task<ValidWikiPagesStats> WikiPageStatsForSinglePage(
@@ -140,10 +140,11 @@ public class AdoWikiWithStorageIntegrationTests
         PageViewsForDays pvfd,
         Func<IAdoWiki, PageViewsForDays, int, Task<ValidWikiPagesStats>> statsFromAdoApi)
     {
-        var (pageId, utcNow, wiki, statsStorage) = ArrangeSut();
+        var (pageId, wiki, statsStorage) = ArrangeSut();
 
-        var expectedLastDay  = new DateDay(utcNow);
-        var expectedFirstDay = pvfd.AsDaySpanUntil(expectedLastDay).StartDay;
+        var lastDay = wiki.Today();
+        var expectedLastDaySpan = new DaySpan(lastDay.AddDays(-1), lastDay);
+        var expectedFirstDay = pvfd.AsDaySpanUntil(lastDay).StartDay;
 
         // Act: obtain the data from the ADO API for wiki
         var stats = await statsFromAdoApi(wiki, pvfd, pageId);
@@ -165,7 +166,7 @@ public class AdoWikiWithStorageIntegrationTests
         // For details on the ingestion delay, please see the comment
         // on Wikitools.AzureDevOps.AdoWiki
         Assert.That(actualFirstDay, Is.Null.Or.AtLeast(expectedFirstDay));
-        Assert.That(actualLastDay,  Is.Null.Or.AtMost(expectedLastDay));
+        Assert.That(actualLastDay,  Is.Null.Or.AtMost(expectedLastDaySpan.EndDay));
 
         Assert.That(storedFirstDay, Is.EqualTo(actualFirstDay));
         Assert.That(storedLastDay,  Is.EqualTo(storedLastDay));
@@ -179,7 +180,7 @@ public class AdoWikiWithStorageIntegrationTests
             ExactDayAssumptionViolationMessage("Minimum first", pvfd));
         Assume.That(
             actualLastDay,
-            Is.EqualTo(expectedLastDay),
+            Is.AtLeast(expectedLastDaySpan.StartDay),
             ExactDayAssumptionViolationMessage("Maximum last", pvfd));
 
         string ExactDayAssumptionViolationMessage(string dayType, PageViewsForDays pvfd)
@@ -189,4 +190,5 @@ public class AdoWikiWithStorageIntegrationTests
                    $"UTC time: {DateTime.UtcNow}";
         }
     }
+
 }

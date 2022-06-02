@@ -17,6 +17,8 @@ public record AdoWikiWithStorage(
     public Task<ValidWikiPagesStats> PageStats(PageViewsForDays pvfd, int pageId)
         => PagesStats(pvfd, pageId);
 
+    public DateDay Today() => AdoWiki.Today();
+
     private Task<ValidWikiPagesStats> PagesStats(PageViewsForDays pvfd, int? pageId)
     {
         Func<WikiPageStats, bool> pageFilter =
