@@ -105,21 +105,34 @@ public class AdoWikiWithStorageIntegrationTests
         ArrangeSut() // kja ArrangeSut / refactor. This method has too long return type.
     {
         var currentDay  = CurrentDay();
-        var env         = new Environment();
         var adoTestsCfg = AzureDevOpsTestsCfg();
-        var storageDecl = new AzureDevOps.AdoWikiPagesStatsStorageDeclare();
-        var storage     = storageDecl.AdoWikiPagesStatsStorage(
-            adoTestsCfg.TestStorageDir(), 
-            currentDay);
+        var storage     = AdoWikiPagesStatsStorage(adoTestsCfg, currentDay);
+        var wiki        = AdoWiki(adoTestsCfg, currentDay);
 
+        return (adoTestsCfg.TestAdoWikiPageId(), wiki, storage);
+    }
+
+    private static IAdoWiki AdoWiki(IAzureDevOpsTestsCfg adoTestsCfg, DateDay currentDay)
+    {
+        var env = new Environment();
         IAdoWiki wiki = new AdoWiki(
             adoTestsCfg.AzureDevOpsCfg().AdoWikiUri(),
             adoTestsCfg.AzureDevOpsCfg().AdoPatEnvVar(),
             env,
             currentDay);
         wiki = new AdoWikiWithPreconditionChecks(wiki);
+        return wiki;
+    }
 
-        return (adoTestsCfg.TestAdoWikiPageId(), wiki, storage);
+    private static AdoWikiPagesStatsStorage AdoWikiPagesStatsStorage(
+        IAzureDevOpsTestsCfg adoTestsCfg,
+        DateDay currentDay)
+    {
+        var storageDecl = new AzureDevOps.AdoWikiPagesStatsStorageDeclare();
+        var storage = storageDecl.AdoWikiPagesStatsStorage(
+            adoTestsCfg.TestStorageDir(),
+            currentDay);
+        return storage;
     }
 
     private static DateDay CurrentDay()
