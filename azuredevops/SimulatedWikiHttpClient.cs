@@ -7,10 +7,9 @@ using Wikitools.Lib.Primitives;
 
 namespace Wikitools.AzureDevOps;
 
-public record SimulatedWikiHttpClient(ValidWikiPagesStats PagesStatsData) : IWikiHttpClient
+public record SimulatedWikiHttpClient(ValidWikiPagesStats PagesStatsData, DateDay Today) : IWikiHttpClient
 {
-    // kja this needs to be injected; especially when Today is removed from AdoApi record
-    public DateDay Today() => SimulatedTimeline.UtcNowDay;
+    DateDay IWikiHttpClient.Today() => Today;
 
     public Task<WikiPageDetail> GetPageDataAsync(int pageId, PageViewsForDays pvfd)
     {

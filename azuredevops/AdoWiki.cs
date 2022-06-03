@@ -22,8 +22,7 @@ namespace Wikitools.AzureDevOps;
 /// - When it appeared, it was counted as 3/28/2021, not 3/27/2021.
 ///   - Presumably because the dates are in UTC, not PDT.
 /// </remarks>
-// kja remove Today. It comes from the client.
-public record AdoWiki(IWikiHttpClient Client, DateDay Today) : IAdoWiki
+public record AdoWiki(IWikiHttpClient Client) : IAdoWiki
 {
     /// <summary>
     /// The Top value is max on which the API doesn't throw. Determined empirically.
@@ -37,7 +36,7 @@ public record AdoWiki(IWikiHttpClient Client, DateDay Today) : IAdoWiki
         Expand(IWikiHttpClient.WithExceptionWrapping(new AdoWikiUri(wikiUriStr), patEnvVar, env))) { }
 
 
-    private AdoWiki((IWikiHttpClient client, DateDay today) data) : this(data.client, data.today) { }
+    private AdoWiki((IWikiHttpClient client, DateDay today) data) : this(data.client) { }
 
     private static (IWikiHttpClient client, DateDay today) Expand(IWikiHttpClient client)
         => (client, client.Today());
@@ -51,7 +50,7 @@ public record AdoWiki(IWikiHttpClient Client, DateDay Today) : IAdoWiki
         => PagesStats(pvfd, (wikiHttpClient, pvfd) 
             => GetWikiPagesDetails(wikiHttpClient, pvfd, pageId));
 
-    DateDay IAdoWiki.Today() => Today;
+    DateDay IAdoWiki.Today() => Client.Today();
 
     private async Task<ValidWikiPagesStats> PagesStats(
         PageViewsForDays pvfd,
