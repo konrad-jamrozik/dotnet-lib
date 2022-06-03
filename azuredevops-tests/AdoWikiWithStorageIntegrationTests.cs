@@ -111,7 +111,7 @@ public class AdoWikiWithStorageIntegrationTests
         var adoTestsCfg = AzureDevOpsTestsCfgFixture.LoadCfg;
         var storage     = AdoWikiPagesStatsStorageDeclare.New(adoTestsCfg);
         var wiki        = AdoWikiDeclare.New(adoTestsCfg);
-        // kja idea: instead of having pageId independently, obtain it from wiki.HomePageId
+        // kja 2 idea: instead of having pageId independently, obtain it from wiki.HomePageId
         var pageId      = adoTestsCfg.TestAdoWikiPageId();
         var boundPvfd   = new BoundPageViewsForDays(pvfd, wiki.Today());
 

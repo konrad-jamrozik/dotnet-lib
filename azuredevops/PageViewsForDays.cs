@@ -26,7 +26,7 @@ public record PageViewsForDays()
     {
         Contract.Assert(value >= Min);
         Value = value;
-        // kja have this here instead of the Min check above, but note it makes a test fail:
+        // kja 2 have this here instead of the Min check above, but note it makes a test fail:
         // Wikitools.AzureDevOps.Tests.AdoWikiWithStorageTests.DataFromStorageFromManyMonths
         //AssertPageViewsForDaysRange();
     }

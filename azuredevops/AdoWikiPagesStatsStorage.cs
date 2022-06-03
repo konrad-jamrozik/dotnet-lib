@@ -28,7 +28,7 @@ public record AdoWikiPagesStatsStorage(MonthlyJsonFilesStorage Storage)
         return Update(pvfd, wikiPagesStatsFunc);
     }
 
-    // kja instead of taking pvfd, it could take Action() (instead of Func())
+    // kja 2 instead of taking pvfd, it could take Action() (instead of Func())
     // that already has pvfd in it. I.e. that action will have pvfd already bound.
     private async Task<AdoWikiPagesStatsStorage> Update(
         PageViewsForDays pvfd,

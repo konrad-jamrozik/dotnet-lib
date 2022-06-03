@@ -14,7 +14,7 @@ public record SimulatedWikiHttpClient(ValidWikiPagesStats PagesStatsData) : IWik
 
     public Task<WikiPageDetail> GetPageDataAsync(int pageId, PageViewsForDays pvfd)
     {
-        // kja redundant once to-do here is fixed: Wikitools.AzureDevOps.PageViewsForDays.PageViewsForDays
+        // kja 2 redundant once to-do here is fixed: Wikitools.AzureDevOps.PageViewsForDays.PageViewsForDays
         pvfd.AssertPageViewsForDaysRange();
 
         var trimmedStats = PagesStatsData.Trim(pvfd).Trim(pageId);
@@ -26,7 +26,7 @@ public record SimulatedWikiHttpClient(ValidWikiPagesStats PagesStatsData) : IWik
     public Task<PagedList<WikiPageDetail>> GetPagesBatchAsync(WikiPagesBatchRequest request)
     {
         var pvfd = new PageViewsForDays(request.PageViewsForDays);
-        // kja redundant once to-do here is fixed: Wikitools.AzureDevOps.PageViewsForDays.PageViewsForDays
+        // kja 2 redundant once to-do here is fixed: Wikitools.AzureDevOps.PageViewsForDays.PageViewsForDays
         pvfd.AssertPageViewsForDaysRange();
         var trimmedStats = PagesStatsData.Trim(pvfd);
 
