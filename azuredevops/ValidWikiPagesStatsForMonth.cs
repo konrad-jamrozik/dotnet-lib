@@ -14,13 +14,6 @@ public record ValidWikiPagesStatsForMonth(ValidWikiPagesStats Stats)
     public ValidWikiPagesStatsForMonth(IEnumerable<WikiPageStats> stats, DateMonth month) 
         : this(new ValidWikiPagesStats(stats, month.DaySpan)) { }
 
-    // kj2 to remove?
-    public new ValidWikiPagesStatsForMonth Trim(DateTime currentDate, int daysFrom, int daysTo)
-        => new ValidWikiPagesStatsForMonth(
-            Trim(
-                currentDate.AddDays(daysFrom),
-                currentDate.AddDays(daysTo)));
-
     public DateMonth Month => Stats.DaySpan.Month;
 
     public bool DaySpanIsForEntireMonth => Stats.DaySpan.IsExactlyForEntireMonth(Month);

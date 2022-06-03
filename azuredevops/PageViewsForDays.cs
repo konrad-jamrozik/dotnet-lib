@@ -48,9 +48,6 @@ public record PageViewsForDays()
 
     public PageViewsForDays MinWith(int? value) => new PageViewsForDays(Value.MinWith(value));
 
-    public static DaySpan AsMaxDaySpanUntil(DateDay endDate)
-        => new PageViewsForDays(Max).AsDaySpanUntil(endDate);
-
     public void AssertPageViewsForDaysRange() // kj2 rename: AssertWithinAdoApiLimit
         => Contract.Assert(
             Value,
