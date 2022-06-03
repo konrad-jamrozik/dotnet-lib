@@ -14,7 +14,7 @@ public class AdoWikiTests
         var input = new ValidWikiPagesStatsFixture().WikiPagesStats();
         var pageViewsForDays = new PageViewsForDays(3);
         var expected = input.Trim(pageViewsForDays);
-        var today = SimulatedTimeline.UtcNowDay;
+        var today = new SimulatedTimeline().UtcNowDay;
         var adoWiki = new AdoWiki(new SimulatedWikiHttpClient(input, today));
 
         // Act
@@ -30,7 +30,7 @@ public class AdoWikiTests
         var input = new ValidWikiPagesStatsFixture().WikiPagesStats();
         var pageViewsForDays = new PageViewsForDays(3);
         var expected = input.Trim(pageViewsForDays).Trim(pageId);
-        var today = SimulatedTimeline.UtcNowDay;
+        var today = new SimulatedTimeline().UtcNowDay;
         var adoWiki = new AdoWiki(new SimulatedWikiHttpClient(input, today));
 
         // Act

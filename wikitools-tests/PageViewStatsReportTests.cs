@@ -21,7 +21,7 @@ public class PageViewStatsReportTests
 
         // Arrange simulations
         var timeline = new SimulatedTimeline();
-        var today = SimulatedTimeline.UtcNowDay;
+        var today = timeline.UtcNowDay;
         var wikiClient =
             new SimulatedWikiHttpClient(ValidWikiPagesStatsFixture.Build(pagesStatsData), today);
         var wiki = new AdoWiki(wikiClient);
