@@ -13,7 +13,7 @@ namespace Wikitools.AzureDevOps;
 ///
 /// For a class abstracting IAdoWiki backed by this storage, see AdoWikiWithStorage.
 /// </summary>
-public record AdoWikiPagesStatsStorage(MonthlyJsonFilesStorage Storage, DateDay CurrentDay)
+public record AdoWikiPagesStatsStorage(MonthlyJsonFilesStorage Storage)
 {
     public Task<AdoWikiPagesStatsStorage> Update(
         IAdoWiki wiki,
@@ -23,13 +23,6 @@ public record AdoWikiPagesStatsStorage(MonthlyJsonFilesStorage Storage, DateDay 
         Func<PageViewsForDays, Task<ValidWikiPagesStats>> wikiPagesStatsFunc =
             pageId == null
                 // ReSharper disable once ConvertClosureToMethodGroup
-                // kja observe that here wiki internally has is its own notion of CurrentDay,
-                // separate from this class CurrentDay.
-                // To-do: Instead of passing CurrentDay to this class' ctor, pass it as argument
-                // to invocation of PagesStats in Wikitools.AzureDevOps.AdoWikiWithStorage.PagesStats
-                // the argument will originate from the AdoWiki instance also used in that method.
-                // Once this is fixed, the "currentDay" param will become possible removable from:
-                // Wikitools.AzureDevOps.Tests.AdoWikiPagesStatsStorageDeclare.New
                 ? pvfd => wiki.PagesStats(pvfd)
                 : pvfd => wiki.PageStats(pvfd, (int)pageId);
         return Update(pvfd, wikiPagesStatsFunc);
@@ -65,9 +58,9 @@ public record AdoWikiPagesStatsStorage(MonthlyJsonFilesStorage Storage, DateDay 
         return this;
     }
 
-    public ValidWikiPagesStats PagesStats(PageViewsForDays pvfd)
+    public ValidWikiPagesStats PagesStats(BoundPageViewsForDays pvfd)
     {
-        var daySpan = pvfd.AsDaySpanUntil(CurrentDay);
+        var daySpan = pvfd.DaySpan;
         IEnumerable<ValidWikiPagesStatsForMonth> statsByMonth = DateMonth
             .MonthSpan(daySpan)
             .Select(month =>

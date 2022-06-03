@@ -32,8 +32,7 @@ public record ValidWikiPagesStats : IEnumerable<WikiPageStats>
 {
     public ValidWikiPagesStats(
         IEnumerable<WikiPageStats> stats,
-        PageViewsForDays pvfd,
-        DateDay endDay) : this(stats, pvfd.AsDaySpanUntil(endDay))
+        BoundPageViewsForDays pvfd) : this(stats, pvfd.DaySpan)
     {
     }
 

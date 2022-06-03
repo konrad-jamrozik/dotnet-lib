@@ -22,6 +22,7 @@ namespace Wikitools.AzureDevOps;
 /// - When it appeared, it was counted as 3/28/2021, not 3/27/2021.
 ///   - Presumably because the dates are in UTC, not PDT.
 /// </remarks>
+// kja remove Today. It comes from the client.
 public record AdoWiki(IWikiHttpClient Client, DateDay Today) : IAdoWiki
 {
     /// <summary>
@@ -32,10 +33,14 @@ public record AdoWiki(IWikiHttpClient Client, DateDay Today) : IAdoWiki
     public AdoWiki(
         string wikiUriStr,
         string patEnvVar,
-        IEnvironment env,
-        DateDay today) : this(
-        IWikiHttpClient.WithExceptionWrapping(new AdoWikiUri(wikiUriStr), patEnvVar, env), 
-        today) { }
+        IEnvironment env) : this(
+        Expand(IWikiHttpClient.WithExceptionWrapping(new AdoWikiUri(wikiUriStr), patEnvVar, env))) { }
+
+
+    private AdoWiki((IWikiHttpClient client, DateDay today) data) : this(data.client, data.today) { }
+
+    private static (IWikiHttpClient client, DateDay today) Expand(IWikiHttpClient client)
+        => (client, client.Today());
 
     public Task<ValidWikiPagesStats> PagesStats(PageViewsForDays pvfd) 
         // ReSharper disable once ConvertClosureToMethodGroup
@@ -56,12 +61,8 @@ public record AdoWiki(IWikiHttpClient Client, DateDay Today) : IAdoWiki
         var wikiHttpClient   = Client;
         var wikiPagesDetails = await wikiPagesDetailsFunc(wikiHttpClient, pvfd);
         var wikiPagesStats   = wikiPagesDetails.Select(WikiPageStats.From);
-        // kja observe that here Today comes from this class ctor, but in reality
-        // the Today is enforced by IWikiHttpClient: either actual one, with actual today's date,
-        // or simulated one. Hence the property DateDay IAdoWiki.Today() should
-        // take Today from the IWikiHttpClient, and NOT from this class ctor.
-        // ALSO, looks like the callers always pass Today set to actual UtcNow.
-        return new ValidWikiPagesStats(wikiPagesStats, pvfd, Today);
+        var boundPvfd = new BoundPageViewsForDays(pvfd, wikiHttpClient.Today());
+        return new ValidWikiPagesStats(wikiPagesStats, boundPvfd);
     }
 
     private async Task<IEnumerable<WikiPageDetail>> GetWikiPagesDetails(

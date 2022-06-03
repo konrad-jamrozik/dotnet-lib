@@ -182,7 +182,7 @@ public class AdoWikiWithStorageTests
     {
         var wikiDecl    = new AdoWikiWithStorageDeclare();
         var storageDecl = new AdoWikiPagesStatsStorageDeclare();
-        var storage     = await storageDecl.New(utcNow, storedStats);
+        var storage     = await storageDecl.New(storedStats);
         var httpClient =
             new SimulatedWikiHttpClient(
                 wikiStats

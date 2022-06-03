@@ -30,30 +30,30 @@ public class AdoWikiPagesStatsStorageTests
     [Test]
     public async Task FirstDayOfViewsInStorageIsNotOffByOne()
     {
-        var pageViewsForDays = new PageViewsForDays(3);
-        var pageViewsForDaysSpan = pageViewsForDays.AsDaySpanUntil(UtcNowDay);
-        var fixture          = new ValidWikiPagesStatsFixture();
-        var stats            = fixture.PagesStatsForMonth(UtcNowDay);
+        var pvfd        = new BoundPageViewsForDays(3, UtcNowDay);
+        var pvfdDaySpan = pvfd.DaySpan;
+        var fixture     = new ValidWikiPagesStatsFixture();
+        var stats       = fixture.PagesStatsForMonth(UtcNowDay);
 
         Assert.That(
             stats.FirstDayWithAnyView,
-            Is.EqualTo(pageViewsForDaysSpan.StartDay.AddDays(-1)),
+            Is.EqualTo(pvfdDaySpan.StartDay.AddDays(-1)),
             "Precondition violation: the off by one error won't be detected by this test as " +
             "there are no views in the \"one before expected first\" day in the arranged data.");
 
-        var expectedStats = stats.Trim(pageViewsForDaysSpan);
+        var expectedStats = stats.Trim(pvfdDaySpan);
 
         Assert.That(
             expectedStats.FirstDayWithAnyView,
-            Is.EqualTo(pageViewsForDaysSpan.StartDay),
+            Is.EqualTo(pvfdDaySpan.StartDay),
             "Precondition violation: the expected stats should start exactly at the beginning" +
             "PageViewsForDays day span, otherwise the test won't catch the off by one error.");
 
         var adoDecl = new AdoWikiPagesStatsStorageDeclare();
-        var storage = await adoDecl.New(UtcNowDay, stats);
+        var storage = await adoDecl.New(stats);
 
         // Act
-        var actualStats = storage.PagesStats(pageViewsForDays);
+        var actualStats = storage.PagesStats(pvfd);
 
         new JsonDiffAssertion(expectedStats, actualStats).Assert();
     }

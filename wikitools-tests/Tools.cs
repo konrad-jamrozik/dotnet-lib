@@ -50,8 +50,7 @@ public class Tools
         IAdoWiki wiki = new AdoWiki(
             cfg.AzureDevOpsCfg().AdoWikiUri(),
             cfg.AzureDevOpsCfg().AdoPatEnvVar(),
-            env,
-            new DateDay(timeline.UtcNow));
+            env);
 
         var pagesViewsStats = wiki.PagesStats(PageViewsForDays.Max);
 

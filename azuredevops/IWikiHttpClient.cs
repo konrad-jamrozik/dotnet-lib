@@ -5,6 +5,7 @@ using Microsoft.TeamFoundation.Wiki.WebApi.Contracts;
 using Microsoft.VisualStudio.Services.Common;
 using Microsoft.VisualStudio.Services.WebApi;
 using Wikitools.Lib.OS;
+using Wikitools.Lib.Primitives;
 
 namespace Wikitools.AzureDevOps;
 
@@ -17,6 +18,8 @@ public interface IWikiHttpClient
     Task<WikiPageDetail> GetPageDataAsync(int pageId, PageViewsForDays pvfd);
 
     Task<PagedList<WikiPageDetail>> GetPagesBatchAsync(WikiPagesBatchRequest request);
+
+    public DateDay Today();
 
     public static WikiHttpClientWithExceptionWrapping WithExceptionWrapping(
         AdoWikiUri wikiUri,

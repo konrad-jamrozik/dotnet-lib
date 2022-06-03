@@ -22,11 +22,10 @@ public class AdoWikiWithStorageDeclare
         string adoPatEnvVar,
         string storageDirPath)
     {
-        var currentDay  = new DateDay(timeline.UtcNow);
-        var wiki        = new AdoWiki(wikiUri, adoPatEnvVar, env, currentDay);
+        var wiki        = new AdoWiki(wikiUri, adoPatEnvVar, env);
         var storageDir  = new Dir(fs, storageDirPath);
         var storageDecl = new AdoWikiPagesStatsStorageDeclare();
-        var storage     = storageDecl.New(storageDir, currentDay);
+        var storage     = storageDecl.New(storageDir);
         var wikiWithStorage = AdoWikiWithStorage(wiki, storage);
         return wikiWithStorage;
     }

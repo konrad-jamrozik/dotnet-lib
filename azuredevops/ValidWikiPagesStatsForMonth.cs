@@ -14,6 +14,7 @@ public record ValidWikiPagesStatsForMonth(ValidWikiPagesStats Stats)
     public ValidWikiPagesStatsForMonth(IEnumerable<WikiPageStats> stats, DateMonth month) 
         : this(new ValidWikiPagesStats(stats, month.DaySpan)) { }
 
+    // kj2 to remove?
     public new ValidWikiPagesStatsForMonth Trim(DateTime currentDate, int daysFrom, int daysTo)
         => new ValidWikiPagesStatsForMonth(
             Trim(

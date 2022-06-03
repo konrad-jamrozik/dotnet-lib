@@ -1,14 +1,17 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.TeamFoundation.Wiki.WebApi;
 using Microsoft.TeamFoundation.Wiki.WebApi.Contracts;
 using Microsoft.VisualStudio.Services.WebApi;
+using Wikitools.Lib.Primitives;
 
 namespace Wikitools.AzureDevOps;
 
 public record SimulatedWikiHttpClient(ValidWikiPagesStats PagesStatsData) : IWikiHttpClient
 {
+    // kja this needs to be injected; especially when Today is removed from AdoApi record
+    public DateDay Today() => SimulatedTimeline.UtcNowDay;
+
     public Task<WikiPageDetail> GetPageDataAsync(int pageId, PageViewsForDays pvfd)
     {
         // kja redundant once to-do here is fixed: Wikitools.AzureDevOps.PageViewsForDays.PageViewsForDays

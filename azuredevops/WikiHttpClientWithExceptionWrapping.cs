@@ -5,6 +5,7 @@ using Microsoft.TeamFoundation.Wiki.WebApi;
 using Microsoft.TeamFoundation.Wiki.WebApi.Contracts;
 using Microsoft.VisualStudio.Services.Common;
 using Microsoft.VisualStudio.Services.WebApi;
+using Wikitools.Lib.Primitives;
 
 namespace Wikitools.AzureDevOps;
 
@@ -27,6 +28,14 @@ public record WikiHttpClientWithExceptionWrapping
         // API reference:
         // https://docs.microsoft.com/en-us/rest/api/azure/devops/wiki/pages-batch/get?view=azure-devops-rest-6.0
         TryInvoke(() => Client.GetPagesBatchAsync(request, Uri.ProjectName, Uri.WikiName));
+
+    private readonly DateDay _today = new DateDay(new Timeline().UtcNow);
+
+    /// <summary>
+    /// Today() represents real-world today, thus reflecting
+    /// the behavior of the decorated WikiHttpClient.
+    /// </summary>
+    DateDay IWikiHttpClient.Today() => _today;
 
     private async Task<T> TryInvoke<T>(Func<Task<T>> func)
     {

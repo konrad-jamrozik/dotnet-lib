@@ -44,10 +44,9 @@ public class AdoWikiWithStorageIntegrationTests
     [Test]
     public async Task ObtainsAndMergesDataFromAdoWikiApiAndStorage()
     {
-        var today       = new Timeline().Today;
         var adoTestsCfg = AzureDevOpsTestsCfgFixture.LoadCfg;
-        var storage     = AdoWikiPagesStatsStorageDeclare.New(adoTestsCfg, today);
-        var wiki        = AdoWikiDeclare.New(adoTestsCfg, today);
+        var storage     = AdoWikiPagesStatsStorageDeclare.New(adoTestsCfg);
+        var wiki        = AdoWikiDeclare.New(adoTestsCfg);
         var pageId      = adoTestsCfg.TestAdoWikiPageId();
 
         // ReSharper disable CommentTypo
@@ -102,31 +101,32 @@ public class AdoWikiWithStorageIntegrationTests
         IAdoWiki wiki,
         PageViewsForDays pvfd,
         int pageId)
-        => (await wiki.PagesStats(pvfd)).WhereStats(stats => stats.Id == pageId);
+        => (await wiki.PagesStats(pvfd))
+            .WhereStats(stats => stats.Id == pageId);
 
     private async Task VerifyDaySpanOfWikiStats(
-        PageViewsForDays pvfd,
+        int pvfd,
         Func<IAdoWiki, PageViewsForDays, int, Task<ValidWikiPagesStats>> statsFromAdoApi)
     {
-        var today       = new Timeline().Today;
         var adoTestsCfg = AzureDevOpsTestsCfgFixture.LoadCfg;
-        var storage     = AdoWikiPagesStatsStorageDeclare.New(adoTestsCfg, today);
-        var wiki        = AdoWikiDeclare.New(adoTestsCfg, today);
+        var storage     = AdoWikiPagesStatsStorageDeclare.New(adoTestsCfg);
+        var wiki        = AdoWikiDeclare.New(adoTestsCfg);
         // kja idea: instead of having pageId independently, obtain it from wiki.HomePageId
         var pageId      = adoTestsCfg.TestAdoWikiPageId();
+        var boundPvfd   = new BoundPageViewsForDays(pvfd, wiki.Today());
 
         var lastDay = wiki.Today();
         var expectedLastDaySpan = new DaySpan(lastDay.AddDays(-1), lastDay);
-        var expectedFirstDay = pvfd.AsDaySpanUntil(lastDay).StartDay;
+        var expectedFirstDay = boundPvfd.DaySpan.StartDay;
 
         // Act: obtain the data from the ADO API for wiki
-        var stats = await statsFromAdoApi(wiki, pvfd, pageId);
+        var stats = await statsFromAdoApi(wiki, boundPvfd, pageId);
 
         // Act: store the data
         storage = await storage.ReplaceWith(stats);
 
         // Act: read the stored data
-        var storedStats = storage.PagesStats(pvfd);
+        var storedStats = storage.PagesStats(boundPvfd);
 
         var actualFirstDay = stats.FirstDayWithAnyView;
         var storedFirstDay = storedStats.FirstDayWithAnyView;
