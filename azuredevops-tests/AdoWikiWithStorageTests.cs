@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using NUnit.Framework;
 using Wikitools.Lib.Primitives;
 using Wikitools.Lib.Tests.Json;
-using static Wikitools.Lib.Primitives.SimulatedTimeline;
 
 namespace Wikitools.AzureDevOps.Tests;
 
@@ -13,7 +12,8 @@ public class AdoWikiWithStorageTests
     [Test]
     public async Task NoData()
     {
-        var wikiWithStorage = await AdoWikiWithStorage(UtcNowDay);
+        var today           = new SimulatedTimeline().UtcNowDay;
+        var wikiWithStorage = await AdoWikiWithStorage(today);
 
         // Act
         var actualStats = await wikiWithStorage.PagesStats(PageViewsForDays.Max);
@@ -24,8 +24,9 @@ public class AdoWikiWithStorageTests
     [Test]
     public async Task DataInWiki()
     {
-        var wikiStats       = new ValidWikiPagesStatsFixture().WikiPagesStats(UtcNowDay);
-        var wikiWithStorage = await AdoWikiWithStorage(UtcNowDay, wikiStats: wikiStats);
+        var today           = new SimulatedTimeline().UtcNowDay;
+        var wikiStats       = new ValidWikiPagesStatsFixture().WikiPagesStats(today);
+        var wikiWithStorage = await AdoWikiWithStorage(today, wikiStats: wikiStats);
 
         // Act
         var actualStats = await wikiWithStorage.PagesStats(PageViewsForDays.Max);
@@ -36,8 +37,9 @@ public class AdoWikiWithStorageTests
     [Test]
     public async Task DataInStorage()
     {
-        var storedStats     = new ValidWikiPagesStatsFixture().PagesStatsForMonth(new DateDay(UtcNowDay));
-        var wikiWithStorage = await AdoWikiWithStorage(UtcNowDay, storedStats);
+        var today           = new SimulatedTimeline().UtcNowDay;
+        var storedStats     = new ValidWikiPagesStatsFixture().PagesStatsForMonth(new DateDay(today));
+        var wikiWithStorage = await AdoWikiWithStorage(today, storedStats);
 
         // Act
         var actualStats = await wikiWithStorage.PagesStats(PageViewsForDays.Max);
@@ -59,10 +61,11 @@ public class AdoWikiWithStorageTests
     [Test]
     public async Task DataInWikiAndStorageWithinWikiPageViewsForDaysMax()
     {
+        var today            = new SimulatedTimeline().UtcNowDay;
         var pvfd             = PageViewsForDays.Max;
-        var pvfdDaySpan      = new PageViewsForDays(pvfd).AsDaySpanUntil(UtcNowDay);
+        var pvfdDaySpan      = new PageViewsForDays(pvfd).AsDaySpanUntil(today);
         var fix              = new ValidWikiPagesStatsFixture();
-        var currMonthStats   = fix.PagesStatsForMonth(UtcNowDay);
+        var currMonthStats   = fix.PagesStatsForMonth(today);
         var currMonthStatsDaySpan = currMonthStats.ViewedDaysSpan;
 
         Assert.That(
@@ -74,7 +77,7 @@ public class AdoWikiWithStorageTests
         // The prevMonthStatsShift is chosen in such a way that the input assumptions as captured
         // by assertions below are obeyed. The exact acceptable values depend on
         // currMonthStats content.
-        DateDay prevMonthStatsShift = UtcNowDay.AddDays(-26);
+        DateDay prevMonthStatsShift = today.AddDays(-26);
         var prevMonthStats = fix.PagesStatsForMonth(prevMonthStatsShift)
             .TrimFrom(pvfdDaySpan.StartDay)
             .Trim(currMonthStats.Month.AddMonths(-1));
@@ -91,7 +94,7 @@ public class AdoWikiWithStorageTests
             "is different from current month (from wiki)");
 
         var wikiWithStorage = await AdoWikiWithStorage(
-            UtcNowDay,
+            today,
             storedStats: prevMonthStats,
             wikiStats: currMonthStats);
 
@@ -136,13 +139,14 @@ public class AdoWikiWithStorageTests
     [Test]
     public async Task DataFromStorageFromManyMonths()
     {
+        var today                = new SimulatedTimeline().UtcNowDay;
         var statsInMonthPresence = new[] { false, false, true, false, true, true, false, false };
         var storedStats = ArrangeStatsFromMonths(statsInMonthPresence);
         Assert.That(storedStats.ViewedDaysSpan > PageViewsForDays.Max);
         Assert.That(storedStats.DaySpan.Count > 6*31, "Should be more than 6 months");
         Assert.That(storedStats.DaySpan.MonthsCount == statsInMonthPresence.Length);
 
-        var wikiWithStorage = await AdoWikiWithStorage(UtcNowDay, storedStats);
+        var wikiWithStorage = await AdoWikiWithStorage(today, storedStats);
 
         // Act
         var actualStats = await wikiWithStorage.PagesStats(storedStats.DaySpan.Count);
@@ -157,7 +161,7 @@ public class AdoWikiWithStorageTests
                 (statsPresent, i) =>
                 {
                     int earliestMonthOffset = -(monthsCount - 1);
-                    DateDay currDay = UtcNowDay.AddMonths(earliestMonthOffset + i);
+                    DateDay currDay = today.AddMonths(earliestMonthOffset + i);
                     return statsPresent
                         ? fix.PagesStatsForMonth(currDay)
                         : new ValidWikiPagesStatsForMonth(

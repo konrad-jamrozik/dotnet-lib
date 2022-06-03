@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using NUnit.Framework;
+using Wikitools.Lib.Primitives;
 using Wikitools.Lib.Tests.Json;
-using static Wikitools.Lib.Primitives.SimulatedTimeline;
 
 namespace Wikitools.AzureDevOps.Tests;
 
@@ -30,10 +30,11 @@ public class AdoWikiPagesStatsStorageTests
     [Test]
     public async Task FirstDayOfViewsInStorageIsNotOffByOne()
     {
-        var pvfd        = new BoundPageViewsForDays(3, UtcNowDay);
+        var today       = new SimulatedTimeline().UtcNowDay;
+        var pvfd        = new BoundPageViewsForDays(3, today);
         var pvfdDaySpan = pvfd.DaySpan;
         var fixture     = new ValidWikiPagesStatsFixture();
-        var stats       = fixture.PagesStatsForMonth(UtcNowDay);
+        var stats       = fixture.PagesStatsForMonth(today);
 
         Assert.That(
             stats.FirstDayWithAnyView,
