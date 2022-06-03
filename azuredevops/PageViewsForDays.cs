@@ -57,7 +57,7 @@ public record PageViewsForDays()
 
     public override string ToString() => $"{Value}";
 
-    // kja convert to BoundPageViewsForDays where appropriate
+    // kja this property should exist only on BoundPageViewsForDays
     public DaySpan AsDaySpanUntil(DateDay endDay)
         => new DaySpan(endDay.AddDays(-Value+1), endDay);
 }
