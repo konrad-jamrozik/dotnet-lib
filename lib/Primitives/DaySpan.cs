@@ -5,6 +5,10 @@ namespace Wikitools.Lib.Primitives;
 
 public record DaySpan
 {
+    public DateDay StartDay { get; private init; }
+
+    public DateDay EndDay { get; private init; }
+
     public DaySpan(DateTime now, int daysAgo) : this(
         new DateDay(now.AddDays(-daysAgo)),
         new DateDay(now)) { }
@@ -13,17 +17,11 @@ public record DaySpan
 
     public DaySpan(DateDay startDay, DateDay endDay)
     {
-        // Note this setup of invariant checks in ctor has some problems.
-        // Details here: https://github.com/dotnet/csharplang/issues/4453#issuecomment-782807066
         Contract.Assert(startDay.Kind == endDay.Kind);
         Contract.Assert(startDay.CompareTo(endDay) <= 0);
         StartDay = startDay;
         EndDay = endDay;
     }
-
-    public DateDay StartDay { get; }
-
-    public DateDay EndDay { get; }
 
     public DateTimeKind Kind => StartDay.Kind;
 
@@ -60,6 +58,9 @@ public record DaySpan
 
     public bool IsExactlyForEntireMonth(DateMonth month)
         => StartDay == month.FirstDay && EndDay == month.LastDay;
+
+    public DaySpan Until(DateTime dateTime)
+        => this with { StartDay = StartDay, EndDay = new DateDay(dateTime) };
 
     public DaySpan Merge(DaySpan other, bool allowGap = false)
     {

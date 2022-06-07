@@ -17,10 +17,7 @@ public record PageViewStats(string FilePath, int Views)
         DaySpan daySpan,
         int? top = null)
     {
-        var pvfd = new PageViewsForDays((timeline.UtcNow - daySpan.StartDay).Days + 1); // kja more pvfd shenanigans! Check other reports too
-        // kja looks like this Assert will be redundant when the TODO above is fixed
-        Contract.Assert(
-            pvfd.AsDaySpanUntil(new DateDay(timeline.UtcNow)).StartDay == daySpan.StartDay);
+        var pvfd = new PageViewsForDays(daySpan.Until(timeline.UtcNow));
 
         // kj2 this will trigger call to ADO API.
         // Here it is OK, as we are in late execution stage, but I need to ensure
