@@ -15,28 +15,21 @@ namespace Wikitools.AzureDevOps;
 /// </summary>
 public record AdoWikiPagesStatsStorage(MonthlyJsonFilesStorage Storage)
 {
-    public Task<AdoWikiPagesStatsStorage> Update(
+    public async Task<AdoWikiPagesStatsStorage> Update(
         IAdoWiki wiki,
         PageViewsForDays pvfd,
         int? pageId = null)
     {
-        Func<PageViewsForDays, Task<ValidWikiPagesStats>> wikiPagesStatsFunc =
+        var wikiPagesStats = await (
             pageId == null
-                // ReSharper disable once ConvertClosureToMethodGroup
-                ? pvfd => wiki.PagesStats(pvfd)
-                : pvfd => wiki.PageStats(pvfd, (int)pageId);
-        return Update(pvfd, wikiPagesStatsFunc);
+                ? wiki.PagesStats(pvfd)
+                : wiki.PageStats(pvfd, (int)pageId));
+        return await Update(wikiPagesStats);
     }
 
-    // kja 2 instead of taking pvfd, it could take Action() (instead of Func())
-    // that already has pvfd in it. I.e. that action will have pvfd already bound.
-    private async Task<AdoWikiPagesStatsStorage> Update(
-        PageViewsForDays pvfd,
-        Func<PageViewsForDays, Task<ValidWikiPagesStats>> wikiPagesStatsFunc)
+    private async Task<AdoWikiPagesStatsStorage> Update(ValidWikiPagesStats wikiPagesStats)
     {
-        var pagesStats = await wikiPagesStatsFunc(pvfd);
-
-        var (previousMonthStats, currentMonthStats) = pagesStats.SplitIntoTwoMonths();
+        var (previousMonthStats, currentMonthStats) = wikiPagesStats.SplitIntoTwoMonths();
         if (previousMonthStats != null)
             await MergeIntoStoredMonthStats(previousMonthStats);
         await MergeIntoStoredMonthStats(currentMonthStats);
