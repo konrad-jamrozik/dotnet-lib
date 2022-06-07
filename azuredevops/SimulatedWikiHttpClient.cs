@@ -11,7 +11,7 @@ public record SimulatedWikiHttpClient(ValidWikiPagesStats PagesStatsData, DateDa
 {
     DateDay IWikiHttpClient.Today() => Today;
 
-    public Task<WikiPageDetail> GetPageDataAsync(int pageId, PageViewsForDays pvfd)
+    public Task<WikiPageDetail> GetPageDataAsync(PageViewsForDays pvfd, int pageId)
     {
         // kja 2 redundant once to-do here is fixed: Wikitools.AzureDevOps.PageViewsForDays.PageViewsForDays
         pvfd.AssertPageViewsForDaysRange();

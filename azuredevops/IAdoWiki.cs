@@ -5,9 +5,9 @@ namespace Wikitools.AzureDevOps;
 
 public interface IAdoWiki
 {
-    Task<ValidWikiPagesStats> PagesStats(PageViewsForDays pvfd);
-
     Task<ValidWikiPagesStats> PageStats(PageViewsForDays pvfd, int pageId);
+
+    Task<ValidWikiPagesStats> PagesStats(PageViewsForDays pvfd);
 
     public DateDay Today();
 }

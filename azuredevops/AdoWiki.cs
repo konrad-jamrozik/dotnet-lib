@@ -66,6 +66,12 @@ public record AdoWiki(IWikiHttpClient Client) : IAdoWiki
 
     private async Task<IEnumerable<WikiPageDetail>> GetWikiPagesDetails(
         IWikiHttpClient wikiClient,
+        PageViewsForDays pvfd,
+        int pageId) 
+        => (await wikiClient.GetPageDataAsync(pvfd, pageId)).WrapInList();
+
+    private async Task<IEnumerable<WikiPageDetail>> GetWikiPagesDetails(
+        IWikiHttpClient wikiClient,
         PageViewsForDays pvfd)
     {
         var wikiPagesBatchRequest = new WikiPagesBatchRequest
@@ -83,10 +89,4 @@ public record AdoWiki(IWikiHttpClient Client) : IAdoWiki
 
         return wikiPagesDetails;
     }
-
-    private async Task<IEnumerable<WikiPageDetail>> GetWikiPagesDetails(
-        IWikiHttpClient wikiClient,
-        PageViewsForDays pvfd,
-        int pageId) 
-        => (await wikiClient.GetPageDataAsync(pageId, pvfd)).WrapInList();
 }

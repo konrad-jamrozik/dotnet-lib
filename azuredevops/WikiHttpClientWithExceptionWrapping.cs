@@ -12,9 +12,7 @@ namespace Wikitools.AzureDevOps;
 public record WikiHttpClientWithExceptionWrapping
     (WikiHttpClient Client, AdoWikiUri Uri) : IWikiHttpClient
 {
-    public Task<WikiPageDetail> GetPageDataAsync(
-        int pageId,
-        PageViewsForDays pvfd) =>
+    public Task<WikiPageDetail> GetPageDataAsync(PageViewsForDays pvfd, int pageId) =>
         // API reference:
         // https://docs.microsoft.com/en-us/rest/api/azure/devops/wiki/page-stats/get?view=azure-devops-rest-6.0
         TryInvoke(
