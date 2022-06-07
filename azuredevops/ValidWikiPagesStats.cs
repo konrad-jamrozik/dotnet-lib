@@ -30,12 +30,6 @@ namespace Wikitools.AzureDevOps;
 /// </summary>
 public record ValidWikiPagesStats : IEnumerable<WikiPageStats>
 {
-    public ValidWikiPagesStats(
-        IEnumerable<WikiPageStats> stats,
-        BoundPageViewsForDays pvfd) : this(stats, pvfd.DaySpan)
-    {
-    }
-
     // Note this setup of invariant checks in ctor has some problems.
     // Details here: https://github.com/dotnet/csharplang/issues/4453#issuecomment-782807066
     // But see how I solved it with "init" for DaySpan,

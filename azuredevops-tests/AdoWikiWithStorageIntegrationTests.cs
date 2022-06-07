@@ -105,7 +105,7 @@ public class AdoWikiWithStorageIntegrationTests
             .WhereStats(stats => stats.Id == pageId);
 
     private async Task VerifyDaySpanOfWikiStats(
-        int pvfd,
+        PageViewsForDays pvfd,
         Func<IAdoWiki, PageViewsForDays, int, Task<ValidWikiPagesStats>> statsFromAdoApi)
     {
         var adoTestsCfg = AzureDevOpsTestsCfgFixture.LoadCfg;
@@ -113,20 +113,21 @@ public class AdoWikiWithStorageIntegrationTests
         var wiki        = AdoWikiDeclare.New(adoTestsCfg);
         // kja 2 idea: instead of having pageId independently, obtain it from wiki.HomePageId
         var pageId      = adoTestsCfg.TestAdoWikiPageId();
-        var boundPvfd   = new BoundPageViewsForDays(pvfd, wiki.Today());
+        var daySpan     = pvfd.AsDaySpanUntil(wiki.Today());
 
         var lastDay = wiki.Today();
         var expectedLastDaySpan = new DaySpan(lastDay.AddDays(-1), lastDay);
-        var expectedFirstDay = boundPvfd.DaySpan.StartDay;
+        
+        var expectedFirstDay = daySpan.StartDay;
 
         // Act: obtain the data from the ADO API for wiki
-        var stats = await statsFromAdoApi(wiki, boundPvfd, pageId);
+        var stats = await statsFromAdoApi(wiki, pvfd, pageId);
 
         // Act: store the data
         storage = await storage.ReplaceWith(stats);
 
         // Act: read the stored data
-        var storedStats = storage.PagesStats(boundPvfd);
+        var storedStats = storage.PagesStats(daySpan);
 
         var actualFirstDay = stats.FirstDayWithAnyView;
         var storedFirstDay = storedStats.FirstDayWithAnyView;

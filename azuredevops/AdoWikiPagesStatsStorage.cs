@@ -58,9 +58,8 @@ public record AdoWikiPagesStatsStorage(MonthlyJsonFilesStorage Storage)
         return this;
     }
 
-    public ValidWikiPagesStats PagesStats(BoundPageViewsForDays pvfd)
+    public ValidWikiPagesStats PagesStats(DaySpan daySpan)
     {
-        var daySpan = pvfd.DaySpan;
         IEnumerable<ValidWikiPagesStatsForMonth> statsByMonth = DateMonth
             .MonthSpan(daySpan)
             .Select(month =>

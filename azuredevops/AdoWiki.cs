@@ -60,8 +60,8 @@ public record AdoWiki(IWikiHttpClient Client) : IAdoWiki
         var wikiHttpClient   = Client;
         var wikiPagesDetails = await wikiPagesDetailsFunc(wikiHttpClient, pvfd);
         var wikiPagesStats   = wikiPagesDetails.Select(WikiPageStats.From);
-        var boundPvfd = new BoundPageViewsForDays(pvfd, wikiHttpClient.Today());
-        return new ValidWikiPagesStats(wikiPagesStats, boundPvfd);
+        var daySpan          = pvfd.AsDaySpanUntil(wikiHttpClient.Today());
+        return new ValidWikiPagesStats(wikiPagesStats, daySpan);
     }
 
     private async Task<IEnumerable<WikiPageDetail>> GetWikiPagesDetails(

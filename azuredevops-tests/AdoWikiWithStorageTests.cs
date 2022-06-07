@@ -63,7 +63,7 @@ public class AdoWikiWithStorageTests
     {
         var today            = new SimulatedTimeline().UtcNowDay;
         var pvfd             = PageViewsForDays.Max;
-        var pvfdDaySpan      = new BoundPageViewsForDays(pvfd, today).DaySpan;
+        var daySpan          = new PageViewsForDays(pvfd).AsDaySpanUntil(today);
         var fix              = new ValidWikiPagesStatsFixture();
         var currMonthStats   = fix.PagesStatsForMonth(today);
         var currMonthStatsDaySpan = currMonthStats.ViewedDaysSpan;
@@ -79,12 +79,12 @@ public class AdoWikiWithStorageTests
         // currMonthStats content.
         DateDay prevMonthStatsShift = today.AddDays(-26);
         var prevMonthStats = fix.PagesStatsForMonth(prevMonthStatsShift)
-            .TrimFrom(pvfdDaySpan.StartDay)
+            .TrimFrom(daySpan.StartDay)
             .Trim(currMonthStats.Month.AddMonths(-1));
         
         Assert.That(
             prevMonthStats.FirstDayWithAnyView,
-            Is.EqualTo(pvfdDaySpan.StartDay),
+            Is.EqualTo(daySpan.StartDay),
             "Precondition violation: the first day of arranged stats has to be exactly at the " +
             "start day boundary of PageViewsForDays.Max.");
         Assert.That(
