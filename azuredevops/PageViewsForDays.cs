@@ -18,30 +18,22 @@ public record PageViewsForDays()
     // Confirmed empirically as of 3/27/2021.
     public const int Max = 30;
 
-    public PageViewsForDays(DaySpan daySpan) : this(daySpan.Count)
+    public PageViewsForDays(int? days) : this()
     {
-    }
-
-    public PageViewsForDays(int? days) : this(days ?? 0)
-    {
-    }
-
-    public PageViewsForDays(int days) : this()
-    {
-        Days = days;
-        AssertPageViewsForDaysRange();
+        Days = days ?? 0;
+        AssertWithinAdoApiLimit();
     }
 
     public int Days { get; }
 
     public static implicit operator PageViewsForDays(int value) => new PageViewsForDays(value);
 
-    public void AssertPageViewsForDaysRange() // kja rename: AssertWithinAdoApiLimit
+    public override string ToString() => $"{Days}";
+
+    private void AssertWithinAdoApiLimit()
         => Contract.Assert(
             Days,
             nameof(PageViewsForDays),
             new Range(Min, Max),
             upperBoundReason: "ADO API limit");
-
-    public override string ToString() => $"{Days}";
 }
