@@ -22,13 +22,13 @@ public class AdoWikiWithStorageIntegrationTests
     [Test]
     public async Task ObtainsAndStoresDataFromAdoWikiFor5DaysFromSinglePageApi() =>
         await VerifyDaySpanOfWikiStats(
-            pvfd: 5,
+            days: 5,
             statsFromAdoApi: WikiPageStatsForSinglePage);
 
     [Test]
     public async Task ObtainsAndStoresDataFromAdoWikiFor5DaysFromManyPagesApi() =>
         await VerifyDaySpanOfWikiStats(
-            pvfd: 5,
+            days: 5,
             statsFromAdoApi: WikiPageStatsForAllPages);
 
     /// <summary>
@@ -92,27 +92,27 @@ public class AdoWikiWithStorageIntegrationTests
 
     private Task<ValidWikiPagesStats> WikiPageStatsForSinglePage(
         IAdoWiki wiki,
-        PageViewsForDays pvfd,
+        int days,
         int pageId)
-        => wiki.PageStats(pvfd, pageId);
+        => wiki.PageStats(days, pageId);
 
     private async Task<ValidWikiPagesStats> WikiPageStatsForAllPages(
         IAdoWiki wiki,
-        PageViewsForDays pvfd,
+        int days,
         int pageId)
-        => (await wiki.PagesStats(pvfd))
+        => (await wiki.PagesStats(days))
             .WhereStats(stats => stats.Id == pageId);
 
     private async Task VerifyDaySpanOfWikiStats(
-        PageViewsForDays pvfd,
-        Func<IAdoWiki, PageViewsForDays, int, Task<ValidWikiPagesStats>> statsFromAdoApi)
+        int days,
+        Func<IAdoWiki, int, int, Task<ValidWikiPagesStats>> statsFromAdoApi)
     {
         var adoTestsCfg = AzureDevOpsTestsCfgFixture.LoadCfg;
         var storage     = AdoWikiPagesStatsStorageDeclare.New(adoTestsCfg);
         var wiki        = AdoWikiDeclare.New(adoTestsCfg);
         // kja 2 idea: instead of having pageId independently, obtain it from wiki.HomePageId
         var pageId      = adoTestsCfg.TestAdoWikiPageId();
-        var daySpan     = pvfd.AsDaySpanUntil(wiki.Today());
+        var daySpan     = days.AsDaySpanUntil(wiki.Today());
 
         var lastDay = wiki.Today();
         var expectedLastDaySpan = new DaySpan(lastDay.AddDays(-1), lastDay);
@@ -120,7 +120,7 @@ public class AdoWikiWithStorageIntegrationTests
         var expectedFirstDay = daySpan.StartDay;
 
         // Act: obtain the data from the ADO API for wiki
-        var stats = await statsFromAdoApi(wiki, pvfd, pageId);
+        var stats = await statsFromAdoApi(wiki, days, pageId);
 
         // Act: store the data
         storage = await storage.ReplaceWith(stats);
@@ -150,11 +150,11 @@ public class AdoWikiWithStorageIntegrationTests
         Assume.That(
             actualFirstDay,
             Is.EqualTo(expectedFirstDay),
-            ExactDayAssumptionViolationMessage("Minimum first", pvfd));
+            ExactDayAssumptionViolationMessage("Minimum first", days));
         Assume.That(
             actualLastDay,
             Is.AtLeast(expectedLastDaySpan.StartDay),
-            ExactDayAssumptionViolationMessage("Maximum last", pvfd));
+            ExactDayAssumptionViolationMessage("Maximum last", days));
 
         string ExactDayAssumptionViolationMessage(string dayType, PageViewsForDays pvfd)
         {

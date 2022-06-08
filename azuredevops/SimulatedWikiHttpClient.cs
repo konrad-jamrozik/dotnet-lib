@@ -16,7 +16,7 @@ public record SimulatedWikiHttpClient(ValidWikiPagesStats PagesStatsData, DateDa
     public Task<WikiPageDetail> GetPageDataAsync(PageViewsForDays pvfd, int pageId)
     {
 
-        var trimmedStats = PagesStatsData.Trim(pvfd).Trim(pageId);
+        var trimmedStats = PagesStatsData.Trim(pvfd).TrimToPageId(pageId);
         var pageDetail = trimmedStats.Single().ToWikiPageDetail();
 
         return Task.FromResult(pageDetail);

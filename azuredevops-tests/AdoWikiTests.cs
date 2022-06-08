@@ -12,13 +12,13 @@ public class AdoWikiTests
     public async Task GetsPagesStats()
     {
         var input = new ValidWikiPagesStatsFixture().WikiPagesStats();
-        var pageViewsForDays = new PageViewsForDays(3);
-        var expected = input.Trim(pageViewsForDays);
+        var days = 3;
+        var expected = input.Trim(days);
         var today = new SimulatedTimeline().UtcNowDay;
         var adoWiki = new AdoWiki(new SimulatedWikiHttpClient(input, today));
 
         // Act
-        var actual = await adoWiki.PagesStats(pageViewsForDays);
+        var actual = await adoWiki.PagesStats(days);
 
         new JsonDiffAssertion(expected, actual).Assert();
     }
@@ -28,13 +28,13 @@ public class AdoWikiTests
     {
         int pageId = 1;
         var input = new ValidWikiPagesStatsFixture().WikiPagesStats();
-        var pageViewsForDays = new PageViewsForDays(3);
-        var expected = input.Trim(pageViewsForDays).Trim(pageId);
+        var days = 3;
+        var expected = input.Trim(days).TrimToPageId(pageId);
         var today = new SimulatedTimeline().UtcNowDay;
         var adoWiki = new AdoWiki(new SimulatedWikiHttpClient(input, today));
 
         // Act
-        var actual = await adoWiki.PageStats(pageViewsForDays, pageId);
+        var actual = await adoWiki.PageStats(days, pageId);
 
         new JsonDiffAssertion(expected, actual).Assert();
     }

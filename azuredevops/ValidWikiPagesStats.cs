@@ -308,10 +308,14 @@ public record ValidWikiPagesStats : IEnumerable<WikiPageStats>
                 })
             .ToArray(), daySpan);
 
+    // kja to remove?
     public ValidWikiPagesStats Trim(PageViewsForDays pvfd)
         => Trim(pvfd.AsDaySpanUntil(DaySpan.EndDay));
 
-    public ValidWikiPagesStats Trim(int pageId)
+    public ValidWikiPagesStats Trim(int days)
+        => Trim(days.AsDaySpanUntil(DaySpan.EndDay));
+
+    public ValidWikiPagesStats TrimToPageId(int pageId)
     {
         var wikiPageStats = this.Single(pageStats => pageStats.Id == pageId).WrapInList();
         return new ValidWikiPagesStats(wikiPageStats, this.DaySpan);

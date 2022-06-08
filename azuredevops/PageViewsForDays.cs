@@ -45,9 +45,6 @@ public record PageViewsForDays()
 
     public static implicit operator PageViewsForDays(int value) => new PageViewsForDays(value);
 
-    // kja get rid of it
-    public static implicit operator int(PageViewsForDays value) => value.Value;
-
     public void AssertPageViewsForDaysRange() // kja rename: AssertWithinAdoApiLimit
         => Contract.Assert(
             Value,
