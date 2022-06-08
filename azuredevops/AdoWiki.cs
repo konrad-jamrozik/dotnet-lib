@@ -45,13 +45,14 @@ public record AdoWiki(IWikiHttpClient Client) : IAdoWiki
 
     public async Task<ValidWikiPagesStats> PagesStats(int days)
     {
-        IEnumerable<WikiPageDetail> wikiPagesDetails = await GetWikiPagesDetails(days);
+        IEnumerable<WikiPageDetail> wikiPagesDetails 
+            = await GetWikiPagesDetails(new PageViewsForDays(days));
         return PagesStats(days, wikiPagesDetails);
     }
 
     public async Task<ValidWikiPagesStats> PageStats(int days, int pageId)
     {
-        var wikiPageDetails = await GetWikiPageDetails(days, pageId);
+        var wikiPageDetails = await GetWikiPageDetails(new PageViewsForDays(days), pageId);
         return PagesStats(days, wikiPageDetails.WrapInList());
     }
 
@@ -65,9 +66,9 @@ public record AdoWiki(IWikiHttpClient Client) : IAdoWiki
     }
 
     private async Task<WikiPageDetail> GetWikiPageDetails(
-        int days,
+        PageViewsForDays pvfd,
         int pageId)
-        => await Client.GetPageDataAsync(days, pageId);
+        => await Client.GetPageDataAsync(pvfd, pageId);
 
     private async Task<IEnumerable<WikiPageDetail>> GetWikiPagesDetails(PageViewsForDays pvfd)
     {

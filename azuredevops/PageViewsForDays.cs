@@ -1,6 +1,5 @@
 ﻿using System;
 using Wikitools.Lib.Contracts;
-using Wikitools.Lib.Primitives;
 
 namespace Wikitools.AzureDevOps;
 
@@ -25,8 +24,6 @@ public record PageViewsForDays()
     }
 
     public int Days { get; }
-
-    public static implicit operator PageViewsForDays(int value) => new PageViewsForDays(value);
 
     public override string ToString() => $"{Days}";
 

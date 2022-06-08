@@ -156,9 +156,9 @@ public class AdoWikiWithStorageIntegrationTests
             Is.AtLeast(expectedLastDaySpan.StartDay),
             ExactDayAssumptionViolationMessage("Maximum last", days));
 
-        string ExactDayAssumptionViolationMessage(string dayType, PageViewsForDays pvfd)
+        string ExactDayAssumptionViolationMessage(string dayType, int days)
         {
-            return $"{dayType} possible day for pageViewsForDays: {pvfd}. " +
+            return $"{dayType} possible day for days: {days}. " +
                    "Possible lack of views (null) or ingestion delay (see comment on AdoWiki). " +
                    $"UTC time: {DateTime.UtcNow}";
         }
