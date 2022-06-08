@@ -17,7 +17,7 @@ public record PageViewStats(string FilePath, int Views)
         DaySpan daySpan,
         int? top = null)
     {
-        var pvfd = new PageViewsForDays(daySpan.Until(timeline.UtcNow));
+        int days = daySpan.Until(timeline.UtcNow).Count;
 
         // kj2 this will trigger call to ADO API.
         // Here it is OK, as we are in late execution stage, but I need to ensure
@@ -31,7 +31,7 @@ public record PageViewStats(string FilePath, int Views)
         // https://github.com/dotnet/roslyn/issues/16160
         // 11/17/2021: Or maybe doing stuff like LINQ IEnumerable is enough? IEnumerable and related
         // collections are lazy after all.
-        var pagesStats = (await wiki.PagesStats(pvfd)).Trim(daySpan);
+        var pagesStats = (await wiki.PagesStats(days)).Trim(daySpan);
 
         var pathsStats = pagesStats.Select(
                 pageStats => new PageViewStats(

@@ -56,7 +56,7 @@ public record AdoWiki(IWikiHttpClient Client) : IAdoWiki
     }
 
     private ValidWikiPagesStats PagesStats(
-        PageViewsForDays pvfd,
+        PageViewsForDays pvfd, // kja use "int days" instead
         IEnumerable<WikiPageDetail> wikiPagesDetails)
     {
         var wikiPagesStats = wikiPagesDetails.Select(WikiPageStats.From);
