@@ -7,11 +7,11 @@ namespace Wikitools.AzureDevOps.Tests;
 
 public record AdoWikiWithPreconditionChecks(IAdoWiki AdoWiki) : IAdoWiki
 {
-    public Task<ValidWikiPagesStats> PagesStats(PageViewsForDays pvfd) => 
-        TryInvoke(() => AdoWiki.PagesStats(pvfd));
+    public Task<ValidWikiPagesStats> PagesStats(int days) => 
+        TryInvoke(() => AdoWiki.PagesStats(days));
 
-    public Task<ValidWikiPagesStats> PageStats(PageViewsForDays pvfd, int pageId) => 
-        TryInvoke(() => AdoWiki.PageStats(pvfd, pageId));
+    public Task<ValidWikiPagesStats> PageStats(int days, int pageId) => 
+        TryInvoke(() => AdoWiki.PageStats(days, pageId));
 
     public DateDay Today() => AdoWiki.Today();
 

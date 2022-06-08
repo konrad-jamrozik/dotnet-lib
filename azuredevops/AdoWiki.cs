@@ -41,16 +41,16 @@ public record AdoWiki(IWikiHttpClient Client) : IAdoWiki
 
     DateDay IAdoWiki.Today() => Client.Today();
 
-    public async Task<ValidWikiPagesStats> PagesStats(PageViewsForDays pvfd)
+    public async Task<ValidWikiPagesStats> PagesStats(int days)
     {
-        IEnumerable<WikiPageDetail> wikiPagesDetails = await GetWikiPagesDetails(pvfd);
-        return PagesStats(pvfd, wikiPagesDetails);
+        IEnumerable<WikiPageDetail> wikiPagesDetails = await GetWikiPagesDetails(days);
+        return PagesStats(days, wikiPagesDetails);
     }
 
-    public async Task<ValidWikiPagesStats> PageStats(PageViewsForDays pvfd, int pageId)
+    public async Task<ValidWikiPagesStats> PageStats(int days, int pageId)
     {
-        var wikiPageDetails = await GetWikiPageDetails(pvfd, pageId);
-        return PagesStats(pvfd, wikiPageDetails.WrapInList());
+        var wikiPageDetails = await GetWikiPageDetails(days, pageId);
+        return PagesStats(days, wikiPageDetails.WrapInList());
     }
 
     private ValidWikiPagesStats PagesStats(

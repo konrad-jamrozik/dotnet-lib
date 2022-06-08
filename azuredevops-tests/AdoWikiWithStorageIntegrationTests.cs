@@ -52,11 +52,11 @@ public class AdoWikiWithStorageIntegrationTests
         // ReSharper disable CommentTypo
         // Act 1. Obtain 10 days of page stats from wiki (days 1 to 10)
         // WWWWWWWWWW
-        var statsForDays1To10 = await wiki.PageStats(pvfd: 10, pageId);
+        var statsForDays1To10 = await wiki.PageStats(days: 10, pageId: pageId);
 
         // Act 2. Obtain 4 days of page stats from wiki (days 7 to 10)
         // ------WWWW
-        var statsForDays7To10 = await wiki.PageStats(pvfd: 4, pageId);
+        var statsForDays7To10 = await wiki.PageStats(days: 4, pageId: pageId);
 
         // Act 3. Save to storage page stats for days 3 to 6
         // WWWWWWWWWW
@@ -74,7 +74,7 @@ public class AdoWikiWithStorageIntegrationTests
             wiki,
             storageWithStats,
             pageViewsForDaysMax: 4);
-        var statsForDays3To10 = await wikiWithStorage.PageStats(pvfd: 8, pageId);
+        var statsForDays3To10 = await wikiWithStorage.PageStats(days: 8, pageId: pageId);
 
         // Assert 4.1. Assert data from Act 4 corresponds to page stats days of 3 to 10
         // (data from storage for days 3 to 6 merged with data from ADO API for days 7 to 10)

@@ -28,11 +28,8 @@ public record PageViewsForDays()
 
     public PageViewsForDays(int value) : this()
     {
-        Contract.Assert(value >= Min);
         Value = value;
-        // kja have this here instead of the Min check above, but note it makes a test fail:
-        // Wikitools.AzureDevOps.Tests.AdoWikiWithStorageTests.DataFromStorageFromManyMonths
-        //AssertPageViewsForDaysRange();
+        AssertPageViewsForDaysRange();
     }
 
     public int Value { get; }
@@ -46,13 +43,12 @@ public record PageViewsForDays()
         }
     }
 
-    public static readonly PageViewsForDays Today = new PageViewsForDays(1);
-
     public static implicit operator PageViewsForDays(int value) => new PageViewsForDays(value);
 
-    public PageViewsForDays MinWith(int? value) => new PageViewsForDays(Value.MinWith(value));
+    // kja get rid of it
+    public static implicit operator int(PageViewsForDays value) => value.Value;
 
-    public void AssertPageViewsForDaysRange() // kj2 rename: AssertWithinAdoApiLimit
+    public void AssertPageViewsForDaysRange() // kja rename: AssertWithinAdoApiLimit
         => Contract.Assert(
             Value,
             nameof(PageViewsForDays),
@@ -61,6 +57,7 @@ public record PageViewsForDays()
 
     public override string ToString() => $"{Value}";
 
+    // kja inline?
     public DaySpan AsDaySpanUntil(DateDay endDay)
-        => new DaySpan(endDay.AddDays(-Value+1), endDay);
+        => Value.AsDaySpanUntil(endDay);
 }

@@ -33,6 +33,6 @@ public class AdoWikiWithStorageDeclare
     public AdoWikiWithStorage AdoWikiWithStorage(
         IAdoWiki wiki,
         AdoWikiPagesStatsStorage storage,
-        int? pageViewsForDaysMax = null) 
+        int pageViewsForDaysMax = PageViewsForDays.Max) 
         => new AdoWikiWithStorage(wiki, storage, pageViewsForDaysMax);
 }
