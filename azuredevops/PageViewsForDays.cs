@@ -22,27 +22,26 @@ public record PageViewsForDays()
     {
     }
 
-    public PageViewsForDays(int? value) : this(value ?? 0)
+    public PageViewsForDays(int? days) : this(days ?? 0)
     {
     }
 
-    public PageViewsForDays(int value) : this()
+    public PageViewsForDays(int days) : this()
     {
-        Value = value;
+        Days = days;
         AssertPageViewsForDaysRange();
     }
 
-    // kja rename to Days
-    public int Value { get; }
+    public int Days { get; }
 
     public static implicit operator PageViewsForDays(int value) => new PageViewsForDays(value);
 
     public void AssertPageViewsForDaysRange() // kja rename: AssertWithinAdoApiLimit
         => Contract.Assert(
-            Value,
+            Days,
             nameof(PageViewsForDays),
             new Range(Min, Max),
             upperBoundReason: "ADO API limit");
 
-    public override string ToString() => $"{Value}";
+    public override string ToString() => $"{Days}";
 }

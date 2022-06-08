@@ -72,7 +72,7 @@ public record AdoWiki(IWikiHttpClient Client) : IAdoWiki
     private async Task<IEnumerable<WikiPageDetail>> GetWikiPagesDetails(PageViewsForDays pvfd)
     {
         var wikiPagesBatchRequest = new WikiPagesBatchRequest
-            { Top = MaxApiTop, PageViewsForDays = pvfd.Value };
+            { Top = MaxApiTop, PageViewsForDays = pvfd.Days };
         var wikiPagesDetails = new List<WikiPageDetail>();
         string? continuationToken = null;
         do
