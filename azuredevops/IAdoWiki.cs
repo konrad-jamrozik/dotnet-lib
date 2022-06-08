@@ -7,6 +7,8 @@ public interface IAdoWiki
 {
     public DateDay Today();
 
+    public int PageViewsForDaysMax();
+
     Task<ValidWikiPagesStats> PageStats(int days, int pageId);
 
     Task<ValidWikiPagesStats> PagesStats(int days);

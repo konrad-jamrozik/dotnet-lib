@@ -33,7 +33,6 @@ public static class Program
         var cfg = new Configuration(fs).Load<IWikitoolsCfg>();
         var wikiDecl = new AdoWikiWithStorageDeclare();
         var wiki = wikiDecl.AdoWikiWithStorage(
-            timeline,
             fs,
             env,
             cfg.AzureDevOpsCfg().AdoWikiUri(),

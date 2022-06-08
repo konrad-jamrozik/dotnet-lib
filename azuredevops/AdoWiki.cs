@@ -41,6 +41,8 @@ public record AdoWiki(IWikiHttpClient Client) : IAdoWiki
 
     DateDay IAdoWiki.Today() => Client.Today();
 
+    public int PageViewsForDaysMax() => Client.PageViewsForDaysMax();
+
     public async Task<ValidWikiPagesStats> PagesStats(int days)
     {
         IEnumerable<WikiPageDetail> wikiPagesDetails = await GetWikiPagesDetails(days);

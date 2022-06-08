@@ -6,12 +6,12 @@ namespace Wikitools.AzureDevOps;
 
 public record AdoWikiWithStorage(
     IAdoWiki AdoWiki,
-    AdoWikiPagesStatsStorage Storage,
-    // kja PageViewsForDaysMax should instead be derived from AdoWiki, and in Storage.Update, which should take "days" as input, not "pvfd".
-    int PageViewsForDaysMax) : IAdoWiki
+    AdoWikiPagesStatsStorage Storage) : IAdoWiki
 {
     public Task<ValidWikiPagesStats> PagesStats(int days)
         => PagesStats(days, pageId: null);
+
+    int IAdoWiki.PageViewsForDaysMax() => AdoWiki.PageViewsForDaysMax();
 
     public Task<ValidWikiPagesStats> PageStats(int days, int pageId)
         => PagesStats(days, pageId);
@@ -20,16 +20,29 @@ public record AdoWikiWithStorage(
 
     private Task<ValidWikiPagesStats> PagesStats(int days, int? pageId)
     {
-        Func<WikiPageStats, bool> statsFilter =
-            pageId != null 
-                ? page => page.Id == pageId
-                : _ => true;
+        var updatedStorage = UpdateFromWiki(AdoWiki, days, pageId);
+        var updatedPagesViewsStats =
+            updatedStorage.Select(storage => storage
+                .PagesStats(days.AsDaySpanUntil(AdoWiki.Today()))
+                .WhereStats(StatsFilter(pageId)));
+        return updatedPagesViewsStats;
+    }
 
-        var pvfd = new PageViewsForDays(days.MinWith(PageViewsForDaysMax));
-        var updatedStorage = Storage.Update(AdoWiki, pvfd, pageId);
-        var storageDaySpan = days.AsDaySpanUntil(AdoWiki.Today());
-        var pagesViewsStats =
-            updatedStorage.Select(s => s.PagesStats(storageDaySpan).WhereStats(statsFilter));
-        return pagesViewsStats;
+    private static Func<WikiPageStats, bool> StatsFilter(int? pageId)
+        => pageId != null 
+            ? page => page.Id == pageId
+            : _ => true;
+
+    private async Task<AdoWikiPagesStatsStorage> UpdateFromWiki(
+        IAdoWiki wiki,
+        int days,
+        int? pageId = null)
+    {
+        var pvfd = new PageViewsForDays(days.MinWith(AdoWiki.PageViewsForDaysMax()));
+        var wikiPagesStats = await (
+            pageId == null
+                ? wiki.PagesStats(pvfd)
+                : wiki.PageStats(pvfd, (int)pageId));
+        return await Storage.Update(wikiPagesStats);
     }
 }

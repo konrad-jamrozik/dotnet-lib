@@ -70,10 +70,9 @@ public class AdoWikiWithStorageIntegrationTests
         // --SSSS----
         // ->
         // --SSSSWWWW
-        var wikiWithStorage = new AdoWikiWithStorageDeclare().AdoWikiWithStorage(
-            wiki,
-            storageWithStats,
-            pageViewsForDaysMax: 4);
+        // kja I need to use here a wrapper over wiki that will constraint pageViewsForDaysMax to 4.
+        // But somehow this test passes right now! How is it possible?
+        var wikiWithStorage = new AdoWikiWithStorage(wiki, storageWithStats);
         var statsForDays3To10 = await wikiWithStorage.PageStats(days: 8, pageId: pageId);
 
         // Assert 4.1. Assert data from Act 4 corresponds to page stats days of 3 to 10

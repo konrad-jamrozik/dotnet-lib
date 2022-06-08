@@ -15,6 +15,8 @@ namespace Wikitools.AzureDevOps;
 /// </summary>
 public interface IWikiHttpClient
 {
+    public int PageViewsForDaysMax();
+
     Task<WikiPageDetail> GetPageDataAsync(PageViewsForDays pvfd, int pageId);
 
     Task<PagedList<WikiPageDetail>> GetPagesBatchAsync(WikiPagesBatchRequest request);

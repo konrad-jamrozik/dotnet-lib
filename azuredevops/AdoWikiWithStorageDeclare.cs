@@ -1,5 +1,4 @@
 ﻿using Wikitools.Lib.OS;
-using Wikitools.Lib.Primitives;
 
 namespace Wikitools.AzureDevOps;
 // kj2 Other possible suffixes for Declare (update README.md):
@@ -15,7 +14,6 @@ namespace Wikitools.AzureDevOps;
 public class AdoWikiWithStorageDeclare
 {
     public AdoWikiWithStorage AdoWikiWithStorage(
-        ITimeline timeline,
         IFileSystem fs,
         IEnvironment env,
         string wikiUri,
@@ -26,13 +24,7 @@ public class AdoWikiWithStorageDeclare
         var storageDir  = new Dir(fs, storageDirPath);
         var storageDecl = new AdoWikiPagesStatsStorageDeclare();
         var storage     = storageDecl.New(storageDir);
-        var wikiWithStorage = AdoWikiWithStorage(wiki, storage);
+        var wikiWithStorage = new AdoWikiWithStorage(wiki, storage);
         return wikiWithStorage;
     }
-
-    public AdoWikiWithStorage AdoWikiWithStorage(
-        IAdoWiki wiki,
-        AdoWikiPagesStatsStorage storage,
-        int pageViewsForDaysMax = PageViewsForDays.Max) 
-        => new AdoWikiWithStorage(wiki, storage, pageViewsForDaysMax);
 }

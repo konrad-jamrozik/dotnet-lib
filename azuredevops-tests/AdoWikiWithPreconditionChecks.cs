@@ -10,6 +10,8 @@ public record AdoWikiWithPreconditionChecks(IAdoWiki AdoWiki) : IAdoWiki
     public Task<ValidWikiPagesStats> PagesStats(int days) => 
         TryInvoke(() => AdoWiki.PagesStats(days));
 
+    public int PageViewsForDaysMax() => AdoWiki.PageViewsForDaysMax();
+
     public Task<ValidWikiPagesStats> PageStats(int days, int pageId) => 
         TryInvoke(() => AdoWiki.PageStats(days, pageId));
 

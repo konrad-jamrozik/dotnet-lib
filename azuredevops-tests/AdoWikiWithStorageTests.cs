@@ -193,7 +193,7 @@ public class AdoWikiWithStorageTests
                 wikiStats ?? new ValidWikiPagesStats(WikiPageStats.EmptyArray, daySpan),
                 Today: daySpan.EndDay);
         var wiki = new AdoWiki(httpClient);
-        var wikiWithStorage = wikiDecl.AdoWikiWithStorage(wiki, storage);
+        var wikiWithStorage = new AdoWikiWithStorage(wiki, storage);
         return wikiWithStorage;
     }
 }

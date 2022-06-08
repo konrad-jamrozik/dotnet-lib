@@ -11,6 +11,8 @@ public record SimulatedWikiHttpClient(ValidWikiPagesStats PagesStatsData, DateDa
 {
     DateDay IWikiHttpClient.Today() => Today;
 
+    public int PageViewsForDaysMax() => PageViewsForDays.Max;
+
     public Task<WikiPageDetail> GetPageDataAsync(PageViewsForDays pvfd, int pageId)
     {
 

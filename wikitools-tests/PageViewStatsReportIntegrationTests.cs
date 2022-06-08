@@ -36,7 +36,6 @@ public class PageViewStatsReportIntegrationTests
         var env = new Environment();
 
         var wiki = new AdoWikiWithStorageDeclare().AdoWikiWithStorage(
-            timeline,
             fs,
             env,
             cfg.AzureDevOpsCfg().AdoWikiUri(),

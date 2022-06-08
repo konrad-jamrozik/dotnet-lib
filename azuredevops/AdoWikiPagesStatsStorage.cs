@@ -15,19 +15,7 @@ namespace Wikitools.AzureDevOps;
 /// </summary>
 public record AdoWikiPagesStatsStorage(MonthlyJsonFilesStorage Storage)
 {
-    public async Task<AdoWikiPagesStatsStorage> Update(
-        IAdoWiki wiki,
-        PageViewsForDays pvfd,
-        int? pageId = null)
-    {
-        var wikiPagesStats = await (
-            pageId == null
-                ? wiki.PagesStats(pvfd)
-                : wiki.PageStats(pvfd, (int)pageId));
-        return await Update(wikiPagesStats);
-    }
-
-    private async Task<AdoWikiPagesStatsStorage> Update(ValidWikiPagesStats wikiPagesStats)
+    public async Task<AdoWikiPagesStatsStorage> Update(ValidWikiPagesStats wikiPagesStats)
     {
         var (previousMonthStats, currentMonthStats) = wikiPagesStats.SplitIntoTwoMonths();
         if (previousMonthStats != null)

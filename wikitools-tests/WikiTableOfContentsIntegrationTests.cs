@@ -70,7 +70,6 @@ public class WikiTableOfContentsIntegrationTests
         var env      = new Environment();
         var wikiDecl = new AdoWikiWithStorageDeclare();
         var wiki = wikiDecl.AdoWikiWithStorage(
-            timeline,
             fs,
             env,
             cfg.AzureDevOpsCfg.AdoWikiUri(),

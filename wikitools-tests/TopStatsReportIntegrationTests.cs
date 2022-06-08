@@ -77,7 +77,6 @@ public class TopStatsReportIntegrationTests
     {
         var env = new Environment();
         var wiki = new AdoWikiWithStorageDeclare().AdoWikiWithStorage(
-            timeline,
             fs,
             env,
             adoCfg.AdoWikiUri(),
