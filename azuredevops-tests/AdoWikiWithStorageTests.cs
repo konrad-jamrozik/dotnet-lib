@@ -63,7 +63,7 @@ public class AdoWikiWithStorageTests
     {
         var today            = new SimulatedTimeline().UtcNowDay;
         var pvfd             = PageViewsForDays.Max;
-        var daySpan          = new PageViewsForDays(pvfd).AsDaySpanUntil(today);
+        var daySpan          = pvfd.AsDaySpanUntil(today);
         var fix              = new ValidWikiPagesStatsFixture();
         var currMonthStats   = fix.PagesStatsForMonth(today);
         var currMonthStatsDaySpan = currMonthStats.ViewedDaysSpan;

@@ -22,7 +22,7 @@ public record WikiHttpClientWithExceptionWrapping
                 Uri.ProjectName,
                 Uri.WikiName,
                 pageId,
-                pvfd.ValueWithinAdoApiLimit));
+                pvfd.Value));
 
     public Task<PagedList<WikiPageDetail>> GetPagesBatchAsync(WikiPagesBatchRequest request) =>
         // API reference:

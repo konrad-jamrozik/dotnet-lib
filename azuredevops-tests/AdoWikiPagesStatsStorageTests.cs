@@ -31,7 +31,7 @@ public class AdoWikiPagesStatsStorageTests
     public async Task FirstDayOfViewsInStorageIsNotOffByOne()
     {
         var today       = new SimulatedTimeline().UtcNowDay;
-        var daySpan     = new PageViewsForDays(3).AsDaySpanUntil(today);
+        var daySpan     = 3.AsDaySpanUntil(today);
         var fixture     = new ValidWikiPagesStatsFixture();
         var stats       = fixture.PagesStatsForMonth(today);
 

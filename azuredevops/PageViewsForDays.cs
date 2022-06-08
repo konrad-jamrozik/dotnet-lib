@@ -32,16 +32,8 @@ public record PageViewsForDays()
         AssertPageViewsForDaysRange();
     }
 
+    // kja rename to Days
     public int Value { get; }
-
-    public int ValueWithinAdoApiLimit
-    {
-        get
-        {
-            AssertPageViewsForDaysRange();
-            return Value;
-        }
-    }
 
     public static implicit operator PageViewsForDays(int value) => new PageViewsForDays(value);
 
@@ -53,8 +45,4 @@ public record PageViewsForDays()
             upperBoundReason: "ADO API limit");
 
     public override string ToString() => $"{Value}";
-
-    // kja inline?
-    public DaySpan AsDaySpanUntil(DateDay endDay)
-        => Value.AsDaySpanUntil(endDay);
 }

@@ -15,8 +15,7 @@ public record SimulatedWikiHttpClient(ValidWikiPagesStats PagesStatsData, DateDa
 
     public Task<WikiPageDetail> GetPageDataAsync(PageViewsForDays pvfd, int pageId)
     {
-
-        var trimmedStats = PagesStatsData.Trim(pvfd).TrimToPageId(pageId);
+        var trimmedStats = PagesStatsData.Trim(pvfd.Value).TrimToPageId(pageId);
         var pageDetail = trimmedStats.Single().ToWikiPageDetail();
 
         return Task.FromResult(pageDetail);
@@ -25,7 +24,7 @@ public record SimulatedWikiHttpClient(ValidWikiPagesStats PagesStatsData, DateDa
     public Task<PagedList<WikiPageDetail>> GetPagesBatchAsync(WikiPagesBatchRequest request)
     {
         var pvfd = new PageViewsForDays(request.PageViewsForDays);
-        var trimmedStats = PagesStatsData.Trim(pvfd);
+        var trimmedStats = PagesStatsData.Trim(pvfd.Value);
 
         var pageIndex = int.Parse(request.ContinuationToken ?? "0");
         var dataPage = trimmedStats.Skip(pageIndex * AdoWiki.MaxApiTop).Take(AdoWiki.MaxApiTop);

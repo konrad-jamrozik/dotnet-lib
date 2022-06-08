@@ -56,23 +56,23 @@ public record AdoWiki(IWikiHttpClient Client) : IAdoWiki
     }
 
     private ValidWikiPagesStats PagesStats(
-        PageViewsForDays pvfd, // kja use "int days" instead
+        int days,
         IEnumerable<WikiPageDetail> wikiPagesDetails)
     {
         var wikiPagesStats = wikiPagesDetails.Select(WikiPageStats.From);
-        var daySpan        = pvfd.AsDaySpanUntil(Client.Today());
+        var daySpan        = days.AsDaySpanUntil(Client.Today());
         return new ValidWikiPagesStats(wikiPagesStats, daySpan);
     }
 
     private async Task<WikiPageDetail> GetWikiPageDetails(
-        PageViewsForDays pvfd,
+        int days,
         int pageId)
-        => await Client.GetPageDataAsync(pvfd, pageId);
+        => await Client.GetPageDataAsync(days, pageId);
 
     private async Task<IEnumerable<WikiPageDetail>> GetWikiPagesDetails(PageViewsForDays pvfd)
     {
         var wikiPagesBatchRequest = new WikiPagesBatchRequest
-            { Top = MaxApiTop, PageViewsForDays = pvfd.ValueWithinAdoApiLimit };
+            { Top = MaxApiTop, PageViewsForDays = pvfd.Value };
         var wikiPagesDetails = new List<WikiPageDetail>();
         string? continuationToken = null;
         do
