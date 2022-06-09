@@ -1,5 +1,4 @@
-using System.Runtime.Serialization.Formatters;
-using Wikitools.Lib.Json;
+using Wikitools.Lib.Configuration;
 using Wikitools.Lib.OS;
 
 namespace Oxce.Configs;

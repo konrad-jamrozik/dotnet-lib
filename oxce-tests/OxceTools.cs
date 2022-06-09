@@ -2,7 +2,7 @@ using System;
 using System.Threading.Tasks;
 using NUnit.Framework;
 using Oxce.Configs;
-using Wikitools.Lib.Json;
+using Wikitools.Lib.Configuration;
 using Wikitools.Lib.OS;
 
 namespace OxceTests
@@ -48,7 +48,7 @@ namespace OxceTests
             var fs = new FileSystem();
             var cfg = new Configuration(fs).Load<IOxceCfg>(
                 configProjectName: "oxce-configs",
-                loadedClassNamespace: "Oxce.Configs");
+                loadedTypeNamespace: "Oxce.Configs");
 
             var saveFilePath = saveFileName != null
                 ? fs.JoinPath(cfg.SaveDir(), saveFileName)
