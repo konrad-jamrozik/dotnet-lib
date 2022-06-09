@@ -2,7 +2,7 @@ using System.Linq;
 using NUnit.Framework;
 using Wikitools.Config;
 using Wikitools.Lib;
-using Wikitools.Lib.Json;
+using Wikitools.Lib.Configuration;
 using Wikitools.Lib.OS;
 using Wikitools.Lib.Primitives;
 using Wikitools.Lib.Tests;

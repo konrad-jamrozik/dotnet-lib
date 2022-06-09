@@ -1,8 +1,7 @@
 using Wikitools.Lib.OS;
 
-namespace Wikitools.Lib.Json;
+namespace Wikitools.Lib.Configuration;
 
-// kja 2 why this is in Json namespace?
 public interface IConfiguration
 {
     IFileSystem FileSystem();

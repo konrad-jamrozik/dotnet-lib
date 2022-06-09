@@ -1,6 +1,4 @@
-﻿using Wikitools.AzureDevOps;
-
-namespace Wikitools;
+﻿namespace Wikitools;
 
 public record WikiPageLink(string WikiPageStatsPath)
 {

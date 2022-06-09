@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Wikitools.AzureDevOps;
 using Wikitools.Config;
-using Wikitools.Lib.Json;
+using Wikitools.Lib.Configuration;
 using Wikitools.Lib.Markdown;
 using Wikitools.Lib.OS;
 using Wikitools.Lib.Primitives;

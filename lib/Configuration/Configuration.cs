@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reflection;
 using Wikitools.Lib.OS;
 
-namespace Wikitools.Lib.Json;
+namespace Wikitools.Lib.Configuration;
 
 public record Configuration(IFileSystem FileSystem)
 {

@@ -1,5 +1,5 @@
 using Wikitools.AzureDevOps.Config;
-using Wikitools.Lib.Json;
+using Wikitools.Lib.Configuration;
 using Wikitools.Lib.OS;
 
 namespace Wikitools.AzureDevOps.Tests;

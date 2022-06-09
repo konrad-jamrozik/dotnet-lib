@@ -1,4 +1,4 @@
-﻿using Wikitools.Lib.Json;
+﻿using Wikitools.Lib.Configuration;
 using Wikitools.Lib.OS;
 
 namespace Wikitools.AzureDevOps.Config;
