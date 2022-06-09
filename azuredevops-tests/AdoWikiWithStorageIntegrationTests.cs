@@ -47,6 +47,7 @@ public class AdoWikiWithStorageIntegrationTests
         var adoTestsCfg = AzureDevOpsTestsCfgFixture.LoadCfg;
         var storage     = AdoWikiPagesStatsStorageDeclare.New(adoTestsCfg);
         var wiki        = AdoWikiDeclare.New(adoTestsCfg);
+        var wikiPvfd4   = AdoWikiDeclare.New(adoTestsCfg, pageViewsForDaysMax: 4);
         var pageId      = adoTestsCfg.TestAdoWikiPageId();
 
         // ReSharper disable CommentTypo
@@ -70,9 +71,7 @@ public class AdoWikiWithStorageIntegrationTests
         // --SSSS----
         // ->
         // --SSSSWWWW
-        // kja I need to use here a wrapper over wiki that will constraint pageViewsForDaysMax to 4.
-        // But somehow this test passes right now! How is it possible?
-        var wikiWithStorage = new AdoWikiWithStorage(wiki, storageWithStats);
+        var wikiWithStorage = new AdoWikiWithStorage(wikiPvfd4, storageWithStats);
         var statsForDays3To10 = await wikiWithStorage.PageStats(days: 8, pageId: pageId);
 
         // Assert 4.1. Assert data from Act 4 corresponds to page stats days of 3 to 10

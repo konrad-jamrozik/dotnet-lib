@@ -18,30 +18,27 @@ public record AdoWikiWithStorage(
 
     public DateDay Today() => AdoWiki.Today();
 
-    private Task<ValidWikiPagesStats> PagesStats(int days, int? pageId)
+    private async Task<ValidWikiPagesStats> PagesStats(int days, int? pageId)
     {
-        var updatedStorage = UpdateFromWiki(days, pageId);
-        var updatedPagesViewsStats =
-            updatedStorage.Select(storage => storage
-                .PagesStats(days.AsDaySpanUntil(AdoWiki.Today()))
-                .WhereStats(StatsFilter(pageId)));
+        var wikiDays = days.MinWith(AdoWiki.PageViewsForDaysMax());
+        var updatedStorage = await UpdateFromWiki(wikiDays, pageId);
+        var updatedPagesViewsStats = updatedStorage
+            .PagesStats(days.AsDaySpanUntil(AdoWiki.Today()))
+            .WhereStats(StatsFilter(pageId));
         return updatedPagesViewsStats;
     }
+
+    private async Task<AdoWikiPagesStatsStorage> UpdateFromWiki(
+        int days,
+        int? pageId = null)
+        => await Storage.Update(
+            await (
+                pageId == null
+                    ? AdoWiki.PagesStats(days)
+                    : AdoWiki.PageStats(days, (int)pageId)));
 
     private static Func<WikiPageStats, bool> StatsFilter(int? pageId)
         => pageId != null 
             ? page => page.Id == pageId
             : _ => true;
-
-    private async Task<AdoWikiPagesStatsStorage> UpdateFromWiki(
-        int days,
-        int? pageId = null)
-    {
-        days = days.MinWith(AdoWiki.PageViewsForDaysMax());
-        var wikiPagesStats = await (
-            pageId == null
-                ? AdoWiki.PagesStats(days)
-                : AdoWiki.PageStats(days, (int)pageId));
-        return await Storage.Update(wikiPagesStats);
-    }
 }
