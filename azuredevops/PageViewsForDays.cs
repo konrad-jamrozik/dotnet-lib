@@ -7,7 +7,7 @@ namespace Wikitools.AzureDevOps;
 /// Represents the "pageViewsForDays" request body integer when obtaining data from ADO wiki
 /// See Wikitools.AzureDevOps.IWikiHttpClient implementations for details on the ADO API calls.
 /// </summary>
-public record PageViewsForDays()
+public class PageViewsForDays
 {
     // If 0, the call to ADO wiki API still succeeds, but all returned WikiPageDetail will have null ViewStats.
     // Confirmed empirically as of 3/27/2021.
@@ -17,7 +17,7 @@ public record PageViewsForDays()
     // Confirmed empirically as of 3/27/2021.
     public const int Max = 30;
 
-    public PageViewsForDays(int? days) : this()
+    public PageViewsForDays(int? days)
     {
         Days = days ?? 0;
         AssertWithinAdoApiLimit();
