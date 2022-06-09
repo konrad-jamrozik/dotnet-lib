@@ -38,8 +38,6 @@ namespace OxceTests
                 "item counts - ufo landed fixed reloaded.csv");
         }
 
-
-
         private async Task ParameterizedProcessSaveFile(
             string saveFileName = null,
             string soldiersOutputFileName = null,
