@@ -7,7 +7,7 @@ using Wikitools.Lib.Primitives;
 namespace Wikitools.AzureDevOps;
 
 /// <summary>
-/// Represents stats of an ADO wiki page. Primarily to be be constructed from
+/// Represents stats of an ADO wiki page. Primarily to be constructed from
 /// Microsoft.TeamFoundation.Wiki.WebApi.WikiPageDetail [1]
 /// by a call to
 /// Wikitools.AzureDevOps.WikiPageStats.From.
@@ -20,7 +20,7 @@ namespace Wikitools.AzureDevOps;
 /// - All the relevant invariants checked in: Wikitools.AzureDevOps.ValidWikiPagesStats.CheckInvariants
 /// - The Path format is of format as codified by Wikitools.AzureDevOps.WikiPageStatsPath
 ///
-/// [1] <a href="https://docs.microsoft.com/en-us/rest/api/azure/devops/wiki/page-stats/get?view=azure-devops-rest-6.0#wikipagedetail"/>
+/// [1] https://docs.microsoft.com/en-us/rest/api/azure/devops/wiki/page-stats/get?view=azure-devops-rest-6.0#wikipagedetail
 /// </summary>
 public record WikiPageStats(string Path, int Id, WikiPageStats.DayStat[] DayStats)
 {
@@ -41,18 +41,17 @@ public record WikiPageStats(string Path, int Id, WikiPageStats.DayStat[] DayStat
         // towards the day X+1, as 10 PM PST is 6 AM UTC the next day.
         // For details, see comment on Wikitools.AzureDevOps.AdoWiki
         pageDetail.ViewStats?
-            .Select(pageStat => new DayStat(pageStat.Count, pageStat.Day.Utc()))
+            .Select(pageStat => new DayStat(pageStat.Count, new DateDay(pageStat.Day.Utc())))
             .OrderBy(ds => ds.Day)
             .ToArray()
         ?? Array.Empty<DayStat>();
 
-    // kj2 Day could be of type DateDay
     public class DayStat
     {
         public int Count { get; }
         public DateTime Day { get; }
 
-        public DayStat(int count, DateTime day)
+        public DayStat(int count, DateDay day)
         {
             Contract.Assert(
                 count >= 1,

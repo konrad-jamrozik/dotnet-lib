@@ -11,6 +11,9 @@ public record MonthlyJsonFilesStorage(Dir StorageDir)
 {
     public T Read<T>(DateTime date)
     {
+        // kja need to support here deserializing DateDay, after I changed Wikitools.AzureDevOps.WikiPageStats.DayStat.Day from DateTime to DateDay
+        //
+        // See https://docs.microsoft.com/en-us/dotnet/standard/serialization/system-text-json-converters-how-to?pivots=dotnet-6-0
         var fileToReadName = FileName(date);
         return !StorageDir.FileExists(fileToReadName)
             ? JsonSerializer.Deserialize<T>("[]")!

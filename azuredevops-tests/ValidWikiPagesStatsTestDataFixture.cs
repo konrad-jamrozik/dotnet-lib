@@ -6,54 +6,54 @@ namespace Wikitools.AzureDevOps.Tests;
 public static class ValidWikiPagesStatsTestDataFixture
 {
         // @formatter:off
-        private static readonly DateTime DecemberDate = new DateTime(year: 2020, month: 12, day: 22).Utc();
-        private static readonly DateTime  JanuaryDate = new DateTime(year: 2021, month:  1, day:  3).Utc();
-        private static readonly DateTime FebruaryDate = new DateTime(year: 2021, month:  2, day: 15).Utc();
-    // @formatter:on
+        private static readonly DateDay DecemberDay = new DateDay(2020, 12, 22, DateTimeKind.Utc);
+        private static readonly DateDay  JanuaryDay = new DateDay(2021,  1,  3, DateTimeKind.Utc);
+        private static readonly DateDay FebruaryDay = new DateDay(2021,  2, 15, DateTimeKind.Utc);
+        // @formatter:on
 
     public static ValidWikiPagesStatsTestData PageStatsEmpty =>
-        new(FebruaryDate,
+        new(FebruaryDay,
             new WikiPageStats.DayStat[] { },
             new WikiPageStats.DayStat[] { },
             new WikiPageStats.DayStat[] { },
             new WikiPageStats.DayStat[] { });
 
     public static ValidWikiPagesStatsTestData PageStatsPreviousMonthOnly =>
-        new(FebruaryDate,
+        new(FebruaryDay,
             new WikiPageStats.DayStat[] { },
             new WikiPageStats.DayStat[] { },
-            new WikiPageStats.DayStat[] { new(115, FebruaryDate.AddMonths(-1)) },
+            new WikiPageStats.DayStat[] { new(115, FebruaryDay.AddMonths(-1)) },
             new WikiPageStats.DayStat[] { });
 
     public static ValidWikiPagesStatsTestData PageStatsYearWrap =>
-        new(JanuaryDate,
+        new(JanuaryDay,
             new WikiPageStats.DayStat[] { },
             new WikiPageStats.DayStat[] { },
-            new WikiPageStats.DayStat[] { new(1201, JanuaryDate.AddMonths(-1).AddDays(-2)) },
-            new WikiPageStats.DayStat[] { new(103, JanuaryDate) });
+            new WikiPageStats.DayStat[] { new(1201, JanuaryDay.AddMonths(-1).AddDays(-2)) },
+            new WikiPageStats.DayStat[] { new(103, JanuaryDay) });
 
     public static ValidWikiPagesStatsTestData PageStatsBeforeYearWrap =>
-        new(DecemberDate,
+        new(DecemberDay,
             new WikiPageStats.DayStat[] { },
             new WikiPageStats.DayStat[] { },
-            new WikiPageStats.DayStat[] { new(1122, DecemberDate.AddMonths(-1)) },
-            new WikiPageStats.DayStat[] { new(1223, DecemberDate.AddDays(1)) });
+            new WikiPageStats.DayStat[] { new(1122, DecemberDay.AddMonths(-1)) },
+            new WikiPageStats.DayStat[] { new(1223, DecemberDay.AddDays(1)) });
 
     public static ValidWikiPagesStatsTestData PageStatsRenamedToNewPath =>
-        new(FebruaryDate,
-            new WikiPageStats.DayStat[] { new(103, JanuaryDate) },
-            new WikiPageStats.DayStat[] { new(217, FebruaryDate.AddDays(2)) },
-            new WikiPageStats.DayStat[] { new(104, JanuaryDate.AddDays(1)) },
-            new WikiPageStats.DayStat[] { new(219, FebruaryDate.AddDays(4)) },
+        new(FebruaryDay,
+            new WikiPageStats.DayStat[] { new(103, JanuaryDay) },
+            new WikiPageStats.DayStat[] { new(217, FebruaryDay.AddDays(2)) },
+            new WikiPageStats.DayStat[] { new(104, JanuaryDay.AddDays(1)) },
+            new WikiPageStats.DayStat[] { new(219, FebruaryDay.AddDays(4)) },
             FooPagePathInCurrentMonth: "/Qux"
         );
 
     public static ValidWikiPagesStatsTestData PageStatsExchangedPaths =>
-        new(FebruaryDate,
-            new WikiPageStats.DayStat[] { new(103, JanuaryDate) },
-            new WikiPageStats.DayStat[] { new(217, FebruaryDate.AddDays(2)) },
-            new WikiPageStats.DayStat[] { new(104, JanuaryDate.AddDays(1)) },
-            new WikiPageStats.DayStat[] { new(219, FebruaryDate.AddDays(4)) },
+        new(FebruaryDay,
+            new WikiPageStats.DayStat[] { new(103, JanuaryDay) },
+            new WikiPageStats.DayStat[] { new(217, FebruaryDay.AddDays(2)) },
+            new WikiPageStats.DayStat[] { new(104, JanuaryDay.AddDays(1)) },
+            new WikiPageStats.DayStat[] { new(219, FebruaryDay.AddDays(4)) },
             FooPagePathInCurrentMonth: ValidWikiPagesStatsTestData.BarPagePath,
             BarPagePathInCurrentMonth: ValidWikiPagesStatsTestData.FooPagePath
         );
@@ -80,11 +80,11 @@ public static class ValidWikiPagesStatsTestDataFixture
     /// ValidWikiPagesStatsTestData.CurrentMonthAfterSplit
     /// </summary>
     public static ValidWikiPagesStatsTestData PageStatsPagesMissing =>
-        new(FebruaryDate,
-            new WikiPageStats.DayStat[] { new(103, JanuaryDate) },
+        new(FebruaryDay,
+            new WikiPageStats.DayStat[] { new(103, JanuaryDay) },
             new WikiPageStats.DayStat[] { },
             new WikiPageStats.DayStat[] { },
-            new WikiPageStats.DayStat[] { new(219, FebruaryDate.AddDays(4)) },
+            new WikiPageStats.DayStat[] { new(219, FebruaryDay.AddDays(4)) },
             FooPageDeletedInCurrentMonth: true,
             BarPageDeletedInPreviousMonth: true
         );
@@ -95,39 +95,39 @@ public static class ValidWikiPagesStatsTestDataFixture
         {
             var fooDaysPreviousMonth = new WikiPageStats.DayStat[]
             {
-                new(113, FebruaryDate.AddMonths(-1).AddDays(-2)),
-                new(114, FebruaryDate.AddMonths(-1).AddDays(-1)),
-                new(115, FebruaryDate.AddMonths(-1)),
-                new(131, FebruaryDate.AddDays(-15))
+                new(113, FebruaryDay.AddMonths(-1).AddDays(-2)),
+                new(114, FebruaryDay.AddMonths(-1).AddDays(-1)),
+                new(115, FebruaryDay.AddMonths(-1)),
+                new(131, FebruaryDay.AddDays(-15))
             };
 
             var fooDaysCurrentMonth = new WikiPageStats.DayStat[]
             {
-                new(201, FebruaryDate.AddDays(-14)),
-                new(212, FebruaryDate.AddDays(-3)),
-                new(213, FebruaryDate.AddDays(-2)),
-                new(214, FebruaryDate.AddDays(-1)),
-                new(215, FebruaryDate)
+                new(201, FebruaryDay.AddDays(-14)),
+                new(212, FebruaryDay.AddDays(-3)),
+                new(213, FebruaryDay.AddDays(-2)),
+                new(214, FebruaryDay.AddDays(-1)),
+                new(215, FebruaryDay)
             };
 
             var barDaysPreviousMonth = new WikiPageStats.DayStat[]
             {
-                new(101, FebruaryDate.AddMonths(-1).AddDays(-14)),
-                new(102, FebruaryDate.AddMonths(-1).AddDays(-13)),
-                new(115, FebruaryDate.AddMonths(-1)),
-                new(131, FebruaryDate.AddDays(-15))
+                new(101, FebruaryDay.AddMonths(-1).AddDays(-14)),
+                new(102, FebruaryDay.AddMonths(-1).AddDays(-13)),
+                new(115, FebruaryDay.AddMonths(-1)),
+                new(131, FebruaryDay.AddDays(-15))
             };
 
             var barDaysCurrentMonth = new WikiPageStats.DayStat[]
             {
-                new(201, FebruaryDate.AddDays(-14)),
-                new(215, FebruaryDate),
-                new(216, FebruaryDate.AddDays(1)),
-                new(217, FebruaryDate.AddDays(2)),
-                new(228, FebruaryDate.AddDays(13))
+                new(201, FebruaryDay.AddDays(-14)),
+                new(215, FebruaryDay),
+                new(216, FebruaryDay.AddDays(1)),
+                new(217, FebruaryDay.AddDays(2)),
+                new(228, FebruaryDay.AddDays(13))
             };
 
-            return new ValidWikiPagesStatsTestData(FebruaryDate,
+            return new ValidWikiPagesStatsTestData(FebruaryDay,
                 fooDaysPreviousMonth,
                 fooDaysCurrentMonth,
                 barDaysPreviousMonth,
