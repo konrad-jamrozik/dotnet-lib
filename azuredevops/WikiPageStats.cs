@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Microsoft.TeamFoundation.Wiki.WebApi;
+using Wikitools.Lib.Contracts;
 using Wikitools.Lib.Primitives;
 
 namespace Wikitools.AzureDevOps;
@@ -14,8 +15,8 @@ namespace Wikitools.AzureDevOps;
 /// Assumed invariants about the underlying ADO API behavior, confirmed by manual tests:
 /// 
 /// - DayStats array might be empty, but never null.
-/// - A DayStat entry has a Count of at least 1. // kj2 assert DayStat.Count >= 1 in code. It is currently asserted in ValidWikiPageStats.
-///   - Thus, in case of a day with no views, the DayStats entry for that day is missing altogether.
+/// - A DayStat entry has a Count of at least 1 (this is captured by DayStat ctor)
+///   - Consequently, in case of a day with no views, the DayStats entry for that day is missing altogether.
 /// - All the relevant invariants checked in: Wikitools.AzureDevOps.ValidWikiPagesStats.CheckInvariants
 /// - The Path format is of format as codified by Wikitools.AzureDevOps.WikiPageStatsPath
 ///
@@ -46,5 +47,32 @@ public record WikiPageStats(string Path, int Id, WikiPageStats.DayStat[] DayStat
         ?? Array.Empty<DayStat>();
 
     // kj2 Day could be of type DateDay
-    public record DayStat(int Count, DateTime Day);
+    public class DayStat
+    {
+        public int Count { get; }
+        public DateTime Day { get; }
+
+        public DayStat(int count, DateTime day)
+        {
+            Contract.Assert(
+                count >= 1,
+                $"Wiki page day visit count has to be >= 1. Instead, it is {count}.");
+            Count = count;
+            Day = day;
+        }
+
+        private bool Equals(DayStat other)
+            => Count == other.Count && Day.Equals(other.Day);
+
+        public override bool Equals(object? obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((DayStat)obj);
+        }
+
+        public override int GetHashCode()
+            => HashCode.Combine(Count, Day);
+    }
 }
