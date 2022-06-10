@@ -11,6 +11,10 @@ public sealed record DateDay(int Year, int Month, int Day, DateTimeKind Kind) :
 {
     public static int Compare(DateTime left, DateTime right)
         => new DateDay(left).CompareTo(new DateDay(right));
+
+    public static bool operator <=(DateDay left, DateDay right) => Compare(left, right) <= 0;
+
+    public static bool operator >=(DateDay left, DateDay right) => Compare(left, right) >= 0;
         
     public static DateDay operator +(DateDay dateDay, int days) => new(dateDay._dateTime.AddDays(days));
 

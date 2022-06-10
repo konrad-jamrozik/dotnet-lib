@@ -32,7 +32,7 @@ public static class JsonExtensions
         IgnoreNullValues = true
     };
 
-    private static readonly JsonSerializerOptions SerializerOptionsIndentedUnsafe =
+    public static readonly JsonSerializerOptions SerializerOptionsIndentedUnsafe =
         new(SerializerOptionsUnsafe) { WriteIndented = true };
 
     public static T FromJsonTo<T>(this string json) =>
@@ -54,8 +54,8 @@ public static class JsonExtensions
     public static string ToJsonUnsafe(this object data, bool ignoreNulls = false) => 
         JsonSerializer.Serialize(data, ignoreNulls ? SerializerOptionsUnsafeIgnoreNulls : SerializerOptionsUnsafe);
 
-    public static string ToJsonIndentedUnsafe(this object data) =>
-        JsonSerializer.Serialize(data, SerializerOptionsIndentedUnsafe);
+    public static string ToJsonIndentedUnsafe(this object data, JsonSerializerOptions? options = null) =>
+        JsonSerializer.Serialize(data, options ?? SerializerOptionsIndentedUnsafe);
 
     /// <remarks>
     /// Based on https://stackoverflow.com/a/58193164/986533

@@ -30,10 +30,13 @@ namespace Wikitools.AzureDevOps;
 /// </summary>
 public record ValidWikiPagesStats : IEnumerable<WikiPageStats>
 {
-    // Note this setup of invariant checks in ctor has some problems.
+    // kj2 Note this setup (approach) of invariant checks in ctor has some problems.
     // Details here: https://github.com/dotnet/csharplang/issues/4453#issuecomment-782807066
     // But see how I solved it with "init" for DaySpan,
     // based on https://christianfindlay.com/2021/04/28/change-behavior-of-record-constructor/
+    // See also:
+    // https://stackoverflow.com/questions/64309291/how-do-i-define-additional-initialization-logic-for-the-positional-record
+    // https://stackoverflow.com/questions/69283960/is-it-possible-to-create-a-c-sharp-record-with-a-private-constructor
     public ValidWikiPagesStats(
         IEnumerable<WikiPageStats> stats,
         DaySpan daySpan)
@@ -64,20 +67,20 @@ public record ValidWikiPagesStats : IEnumerable<WikiPageStats>
 
     public static DateDay? FirstDayWithAnyViewStatic(IEnumerable<WikiPageStats> stats)
     {
-        var minDatePerPage = stats
+        var firstDayWithAnyView = stats
             .Where(ps => ps.DayStats.Any())
             .Select(ps => ps.DayStats.Min(ds => ds.Day))
-            .ToList();
-        return minDatePerPage.Any() ? new DateDay(minDatePerPage.Min()) : null;
+            .Min();
+        return firstDayWithAnyView;
     }
 
     public static DateDay? LastDayWithAnyViewStatic(IEnumerable<WikiPageStats> stats)
     {
-        var maxDatePerPage = stats
+        var lastDayWithAnyView = stats
             .Where(ps => ps.DayStats.Any())
             .Select(ps => ps.DayStats.Max(ds => ds.Day))
-            .ToList();
-        return maxDatePerPage.Any() ? new DateDay(maxDatePerPage.Max()) : null;
+            .Max();
+        return lastDayWithAnyView;
     }
 
     public static ValidWikiPagesStats Merge(IEnumerable<ValidWikiPagesStats> stats, bool allowGaps = false) 
@@ -293,7 +296,8 @@ public record ValidWikiPagesStats : IEnumerable<WikiPageStats>
             Contract.Assert(dayStats.Last().Count >= dayStats.First().Count,
                 "View count for given day for given page cannot be lower in current stats, as compared to previous stats. " +
                 "I.e. day stat count for current stats >= day stat count for previous stats. " +
-                $"Instead got: {dayStats.Last().Count} >= {dayStats.First().Count}. For day: {dayStats.Key.ToShortDateString()}");
+                $"Instead got: {dayStats.Last().Count} >= {dayStats.First().Count}. " +
+                $"For day: {((DateTime)dayStats.Key).ToShortDateString()}");
             return dayStats.Last();
         }).ToArray();
         return mergedStats;

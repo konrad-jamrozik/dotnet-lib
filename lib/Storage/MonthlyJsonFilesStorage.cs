@@ -9,22 +9,24 @@ namespace Wikitools.Lib.Storage;
 
 public record MonthlyJsonFilesStorage(Dir StorageDir)
 {
+    private static readonly JsonSerializerOptions SerializerOptions = new(JsonExtensions.SerializerOptionsIndentedUnsafe)
+    {
+        Converters = { new DateDayJsonConverter() }
+    };
+
     public T Read<T>(DateTime date)
     {
-        // kja need to support here deserializing DateDay, after I changed Wikitools.AzureDevOps.WikiPageStats.DayStat.Day from DateTime to DateDay
-        //
-        // See https://docs.microsoft.com/en-us/dotnet/standard/serialization/system-text-json-converters-how-to?pivots=dotnet-6-0
         var fileToReadName = FileName(date);
         return !StorageDir.FileExists(fileToReadName)
-            ? JsonSerializer.Deserialize<T>("[]")!
-            : JsonSerializer.Deserialize<T>(StorageDir.ReadAllText(fileToReadName))!;
+            ? JsonSerializer.Deserialize<T>("[]", SerializerOptions)!
+            : JsonSerializer.Deserialize<T>(StorageDir.ReadAllText(fileToReadName), SerializerOptions)!;
     }
 
     public async Task With<T>(DateMonth date, Func<T, T> mergeFunc) where T : class => 
         await Write(mergeFunc(Read<T>(date)), date);
 
     public Task Write(object data, DateMonth date, string? fileName = default) =>
-        WriteToFile(data.ToJsonIndentedUnsafe(), date, fileName);
+        WriteToFile(data.ToJsonIndentedUnsafe(SerializerOptions), date, fileName);
 
     private async Task WriteToFile(string dataJson, DateMonth date, string? fileName) =>
         await StorageDir

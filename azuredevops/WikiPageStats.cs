@@ -49,7 +49,7 @@ public record WikiPageStats(string Path, int Id, WikiPageStats.DayStat[] DayStat
     public class DayStat
     {
         public int Count { get; }
-        public DateTime Day { get; }
+        public DateDay Day { get; }
 
         public DayStat(int count, DateDay day)
         {
