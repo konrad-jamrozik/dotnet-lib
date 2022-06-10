@@ -12,7 +12,7 @@ namespace Wikitools.AzureDevOps;
 /// [1] https://docs.microsoft.com/en-us/rest/api/azure/devops/wiki/page%20stats/get?view=azure-devops-rest-6.0
 ///
 /// Assumed invariants about the underlying ADO API behavior, confirmed by manual tests, are as follows:
-/// kj2 ValidWikiPagesStats invariants should be explained in English
+/// kj2-asserts ValidWikiPagesStats invariants should be explained in English
 /// - Everything evident from the CheckInvariants() method. 
 /// - If a page path was changed since last call to this method, it will appear only with the new path.
 ///   Consider a page with (ID, Path) of (42, "/Foo") and some set XDayViews of daily view counts.
@@ -30,13 +30,6 @@ namespace Wikitools.AzureDevOps;
 /// </summary>
 public record ValidWikiPagesStats : IEnumerable<WikiPageStats>
 {
-    // kj2 Note this setup (approach) of invariant checks in ctor has some problems.
-    // Details here: https://github.com/dotnet/csharplang/issues/4453#issuecomment-782807066
-    // But see how I solved it with "init" for DaySpan,
-    // based on https://christianfindlay.com/2021/04/28/change-behavior-of-record-constructor/
-    // See also:
-    // https://stackoverflow.com/questions/64309291/how-do-i-define-additional-initialization-logic-for-the-positional-record
-    // https://stackoverflow.com/questions/69283960/is-it-possible-to-create-a-c-sharp-record-with-a-private-constructor
     public ValidWikiPagesStats(
         IEnumerable<WikiPageStats> stats,
         DaySpan daySpan)
@@ -84,7 +77,7 @@ public record ValidWikiPagesStats : IEnumerable<WikiPageStats>
     }
 
     public static ValidWikiPagesStats Merge(IEnumerable<ValidWikiPagesStats> stats, bool allowGaps = false) 
-        // kj2 This Merge is O(n^2) while it could be O(n).
+        // kj2-perf This Merge is O(n^2) while it could be O(n).
         => stats.Aggregate((merged, next) => merged.Merge(next, allowGaps));
 
     public IEnumerable<ValidWikiPagesStatsForMonth> SplitByMonth() => SplitByMonth(this);
@@ -125,11 +118,11 @@ public record ValidWikiPagesStats : IEnumerable<WikiPageStats>
         // Pages are expected to generally have unique paths, except the special case of when
         // a page was deleted and then new page was created with the same path.
         // In such case two pages with different IDs will have the same path.
-        // kj2 test for ValidWikiPagesStats invariant; write a test that would fail if pagesStatsArray.AssertDistinctBy(ps => ps.Path); would be present.
+        // kj2-tests test for ValidWikiPagesStats invariant; write a test that would fail if pagesStatsArray.AssertDistinctBy(ps => ps.Path); would be present.
         Contract.Assert(pagesStatsArray.DistinctBy(ps => ps.Path).Count() <= pagesStatsArray.Length);
         pagesStatsArray.AssertOrderedBy(ps => ps.Id);
 
-        // kj2 move ValidWikiPagesStats invariants to WikiPageStats itself.
+        // kj2-asserts move ValidWikiPagesStats invariants to WikiPageStats itself.
         // Don't forget to update comment on that class!
         pagesStatsArray.ForEach(ps =>
         {
@@ -257,7 +250,7 @@ public record ValidWikiPagesStats : IEnumerable<WikiPageStats>
     ///   are equal or more recent than all day view stats
     ///   for a page with the same ID in previousStats.
     /// </summary>
-    // kj2 add tests showing this is associative but not commutative (not comm due to ignoring previousPageStats.Path and same with count)
+    // kj2-tests add tests showing this is associative but not commutative (not comm due to ignoring previousPageStats.Path and same with count)
     // Maybe also add some invariant check if a merge like next.merge(prev) is done instead of prev.merge(next). Basically the non-checked one mentioned above.
     private static ValidWikiPagesStats Merge(
         ValidWikiPagesStats previousStats,
