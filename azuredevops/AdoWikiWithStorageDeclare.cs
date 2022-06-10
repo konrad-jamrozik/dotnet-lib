@@ -1,7 +1,7 @@
 ﻿using Wikitools.Lib.OS;
 
 namespace Wikitools.AzureDevOps;
-// kj2 Other possible suffixes for Declare (update README.md):
+// kj2-naming Other possible suffixes for Declare (update README.md):
 // Ctor, Def, Scaffolding, Blueprint, Recipe, Chart (a'la Helm Chart), Factory, DI (for Dep. Inj).
 //
 // From https://helm.sh/docs/topics/architecture/

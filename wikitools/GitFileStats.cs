@@ -33,7 +33,7 @@ public record GitFileStats(
 
     public static TabularData TabularData(RankedTop<GitFileStats> rows)
     {
-        // kj2 same as Wikitools.GitAuthorStats.TabularData
+        // kj2-report same as Wikitools.GitAuthorStats.TabularData
         var rowsAsObjectArrays = rows.Select(AsObjectArray).ToArray();
 
         return new TabularData((headerRow: HeaderRow, rowsAsObjectArrays));
@@ -58,7 +58,7 @@ public record GitFileStats(
         => new object[]
         {
             row.rank, 
-            // kj2 hardcoded "wiki/" in the .Replace. This is not the only place it is used.
+            // kj2-toc hardcoded "wiki/" in the .Replace. This is not the only place it is used.
             WikiPageLink.FromFileSystemPath(row.stats.FilePath.Replace("wiki/","")).ToString(),
             row.stats.Insertions, 
             row.stats.Deletions

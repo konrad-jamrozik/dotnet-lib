@@ -18,7 +18,7 @@ public record PageViewStats(string FilePath, int Views)
     {
         int days = daySpan.Until(timeline.UtcNow).Count;
 
-        // kj2 this will trigger call to ADO API.
+        // kj2-migration this will trigger call to ADO API.
         // Here it is OK, as we are in late execution stage, but I need to ensure
         // this is fixed everywhere, always deferred to the execution stage.
         //
@@ -45,7 +45,7 @@ public record PageViewStats(string FilePath, int Views)
 
     public static TabularData TabularData(RankedTop<PageViewStats> rows)
     {
-        // kj2 same as Wikitools.GitAuthorStats.TabularData
+        // kj2-report same as Wikitools.GitAuthorStats.TabularData
         var rowsAsObjectArrays = rows.Select(AsObjectArray).ToArray();
 
         return new TabularData((headerRow: HeaderRow, rowsAsObjectArrays));

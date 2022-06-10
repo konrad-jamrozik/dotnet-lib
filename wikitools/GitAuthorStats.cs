@@ -49,7 +49,7 @@ public record GitAuthorStats(
 
     public static TabularData TabularData(RankedTop<GitAuthorStats> rows)
     {
-        // kj2 Rows conversion to object[]: instead of this conversion, TabularData should
+        // kj2-report Rows conversion to object[]: instead of this conversion, TabularData should
         // handle not only object[][], but also arbitrary_record[], and use reflection
         // to convert this record into a an array of objects[].
         var rowsAsObjectArrays = rows.Select(AsObjectArray).ToArray();

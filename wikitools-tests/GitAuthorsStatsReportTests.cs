@@ -12,7 +12,8 @@ namespace Wikitools.Tests;
 
 public class GitAuthorsStatsReportTests
 {
-    [Fact] // kj2 use everywhere NUnit
+    // kj2-migration move to newest C#
+    [Fact] // kj2-migration use everywhere NUnit
     public async Task ReportsGitAuthorsStats()
     {
         // Arrange inputs and simulations

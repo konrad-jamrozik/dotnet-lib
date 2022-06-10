@@ -22,7 +22,7 @@ public sealed record DateMonth(int Year, int Month, DateTimeKind Kind) :
     {
         DateMonth iteratedMonth = daySpan.StartDay.AsDateMonth();
         var output = new List<DateMonth>();
-        // kj2 to get rid of this 'while' I need something like "AggregateWhile"
+        // kj2-refactor to get rid of this 'while' I need something like "AggregateWhile"
         // on a lazy stream of (month, month.NextMonth, month.NextMonth.NextMonth)  
         // Something like:
         // startDay.AsDateMonth().AggregateWhile(

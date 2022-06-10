@@ -2,7 +2,7 @@
 
 namespace Wikitools.AzureDevOps;
 
-// kj2 make the WikiPageStats.Path param be of this type
+// kj2-toc make the WikiPageStats.Path param be of this type
 /// <summary>
 /// Represents a Wikitools.AzureDevOps.WikiPageStats.Path.
 ///

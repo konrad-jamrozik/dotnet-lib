@@ -26,12 +26,12 @@ public record GitLog(ITimeline Timeline, GitRepository Repo)
            // "_including_ commits made during the BeforeDay" vs "_excluding_".
            $"--before={((DateTime)daySpan.EndDay.AddDays(1)).ToString(GitLogCommitRangeFormat)} ";
 
-    // kj2 need to memoize stuff from it, now that reports call it themselves.
+    // kj2-git need to memoize stuff from it, now that reports call it themselves.
     public Task<GitLogCommits> Commits(int days)
     {
         var utcNowDay = new DateDay(Timeline.UtcNow);
         DateDay after = DaysInThePast(utcNowDay, days);
-        // kj2 currently this will give different results as current day passes,
+        // kj2-git/bug currently this will give different results as current day passes,
         // because the end of the range is utcNowDay i.e. today. So calling this at
         // 8 AM UTC will have less commits than 5 PM UTC.
         // What's worse, the day span is "false" in the sense it doesn't take

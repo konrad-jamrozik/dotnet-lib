@@ -40,7 +40,7 @@ public class TopStatsReportIntegrationTests
         IWikitoolsCfg cfg,
         IAzureDevOpsCfg adoCfg)
     {
-        // kj2 dedup logic used in this method, and in int tests for other reports using the same data.
+        // kj2-testdata dedup logic used in this method, and in int tests for other reports using the same data.
         var timeline = new Timeline();
         var gitLog = GitLog(timeline, fs, cfg);
         var wiki = AdoWiki(timeline, fs, cfg, adoCfg);

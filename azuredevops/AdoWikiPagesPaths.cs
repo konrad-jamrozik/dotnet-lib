@@ -13,7 +13,7 @@ namespace Wikitools.AzureDevOps;
 /// </summary>
 public record AdoWikiPagesPaths(IEnumerable<string> GitClonePaths) : IEnumerable<string>
 {
-    // kj2 WikiPagesFolder "wiki" / this should be parameterized
+    // kj2-toc WikiPagesFolder "wiki" / this should be parameterized
     public const string WikiPagesFolder = "wiki";
     public const string WikiPagesPrefix = WikiPagesFolder + "\\";
 

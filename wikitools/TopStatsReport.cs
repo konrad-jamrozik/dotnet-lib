@@ -36,7 +36,7 @@ public record TopStatsReport : MarkdownDocument
         var days7 = 7;
         var days28 = 28;
 
-        // kj2 currently going up to 8 days back, and including today, which is partial.
+        // kj2-report/bug currently going up to 8 days back, and including today, which is partial.
         // Should instead be exactly from 8 days back (inclusive) to 1 day back (inclusive),
         // but without today.
         // Need same fix for git file stats. But page stats are already solved.

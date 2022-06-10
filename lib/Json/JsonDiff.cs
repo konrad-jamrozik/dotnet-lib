@@ -26,9 +26,9 @@ public class JsonDiff
     {
         var diff = new Lazy<DiffObject>(() =>
         {
-            // kj2 JsonElement deserialization could possibly be simplified to
+            // kj2-json JsonElement deserialization could possibly be simplified to
             // JsonElement baselineJson = JsonSerializer.Deserialize<JsonElement>(JsonSerializer.SerializeToUtf8Bytes(baseline));
-            // kj2 use instead Wikitools.Lib.Json.JsonExtensions.FromObjectToJsonElement
+            // kj2-json use instead Wikitools.Lib.Json.JsonExtensions.FromObjectToJsonElement
             JsonDocument baselineJson = JsonDocument.Parse(JsonSerializer.SerializeToUtf8Bytes(baseline));
             JsonDocument targetJson   = JsonDocument.Parse(JsonSerializer.SerializeToUtf8Bytes(target));
             DiffObject?  elementDiff  = new JsonElementDiff(baselineJson, targetJson).Value;

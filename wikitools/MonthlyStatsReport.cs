@@ -7,7 +7,7 @@ using Wikitools.Lib.Primitives;
 
 namespace Wikitools;
 
-// kj2 maybe instead of inheriting MarkdownDocument, it should be an interface, like:
+// kj2-report maybe instead of inheriting MarkdownDocument, it should be an interface, like:
 // IMarkdownDocumentConvertible with method .ToMarkdownDocument.
 // Or instead introduce a new MarkdownDocument ctor taking this class as param?
 // This would require access to internals, perhaps.

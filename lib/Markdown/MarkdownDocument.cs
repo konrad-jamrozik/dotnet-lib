@@ -10,8 +10,8 @@ namespace Wikitools.Lib.Markdown;
 
 public record MarkdownDocument(Task<object[]> Content) : IWritableToText
 {
-    // kj2 needs to be duplicated a lot in UT assertions. Fix.
-    // kj2 JsonDiff doesn't seem to properly show the extra whitespace on assertion failures.
+    // kj2-report needs to be duplicated a lot in UT assertions. Fix.
+    // kj2-json JsonDiff doesn't seem to properly show the extra whitespace on assertion failures.
     public const string LineBreakMarker = "  ";
 
     protected MarkdownDocument(object[] content) : this(Task.FromResult(content)) 

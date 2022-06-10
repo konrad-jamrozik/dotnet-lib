@@ -46,7 +46,7 @@ public record WikiPageStats(string Path, int Id, WikiPageStats.DayStat[] DayStat
             .ToArray()
         ?? Array.Empty<DayStat>();
 
-    public class DayStat
+    public record DayStat
     {
         public int Count { get; }
         public DateDay Day { get; }
@@ -60,18 +60,18 @@ public record WikiPageStats(string Path, int Id, WikiPageStats.DayStat[] DayStat
             Day = day;
         }
 
-        private bool Equals(DayStat other)
-            => Count == other.Count && Day.Equals(other.Day);
-
-        public override bool Equals(object? obj)
-        {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
-            return Equals((DayStat)obj);
-        }
-
-        public override int GetHashCode()
-            => HashCode.Combine(Count, Day);
+        // private bool Equals(DayStat other)
+        //     => Count == other.Count && Day.Equals(other.Day);
+        //
+        // public override bool Equals(object? obj)
+        // {
+        //     if (ReferenceEquals(null, obj)) return false;
+        //     if (ReferenceEquals(this, obj)) return true;
+        //     if (obj.GetType() != this.GetType()) return false;
+        //     return Equals((DayStat)obj);
+        // }
+        //
+        // public override int GetHashCode()
+        //     => HashCode.Combine(Count, Day);
     }
 }

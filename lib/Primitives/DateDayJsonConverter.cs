@@ -26,7 +26,7 @@ public class DateDayJsonConverter : JsonConverter<DateDay>
     // This custom format is basically "o" but with fractions of seconds omitted.
     private const string DefaultSerializationFormat = "yyyy-MM-ddTHH:mm:ssK";
 
-    // kj2 Write unit test showing both of these format can be deserialized succesfully.
+    // kj2-tests Write unit test showing both of these format can be deserialized succesfully.
     private static readonly string[] DeserializationFormats = { SerializationFormat, DefaultSerializationFormat };
 
     private static readonly CultureInfo SerializationCulture = CultureInfo.InvariantCulture;
@@ -37,7 +37,7 @@ public class DateDayJsonConverter : JsonConverter<DateDay>
         JsonSerializerOptions options)
     {
         string dateToParse = reader.GetString() ?? string.Empty;
-        // kj2 Write unit test showing that the date is roundtripped with Kind.UTC if
+        // kj2-tests Write unit test showing that the date is roundtripped with Kind.UTC if
         // time zone is Z, and otherwise Unspecified.
         DateTime parsedDate = DateTime.ParseExact(
             dateToParse,

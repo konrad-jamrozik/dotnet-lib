@@ -65,7 +65,7 @@ public static class JsonExtensions
     public static T? ToObject<T>(this JsonElement element)
     {
         string json = element.GetRawText();
-        // kj2 make JSON without comments into reusable OO logic.
+        // kj2-json make JSON without comments into reusable OO logic.
         string jsonWithoutComments = string.Join(Environment.NewLine,
             json.Split(Environment.NewLine).Where(line => !line.TrimStart().StartsWith("//")));
         return JsonSerializer.Deserialize<T>(jsonWithoutComments);

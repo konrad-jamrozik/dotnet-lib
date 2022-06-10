@@ -32,7 +32,7 @@ public record ValidWikiPagesStatsTestData(
     private const int FooPageId = 101;
     private const int BarPageId = 202;
 
-    // kj2 ValidWikiPagesStatsTestData / this is too complex. Simplify / break down to simpler classes.
+    // kj2-testdata ValidWikiPagesStatsTestData / this is too complex. Simplify / break down to simpler classes.
         // @formatter:off
         private readonly WikiPageStats _fooPagePreviousMonth = new(FooPagePath, FooPageId, FooPagePreviousMonthDayStats);
         private readonly WikiPageStats _barPagePreviousMonth = new(BarPagePath, BarPageId, BarPagePreviousMonthDayStats);

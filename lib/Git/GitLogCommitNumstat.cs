@@ -19,10 +19,6 @@ public partial record GitLogCommit
 
         public Numstat(int insertions, int deletions, GitLogPath path)
         {
-            // Note this setup of invariant checks in ctor has some problems.
-            // Details here: https://github.com/dotnet/csharplang/issues/4453#issuecomment-782807066
-            // But see how I solved it with "init" for DaySpan,
-            // based on https://christianfindlay.com/2021/04/28/change-behavior-of-record-constructor/
             Insertions = insertions;
             Deletions = deletions;
             Path = path;

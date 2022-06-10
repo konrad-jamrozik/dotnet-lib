@@ -33,7 +33,7 @@ public record TrieFromPaths
             
         var suffixes = Suffixes(pathsSuffixes, segmentsByDepthSuffixes);
 
-        // kj2 PathPart.Value / Currently value is null here as weaving values in
+        // kj2-toc PathPart.Value / Currently value is null here as weaving values in
         // when building a trie from a path is not yet supported.
         return new PathPart<object?>(prefix, Value: null, suffixes);
     }

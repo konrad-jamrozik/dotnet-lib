@@ -22,9 +22,13 @@ public class Tools
         _testOut = testOut;
     }
 
-    [Fact(Skip = "For one-off experiments")]
+    [Fact]//(Skip = "For one-off experiments")]
     public void Scratchpad()
     {
+        DaySpan x = new DaySpan(new DateDay(DateTime.UtcNow), new DateDay(DateTime.UtcNow));
+        _testOut.WriteLine(x.ToString());
+        var y = new WikiPageStats.DayStat(40, new DateDay(DateTime.Today));
+        _testOut.WriteLine(y.ToString());
     }
 
     [Fact(Skip = "Tool to be used manually")]
@@ -62,7 +66,7 @@ public class Tools
             $"wiki_stats_{timeline.UtcNow:yyyy_MM_dd}_{cfg.AdoWikiPageViewsForDays()}days.json");
     }
 
-    // kj2 I need to ensure this transferring of data scraped from ADO wiki into monthly storage
+    // kj2-bug I need to ensure this transferring of data scraped from ADO wiki into monthly storage
     // is done during normal program execution, not by this extra tool.
     [Fact(Skip = "Tool to be used manually")]
     public void SplitIntoMonthlyStats()

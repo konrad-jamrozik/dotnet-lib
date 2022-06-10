@@ -22,7 +22,7 @@ public record ReportTestsData
                 new object[] { 2, "AuthorA :fire::fire:", 1, 100, 10 },
                 new object[] { 3, "AuthorB :fire:", 1, 77, 7 },
             },
-            // kj2 just terrible duplication of test data fixtures
+            // kj2-testdata just terrible duplication of test data fixtures
             [(nameof(GitFilesStatsReportTests), CommitsLogs)] = new[] {
                 new object[]
                     { 1, WikiPageLink.FromFileSystemPath("Foo/bar601_7.md").ToString(), 601, 7 },
