@@ -41,19 +41,17 @@ public record Soldier(
     int CurrentPsiStrength,
     int CurrentPsiSkill,
     int CurrentMelee,
-    int CurrentMana)
+    int CurrentMana,
+    Diary Diary)
 {
-    private static IEnumerable<PropertyInfo> Properties { get; } = typeof(Soldier).GetProperties();
+    private static IEnumerable<PropertyInfo> Properties { get; } =
+        typeof(Soldier).GetProperties().Where(pi => pi.Name != nameof(Diary));
 
     public static string CsvHeaders()
         => string.Join(",", 
             Properties.Select(p => p.Name)
                 .Union(TrainingStats.CsvHeaders()) // kja should be Concat instead?
                 .Union(MaxStats.CsvHeaders())); // kja should be Concat instead?
-
-    public override string ToString()
-        => $"{nameof(Soldier)} {{ "
-           + string.Join(", ", DataMap().Select(p => $"{p.Key} = {p.Value}")) + " }";
 
     public string CsvString()
     {
@@ -62,6 +60,10 @@ public record Soldier(
         csvStr = Regex.Replace(csvStr, " \\w+\\ = ", "");
         return csvStr;
     }
+
+    public override string ToString()
+        => $"{nameof(Soldier)} {{ "
+           + string.Join(", ", DataMap().Select(p => $"{p.Key} = {p.Value}")) + " }";
 
     private IEnumerable<(string Key, object Value)> DataMap()
     {
@@ -107,6 +109,8 @@ public record Soldier(
         var statGainTotal = soldierDiary.ParseIntOrZero("statGainTotal");
         var initialStats = new YamlMapping(soldier.Lines("initialStats"));
         var currentStats = new YamlMapping(soldier.Lines("currentStats"));
+        var transformationBonuses =
+            TransformationBonuses.Parse(soldier.Lines("transformationBonuses"));
         var currentTU = currentStats.ParseInt("tu");
         var currentStamina = currentStats.ParseInt("stamina");
         var currentHealth = currentStats.ParseInt("health");
@@ -119,11 +123,7 @@ public record Soldier(
         var currentPsiSkill = currentStats.ParseInt("psiSkill");
         var currentMelee = currentStats.ParseInt("melee");
         var currentMana = currentStats.ParseInt("mana");
-        // kja to use it
         var diary = Diary.Parse(soldier.Lines("diary"));
-        var transformationBonuses =
-            TransformationBonuses.Parse(soldier.Lines("transformationBonuses"));
-
 
         return new Soldier(
             id,
@@ -156,7 +156,8 @@ public record Soldier(
             currentPsiStrength,
             currentPsiSkill,
             currentMelee,
-            currentMana);
+            currentMana,
+            diary);
     }
 
 }
