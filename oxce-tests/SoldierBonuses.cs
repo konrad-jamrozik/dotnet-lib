@@ -1,21 +1,21 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace OxceTests;
 
-public record SoldierBonuses(IEnumerable<SoldierBonus> SoldierBonusData) : IEnumerable<SoldierBonuses>
+public record SoldierBonuses(IEnumerable<SoldierBonus> SoldierBonusData) : IEnumerable<SoldierBonus>
 {
-
-    public static SoldierBonuses FromRulesetFile(YamlMapping soldierBonusesYaml)
+    public static SoldierBonuses FromRulesetFileYaml(YamlMapping soldierBonusesYaml)
     {
-        return null;
+        var soldierBonusesLines =
+            new YamlBlockSequence(soldierBonusesYaml.Lines("soldierBonuses")).NodesLines();
+        var soldierBonuses = soldierBonusesLines.Select(
+            lines => SoldierBonus.FromSoldierYaml(new YamlMapping(lines)));
+        return new SoldierBonuses(soldierBonuses);
     }
 
-    public IEnumerator<SoldierBonuses> GetEnumerator()
-    {
-        return null;
-    }
+    public IEnumerator<SoldierBonus> GetEnumerator() => SoldierBonusData.GetEnumerator();
 
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 }
