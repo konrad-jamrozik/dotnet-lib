@@ -44,5 +44,21 @@ namespace OxceTests
 
             Assert.That(nestedYamlMapping.KeyValuePairs().Count(), Is.Zero);
         }
+
+
+        [Test]
+        public void TestYamlMappingWithNotIndentedComment()
+        {
+            var yamlMapping = new YamlMapping(
+                new[]
+                {
+                    "key1:",
+                    "# comment line",
+                    "  - name: foo"
+                });
+            var nestedYamlMapping = new YamlMapping(yamlMapping.Lines("key1"));
+
+            Assert.That(nestedYamlMapping.KeyValuePairs().Count(), Is.EqualTo(1));
+        }
     }
 }

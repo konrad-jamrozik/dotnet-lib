@@ -12,7 +12,7 @@ namespace OxceTests
 
         public YamlMapping(IEnumerable<string> lines)
         {
-            _lines = lines;
+            _lines = lines.Where(line => !IsComment(line));
         }
 
         public IEnumerable<string> Lines(string key)
@@ -24,11 +24,11 @@ namespace OxceTests
             {
                 if (appendingLines)
                 {
-                    if (FinishedAppendingLines(line)) 
+                    if (FinishedAppendingLines(line))
                         break;
 
                     AppendLine(line, outputLines);
-                } 
+                }
                 else if (FoundKey(key, line))
                 {
                     appendingLines = true;
@@ -62,15 +62,6 @@ namespace OxceTests
             return lineIsNotIndented;
         }
 
-        private static void AppendLine(string line, List<string> valueLines) => valueLines.Add(line);
-
-        private static void AddValueFromKeyLineIfPresent(string key, string line, List<string> valueLines)
-        {
-            string lineWithKeyStripped = line.Substring((key + ":").Length).Trim();
-            if (lineWithKeyStripped.Any())
-                valueLines.Add(Indent + lineWithKeyStripped);
-        }
-
         public string ParseString(string key) => Lines(key).Single();
 
         public string ParseStringOrEmpty(string key)
@@ -86,5 +77,17 @@ namespace OxceTests
 
         public float ParseFloatOrZero(string key)
             => float.TryParse(Lines(key).SingleOrDefault(), out var value) ? value : 0;
+
+
+        private static void AppendLine(string line, List<string> valueLines) => valueLines.Add(line);
+
+        private static void AddValueFromKeyLineIfPresent(string key, string line, List<string> valueLines)
+        {
+            string lineWithKeyStripped = line.Substring((key + ":").Length).Trim();
+            if (lineWithKeyStripped.Any())
+                valueLines.Add(Indent + lineWithKeyStripped);
+        }
+
+        private bool IsComment(string line) => line.TrimStart().StartsWith("#");
     }
 }

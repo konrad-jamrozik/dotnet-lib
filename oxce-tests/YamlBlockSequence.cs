@@ -12,7 +12,7 @@ namespace OxceTests
 
         public YamlBlockSequence(IEnumerable<string> lines)
         {
-            _lines = lines;
+            _lines = lines.Where(line => !IsComment(line));
         }
 
         public IEnumerable<IEnumerable<string>> NodesLines()
@@ -58,5 +58,7 @@ namespace OxceTests
             if (lineWithIndicatorStripped.Any())
                 nodeLines.Add(Indent + lineWithIndicatorStripped);
         }
+
+        private bool IsComment(string line) => line.TrimStart().StartsWith("#");
     }
 }
