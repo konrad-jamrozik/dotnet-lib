@@ -7,11 +7,17 @@ public interface IOxceCfg : IConfiguration
 {
     public string SaveDir();
     public string SaveFileName();
+
+    public string RulesetDir();
+    public string SoldierBonusesFileName();
+
     public string OutputDir();
     public string SoldiersOutputFileName();
     public string ItemCountsOutputFileName();
 
     public string SaveFilePath(IFileSystem fs) => fs.JoinPath(SaveDir(), SaveFileName());
+
+    public string SoldierBonusesFilePath(IFileSystem fs) => fs.JoinPath(RulesetDir(), SoldierBonusesFileName());
 
     public string SoldiersOutputPath(IFileSystem fs) => fs.JoinPath(OutputDir(), SoldiersOutputFileName());
 

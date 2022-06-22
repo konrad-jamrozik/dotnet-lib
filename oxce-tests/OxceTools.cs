@@ -48,25 +48,49 @@ namespace OxceTests
                 configProjectName: "oxce-configs",
                 loadedTypeNamespace: "Oxce.Configs");
 
-            var saveFilePath = saveFileName != null
-                ? fs.JoinPath(cfg.SaveDir(), saveFileName)
+            var soldierBonuses = ReadSoldierBonuses(fs, cfg);
+
+            var bases = ReadBasesFromSaveFile(fs, cfg, saveFileName);
+
+            await bases.WriteSoldiers(fs, SoldiersOutputPath(fs, cfg, soldiersOutputFileName));
+            await bases.WriteItemCounts(fs, ItemCountsOutputPath(fs, cfg, itemCountsOutputFileName));
+        }
+
+        private static SoldierBonuses ReadSoldierBonuses(IFileSystem fs, IOxceCfg cfg)
+        {
+            var soldierBonusesFilePath = cfg.SoldierBonusesFilePath(fs);
+            Console.Out.WriteLine("Reading " + soldierBonusesFilePath);
+            var soldierBonusesYamlMapping =
+                new YamlMapping(fs.ReadAllLines(soldierBonusesFilePath));
+            var soldierBonuses = SoldierBonuses.FromRulesetFile(soldierBonusesYamlMapping);
+            return soldierBonuses;
+        }
+
+        private static Bases ReadBasesFromSaveFile(IFileSystem fs, IOxceCfg cfg, string fileName)
+        {
+            var filePath = fileName != null
+                ? fs.JoinPath(cfg.SaveDir(), fileName)
                 : cfg.SaveFilePath(fs);
+            Console.Out.WriteLine("Reading " + filePath);
+            var saveFileYamlMapping = new YamlMapping(fs.ReadAllLines(filePath));
+            var bases = Bases.FromSaveFile(saveFileYamlMapping);
+            return bases;
+        }
 
-            Console.Out.WriteLine("Reading " + saveFilePath);
-
-            var soldiersOutputPath = soldiersOutputFileName != null
-                ? fs.JoinPath(cfg.OutputDir(), soldiersOutputFileName)
-                : cfg.SoldiersOutputPath(fs);
-
-            var itemCountsOutputPath = itemCountsOutputFileName != null
-                ? fs.JoinPath(cfg.OutputDir(), itemCountsOutputFileName)
+        private static string ItemCountsOutputPath(
+            IFileSystem fs,
+            IOxceCfg cfg,
+            string fileName)
+            => fileName != null
+                ? fs.JoinPath(cfg.OutputDir(), fileName)
                 : cfg.ItemCountsOutputPath(fs);
 
-            var yamlMapping = new YamlMapping(fs.ReadAllLines(saveFilePath));
-            var bases = Bases.FromSaveFile(yamlMapping);
-
-            await bases.WriteSoldiers(fs, soldiersOutputPath);
-            await bases.WriteItemCounts(fs, itemCountsOutputPath);
-        }
+        private static string SoldiersOutputPath(
+            IFileSystem fs,
+            IOxceCfg cfg,
+            string fileName)
+            => fileName != null
+                ? fs.JoinPath(cfg.OutputDir(), fileName)
+                : cfg.SoldiersOutputPath(fs);
     }
 }
