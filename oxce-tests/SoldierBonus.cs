@@ -26,17 +26,17 @@ public record SoldierBonus(string Name, SoldierBonus.StatsData Stats)
     {
         public static StatsData FromStatsYaml(YamlMapping yaml)
             => new StatsData(
-                TU: yaml.ParseIntOrZero("TU"),
-                Stamina: yaml.ParseIntOrZero("Stamina"),
-                Health: yaml.ParseIntOrZero("Health"),
-                Bravery: yaml.ParseIntOrZero("Bravery"),
-                Reactions: yaml.ParseIntOrZero("Reactions"),
-                Firing: yaml.ParseIntOrZero("Firing"),
-                Throwing: yaml.ParseIntOrZero("Throwing"),
-                Strength: yaml.ParseIntOrZero("Strength"),
-                PsiStrength: yaml.ParseIntOrZero("PsiStrength"),
-                PsiSkill: yaml.ParseIntOrZero("PsiSkill"),
-                Melee: yaml.ParseIntOrZero("Melee"),
-                Mana: yaml.ParseIntOrZero("Mana"));
+                TU: yaml.ParseIntOrZero("tu"),
+                Stamina: yaml.ParseIntOrZero("stamina"),
+                Health: yaml.ParseIntOrZero("health"),
+                Bravery: yaml.ParseIntOrZero("bravery"),
+                Reactions: yaml.ParseIntOrZero("reactions"),
+                Firing: yaml.ParseIntOrZero("firing"),
+                Throwing: yaml.ParseIntOrZero("throwing"),
+                Strength: yaml.ParseIntOrZero("strength"),
+                PsiStrength: yaml.ParseIntOrZero("psiStrength"),
+                PsiSkill: yaml.ParseIntOrZero("psiSkill"),
+                Melee: yaml.ParseIntOrZero("melee"),
+                Mana: yaml.ParseIntOrZero("mana"));
     }
 }
