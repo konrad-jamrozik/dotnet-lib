@@ -10,19 +10,11 @@ namespace OxceTests;
 
 public record Bases(IEnumerable<Base> BaseData) : IEnumerable<Base>
 {
-    public IEnumerable<Soldier> Soldiers => BaseData.SelectMany(@base => @base.Soldiers);
-
-    public IEnumerable<ItemCount> ItemCounts => BaseData.SelectMany(@base => @base.ItemCounts);
-
-    public IEnumerator<Base> GetEnumerator() => BaseData.GetEnumerator();
-
-    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-
-    public static Bases FromSaveFile(YamlMapping saveGameYaml)
+    public static Bases FromSaveFileYaml(YamlMapping yaml)
     {
-        var basesLines = saveGameYaml.Lines("bases").ToList();
+        var basesLines = yaml.Lines("bases").ToList();
         var basesNodesLines = new YamlBlockSequence(basesLines).NodesLines();
-        var bases = basesNodesLines.Select(lines => Base.FromSaveFile(new YamlMapping(lines)));
+        var bases = basesNodesLines.Select(lines => Base.FromBaseYaml(new YamlMapping(lines)));
         return new Bases(bases);
     }
 
@@ -45,4 +37,12 @@ public record Bases(IEnumerable<Base> BaseData) : IEnumerable<Base>
 
         await Console.Out.WriteLineAsync("Wrote bases item count data to " + itemCountsOutputPath);
     }
+
+    public IEnumerable<Soldier> Soldiers => BaseData.SelectMany(@base => @base.Soldiers);
+
+    public IEnumerable<ItemCount> ItemCounts => BaseData.SelectMany(@base => @base.ItemCounts);
+
+    public IEnumerator<Base> GetEnumerator() => BaseData.GetEnumerator();
+
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 }

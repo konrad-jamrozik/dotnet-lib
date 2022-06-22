@@ -62,7 +62,7 @@ namespace OxceTests
             Console.Out.WriteLine("Reading " + soldierBonusesFilePath);
             var soldierBonusesYamlMapping =
                 new YamlMapping(fs.ReadAllLines(soldierBonusesFilePath));
-            var soldierBonuses = SoldierBonuses.FromRulesetFile(soldierBonusesYamlMapping);
+            var soldierBonuses = SoldierBonuses.FromRulesetFileYaml(soldierBonusesYamlMapping);
             return soldierBonuses;
         }
 
@@ -73,7 +73,7 @@ namespace OxceTests
                 : cfg.SaveFilePath(fs);
             Console.Out.WriteLine("Reading " + filePath);
             var saveFileYamlMapping = new YamlMapping(fs.ReadAllLines(filePath));
-            var bases = Bases.FromSaveFile(saveFileYamlMapping);
+            var bases = Bases.FromSaveFileYaml(saveFileYamlMapping);
             return bases;
         }
 

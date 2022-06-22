@@ -5,12 +5,12 @@ namespace OxceTests;
 
 public record Base(string Name, IEnumerable<Soldier> Soldiers, IEnumerable<ItemCount> ItemCounts)
 {
-    public static Base FromSaveFile(YamlMapping baseYaml)
+    public static Base FromBaseYaml(YamlMapping yaml)
     {
-        var baseName = baseYaml.ParseString("name");
-        var transfers = Transfers.FromBaseYaml(baseYaml, baseName);
-        var soldiers = ParseBaseSoldiers(baseYaml, baseName, transfers);
-        var itemCounts = ParseBaseItemCounts(baseYaml, baseName, transfers);
+        var baseName = yaml.ParseString("name");
+        var transfers = Transfers.FromBaseYaml(yaml, baseName);
+        var soldiers = ParseBaseSoldiers(yaml, baseName, transfers);
+        var itemCounts = ParseBaseItemCounts(yaml, baseName, transfers);
         return new Base(baseName, soldiers, itemCounts);
     }
 
