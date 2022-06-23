@@ -20,8 +20,8 @@ public record Base(string Name, IEnumerable<Soldier> Soldiers, IEnumerable<ItemC
         Transfers transfers)
     {
         var soldiersYaml = new YamlBlockSequence(baseYaml.Lines("soldiers"));
-        var soldiersLines = soldiersYaml.NodesLines();
-        var soldiers = soldiersLines.Select(
+        var soldiersNodesLines = soldiersYaml.NodesLines();
+        var soldiers = soldiersNodesLines.Select(
             soldierLines => Soldier.Parse(soldierLines, baseName, inTransfer: false));
         
         // kja should be Concat instead?

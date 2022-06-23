@@ -12,12 +12,12 @@ namespace OxceTests
             var yamlMapping = new YamlMapping(
                 new[]
                 {
-                    "key1: 5",
+                    "key1: 5 # comment to remove 1",
                     "key2:  ",
-                    "  - foo",
+                    "  - foo # comment to remove 2",
                     "  - bar",
                     "entry3: 42",
-                    "key 4: - qux"
+                    "key 4: - qux  "
                 });
 
             Assert.Multiple(() =>
@@ -32,7 +32,7 @@ namespace OxceTests
         }
 
         [Test]
-        public void TestYamlMappingKeyValuePairs()
+        public void TestYamlMappingKeyVaulePairsNoElements()
         {
             var yamlMapping = new YamlMapping(
                 new[]
@@ -45,20 +45,29 @@ namespace OxceTests
             Assert.That(nestedYamlMapping.KeyValuePairs().Count(), Is.Zero);
         }
 
-
         [Test]
-        public void TestYamlMappingWithNotIndentedComment()
+        public void TestYamlMappingKeyValuePairs()
         {
             var yamlMapping = new YamlMapping(
                 new[]
                 {
-                    "key1:",
-                    "# comment line",
-                    "  - name: foo"
+                    "key1: # comment 1",
+                    "# comment 2",
+                    "  - name: foo # comment 2",
+                    "  - type: bar   ",
+                    "key2: quz # comment 3"
                 });
             var nestedYamlMapping = new YamlMapping(yamlMapping.Lines("key1"));
 
-            Assert.That(nestedYamlMapping.KeyValuePairs().Count(), Is.EqualTo(1));
+            // Act
+            var actual = nestedYamlMapping.KeyValuePairs().ToList();
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(actual.Count, Is.EqualTo(2));
+                Assert.That(actual[0].Value, Is.EqualTo("foo"));
+                Assert.That(actual[1].Value, Is.EqualTo("bar"));
+            });
         }
     }
 }

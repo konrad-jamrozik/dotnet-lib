@@ -48,12 +48,23 @@ namespace OxceTests
                 configProjectName: "oxce-configs",
                 loadedTypeNamespace: "Oxce.Configs");
 
+            var commendations = ReadCommendations(fs, cfg);
             var soldierBonuses = ReadSoldierBonuses(fs, cfg);
 
             var bases = ReadBasesFromSaveFile(fs, cfg, saveFileName);
 
             await bases.WriteSoldiers(fs, SoldiersOutputPath(fs, cfg, soldiersOutputFileName));
             await bases.WriteItemCounts(fs, ItemCountsOutputPath(fs, cfg, itemCountsOutputFileName));
+        }
+
+        private static Commendations ReadCommendations(IFileSystem fs, IOxceCfg cfg)
+        {
+            var commendationsFilePath = cfg.CommendationsFilePath(fs);
+            Console.Out.WriteLine("Reading " + commendationsFilePath);
+            var commendationsYamlMapping =
+                new YamlMapping(fs.ReadAllLines(commendationsFilePath));
+            var commendations = Commendations.FromRulesetFileYaml(commendationsYamlMapping);
+            return commendations;
         }
 
         private static SoldierBonuses ReadSoldierBonuses(IFileSystem fs, IOxceCfg cfg)
