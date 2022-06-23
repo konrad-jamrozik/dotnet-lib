@@ -30,56 +30,31 @@ public record Soldier(
     bool BioEnOrLegacy,
     bool Tni,
     bool Helix,
-    int CurrentTU,
-    int CurrentStamina,
-    int CurrentHealth,
-    int CurrentBravery,
-    int CurrentReactions,
-    int CurrentFiring,
-    int CurrentThrowing,
-    int CurrentStrength,
-    int CurrentPsiStrength,
-    int CurrentPsiSkill,
-    int CurrentMelee,
-    int CurrentMana,
-    // Order of fields from commendations ruleset file.
-    int Monster,
-    int Wrestler,
-    int Slasher,
-    int Rocket,
-    int Trooper,
-    int Sniper,
-    int Shotgun,
-    int Gunslinger,
-    int Assaulter,
-    int Cannoneer,
-    int Bombardier,
-    int Warrior,
-    int Technician,
-    int Traditionalist,
-    int Incapacitator,
-    int JungleMower,
-    int Gunner,
-    int Purifier,
-    int Grenadier,
-    int Tasemaster,
-    int Suppressor,
-    int Sorcerer,
+    SoldierStats CurrentStats,
+    SoldierWeaponClassDecorations WeaponClassDecorations,
     Diary Diary,
     TransformationBonuses TransformationBonuses)
 {
     private static readonly string[] PropertiesExcludedFromPrinting =
-        { nameof(Diary), nameof(TransformationBonuses) };
+    {
+        nameof(CurrentStats), 
+        nameof(WeaponClassDecorations), 
+        nameof(Diary),
+        nameof(TransformationBonuses)
+    };
 
     private static IEnumerable<PropertyInfo> Properties { get; } =
         typeof(Soldier).GetProperties()
             .Where(pi => !PropertiesExcludedFromPrinting.Contains(pi.Name));
 
     public static string CsvHeaders()
-        => string.Join(",", 
+        => string.Join(
+            ",",
             Properties.Select(p => p.Name)
-                .Union(TrainingStats.CsvHeaders()) // kja should be Concat instead?
-                .Union(MaxStats.CsvHeaders())); // kja should be Concat instead?
+                .Concat(SoldierStats.CsvHeaders().Select(header => "Current" + header))
+                .Concat(TrainingStats.CsvHeaders())
+                .Concat(MaxStats.CsvHeaders())
+                .Concat(SoldierWeaponClassDecorations.CsvHeaders()));
 
     public string CsvString()
     {
@@ -97,8 +72,11 @@ public record Soldier(
     {
         var propertyData = Properties.Select(p => (p.Name, p.GetValue(this)));
         var allData = propertyData
-            .Union(TrainingStats.Get(this)) // kja should be Concat instead?
-            .Union(MaxStats.Get(this)); // kja should be Concat instead?
+            .Concat(CurrentStats.AsKeyValueTuples())
+            // KJA need to ensure that CurrentStats aren't augmented by commendations
+            .Concat(TrainingStats.Get(this))
+            .Concat(MaxStats.Get(this))
+            .Concat(WeaponClassDecorations.AsKeyValueTuples());
         return allData;
     }
 
@@ -112,7 +90,7 @@ public record Soldier(
     /// StatGainTotal but without the psi skill of the soldier, as psi skill
     /// training mode and magnitude is different, and would skew comparisons.
     /// </summary>
-    public int StatGainReal => Math.Max(StatGainTotal - CurrentPsiSkill, 0);
+    public int StatGainReal => Math.Max(StatGainTotal - CurrentStats.PsiSkill, 0);
 
     public string HelixName => Name.EndsWith("H") ? "TRUE" : "FALSE";
 
@@ -136,22 +114,12 @@ public record Soldier(
         var monthsService = soldierDiary.ParseIntOrZero("monthsService");
         var statGainTotal = soldierDiary.ParseIntOrZero("statGainTotal");
         var initialStats = new YamlMapping(soldier.Lines("initialStats"));
-        var currentStats = new YamlMapping(soldier.Lines("currentStats"));
+        var currentStatsYaml = new YamlMapping(soldier.Lines("currentStats"));
+        var currentStats = SoldierStats.FromStatsYaml(currentStatsYaml);
+        var diary = Diary.Parse(soldier.Lines("diary"));
+        var weaponClassDecorations = SoldierWeaponClassDecorations.FromDiary(diary);
         var transformationBonuses =
             TransformationBonuses.Parse(soldier.Lines("transformationBonuses"));
-        var currentTU = currentStats.ParseInt("tu");
-        var currentStamina = currentStats.ParseInt("stamina");
-        var currentHealth = currentStats.ParseInt("health");
-        var currentBravery = currentStats.ParseInt("bravery");
-        var currentReactions = currentStats.ParseInt("reactions");
-        var currentFiring = currentStats.ParseInt("firing");
-        var currentThrowing = currentStats.ParseInt("throwing");
-        var currentStrength = currentStats.ParseInt("strength");
-        var currentPsiStrength = currentStats.ParseInt("psiStrength");
-        var currentPsiSkill = currentStats.ParseInt("psiSkill");
-        var currentMelee = currentStats.ParseInt("melee");
-        var currentMana = currentStats.ParseInt("mana");
-        var diary = Diary.Parse(soldier.Lines("diary"));
 
         return new Soldier(
             id,
@@ -173,40 +141,8 @@ public record Soldier(
             transformationBonuses.Contains("STR_BIO_ENHANCEMENT") || transformationBonuses.Contains("STR_SECTOID_LEGACY"),
             transformationBonuses.Contains("STR_TACTICAL_NEURAL_IMPLANT"),
             transformationBonuses.Contains("STR_HELIX_KNIGHT") || transformationBonuses.Contains("STR_HELIX_PSION"),
-            currentTU,
-            currentStamina,
-            currentHealth,
-            currentBravery,
-            currentReactions,
-            currentFiring,
-            currentThrowing,
-            currentStrength,
-            currentPsiStrength,
-            currentPsiSkill,
-            currentMelee,
-            currentMana,
-            diary.Decoration("STR_MEDAL_MONSTER_NAME"),
-            diary.Decoration("STR_MEDAL_WRESTLER_NAME"),
-            diary.Decoration("STR_MEDAL_SLASHER_NAME"),
-            diary.Decoration("STR_MEDAL_ROCKET_SCIENTIST_NAME"),
-            diary.Decoration("STR_MEDAL_TROOPER_NAME"),
-            diary.Decoration("STR_MEDAL_SNIPER_NAME"),
-            diary.Decoration("STR_MEDAL_SHOTGUN_SURGEON_NAME"),
-            diary.Decoration("STR_MEDAL_GUNSLINGER_NAME"),
-            diary.Decoration("STR_MEDAL_ASSAULTER_NAME"),
-            diary.Decoration("STR_MEDAL_CANNONEER_NAME"),
-            diary.Decoration("STR_MEDAL_BOMBARDIER_NAME"),
-            diary.Decoration("STR_MEDAL_WARRIOR_NAME"),
-            diary.Decoration("STR_MEDAL_TECHNICIAN_NAME"),
-            diary.Decoration("STR_MEDAL_TRADITIONALIST_NAME"),
-            diary.Decoration("STR_MEDAL_INCAPACITATOR_NAME"),
-            diary.Decoration("STR_MEDAL_JUNGLE_MOWER_NAME"),
-            diary.Decoration("STR_MEDAL_GUNNER_NAME"),
-            diary.Decoration("STR_MEDAL_PURIFIER_NAME"),
-            diary.Decoration("STR_MEDAL_GRENADIER_NAME"),
-            diary.Decoration("STR_MEDAL_TASEMASTER_NAME"),
-            diary.Decoration("STR_MEDAL_SUPPRESSOR_NAME"),
-            diary.Decoration("STR_MEDAL_SORCERER_NAME"),
+            currentStats,
+            weaponClassDecorations,
             diary,
             transformationBonuses);
     }

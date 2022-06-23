@@ -53,7 +53,7 @@ public record CommendationBonuses(
             }
         }
 
-        var soldierWithBonuses = soldier with { CurrentMana = soldier.CurrentMana + soldierBonuses.Sum(sb => sb.Mana) };
+        var soldierWithBonuses = soldier; // with { CurrentMana = soldier.CurrentMana + soldierBonuses.Sum(sb => sb.Mana) };
         return soldierWithBonuses;
     }
 }

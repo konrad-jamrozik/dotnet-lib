@@ -1,3 +1,6 @@
+using System.Collections.Generic;
+using System.Linq;
+
 namespace OxceTests;
 
 public record SoldierStats(
@@ -28,4 +31,26 @@ public record SoldierStats(
             PsiSkill: yaml.ParseIntOrZero("psiSkill"),
             Melee: yaml.ParseIntOrZero("melee"),
             Mana: yaml.ParseIntOrZero("mana"));
+
+    public static IEnumerable<string> CsvHeaders() => new[]
+    {
+        "TU",
+        "Stamina",
+        "Health",
+        "Bravery",
+        "Reactions",
+        "Firing",
+        "Throwing",
+        "Strength",
+        "PsiStrength",
+        "PsiSkill",
+        "Melee",
+        "Mana"
+    };
+
+    public IEnumerable<(string Name, object Value)> AsKeyValueTuples()
+    {
+        var propertyInfos = typeof(SoldierStats).GetProperties();
+        return propertyInfos.Select(p => (p.Name, p.GetValue(this)));
+    }
 }

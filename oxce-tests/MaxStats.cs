@@ -27,16 +27,16 @@ namespace OxceTests
             var caps = StatCaps.MapByType[soldier.Type];
             var values = new List<int>
             {
-                Math.Min(soldier.CurrentTU - caps.TU, 0),
-                Math.Min(soldier.CurrentStamina - caps.Stamina, 0),
-                Math.Min(soldier.CurrentHealth - caps.Health, 0),
-                Math.Min(soldier.CurrentBravery - caps.Bravery, 0) / 10,
-                Math.Min(soldier.CurrentReactions - caps.Reactions, 0),
-                Math.Min(soldier.CurrentFiring - caps.Firing, 0),
-                Math.Min(soldier.CurrentThrowing - caps.Throwing, 0),
-                Math.Min(soldier.CurrentStrength - caps.Strength, 0),
-                Math.Min(soldier.CurrentMelee - caps.Melee, 0),
-                Math.Min(soldier.CurrentMana - caps.Mana, 0)
+                Math.Min(soldier.CurrentStats.TU - caps.TU, 0),
+                Math.Min(soldier.CurrentStats.Stamina - caps.Stamina, 0),
+                Math.Min(soldier.CurrentStats.Health - caps.Health, 0),
+                Math.Min(soldier.CurrentStats.Bravery - caps.Bravery, 0) / 10,
+                Math.Min(soldier.CurrentStats.Reactions - caps.Reactions, 0),
+                Math.Min(soldier.CurrentStats.Firing - caps.Firing, 0),
+                Math.Min(soldier.CurrentStats.Throwing - caps.Throwing, 0),
+                Math.Min(soldier.CurrentStats.Strength - caps.Strength, 0),
+                Math.Min(soldier.CurrentStats.Melee - caps.Melee, 0),
+                Math.Min(soldier.CurrentStats.Mana - caps.Mana, 0)
             };
 
             var maxTotal = values.Sum();
