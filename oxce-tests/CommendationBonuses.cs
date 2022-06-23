@@ -18,7 +18,7 @@ public record CommendationBonuses(
                 soldierBonus => soldierBonus.Name,
                 soldierBonus => soldierBonus.Stats));
 
-    public Soldier AddToSoldier(Soldier soldier)
+    public SoldierStats StatsWithBonuses(Soldier soldier)
     {
         var soldierStatsBonuses = new List<SoldierStats>();
 
@@ -53,10 +53,6 @@ public record CommendationBonuses(
             }
         }
 
-        var soldierWithBonuses = soldier with
-        {
-            CurrentStats = soldier.CurrentStats.SumWith(soldierStatsBonuses)
-        };
-        return soldierWithBonuses;
+        return soldier.CurrentStats.SumWith(soldierStatsBonuses);
     }
 }

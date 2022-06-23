@@ -26,7 +26,7 @@ public record Bases(IEnumerable<Base> BaseData) : IEnumerable<Base>
         string[] csvLines = Soldier.CsvHeaders().WrapInList()
             .Concat(
                 Soldiers.OrderBy(s => s.Id).Select(
-                    s => commendationBonuses.AddToSoldier(s).CsvString())).ToArray();
+                    s => s.CsvString(commendationBonuses))).ToArray();
 
         await fs.WriteAllLinesAsync(soldiersOutputPath, csvLines);
 

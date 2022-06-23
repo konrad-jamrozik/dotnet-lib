@@ -51,29 +51,28 @@ public record Soldier(
         => string.Join(
             ",",
             Properties.Select(p => p.Name)
-                .Concat(SoldierStats.CsvHeaders().Select(header => "Current" + header))
+                .Concat(SoldierStats.CsvHeaders())
                 .Concat(TrainingStats.CsvHeaders())
                 .Concat(MaxStats.CsvHeaders())
                 .Concat(SoldierWeaponClassDecorations.CsvHeaders()));
 
-    public string CsvString()
+    public string CsvString(CommendationBonuses commendationBonuses)
     {
-        var str = ToString();
+        var str = ToString(commendationBonuses);
         var csvStr = Regex.Replace(str, $"{nameof(Soldier)} {{(.*) }}", "$1");
         csvStr = Regex.Replace(csvStr, " \\w+\\ = ", "");
         return csvStr;
     }
 
-    public override string ToString()
+    public string ToString(CommendationBonuses commendationBonuses)
         => $"{nameof(Soldier)} {{ "
-           + string.Join(", ", DataMap().Select(p => $"{p.Key} = {p.Value}")) + " }";
+           + string.Join(", ", DataMap(commendationBonuses).Select(p => $"{p.Key} = {p.Value}")) + " }";
 
-    private IEnumerable<(string Key, object Value)> DataMap()
+    private IEnumerable<(string Key, object Value)> DataMap(CommendationBonuses commendationBonuses)
     {
         var propertyData = Properties.Select(p => (p.Name, p.GetValue(this)));
         var allData = propertyData
-            .Concat(CurrentStats.AsKeyValueTuples())
-            // KJA need to ensure that CurrentStats aren't augmented by commendations
+            .Concat(commendationBonuses.StatsWithBonuses(this).AsKeyValueTuples())
             .Concat(TrainingStats.Get(this))
             .Concat(MaxStats.Get(this))
             .Concat(WeaponClassDecorations.AsKeyValueTuples());
