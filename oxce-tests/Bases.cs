@@ -18,10 +18,15 @@ public record Bases(IEnumerable<Base> BaseData) : IEnumerable<Base>
         return new Bases(bases);
     }
 
-    public async Task WriteSoldiers(IFileSystem fs, string soldiersOutputPath)
+    public async Task WriteSoldiers(
+        IFileSystem fs,
+        string soldiersOutputPath,
+        CommendationBonuses commendationBonuses)
     {
         string[] csvLines = Soldier.CsvHeaders().WrapInList()
-            .Concat(Soldiers.OrderBy(s => s.Id).Select(s => s.CsvString())).ToArray();
+            .Concat(
+                Soldiers.OrderBy(s => s.Id).Select(
+                    s => commendationBonuses.AddToSoldier(s).CsvString())).ToArray();
 
         await fs.WriteAllLinesAsync(soldiersOutputPath, csvLines);
 
