@@ -32,7 +32,7 @@ public record CommendationBonuses(Commendations Commendations, SoldierBonuses So
         //     soldierBonuses.Add(statsData);
         // }
 
-        // kja commented out as I need to support soldierTransformations file, stuff like "flatOverallStatChange". See for example STR_COMBAT_PILOT_TRAINING
+        // kja commented out as I need to support soldierTransformations file / soldierBonusType. See for example STR_COMBAT_PILOT_TRAINING
         // foreach (string name in soldier.TransformationBonuses.TransformationNames)
         // {
         //     if (!SoldierBonuses.SoldierBonusData.Any(bonus => bonus.Name == name))
