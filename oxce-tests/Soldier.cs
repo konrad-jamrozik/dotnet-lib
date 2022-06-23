@@ -146,5 +146,4 @@ public record Soldier(
             diary,
             transformationBonuses);
     }
-
 }
