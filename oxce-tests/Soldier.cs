@@ -65,10 +65,15 @@ public record Soldier(
     int Tasemaster,
     int Suppressor,
     int Sorcerer,
-    Diary Diary)
+    Diary Diary,
+    TransformationBonuses TransformationBonuses)
 {
+    private static readonly string[] PropertiesExcludedFromPrinting =
+        { nameof(Diary), nameof(TransformationBonuses) };
+
     private static IEnumerable<PropertyInfo> Properties { get; } =
-        typeof(Soldier).GetProperties().Where(pi => pi.Name != nameof(Diary));
+        typeof(Soldier).GetProperties()
+            .Where(pi => !PropertiesExcludedFromPrinting.Contains(pi.Name));
 
     public static string CsvHeaders()
         => string.Join(",", 
@@ -202,7 +207,8 @@ public record Soldier(
             diary.Decoration("STR_MEDAL_TASEMASTER_NAME"),
             diary.Decoration("STR_MEDAL_SUPPRESSOR_NAME"),
             diary.Decoration("STR_MEDAL_SORCERER_NAME"),
-            diary);
+            diary,
+            transformationBonuses);
     }
 
 }
