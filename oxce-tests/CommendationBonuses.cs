@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Wikitools.Lib.Primitives;
 
 namespace OxceTests;
 
@@ -20,7 +21,7 @@ public record CommendationBonuses(
 
     public Soldier AddToSoldier(Soldier soldier)
     {
-        var soldierBonuses = new List<SoldierStats>();
+        var soldierStatsBonuses = new List<SoldierStats>();
 
         foreach (var (name, decoration) in soldier.Diary.Commendations)
         {
@@ -28,14 +29,14 @@ public record CommendationBonuses(
             var soldierBonusTypes = CommendationNameToSoldierBonusTypesMap[nameWithoutNoun];
             var soldierBonusType = soldierBonusTypes[decoration];
             var statsData = SoldierBonusNameToStatsMap[soldierBonusType];
-            soldierBonuses.Add(statsData);
+            soldierStatsBonuses.Add(statsData);
         }
 
         foreach (var name in soldier.TransformationBonuses.TransformationNames)
         {
             if (SoldierBonusNameToStatsMap.ContainsKey(name))
             {
-                soldierBonuses.Add(SoldierBonusNameToStatsMap[name]);
+                soldierStatsBonuses.Add(SoldierBonusNameToStatsMap[name]);
             }
             else
             {
@@ -53,7 +54,10 @@ public record CommendationBonuses(
             }
         }
 
-        var soldierWithBonuses = soldier; // with { CurrentMana = soldier.CurrentMana + soldierBonuses.Sum(sb => sb.Mana) };
+        var soldierWithBonuses = soldier with
+        {
+            CurrentStats = soldier.CurrentStats.SumWith(soldierStatsBonuses)
+        };
         return soldierWithBonuses;
     }
 }
