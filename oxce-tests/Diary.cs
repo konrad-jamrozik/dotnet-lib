@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -24,4 +23,7 @@ public record Diary(IDictionary<string, int> Commendations)
 
         return new Diary(commendations);
     }
+
+    public int Decoration(string name)
+        => Commendations.ContainsKey(name) ? Commendations[name] : 0;
 }
