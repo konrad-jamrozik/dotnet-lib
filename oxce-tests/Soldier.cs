@@ -117,6 +117,8 @@ public record Soldier(
         var currentStats = SoldierStats.FromStatsYaml(currentStatsYaml);
         var diary = Diary.Parse(soldier.Lines("diary"));
         var weaponClassDecorations = SoldierWeaponClassDecorations.FromDiary(diary);
+        var previousTransformations =
+            PreviousTransformations.Parse(soldier.Lines("previousTransformations"));
         var transformationBonuses =
             TransformationBonuses.Parse(soldier.Lines("transformationBonuses"));
 
@@ -133,7 +135,10 @@ public record Soldier(
             recovery,
             manaMissing,
             statGainTotal,
-            transformationBonuses.Contains("STR_COMBAT_PILOT_TRAINING"),
+            transformationBonuses.Contains("STR_COMBAT_PILOT_TRAINING") ||
+            // Need to look also into previousTransformations for combat pilot training because 
+            // this transformation dosesn't have entry for 'soldierBonusType'.
+            previousTransformations.Contains("STR_COMBAT_PILOT_TRAINING"),
             transformationBonuses.Contains("STR_GUN_KATA"),
             transformationBonuses.Contains("STR_DAGONIZATION"),
             transformationBonuses.Contains("STR_MARTIAL_ARTS_TRAINING"),
