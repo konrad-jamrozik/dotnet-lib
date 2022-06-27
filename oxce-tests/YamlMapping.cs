@@ -9,7 +9,6 @@ public class YamlMapping
 {
     private const string Indent = "  ";
     private readonly ParsedLines _parsedLines;
-
     private IEnumerable<string> LinesData => _parsedLines.Lines;
 
     public YamlMapping(ParsedLines lines)
@@ -17,14 +16,14 @@ public class YamlMapping
         _parsedLines = lines with { Lines = lines.Lines.Where(line => !IsComment(line)).ToList() };
     }
 
-    public YamlMapping(IEnumerable<string> lines) : this(new ParsedLines(lines.ToList(), (0, lines.Count())))
-    {
+    public YamlMapping(IEnumerable<string> lines) : this(
+        new ParsedLines(lines.ToList(), (0, lines.Count()))) {
     }
 
     public IEnumerable<string> Lines(string key)
-        => LinesInternal(key).Lines;
+        => ParseLines(key).Lines;
 
-    private ParsedLines LinesInternal(string key)
+    public ParsedLines ParseLines(string key)
     {
         int startLineOffset = _parsedLines.Offsets.start;
         int endLineOffset = _parsedLines.Offsets.start;

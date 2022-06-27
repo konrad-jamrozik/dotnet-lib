@@ -8,18 +8,22 @@ public class YamlBlockSequence
 {
     private const string Indent = "  ";
     private const string IndicatorPrefix = "- ";
-    private readonly IEnumerable<string> _lines;
+    private readonly ParsedLines _parsedLines;
+    private IEnumerable<string> LinesData => _parsedLines.Lines;
 
-    public YamlBlockSequence(IEnumerable<string> lines)
+    public YamlBlockSequence(ParsedLines lines)
     {
-        _lines = lines.Where(line => !IsComment(line));
+        _parsedLines = lines with { Lines = lines.Lines.Where(line => !IsComment(line)).ToList() };
     }
+
+    public YamlBlockSequence(IEnumerable<string> lines) : this(
+        new ParsedLines(lines.ToList(), (0, lines.Count()))) { }
 
     public IEnumerable<IEnumerable<string>> NodesLines()
     {
         var nodesLines = new List<List<string>>();
         List<string> currentNodeLines = null;
-        foreach (string line in _lines)
+        foreach (string line in LinesData)
         {
             if (FoundNextNode(line))
             {

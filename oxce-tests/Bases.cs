@@ -12,7 +12,7 @@ public record Bases(IEnumerable<Base> BaseData) : IEnumerable<Base>
 {
     public static Bases FromSaveFileYaml(YamlMapping yaml)
     {
-        var basesLines = yaml.Lines("bases").ToList();
+        var basesLines = yaml.ParseLines("bases");
         var basesNodesLines = new YamlBlockSequence(basesLines).NodesLines();
         var bases = basesNodesLines.Select(lines => Base.FromBaseYaml(new YamlMapping(lines)));
         return new Bases(bases);
