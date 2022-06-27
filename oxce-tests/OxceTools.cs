@@ -84,7 +84,7 @@ public class OxceTools
             ? fs.JoinPath(cfg.SaveDir(), fileName)
             : cfg.SaveFilePath(fs);
         Console.Out.WriteLine("Reading " + filePath);
-        var saveFileYamlMapping = new YamlMapping(fs.ReadAllLines(filePath));
+        var saveFileYamlMapping = new YamlMapping(ParsedLines.FromFile(fs, filePath));
         var bases = Bases.FromSaveFileYaml(saveFileYamlMapping);
         return bases;
     }

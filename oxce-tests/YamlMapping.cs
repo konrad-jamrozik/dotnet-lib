@@ -8,19 +8,30 @@ namespace OxceTests;
 public class YamlMapping
 {
     private const string Indent = "  ";
-    private readonly IEnumerable<string> _lines;
+    private readonly ParsedLines _parsedLines;
 
-    public YamlMapping(IEnumerable<string> lines)
+    private IEnumerable<string> LinesData => _parsedLines.Lines;
+
+    public YamlMapping(ParsedLines lines)
     {
-        _lines = lines.Where(line => !IsComment(line));
+        _parsedLines = lines with { Lines = lines.Lines.Where(line => !IsComment(line)).ToList() };
+    }
+
+    public YamlMapping(IEnumerable<string> lines) : this(new ParsedLines(lines.ToList(), (0, lines.Count())))
+    {
     }
 
     public IEnumerable<string> Lines(string key)
+        => LinesInternal(key).Lines;
+
+    private ParsedLines LinesInternal(string key)
     {
+        int startLineOffset = _parsedLines.Offsets.start;
+        int endLineOffset = _parsedLines.Offsets.start;
         var outputLines = new List<string>();
         bool appendingLines = false;
-            
-        foreach (string line in _lines)
+
+        foreach (string line in _parsedLines.Lines)
         {
             if (appendingLines)
             {
@@ -35,21 +46,31 @@ public class YamlMapping
 
                 AddValueFromKeyLineIfPresent(key, line, outputLines);
             }
+            else
+            {
+                // We increase the start line offset on each line
+                // only if we didn't find the key yet
+                startLineOffset++;
+            }
+
+            endLineOffset++;
         }
 
         // Remove indent
         var postProcessedOutputLines = outputLines.Select(line => line.Substring(Indent.Length));
+
         postProcessedOutputLines = postProcessedOutputLines.Select(TrimEndOfLineComment)
             .Where(line => line != string.Empty);
-        return postProcessedOutputLines;
+
+        return new ParsedLines(postProcessedOutputLines.ToList(), (startLineOffset, endLineOffset));
     }
 
     public IEnumerable<(string Key, string Value)> KeyValuePairs()
     {
-        if (_lines.Count() == 1 && _lines.Single() == "{}")
+        if (LinesData.Count() == 1 && LinesData.Single() == "{}")
             return Array.Empty<(string Key, string Value)>();
 
-        return _lines.Select(
+        return LinesData.Select(
             line =>
             {
                 var split = line.Split(": ");
