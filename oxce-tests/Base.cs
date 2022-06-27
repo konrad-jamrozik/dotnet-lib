@@ -9,8 +9,8 @@ public record Base(string Name, IEnumerable<Soldier> Soldiers, IEnumerable<ItemC
     {
         var baseName = yaml.ParseString("name");
         var transfers = Transfers.FromBaseYaml(yaml, baseName);
-        var soldiers = ParseBaseSoldiers(yaml, baseName, transfers);
         var crafts = ParseCrafts(yaml, baseName);
+        var soldiers = ParseBaseSoldiers(yaml, baseName, transfers, crafts);
         var itemCounts = ParseBaseItemCounts(yaml, baseName, transfers, crafts);
         return new Base(baseName, soldiers, itemCounts);
     }
@@ -18,16 +18,16 @@ public record Base(string Name, IEnumerable<Soldier> Soldiers, IEnumerable<ItemC
     private static IEnumerable<Soldier> ParseBaseSoldiers(
         YamlMapping baseYaml,
         string baseName,
-        Transfers transfers)
+        Transfers transfers,
+        IEnumerable<Craft> crafts)
     {
         var soldiersYaml = new YamlBlockSequence(baseYaml.Lines("soldiers"));
         var soldiersNodesLines = soldiersYaml.NodesLines();
         var soldiers = soldiersNodesLines.Select(
-            soldierLines => Soldier.Parse(soldierLines, baseName, inTransfer: false));
+            soldierLines => Soldier.Parse(soldierLines, baseName, inTransfer: false, crafts));
         
         return soldiers.Concat(transfers.Soldiers).OrderBy(soldier => soldier.Id);
     }
-
     
     private static IEnumerable<Craft> ParseCrafts(YamlMapping baseYaml, string baseName)
     {

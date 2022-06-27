@@ -15,6 +15,7 @@ public record Soldier(
     string Name,
     string Type,
     string BaseName,
+    string CraftName,
     bool InTransfer,
     int Missions,
     int Kills,
@@ -40,7 +41,8 @@ public record Soldier(
         nameof(CurrentStats), 
         nameof(WeaponClassDecorations), 
         nameof(Diary),
-        nameof(TransformationBonuses)
+        nameof(TransformationBonuses),
+        nameof(Craft)
     };
 
     private static IEnumerable<PropertyInfo> Properties { get; } =
@@ -98,35 +100,37 @@ public record Soldier(
     public static Soldier Parse(
         IEnumerable<string> soldierLines,
         string baseName,
-        bool inTransfer)
+        bool inTransfer,
+        IEnumerable<Craft> crafts = null)
     {
-        var soldier = new YamlMapping(soldierLines);
-        var id = soldier.ParseInt("id");
-        var type = soldier.ParseString("type");
-        var name = soldier.ParseString("name");
-        var missions = soldier.ParseInt("missions");
-        var kills = soldier.ParseInt("kills");
-        var recovery = soldier.ParseFloatOrZero("recovery");
-        var manaMissing = soldier.ParseIntOrZero("manaMissing");
-        var rank = soldier.ParseInt("rank");
-        var soldierDiary = new YamlMapping(soldier.Lines("diary"));
+        var soldierYaml = new YamlMapping(soldierLines);
+        var id = soldierYaml.ParseInt("id");
+        var type = soldierYaml.ParseString("type");
+        var name = soldierYaml.ParseString("name");
+        var missions = soldierYaml.ParseInt("missions");
+        var kills = soldierYaml.ParseInt("kills");
+        var recovery = soldierYaml.ParseFloatOrZero("recovery");
+        var manaMissing = soldierYaml.ParseIntOrZero("manaMissing");
+        var rank = soldierYaml.ParseInt("rank");
+        var soldierDiary = new YamlMapping(soldierYaml.Lines("diary"));
         var monthsService = soldierDiary.ParseIntOrZero("monthsService");
         var statGainTotal = soldierDiary.ParseIntOrZero("statGainTotal");
-        var initialStats = new YamlMapping(soldier.Lines("initialStats"));
-        var currentStatsYaml = new YamlMapping(soldier.Lines("currentStats"));
+        var initialStats = new YamlMapping(soldierYaml.Lines("initialStats"));
+        var currentStatsYaml = new YamlMapping(soldierYaml.Lines("currentStats"));
         var currentStats = SoldierStats.FromStatsYaml(currentStatsYaml);
-        var diary = Diary.Parse(soldier.Lines("diary"));
+        var diary = Diary.Parse(soldierYaml.Lines("diary"));
         var weaponClassDecorations = SoldierWeaponClassDecorations.FromDiary(diary);
         var previousTransformations =
-            PreviousTransformations.Parse(soldier.Lines("previousTransformations"));
+            PreviousTransformations.Parse(soldierYaml.Lines("previousTransformations"));
         var transformationBonuses =
-            TransformationBonuses.Parse(soldier.Lines("transformationBonuses"));
+            TransformationBonuses.Parse(soldierYaml.Lines("transformationBonuses"));
 
         return new Soldier(
             id,
             name,
             type,
             baseName,
+            ParseCraftName(baseName, soldierYaml),
             inTransfer,
             missions,
             kills,
@@ -149,5 +153,12 @@ public record Soldier(
             weaponClassDecorations,
             diary,
             transformationBonuses);
+    }
+
+    private static string ParseCraftName(string baseName, YamlMapping soldierYaml)
+    {
+        var craft = Craft.Parse(soldierYaml.Lines("craft"), baseName);
+        var craftName = craft != null ? craft.Type + "/" + craft.Id : "";
+        return craftName;
     }
 }

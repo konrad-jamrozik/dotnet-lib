@@ -81,7 +81,6 @@ public class YamlMapping
     public float ParseFloatOrZero(string key)
         => float.TryParse(Lines(key).SingleOrDefault(), out var value) ? value : 0;
 
-
     private static void AppendLine(string line, List<string> valueLines) => valueLines.Add(line);
 
     private static void AddValueFromKeyLineIfPresent(string key, string line, List<string> valueLines)
