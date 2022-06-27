@@ -18,7 +18,7 @@ public record Transfers(YamlBlockSequence TransfersYaml, string BaseName)
             .Where(soldierLines => soldierLines.Any())
             .Select(soldierLines => Soldier.Parse(soldierLines, BaseName, inTransfer: true));
 
-    public Dictionary<string, int> ItemCountsMap
+    public ItemCounts ItemCounts
     {
         get
         {
@@ -40,7 +40,7 @@ public record Transfers(YamlBlockSequence TransfersYaml, string BaseName)
                     itemIdQts => itemIdQts.Key,
                     itemIdQts => itemIdQts.Sum());
 
-            return itemCountsMap;
+            return new ItemCounts(itemCountsMap);
         }
     }
 }

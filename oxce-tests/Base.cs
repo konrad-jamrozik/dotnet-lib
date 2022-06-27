@@ -10,7 +10,8 @@ public record Base(string Name, IEnumerable<Soldier> Soldiers, IEnumerable<ItemC
         var baseName = yaml.ParseString("name");
         var transfers = Transfers.FromBaseYaml(yaml, baseName);
         var soldiers = ParseBaseSoldiers(yaml, baseName, transfers);
-        var itemCounts = ParseBaseItemCounts(yaml, baseName, transfers);
+        var crafts = ParseCrafts(yaml, baseName);
+        var itemCounts = ParseBaseItemCounts(yaml, baseName, transfers, crafts);
         return new Base(baseName, soldiers, itemCounts);
     }
 
@@ -24,34 +25,44 @@ public record Base(string Name, IEnumerable<Soldier> Soldiers, IEnumerable<ItemC
         var soldiers = soldiersNodesLines.Select(
             soldierLines => Soldier.Parse(soldierLines, baseName, inTransfer: false));
         
-        // kja should be Concat instead?
-        return soldiers.Union(transfers.Soldiers).OrderBy(soldier => soldier.Id);
+        return soldiers.Concat(transfers.Soldiers).OrderBy(soldier => soldier.Id);
+    }
+
+    
+    private static IEnumerable<Craft> ParseCrafts(YamlMapping baseYaml, string baseName)
+    {
+        var craftsYaml = new YamlBlockSequence(baseYaml.Lines("crafts"));
+        var craftsNodesLines = craftsYaml.NodesLines();
+        var crafts = craftsNodesLines.Select(
+            craftLines => Craft.Parse(craftLines, baseName));
+
+        return crafts;
     }
 
     private static IEnumerable<ItemCount> ParseBaseItemCounts(
-        YamlMapping baseYaml, string baseName, Transfers transfers)
+        YamlMapping baseYaml, string baseName, Transfers transfers, IEnumerable<Craft> crafts)
     {
-        var itemCountsYaml = new YamlMapping(baseYaml.Lines("items"));
-        var itemCountEntries = itemCountsYaml.KeyValuePairs();
-
-        Dictionary<string, int> itemCountsMap = itemCountEntries
-            .GroupBy(entry => entry.Key, entry => int.Parse(entry.Value))
-            .ToDictionary(itemIdCounts => itemIdCounts.Key, itemIdCounts => itemIdCounts.Sum());
-
-        var transferredItemCountsMap = transfers.ItemCountsMap;
-
-        // kja I need here an abstraction: dict1.Merge(dict2, value => value.Sum())
-        // when done, reuse the ToDictionary proposed in transfers.ItemCountsMap (above)
-        // as well as when computing itemCountsMap (even higher above).
-        var combinedItemCountsMap = itemCountsMap.Select(kvp => kvp)
-            .Concat(transferredItemCountsMap.Select(kvp => kvp))
-            .GroupBy(kvp => kvp.Key, kvp => kvp.Value)
-            .ToDictionary(
-                itemIdCounts => itemIdCounts.Key,
-                itemIdCounts => itemIdCounts.Sum());
+        var baseItemCounts = OxceTests.ItemCounts.Parse(baseYaml);
+        var combinedItemCountsMap = CombinedItemCountsMap(
+            new List<ItemCounts> { baseItemCounts, transfers.ItemCounts }
+                .Concat(crafts.Select(craft => craft.ItemCounts)));
 
         return combinedItemCountsMap.Select(
             itemCount => new ItemCount(baseName, itemCount.Key, itemCount.Value));
     }
 
+    private static Dictionary<string, int> CombinedItemCountsMap(
+        IEnumerable<ItemCounts> itemCountsEnumerable)
+    {
+        // kja I need here an abstraction: dict1.Merge(dict2, value => value.Sum())
+        // when done, reuse the ToDictionary proposed in transfers.ItemCountsMap (above)
+        // as well as when computing itemCountsMap (even higher above).
+        var combinedItemCountsMap = itemCountsEnumerable
+            .SelectMany(itemCounts => itemCounts.Map.Select(kvp => kvp))
+            .GroupBy(kvp => kvp.Key, kvp => kvp.Value)
+            .ToDictionary(
+                itemIdCounts => itemIdCounts.Key,
+                itemIdCounts => itemIdCounts.Sum());
+        return combinedItemCountsMap;
+    }
 }
