@@ -141,7 +141,7 @@ public record Soldier(
             statGainTotal,
             transformationBonuses.Contains("STR_COMBAT_PILOT_TRAINING") ||
             // Need to look also into previousTransformations for combat pilot training because 
-            // this transformation dosesn't have entry for 'soldierBonusType'.
+            // this transformation doesn't have entry for 'soldierBonusType'.
             previousTransformations.Contains("STR_COMBAT_PILOT_TRAINING"),
             transformationBonuses.Contains("STR_GUN_KATA"),
             transformationBonuses.Contains("STR_DAGONIZATION"),
