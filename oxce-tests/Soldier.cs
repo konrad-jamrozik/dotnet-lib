@@ -100,8 +100,7 @@ public record Soldier(
     public static Soldier Parse(
         IEnumerable<string> soldierLines,
         string baseName,
-        bool inTransfer,
-        IEnumerable<Craft> crafts = null)
+        bool inTransfer)
     {
         var soldierYaml = new YamlMapping(soldierLines);
         var id = soldierYaml.ParseInt("id");

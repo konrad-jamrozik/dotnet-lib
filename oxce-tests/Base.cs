@@ -24,7 +24,7 @@ public record Base(string Name, IEnumerable<Soldier> Soldiers, IEnumerable<ItemC
         var soldiersYaml = new YamlBlockSequence(baseYaml.Lines("soldiers"));
         var soldiersNodesLines = soldiersYaml.NodesLines();
         var soldiers = soldiersNodesLines.Select(
-            soldierLines => Soldier.Parse(soldierLines, baseName, inTransfer: false, crafts));
+            soldierLines => Soldier.Parse(soldierLines, baseName, inTransfer: false));
         
         return soldiers.Concat(transfers.Soldiers).OrderBy(soldier => soldier.Id);
     }
