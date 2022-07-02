@@ -6,15 +6,15 @@ namespace Wikitools.AzureDevOps.Tests;
 
 public class ValidWikiPagesStatsTests
 {
-        // @formatter:off
-        [Fact] public void PageStatsEmpty()                  => Verify(Data.PageStatsEmpty);
-        [Fact] public void PageStatsYearWrap()               => Verify(Data.PageStatsYearWrap);
-        [Fact] public void PageStatsBeforeYearWrap()         => Verify(Data.PageStatsBeforeYearWrap);
-        [Fact] public void PageStatsPreviousMonthOnly()      => Verify(Data.PageStatsPreviousMonthOnly);
-        [Fact] public void PageStats()                       => Verify(Data.PageStats);
-        [Fact] public void PageStatsRenamedToNewPath()       => Verify(Data.PageStatsRenamedToNewPath);
-        [Fact] public void PageStatsExchangedPaths()         => Verify(Data.PageStatsExchangedPaths);
-        [Fact] public void PageStatsPagesMissing()           => Verify(Data.PageStatsPagesMissing);
+    // @formatter:off
+    [Fact] public void PageStatsEmpty()                  => Verify(Data.PageStatsEmpty);
+    [Fact] public void PageStatsYearWrap()               => Verify(Data.PageStatsYearWrap);
+    [Fact] public void PageStatsBeforeYearWrap()         => Verify(Data.PageStatsBeforeYearWrap);
+    [Fact] public void PageStatsPreviousMonthOnly()      => Verify(Data.PageStatsPreviousMonthOnly);
+    [Fact] public void PageStats()                       => Verify(Data.PageStats);
+    [Fact] public void PageStatsRenamedToNewPath()       => Verify(Data.PageStatsRenamedToNewPath);
+    [Fact] public void PageStatsExchangedPaths()         => Verify(Data.PageStatsExchangedPaths);
+    [Fact] public void PageStatsPagesMissing()           => Verify(Data.PageStatsPagesMissing);
     // @formatter:on
 
     private static void Verify(ValidWikiPagesStatsTestData data)

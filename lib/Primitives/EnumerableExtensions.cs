@@ -35,7 +35,7 @@ public static class EnumerableExtensions
         return orderedGroups;
     }
 
-    public static TSource[] UnionMerge<TSource, TKey>(
+    public static TSource[] ConcatMerge<TSource, TKey>(
         this IEnumerable<TSource> first,
         IEnumerable<TSource> second,
         Func<TSource, TKey> selectKey,
@@ -55,11 +55,10 @@ public static class EnumerableExtensions
         var secondExceptFirst = secondKeySet.Except(firstKeySet).Select(key => secondByKey[key]);
         var overlapping       = overlappingKeys.Select(key => merge(firstByKey[key], secondByKey[key]));
 
-        // kj2-bug should be Concat instead?
-        var union = firstExceptSecond.Union(overlapping).Union(secondExceptFirst).ToArray();
+        var concat = firstExceptSecond.Concat(overlapping).Concat(secondExceptFirst).ToArray();
 
-        union.AssertDistinctBy(selectKey);
-        return union;
+        concat.AssertDistinctBy(selectKey);
+        return concat;
     }
 
     public static void AssertOrderedBy<TSource, TKey>(

@@ -257,7 +257,7 @@ public record ValidWikiPagesStats : IEnumerable<WikiPageStats>
         ValidWikiPagesStats currentStats,
         bool allowGaps)
     {
-        IEnumerable<WikiPageStats> merged = previousStats.UnionMerge(currentStats, ps => ps.Id, Merge);
+        IEnumerable<WikiPageStats> merged = previousStats.ConcatMerge(currentStats, ps => ps.Id, Merge);
         merged = merged.OrderBy(ps => ps.Id)
             .Select(ps => ps with { DayStats = ps.DayStats.OrderBy(ds => ds.Day).ToArray() });
 

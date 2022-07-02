@@ -10,7 +10,7 @@ namespace Wikitools.Lib.Tests;
 public class EnumerableExtensionsTests
 {
     [Fact]
-    public void UnionMerges()
+    public void ConcatMerges()
     {
         var first = new List<List<string>>
         {
@@ -39,7 +39,7 @@ public class EnumerableExtensionsTests
         };
 
         // Act
-        var actual = first.UnionMerge(
+        var actual = first.ConcatMerge(
             second,
             i => i[0],
             (i1, i2) => new List<string> { i1[0], i1[1] + "_" + i2[1], i1[2] + "|" + i2[2] });
@@ -49,14 +49,14 @@ public class EnumerableExtensionsTests
 
 
     [Fact]
-    public void UnionMergesReusingKeyForMerge()
+    public void MergesUsingKeyInMerge()
     {
         var first    = new List<dynamic> { new { Foo = "i1" }, new { Foo = "i2" } };
         var second   = new List<dynamic> { new { Foo = "i2" }, new { Foo = "i3" } };
         var expected = new List<dynamic> { new { Foo = "i1" }, new { Foo = "i2i2_" }, new { Foo = "i3" } };
 
         // Act
-        var actual = first.UnionMerge(second, i => i.Foo, (i1, i2) => new { Foo = i1.Foo + i2.Foo + "_" });
+        var actual = first.ConcatMerge(second, i => i.Foo, (i1, i2) => new { Foo = i1.Foo + i2.Foo + "_" });
 
         new JsonDiffAssertion(expected, actual).Assert();
     }

@@ -54,7 +54,7 @@ public record ValidWikiPagesStatsTestData(
         {
             WikiPageStats[] pageStats =
                 new[] { _fooPagePreviousMonth }
-                    .Union(
+                    .Concat(
                         !BarPageDeletedInPreviousMonth
                             ? new[] { _barPagePreviousMonth }
                             : WikiPageStats.EmptyArray)

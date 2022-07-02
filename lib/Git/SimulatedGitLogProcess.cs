@@ -26,17 +26,14 @@ public record SimulatedGitLogProcess(ITimeline Timeline, DaySpan daySpan, GitLog
                 .Concat(commitLines).ToList()
         );
 
-    // kja note: this is in Simulated class!
     private static List<string> GetStdOutLines(GitLogCommit commit)
     {
-        var authors = commit.Author.WrapInList().Union(commit.Author.WrapInList());
-        var authors2 = commit.Author.WrapInList().Concat(commit.Author.WrapInList());
 
         return new List<string>
             {
                 commit.Author,
                 commit.Date.ToString(RoundTripFormat)
-            }.Union( // kja-git/bug should be Concat instead?
+            }.Concat(
                 commit.Stats
                     .Select(
                         stat =>

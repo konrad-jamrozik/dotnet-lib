@@ -62,7 +62,7 @@ public partial record WikiTableOfContents : MarkdownDocument
         {
             string.Format(PageHeader, timeline.UtcNow),
             ""
-        }.Union(tocLines.Cast<object>().ToArray());
+        }.Concat(tocLines.Cast<object>().ToArray());
 
         return outputLines.ToArray();
     }
