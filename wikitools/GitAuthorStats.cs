@@ -18,15 +18,12 @@ public record GitAuthorStats(
     public static readonly object[] HeaderRow =
         { "Place", "Author", "Files changed", "Insertions", "Deletions" };
 
-    public static async Task<RankedTop<GitAuthorStats>> From(
-        GitLog gitLog,
-        int commitDays,
+    public static RankedTop<GitAuthorStats> From(
+        GitLogCommits commits,
         int top,
         string[]? excludedAuthors = null,
         string[]? excludedPaths = null)
     {
-        GitLogCommits commits = await gitLog.Commits(commitDays);
-
         GitAuthorStats[] statsSumByAuthor = SumByAuthor(commits, excludedPaths)
             .OrderByDescending(stats => stats.Insertions)
             .WhereNotContains(stats => stats.AuthorName, excludedAuthors)

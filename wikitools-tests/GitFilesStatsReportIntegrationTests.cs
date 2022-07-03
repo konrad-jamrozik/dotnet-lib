@@ -4,6 +4,7 @@ using NUnit.Framework;
 using Wikitools.Config;
 using Wikitools.Lib;
 using Wikitools.Lib.Configuration;
+using Wikitools.Lib.Data;
 using Wikitools.Lib.OS;
 using Wikitools.Lib.Primitives;
 using Wikitools.Lib.Tests;
@@ -43,7 +44,9 @@ public class GitFilesStatsReportIntegrationTests
             gitRepoDir,
             cfg.GitExecutablePath());
 
-        var stats = await GitFileStats.From(gitLog, cfg.GitLogDays(), cfg.ExcludedPaths());
+        string[] excludedPaths = cfg.ExcludedPaths();
+        var commits = await gitLog.Commits(cfg.GitLogDays());
+        RankedTop<GitFileStats> stats = GitFileStats.From(commits, excludedPaths: excludedPaths);
 
         var filesReport = new GitFilesStatsReport(
             timeline,

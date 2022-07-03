@@ -36,24 +36,16 @@ public record TopStatsReport : MarkdownDocument
         var days7 = 7;
         var days28 = 28;
 
-        // kj2-report/bug currently going up to 8 days back, and including today, which is partial.
+        // kja-report/bug currently going up to 8 days back, and including today, which is partial.
         // Should instead be exactly from 8 days back (inclusive) to 1 day back (inclusive),
         // but without today.
         // Need same fix for git file stats. But page stats are already solved.
-        var authorStatsLast7Days = await GitAuthorStats.From(
-            gitLog,
-            days7,
-            top3,
-            excludedAuthors,
-            excludedPaths);
-        var authorStatsLast28Days = await GitAuthorStats.From(
-            gitLog,
-            days28,
-            top5,
-            excludedAuthors,
-            excludedPaths);
-        var fileStatsLast7Days = await GitFileStats.From(gitLog, days7, excludedPaths, top5);
-        var fileStatsLast28Days = await GitFileStats.From(gitLog, days28, excludedPaths, top10);
+        GitLogCommits commits7Days = await gitLog.Commits(days7);
+        GitLogCommits commits28Days = await gitLog.Commits(days28);
+        var authorStatsLast7Days = GitAuthorStats.From(commits7Days, top3, excludedAuthors, excludedPaths);
+        var authorStatsLast28Days = GitAuthorStats.From(commits28Days, top5, excludedAuthors, excludedPaths);
+        var fileStatsLast7Days = GitFileStats.From(commits7Days, top5, excludedPaths);
+        var fileStatsLast28Days = GitFileStats.From(commits28Days, top10, excludedPaths);
 
         var ago1Day = timeline.DaysFromUtcNow(-1);
         var ago7Days = timeline.DaysFromUtcNow(-7);
@@ -67,6 +59,7 @@ public record TopStatsReport : MarkdownDocument
 
         return new object[]
         {
+            // kja use here as time span the range from the commits
             $"This page was generated on {timeline.UtcNow} UTC",
             $"All day ranges are up until EOD {timeline.DaysFromUtcNow(-1)} UTC",
             "",

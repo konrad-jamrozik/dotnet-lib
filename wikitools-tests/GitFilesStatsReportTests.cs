@@ -29,9 +29,10 @@ public class GitFilesStatsReportTests
         var os = new SimulatedOS(new SimulatedGitLogProcess(logDaysSpan, commitsData));
 
         // Arrange SUT declaration
-        var gitLog = new GitLogDeclare().GitLog(timeline, os, gitRepoDir, gitExecutablePath);
-        var stats  = await GitFileStats.From(gitLog, commitDays, top: top);
-        var sut    = new GitFilesStatsReport(timeline, commitDays, stats);
+        var gitLog  = new GitLogDeclare().GitLog(timeline, os, gitRepoDir, gitExecutablePath);
+        var commits = await gitLog.Commits(commitDays);
+        RankedTop<GitFileStats> stats = GitFileStats.From(commits, top);
+        var sut     = new GitFilesStatsReport(timeline, commitDays, stats);
 
         // Arrange expectations
         var expected = new MarkdownDocument(Task.FromResult(new object[]

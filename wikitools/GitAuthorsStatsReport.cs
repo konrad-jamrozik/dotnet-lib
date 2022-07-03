@@ -28,7 +28,8 @@ public record GitAuthorsStatsReport : MarkdownDocument
         int commitDays,
         string[]? excludedAuthors)
     {
-        RankedTop<GitAuthorStats> stats = await GitAuthorStats.From(gitLog, commitDays, top, excludedAuthors);
+        GitLogCommits commits = await gitLog.Commits(commitDays);
+        RankedTop<GitAuthorStats> stats = GitAuthorStats.From(commits, top, excludedAuthors);
         return new object[]
         {
             string.Format(ReportHeaderFormatString, commitDays, timeline.UtcNow),

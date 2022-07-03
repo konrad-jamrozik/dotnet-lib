@@ -14,14 +14,11 @@ public record GitFileStats(
 {
     public static readonly object[] HeaderRow = { "Place", "File Path", "Insertions", "Deletions" };
 
-    public static async Task<RankedTop<GitFileStats>> From(
-        GitLog gitLog,
-        int commitDays,
-        string[]? excludedPaths = null,
-        int? top = null)
+    public static RankedTop<GitFileStats> From(
+        GitLogCommits commits,
+        int? top = null,
+        string[]? excludedPaths = null)
     {
-        var commits = await gitLog.Commits(commitDays);
-
         GitFileStats[] statsSumByFilePath =
             SumByFilePath(commits)
                 .OrderByDescending(stats => stats.Insertions)
