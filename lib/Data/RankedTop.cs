@@ -9,7 +9,11 @@ public record RankedTop<T>(IEnumerable<T> Seq, int? Top) : IEnumerable<(int rank
 {
     private IEnumerable<(int rank, T elem)> RankedTopSeq
         => Seq.Take(Top != null ? new Range(0, (int)Top) : Range.All)
-            .Select((elem, rank) => (rank + 1, elem));
+            .Select((elem, index) =>
+            {
+                var rank = index + 1; // +1 so that first rank is 1, not 0.
+                return (rank, elem);
+            });
     
     public IEnumerator<(int rank, T elem)> GetEnumerator()
         => RankedTopSeq.GetEnumerator();
