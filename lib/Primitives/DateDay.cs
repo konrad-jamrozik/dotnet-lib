@@ -36,12 +36,12 @@ public sealed record DateDay(int Year, int Month, int Day, DateTimeKind Kind) :
 
     public bool Equals(DateDay? other) => _dateTime.Equals(other?._dateTime);
 
-    public int CompareTo(DateTime other) => _dateTime.CompareTo(other);
+    // Returns 1 on null. This is to ensure the same behavior as System.DateTime.CompareTo.
+    public int CompareTo(DateMonth? other) => other == null ? 1 : CompareTo(new DateDay(other));
 
     public int CompareTo(DateDay? other) => _dateTime.CompareTo(other?._dateTime);
 
-    // Returns 1 on null. This is to ensure the same behavior as System.DateTime.CompareTo.
-    public int CompareTo(DateMonth? other) => other == null ? 1 : CompareTo(new DateDay(other));
+    public int CompareTo(DateTime other) => _dateTime.CompareTo(other);
 
     public override int GetHashCode() => _dateTime.GetHashCode();
 

@@ -13,7 +13,7 @@ public class GitLogTests
     {
         var timeline = new SimulatedTimeline();
         int daysAgo = 5;
-        var daySpan = new DaySpan(timeline.UtcNowDay.AddDays(-1), daysAgo);
+        var daySpan = daysAgo.AsDaySpanUntil(timeline.UtcNowDay.AddDays(-1));
         var os = new SimulatedOS(GitLogProcess(timeline, daySpan, daysAgo));
         var fs = new SimulatedFileSystem();
         var gitRepoDir = fs.NextSimulatedDir();
@@ -44,19 +44,19 @@ public class GitLogTests
             {
                 new GitLogCommit(
                     "PreFooAuthor",
-                    timeline.UtcNow.AddDays(-daysAgo-2),
+                    timeline.UtcNow.AddDays(-daysAgo-1), // Should be excluded from the returned commits
                     new GitLogCommit.Numstat[] { new GitLogCommit.Numstat(1, 1, "PreFooPath") }),
                 new GitLogCommit(
                     "FooAuthor",
-                    timeline.UtcNow.AddDays(-daysAgo-1),
+                    timeline.UtcNow.AddDays(-daysAgo), // Should be included in the returned commits
                     new GitLogCommit.Numstat[] { new GitLogCommit.Numstat(2, 2, "FooPath") }),
                 new GitLogCommit(
                     "BarAuthor",
-                    timeline.UtcNow.AddDays(-1),
+                    timeline.UtcNow.AddDays(-1), // Should be included in the returned commits
                     new GitLogCommit.Numstat[] { new GitLogCommit.Numstat(3, 3, "BarPath") }),
                 new GitLogCommit(
                     "PostBarAuthor",
-                    timeline.UtcNow,
+                    timeline.UtcNow, // Should be excluded from the returned commits
                     new GitLogCommit.Numstat[] { new GitLogCommit.Numstat(4, 4, "PostBarPath") })
             });
         return gitLogProcess;

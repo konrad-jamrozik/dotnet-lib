@@ -21,7 +21,7 @@ public class GitFilesStatsReportTests
         var lastDayOfCommits  = timeline.UtcNowDay.AddDays(-1);
         var commitsData       = data.GetCommitsLogs(lastDayOfCommits);
         var commitDays        = 15;
-        var logDaysSpan       = new DaySpan(lastDayOfCommits, commitDays);
+        var logDaysSpan       = commitDays.AsDaySpanUntil(lastDayOfCommits);
         var fs                = new SimulatedFileSystem();
         var gitRepoDir        = fs.NextSimulatedDir();
         var gitExecutablePath = "unused";

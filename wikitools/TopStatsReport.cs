@@ -39,7 +39,9 @@ public record TopStatsReport : MarkdownDocument
         // kja-report/bug currently going up to 8 days back, and including today, which is partial.
         // Should instead be exactly from 8 days back (inclusive) to 1 day back (inclusive),
         // but without today.
-        // Need same fix for git file stats. But page stats are already solved.
+        // Need same fix for git file stats. Also review if page stats work correctly, especially that they use
+        // the obsolete ctor of public DaySpan(DateTime now, int daysAgo) which includes one day too much in the day
+        // span.
         GitLogCommits commits7Days = await gitLog.Commits(days7);
         GitLogCommits commits28Days = await gitLog.Commits(days28);
         var authorStatsLast7Days = GitAuthorStats.From(commits7Days, top3, excludedAuthors, excludedPaths);

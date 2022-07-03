@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using Wikitools.Lib.Contracts;
 
 namespace Wikitools.Lib.Primitives;
@@ -8,7 +9,8 @@ public record DaySpan
     public DateDay StartDay { get; private init; }
 
     public DateDay EndDay { get; private init; }
-
+    
+    // kja get rid of it. Use AsDaySpanUntil extension method instead.
     public DaySpan(DateTime now, int daysAgo) : this(
         new DateDay(now.AddDays(-daysAgo)),
         new DateDay(now)) { }
@@ -69,6 +71,20 @@ public record DaySpan
             AssertNoGap(other);
 
         return new DaySpan(StartDay, other.EndDay);
+    }
+
+    public string ToPrettyString()
+    {
+        return
+            $"a day span from {FormatDay(StartDay)} to {FormatDay(EndDay)} ({Count} days)";
+
+        string FormatDay(DateDay day)
+        {
+            // To decode the format, see:
+            // https://docs.microsoft.com/en-us/dotnet/standard/base-types/custom-date-and-time-format-strings
+            // https://docs.microsoft.com/en-us/dotnet/standard/base-types/standard-date-and-time-format-strings#Roundtrip
+            return day.ToString("yyyy-MM-ddTK", CultureInfo.InvariantCulture);
+        }
     }
 
     private void AssertNoLaterThan(DaySpan other)

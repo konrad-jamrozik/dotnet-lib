@@ -22,8 +22,9 @@ public record GitLog(ITimeline Timeline, GitRepository Repo)
     // https://git-scm.com/docs/git-log#_commit_limiting
     public static string GitLogParamsStringCommitRange(DaySpan daySpan)
         => $"--after={((DateTime)daySpan.StartDay).ToString(GitLogCommitRangeFormat)} " +
-           // Here the ".AddDays(1)" is necessary for the BeforeDay to be interpreted as 
-           // "_including_ commits made during the BeforeDay" vs "_excluding_".
+           // Here the ".AddDays(1)" is necessary for the EndDay to be interpreted as 
+           // "_including_ commits made during the EndDay".
+           // That is, the value of "--before" has to be the midnight between EndDay and EndDay+1.
            $"--before={((DateTime)daySpan.EndDay.AddDays(1)).ToString(GitLogCommitRangeFormat)} ";
 
     /// <summary>
@@ -39,16 +40,12 @@ public record GitLog(ITimeline Timeline, GitRepository Repo)
     /// </summary>
     public Task<GitLogCommits> Commits(int days)
     {
-        var utcNowDay = new DateDay(Timeline.UtcNow).AddDays(-1);
-        DateDay after = DaysInThePast(utcNowDay, days);
-        return GetCommits(daySpan: new DaySpan(after, utcNowDay));
+        var yesterday = new DateDay(Timeline.UtcNow).AddDays(-1);
+        return GetCommits(daySpan: days.AsDaySpanUntil(yesterday));
     }
 
     public Task<GitLogCommits> Commits(DaySpan daySpan) 
         => GetCommits(daySpan);
-
-    private static DateDay DaysInThePast(DateDay nowDay, int days)
-        => nowDay.AddDays(-days);
 
     private static string GitLogCommand(
         DaySpan daySpan,

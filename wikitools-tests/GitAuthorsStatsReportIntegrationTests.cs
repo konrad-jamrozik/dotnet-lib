@@ -43,7 +43,6 @@ public class GitAuthorsStatsReportIntegrationTests
             cfg.GitExecutablePath());
 
         var authorsReport = new GitAuthorsStatsReport(
-            timeline,
             gitLog,
             cfg.Top(),
             cfg.GitLogDays(),
