@@ -26,6 +26,10 @@ public record SimulatedGitLogProcess(DaySpan DaySpan, GitLogCommit[] Commits) : 
                 .Concat(commitLines).ToList()
         );
 
+    public override string ToString()
+        => $"{nameof(SimulatedGitLogProcess)}: " +
+           $"GitLogParamsStringCommitRange: {GitLog.GitLogParamsStringCommitRange(DaySpan)}";
+
     private static List<string> GetStdOutLines(GitLogCommit commit)
     {
 
