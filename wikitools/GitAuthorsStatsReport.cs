@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using Wikitools.Lib.Data;
 using Wikitools.Lib.Git;
 using Wikitools.Lib.Markdown;
 using Wikitools.Lib.Primitives;
@@ -8,6 +9,8 @@ namespace Wikitools;
 public record GitAuthorsStatsReport : MarkdownDocument
 {
     public const string ReportHeaderFormatString =
+        // kja this string should instead use GitLogCommits.DaySpan.ToString(), to be returned from
+        // GitAuthorStats.From, called from GetContent
         "Git contributions since last {0} days as of {1}";
 
     public GitAuthorsStatsReport(
@@ -25,7 +28,7 @@ public record GitAuthorsStatsReport : MarkdownDocument
         int commitDays,
         string[]? excludedAuthors)
     {
-        var stats = await GitAuthorStats.From(gitLog, commitDays, top, excludedAuthors);
+        RankedTop<GitAuthorStats> stats = await GitAuthorStats.From(gitLog, commitDays, top, excludedAuthors);
         return new object[]
         {
             string.Format(ReportHeaderFormatString, commitDays, timeline.UtcNow),

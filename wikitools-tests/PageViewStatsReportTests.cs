@@ -38,7 +38,7 @@ public class PageViewStatsReportTests
             "" + MarkdownDocument.LineBreakMarker,
             new TabularData(
                 HeaderRow: PageViewStats.HeaderRow,
-                Rows: data.ExpectedRows[(nameof(PageViewStatsReportTests), pagesStatsData)])
+                Rows: data.ExpectedRows[nameof(PageViewStatsReportTests)])
         }));
 
         // Act

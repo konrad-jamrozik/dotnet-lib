@@ -6,7 +6,7 @@ using Wikitools.Lib.Primitives;
 
 namespace Wikitools.Lib.Git;
 
-public record SimulatedGitLogProcess(ITimeline Timeline, DaySpan daySpan, GitLogCommit[] Commits) : IProcessSimulationSpec
+public record SimulatedGitLogProcess(DaySpan DaySpan, GitLogCommit[] Commits) : IProcessSimulationSpec
 {
     /// <summary>
     /// https://docs.microsoft.com/en-us/dotnet/standard/base-types/standard-date-and-time-format-strings
@@ -16,7 +16,7 @@ public record SimulatedGitLogProcess(ITimeline Timeline, DaySpan daySpan, GitLog
     public bool Matches(string executableFilePath, string workingDirPath, string[] arguments)
         => arguments.Any(
             arg => arg.Contains("git log") && arg.Contains(
-                GitLog.GitLogParamsStringCommitRange(daySpan)));
+                GitLog.GitLogParamsStringCommitRange(DaySpan)));
 
     public List<string> StdOutLines => Commits
         .Select(GetStdOutLines)

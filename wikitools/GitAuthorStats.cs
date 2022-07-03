@@ -25,7 +25,7 @@ public record GitAuthorStats(
         string[]? excludedAuthors = null,
         string[]? excludedPaths = null)
     {
-        var commits = await gitLog.Commits(commitDays);
+        GitLogCommits commits = await gitLog.Commits(commitDays);
 
         GitAuthorStats[] statsSumByAuthor = SumByAuthor(commits, excludedPaths)
             .OrderByDescending(stats => stats.Insertions)

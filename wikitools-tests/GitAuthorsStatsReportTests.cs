@@ -12,24 +12,26 @@ namespace Wikitools.Tests;
 
 public class GitAuthorsStatsReportTests
 {
+    // kj2-tests this test is super hard to work with, refactor, and similar tests.
     // kj2-migration move to newest C#
     [Fact] // kj2-migration use everywhere NUnit
     public async Task ReportsGitAuthorsStats()
     {
         // Arrange inputs and simulations
         var data              = new ReportTestsData();
-        var commitsData       = data.CommitsLogs;
         var timeline          = new SimulatedTimeline();
+        var lastDayOfCommits  = timeline.UtcNowDay.AddDays(-1);
+        var commitsData       = data.GetCommitsLogs(lastDayOfCommits);
         var commitDays        = 15;
-        var logDaysSpan       = new DaySpan(timeline.UtcNow, commitDays);
+        var logDaysSpan       = new DaySpan(lastDayOfCommits, commitDays);
         var fs                = new SimulatedFileSystem();
         var gitRepoDir        = fs.NextSimulatedDir();
         var gitExecutablePath = "unused";
         var top               = 5;
-        var os = new SimulatedOS(new SimulatedGitLogProcess(timeline, logDaysSpan, commitsData));
+        var os = new SimulatedOS(new SimulatedGitLogProcess(logDaysSpan, commitsData));
 
         // Arrange SUT declaration
-        var gitLog  = new GitLogDeclare().GitLog(timeline, os, gitRepoDir, gitExecutablePath);
+        var gitLog = new GitLogDeclare().GitLog(timeline, os, gitRepoDir, gitExecutablePath);
         var sut = new GitAuthorsStatsReport(timeline, gitLog, top, commitDays);
 
         // Arrange expectations
@@ -42,7 +44,7 @@ public class GitAuthorsStatsReportTests
             + MarkdownDocument.LineBreakMarker,
             "" + MarkdownDocument.LineBreakMarker,
             new TabularData((GitAuthorStats.HeaderRow,
-                data.ExpectedRows[(nameof(GitAuthorsStatsReportTests), commitsData)]))
+                data.ExpectedRows[nameof(GitAuthorsStatsReportTests)]))
         }));
 
         await new MarkdownDocumentDiff(expected, sut).Verify();

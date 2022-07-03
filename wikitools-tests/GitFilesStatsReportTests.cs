@@ -17,15 +17,16 @@ public class GitFilesStatsReportTests
     {
         // Arrange inputs
         var data              = new ReportTestsData();
-        var commitsData       = data.CommitsLogs;
         var timeline          = new SimulatedTimeline();
+        var lastDayOfCommits  = timeline.UtcNowDay.AddDays(-1);
+        var commitsData       = data.GetCommitsLogs(lastDayOfCommits);
         var commitDays        = 15;
-        var logDaysSpan       = new DaySpan(timeline.UtcNow, commitDays);
+        var logDaysSpan       = new DaySpan(lastDayOfCommits, commitDays);
         var fs                = new SimulatedFileSystem();
         var gitRepoDir        = fs.NextSimulatedDir();
         var gitExecutablePath = "unused";
         var top               = 5;
-        var os = new SimulatedOS(new SimulatedGitLogProcess(timeline, logDaysSpan, commitsData));
+        var os = new SimulatedOS(new SimulatedGitLogProcess(logDaysSpan, commitsData));
 
         // Arrange SUT declaration
         var gitLog = new GitLogDeclare().GitLog(timeline, os, gitRepoDir, gitExecutablePath);
@@ -39,7 +40,7 @@ public class GitFilesStatsReportTests
             + MarkdownDocument.LineBreakMarker,
             "" + MarkdownDocument.LineBreakMarker,
             new TabularData((GitFileStats.HeaderRow,
-                data.ExpectedRows[(nameof(GitFilesStatsReportTests), commitsData)]))
+                data.ExpectedRows[nameof(GitFilesStatsReportTests)]))
         }));
 
         await new MarkdownDocumentDiff(expected, sut).Verify();

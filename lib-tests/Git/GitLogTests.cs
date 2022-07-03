@@ -13,7 +13,7 @@ public class GitLogTests
     {
         var timeline = new SimulatedTimeline();
         int daysAgo = 5;
-        var daySpan = new DaySpan(timeline.UtcNow, daysAgo);
+        var daySpan = new DaySpan(timeline.UtcNowDay.AddDays(-1), daysAgo);
         var os = new SimulatedOS(GitLogProcess(timeline, daySpan, daysAgo));
         var fs = new SimulatedFileSystem();
         var gitRepoDir = fs.NextSimulatedDir();
@@ -30,7 +30,7 @@ public class GitLogTests
 
         Assert.Equal(2, commits.Count());
         Assert.Equal(0, DateDay.Compare(firstCommit.Date, daySpan.StartDay));
-        Assert.Equal(0, DateDay.Compare(lastCommit.Date, timeline.UtcNow));
+        Assert.Equal(0, DateDay.Compare(lastCommit.Date, timeline.UtcNowDay.AddDays(-1)));
     }
 
     private static SimulatedGitLogProcess GitLogProcess(
@@ -39,25 +39,24 @@ public class GitLogTests
         int daysAgo)
     {
         var gitLogProcess = new SimulatedGitLogProcess(
-            timeline,
             daySpan,
             new GitLogCommit[]
             {
                 new GitLogCommit(
                     "PreFooAuthor",
-                    timeline.UtcNow.AddDays(-daysAgo-1),
+                    timeline.UtcNow.AddDays(-daysAgo-2),
                     new GitLogCommit.Numstat[] { new GitLogCommit.Numstat(1, 1, "PreFooPath") }),
                 new GitLogCommit(
                     "FooAuthor",
-                    timeline.UtcNow.AddDays(-daysAgo),
+                    timeline.UtcNow.AddDays(-daysAgo-1),
                     new GitLogCommit.Numstat[] { new GitLogCommit.Numstat(2, 2, "FooPath") }),
                 new GitLogCommit(
                     "BarAuthor",
-                    timeline.UtcNow,
+                    timeline.UtcNow.AddDays(-1),
                     new GitLogCommit.Numstat[] { new GitLogCommit.Numstat(3, 3, "BarPath") }),
                 new GitLogCommit(
                     "PostBarAuthor",
-                    timeline.UtcNow.AddDays(1),
+                    timeline.UtcNow,
                     new GitLogCommit.Numstat[] { new GitLogCommit.Numstat(4, 4, "PostBarPath") })
             });
         return gitLogProcess;
