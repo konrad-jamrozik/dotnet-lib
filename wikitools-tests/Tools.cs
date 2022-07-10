@@ -66,7 +66,7 @@ public class Tools
             $"wiki_stats_{timeline.UtcNow:yyyy_MM_dd}_{cfg.AdoWikiPageViewsForDays()}days.json");
     }
 
-    // kj2-bug I need to ensure this transferring of data scraped from ADO wiki into monthly storage
+    // kja-bug I need to ensure this transferring of data scraped from ADO wiki into monthly storage
     // is done during normal program execution, not by this extra tool.
     [Fact(Skip = "Tool to be used manually")]
     public void SplitIntoMonthlyStats()

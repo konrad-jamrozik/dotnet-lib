@@ -16,7 +16,9 @@ public record PageViewStats(string FilePath, int Views)
         DaySpan daySpan,
         int? top = null)
     {
-        int days = daySpan.Until(timeline.UtcNow).Count;
+        // days passed to the ADO API call. Must be from 'daySpan' start to
+        // current time in UTC.
+        int daysForApiCall = daySpan.Until(timeline.UtcNow).Count;
 
         // kj2-migration this will trigger call to ADO API.
         // Here it is OK, as we are in late execution stage, but I need to ensure
@@ -30,7 +32,7 @@ public record PageViewStats(string FilePath, int Views)
         // https://github.com/dotnet/roslyn/issues/16160
         // 11/17/2021: Or maybe doing stuff like LINQ IEnumerable is enough? IEnumerable and related
         // collections are lazy after all.
-        var pagesStats = (await wiki.PagesStats(days)).Trim(daySpan);
+        var pagesStats = (await wiki.PagesStats(daysForApiCall)).Trim(daySpan);
 
         var pathsStats = pagesStats.Select(
                 pageStats => new PageViewStats(

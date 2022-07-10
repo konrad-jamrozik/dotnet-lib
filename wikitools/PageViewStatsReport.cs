@@ -9,8 +9,7 @@ namespace Wikitools;
 public record PageViewStatsReport : MarkdownDocument
 {
     public const string ReportHeaderFormatString =
-        // kja fix - use dayspan from commits
-        "Page views since last {0} days as of {1}. Total wiki pages: {2}";
+        "Page views for {0} as of {1}. Total wiki pages: {2}";
 
     public PageViewStatsReport(
         ITimeline timeline,
@@ -23,15 +22,15 @@ public record PageViewStatsReport : MarkdownDocument
         IAdoWiki wiki,
         int daysAgo)
     {
-        var pageViewStats = await PageViewStats.From(
-            timeline,
-            wiki,
-            new DaySpan(timeline.UtcNow, daysAgo));
+        // kja use .Yesterday instead of AddDays(-1); fix everywhere.
+        var daySpan = daysAgo.AsDaySpanUntil(new DateDay(timeline.UtcNow).AddDays(-1));
+
+        var pageViewStats = await PageViewStats.From(timeline, wiki, daySpan);
         return new object[]
         {
             string.Format(
                 ReportHeaderFormatString,
-                daysAgo,
+                daySpan.ToPrettyString(),
                 timeline.UtcNow,
                 pageViewStats.Count()),
             "",

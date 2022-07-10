@@ -11,6 +11,7 @@ namespace Wikitools.Tests;
 
 public class PageViewStatsReportTests
 {
+    // kja fix this failing test now that the dayspan goes up to yesterday, not today.
     [Fact]
     public async Task ReportsPageViewStats()
     {
@@ -27,7 +28,7 @@ public class PageViewStatsReportTests
         var wiki = new AdoWiki(wikiClient);
 
         // Arrange SUT declaration
-        var sut      = new PageViewStatsReport(timeline, wiki, daysAgo);
+        var sut = new PageViewStatsReport(timeline, wiki, daysAgo);
 
         var expected = new MarkdownDocument(Task.FromResult(new object[]
         {

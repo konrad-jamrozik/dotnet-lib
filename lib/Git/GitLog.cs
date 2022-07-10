@@ -29,7 +29,7 @@ public record GitLog(ITimeline Timeline, GitRepository Repo)
 
     /// <summary>
     /// Returns commits for 'days' last days, up until the beginning of current day in UTC.
-    /// Fore example, if today UTC is 7/15/2022, then if days = 3, this will return
+    /// For example, if today UTC is 7/15/2022, then if days = 3, this will return
     /// commits from days 7/12, 7/13 and 7/14, all inclusive.
     ///
     /// Today is excluded because if it was included then calling this method more than once

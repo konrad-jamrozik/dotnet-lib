@@ -9,11 +9,6 @@ public record DaySpan
 
     public DateDay EndDay { get; private init; }
     
-    // kja get rid of it. Use AsDaySpanUntil extension method instead.
-    public DaySpan(DateTime now, int daysAgo) : this(
-        new DateDay(now.AddDays(-daysAgo)),
-        new DateDay(now)) { }
-
     public DaySpan(DateDay singleDay) : this(singleDay, singleDay) { }
 
     public DaySpan(DateDay startDay, DateDay endDay)
