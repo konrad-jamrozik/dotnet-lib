@@ -9,6 +9,7 @@ namespace Wikitools;
 public record PageViewStatsReport : MarkdownDocument
 {
     public const string ReportHeaderFormatString =
+        // kja fix - use dayspan from commits
         "Page views since last {0} days as of {1}. Total wiki pages: {2}";
 
     public PageViewStatsReport(

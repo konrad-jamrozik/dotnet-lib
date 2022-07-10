@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 
 namespace Wikitools.Lib.Primitives;
 
@@ -20,4 +21,25 @@ public static class DateTimeExtensions
     public static DateDay MonthLastDay(this DateTime date) => date.MonthFirstDay().AddMonths(1).AddDays(-1);
 
     public static DateMonth Month(this DateTime date) => new(date);
+
+    public static string Format(this DateTime date, bool includeTime = false, bool includeTimezone = false)
+    {
+        // https://docs.microsoft.com/en-us/dotnet/standard/base-types/custom-date-and-time-format-strings
+        // https://docs.microsoft.com/en-us/dotnet/standard/base-types/standard-date-and-time-format-strings
+        var timeSuffix = includeTime ? " HH:mm:ss" : "";
+        var timezoneSuffix = includeTimezone ? " " + FormatTimezone(date) : "";
+        return date.ToString("yyyy-MM-dd" + timeSuffix, CultureInfo.InvariantCulture) + timezoneSuffix;
+    }
+
+    public static string FormatTimezone(DateTime date)
+    {
+        var timezone = date.Kind switch
+        {
+            DateTimeKind.Utc => "UTC",
+            DateTimeKind.Local => "local time",
+            DateTimeKind.Unspecified => "",
+            _ => throw new InvalidOperationException(date.Kind.ToString())
+        };
+        return timezone;
+    }
 }

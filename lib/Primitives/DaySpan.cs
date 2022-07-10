@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Globalization;
 using Wikitools.Lib.Contracts;
 
 namespace Wikitools.Lib.Primitives;
@@ -78,13 +77,7 @@ public record DaySpan
         return
             $"a day span from {FormatDay(StartDay)} to {FormatDay(EndDay)} ({Count} days)";
 
-        string FormatDay(DateDay day)
-        {
-            // To decode the format, see:
-            // https://docs.microsoft.com/en-us/dotnet/standard/base-types/custom-date-and-time-format-strings
-            // https://docs.microsoft.com/en-us/dotnet/standard/base-types/standard-date-and-time-format-strings#Roundtrip
-            return day.ToString("yyyy-MM-ddTK", CultureInfo.InvariantCulture);
-        }
+        string FormatDay(DateDay day) => ((DateTime)day).Format(includeTimezone: true);
     }
 
     private void AssertNoLaterThan(DaySpan other)
