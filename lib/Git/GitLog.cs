@@ -40,7 +40,7 @@ public record GitLog(ITimeline Timeline, GitRepository Repo)
     /// </summary>
     public Task<GitLogCommits> Commits(int days)
     {
-        var yesterday = new DateDay(Timeline.UtcNow).AddDays(-1);
+        var yesterday = new DateDay(Timeline.UtcNow).Yesterday;
         return GetCommits(daySpan: days.AsDaySpanUntil(yesterday));
     }
 

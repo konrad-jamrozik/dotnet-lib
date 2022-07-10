@@ -22,8 +22,7 @@ public record PageViewStatsReport : MarkdownDocument
         IAdoWiki wiki,
         int daysAgo)
     {
-        // kja use .Yesterday instead of AddDays(-1); fix everywhere.
-        var daySpan = daysAgo.AsDaySpanUntil(new DateDay(timeline.UtcNow).AddDays(-1));
+        var daySpan = daysAgo.AsDaySpanUntil(new DateDay(timeline.UtcNow).Yesterday);
 
         var pageViewStats = await PageViewStats.From(timeline, wiki, daySpan);
         return new object[]

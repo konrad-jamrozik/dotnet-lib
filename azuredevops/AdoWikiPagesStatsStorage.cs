@@ -69,8 +69,8 @@ public record AdoWikiPagesStatsStorage(MonthlyJsonFilesStorage Storage)
                 storedStats =>
                 {
                     // The daySpan starts at the beginning of the month instead of stats.DaySpan.StartDay,
-                    // to ensure that (1) holds.
-                    // The daySpan ends at stats.DaySpan.EndDay, to ensure (2) holds.
+                    // to ensure that precondition (1) holds.
+                    // The daySpan ends at stats.DaySpan.EndDay, to ensure precondition (2) holds.
                     var daySpan = new DaySpan(stats.Month.FirstDay, stats.DaySpan.EndDay);
                     var validStoredStats = new ValidWikiPagesStatsForMonth(storedStats, daySpan);
                     return new ValidWikiPagesStatsForMonth(validStoredStats.Merge(stats), daySpan);

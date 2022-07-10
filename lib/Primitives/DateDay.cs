@@ -47,6 +47,8 @@ public sealed record DateDay(int Year, int Month, int Day, DateTimeKind Kind) :
 
     public override string ToString() => _dateTime.ToString(CultureInfo.InvariantCulture);
 
+    public DateDay Yesterday => AddDays(-1);
+
     public string ToString(string? format, IFormatProvider? formatProvider) =>
         format == null && formatProvider == null
             // https://docs.microsoft.com/en-us/dotnet/standard/base-types/custom-date-and-time-format-strings

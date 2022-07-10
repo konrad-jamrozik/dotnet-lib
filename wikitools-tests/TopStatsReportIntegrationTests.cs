@@ -81,7 +81,15 @@ public class TopStatsReportIntegrationTests
             env,
             adoCfg.AdoWikiUri(),
             adoCfg.AdoPatEnvVar(),
-            cfg.StorageDirPath());
+            cfg.StorageDirPath()); // kj2 here int test is using PROD storage dir instead of
+        // Wikitools.AzureDevOps.Config.IAzureDevOpsTestsCfg.TestStorageDirPath
+        // because it requires real data. But it is confusing - one would expect for the data
+        // to be in a test storage dir, not prod storage dir. Need to ponder what to do about it.
+        // Maybe I need a new dir, "int test storage dir". The test then would
+        // copy-over the required data, and only that data, to it?
+        // But the problem is I actually need production data - I am in fact using 
+        // these int tests as normal tool usage. So really proper fix is to convert it 
+        // from a int test, to a normal cmd line tool.
         return wiki;
     }
 }

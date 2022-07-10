@@ -66,8 +66,15 @@ public class Tools
             $"wiki_stats_{timeline.UtcNow:yyyy_MM_dd}_{cfg.AdoWikiPageViewsForDays()}days.json");
     }
 
-    // kja-bug I need to ensure this transferring of data scraped from ADO wiki into monthly storage
-    // is done during normal program execution, not by this extra tool.
+    // kja I need to ensure this transferring of data scraped from ADO wiki into monthly storage
+    // is done at the end of ToolGetWikiStats(); two modes:
+    // a) the transfer will happen for thePageViewsForDays.Max in normal run, and
+    // b) in a separate tool, re-merge all stats, check if the merged stats correspond to the saves stats,
+    // show diff in not.
+    //
+    // The transfer is from files like wiki_stats_2022_07_02_30days.json
+    // to files like date_2022_07.json
+    // (format from Wikitools.Lib.Storage.MonthlyJsonFilesStorage.FileName)
     [Fact(Skip = "Tool to be used manually")]
     public void SplitIntoMonthlyStats()
     {
@@ -123,6 +130,7 @@ public class Tools
         storage.Write(
             mergedStats.Trim(outputMonth),
             outputMonth,
+            // kja this duplicates Wikitools.Lib.Storage.MonthlyJsonFilesStorage.FileName
             $"date_{outputMonth:yyyy_MM}.json").Wait();
     }
 
