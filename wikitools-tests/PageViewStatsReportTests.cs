@@ -11,13 +11,12 @@ namespace Wikitools.Tests;
 
 public class PageViewStatsReportTests
 {
-    // kja fix this failing test now that the dayspan goes up to yesterday, not today.
     [Fact]
     public async Task ReportsPageViewStats()
     {
         // Arrange inputs
         var data             = new ReportTestsData();
-        var pagesStatsData   = data.WikiPagesStats;
+        var pagesStatsData   = data.WikiPagesStats(daysOffset: -1); 
         var daysAgo          = 29;
 
         // Arrange simulations
@@ -33,7 +32,7 @@ public class PageViewStatsReportTests
         var expected = new MarkdownDocument(Task.FromResult(new object[]
         {
             string.Format(PageViewStatsReport.ReportHeaderFormatString,
-                daysAgo,
+                daysAgo.AsDaySpanUntil(timeline.UtcNowDay.AddDays(-1)).ToPrettyString(),
                 timeline.UtcNow,
                 pagesStatsData.Length) + MarkdownDocument.LineBreakMarker,
             "" + MarkdownDocument.LineBreakMarker,

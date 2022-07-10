@@ -10,11 +10,12 @@ namespace Wikitools.Tests;
 
 public record ReportTestsData
 {
+    private readonly ValidWikiPagesStatsFixture _fix;
+
     public ReportTestsData()
     {
-        var fix = new ValidWikiPagesStatsFixture();
+        _fix = new ValidWikiPagesStatsFixture();
         CommitsLogs = GetCommitsLogs();
-        WikiPagesStats = fix.WikiPagesStats().ToArray();
         ExpectedRows = new Dictionary<string, object[][]>
         {
             [nameof(GitAuthorsStatsReportTests)] = new[] {
@@ -47,9 +48,9 @@ public record ReportTestsData
         };
     }
 
-    public readonly GitLogCommit[] CommitsLogs;
+    public readonly GitLogCommit[] CommitsLogs; // kj2 unused
 
-    public readonly WikiPageStats[] WikiPagesStats;
+    public WikiPageStats[] WikiPagesStats(int daysOffset = 0) => _fix.WikiPagesStats(daysOffset).ToArray();
 
     public readonly Dictionary<string, object[][]> ExpectedRows;
 

@@ -5,7 +5,7 @@ namespace Wikitools.AzureDevOps.Tests;
 
 public class ValidWikiPagesStatsFixture
 {
-    public ValidWikiPagesStats WikiPagesStats() => WikiPagesStats(Today);
+    public ValidWikiPagesStats WikiPagesStats(int daysOffset = 0) => WikiPagesStats(Today.AddDays(daysOffset));
 
     public static DateDay Today => new DateDay(new SimulatedTimeline().UtcNow);
 
