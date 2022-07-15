@@ -21,14 +21,14 @@ public record AdoWikiWithStorage(
     private async Task<ValidWikiPagesStats> PagesStats(int days, int? pageId)
     {
         var wikiDays = days.MinWith(AdoWiki.PageViewsForDaysMax());
-        var updatedStorage = await UpdateFromWiki(wikiDays, pageId);
+        var updatedStorage = await UpdateStorageFromWiki(wikiDays, pageId);
         var updatedPagesViewsStats = updatedStorage
             .PagesStats(days.AsDaySpanUntil(AdoWiki.Today()))
             .WhereStats(StatsFilter(pageId));
         return updatedPagesViewsStats;
     }
 
-    private async Task<AdoWikiPagesStatsStorage> UpdateFromWiki(
+    private async Task<AdoWikiPagesStatsStorage> UpdateStorageFromWiki(
         int days,
         int? pageId = null)
         => await Storage.Update(

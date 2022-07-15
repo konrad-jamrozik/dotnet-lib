@@ -33,5 +33,6 @@ public record MonthlyJsonFilesStorage(Dir StorageDir)
             .CreateDirIfNotExists()
             .WriteAllTextAsync(fileName ?? FileName(date), dataJson);
 
+    // kja the input should be DateMonth
     private static string FileName(DateTime date) => $"date_{date:yyyy_MM}.json";
 }
