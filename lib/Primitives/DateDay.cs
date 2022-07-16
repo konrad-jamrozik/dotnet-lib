@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using System.Text.Json.Serialization;
 
 namespace Wikitools.Lib.Primitives;
 
@@ -47,6 +48,7 @@ public sealed record DateDay(int Year, int Month, int Day, DateTimeKind Kind) :
 
     public override string ToString() => _dateTime.ToString(CultureInfo.InvariantCulture);
 
+    [JsonIgnore]
     public DateDay Yesterday => AddDays(-1);
 
     public string ToString(string? format, IFormatProvider? formatProvider) =>
