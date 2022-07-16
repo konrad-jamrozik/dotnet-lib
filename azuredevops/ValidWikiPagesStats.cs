@@ -77,7 +77,7 @@ public record ValidWikiPagesStats : IEnumerable<WikiPageStats>
     }
 
     public static ValidWikiPagesStats Merge(IEnumerable<ValidWikiPagesStats> stats, bool allowGaps = false) 
-        // kj2-perf This Merge is O(n^2) while it could be O(n).
+        // kja-perf This Merge is O(n^2) while it could be O(n).
         => stats.Aggregate((merged, next) => merged.Merge(next, allowGaps));
 
     public IEnumerable<ValidWikiPagesStatsForMonth> SplitByMonth() => SplitByMonth(this);
@@ -312,5 +312,11 @@ public record ValidWikiPagesStats : IEnumerable<WikiPageStats>
     {
         var wikiPageStats = this.Single(pageStats => pageStats.Id == pageId).WrapInList();
         return new ValidWikiPagesStats(wikiPageStats, this.DaySpan);
+    }
+
+    public List<ValidWikiPagesStatsForMonth> PartitionByMonth()
+    {
+        // kja to implement
+        return new List<ValidWikiPagesStatsForMonth>();
     }
 }

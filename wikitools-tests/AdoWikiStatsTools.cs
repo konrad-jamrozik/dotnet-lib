@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Wikitools.AzureDevOps;
 using Wikitools.Config;
@@ -10,9 +9,9 @@ using Wikitools.Lib.Json;
 using Wikitools.Lib.OS;
 using Wikitools.Lib.Primitives;
 using Wikitools.Lib.Storage;
+using Wikitools.Lib.Tests.Json;
 using Xunit;
 using Environment = Wikitools.Lib.OS.Environment;
-using File = Wikitools.Lib.OS.File;
 
 namespace Wikitools.Tests;
 
@@ -21,10 +20,10 @@ public class AdoWikiStatsTools
     [Fact(Skip = "Tool to be used manually")]
     public async Task ToolGetWikiStats()
     {
-        ITimeline    timeline = new Timeline();
-        IFileSystem  fs       = new FileSystem();
-        IEnvironment env      = new Environment();
-        IWikitoolsCfg cfg     = new Configuration(fs).Load<IWikitoolsCfg>();
+        ITimeline     timeline = new Timeline();
+        IFileSystem   fs       = new FileSystem();
+        IEnvironment  env      = new Environment();
+        IWikitoolsCfg cfg      = new Configuration(fs).Load<IWikitoolsCfg>();
         IAdoWiki wiki = new AdoWiki(
             cfg.AzureDevOpsCfg().AdoWikiUri(),
             cfg.AzureDevOpsCfg().AdoPatEnvVar(),
@@ -32,11 +31,16 @@ public class AdoWikiStatsTools
 
         var pagesViewsStats = wiki.PagesStats(PageViewsForDays.Max);
 
-        var storage = new MonthlyJsonFilesStorage(StorageDirWithStatsFiles(fs, cfg));
+        var storageDir = StorageDirWithStatsFiles(fs, cfg);
+        var storage = new MonthlyJsonFilesStorage(storageDir);
+        var statsFile = new WikiStatsFile(
+            storageDir,
+            timeline.UtcNow,
+            cfg.AdoWikiPageViewsForDays());
 
         await storage.Write(await pagesViewsStats,
             new DateMonth(timeline.UtcNow),
-            new StatsFile(timeline.UtcNow, cfg.AdoWikiPageViewsForDays()).Name);
+            statsFile.Name);
     }
 
     [Fact]
@@ -46,16 +50,45 @@ public class AdoWikiStatsTools
         IWikitoolsCfg cfg = new Configuration(fs).Load<IWikitoolsCfg>();
         Dir storageDir = StorageDirWithStatsFiles(fs, cfg);
 
-        // kja storageStats.GetFiles().Select(f => new StatsFile(f));
-        // Probably can also move DeserializeStats to be a method on statsFiles
-        List<File> statsFiles = storageDir.GetFiles(filterRegexPattern: StatsFile.Regex);
-
-        List<ValidWikiPagesStats> stats = statsFiles
-            .Select(file => DeserializeStats(fs, (file.Path, StatsFile.DaySpan(file))))
+        // 1. Obtain references to all files in storage directory
+        // containing the saved raw stats from ADO wiki
+        List<WikiStatsFile> statsFiles = storageDir
+            .GetFiles(filterRegexPattern: WikiStatsFile.Regex)
+            .Select(file => new WikiStatsFile(file))
             .ToList();
 
-        // kja curr work
-        var paths = statsFiles.Select(f => f.Path).ToList();
+        // 2. Deserialize stats from these files.
+        List<ValidWikiPagesStats> stats = statsFiles
+            .Select(statsFile => statsFile.Stats)
+            .ToList();
+
+        // 3. Partition these stats by month
+        ValidWikiPagesStats mergedStats = ValidWikiPagesStats.Merge(stats);
+        // kja implement PartitionByMonth
+        List<ValidWikiPagesStatsForMonth> statsByMonths = mergedStats.PartitionByMonth();
+
+        // 4. Verify which stats from ADO wiki correspond with the previously stored stats
+        var storage = new MonthlyJsonFilesStorage(storageDir);
+        var allDiffsEmpty = statsByMonths.Select(
+            monthStats =>
+            {
+                IEnumerable<WikiPageStats> rawStoredStatsForMonth =
+                    storage.Read<IEnumerable<WikiPageStats>>(monthStats.Month);
+                var storedStatsForMonth = new ValidWikiPagesStatsForMonth(
+                    rawStoredStatsForMonth,
+                    monthStats.Month);
+                var diff = new JsonDiff(storedStatsForMonth, monthStats);
+                new JsonDiffAssertion(diff).Assert();
+                return diff.IsEmpty;
+            }).All(diffIsEmpty => diffIsEmpty);
+
+        // 5. Upsert the stats from ADO wiki into the storage
+        Task[] writeTasks = statsByMonths
+            .Take(0) // kja Take(0) until I get the diff and dry-run flag running
+            .Select(monthStats => storage.Write(monthStats, monthStats.Month))
+            .ToArray();
+        Task.WaitAll(writeTasks);
+
         
         // DONE 1. obtain references to all wiki_stats_ files in given directory
         //
@@ -66,7 +99,7 @@ public class AdoWikiStatsTools
         //
         //    List<ValidWikiPagesStats> stats = statsFiles.Select(file => DeserializeStats(file, GetDaySpan(file.date, file.int)))
         //    
-        // 3. merge the stats into one huge valid wiki stats
+        // DONE 3. merge the stats into one huge valid wiki stats
         //
         //    ValidWikiPagesStats mergedStats = ValidWikiPagesStats.Merge(stats);
         //
@@ -143,54 +176,22 @@ public class AdoWikiStatsTools
         DateDay stats2EndDay,
         DateMonth outputMonth)
     {
-        var stats1Path = storageDirPath + $"/wiki_stats_{stats1EndDay:yyyy_MM_dd}_30days.json";
-        var stats1StartDay = stats1EndDay.AddDays(-29);
-        var stats1 = DeserializeStats(fs, (stats1Path, new DaySpan(stats1StartDay, stats1EndDay)));
+        // kja commented out because I moved DeserializeStats to WikiStatsFile
 
-        var stats2Path = storageDirPath + $"/wiki_stats_{stats2EndDay:yyyy_MM_dd}_30days.json";
-        var stats2StartDay = stats2EndDay.AddDays(-29);
-        var stats2 = DeserializeStats(fs, (stats2Path, new DaySpan(stats2StartDay, stats2EndDay)));
+        // var stats1Path = storageDirPath + $"/wiki_stats_{stats1EndDay:yyyy_MM_dd}_30days.json";
+        // var stats1StartDay = stats1EndDay.AddDays(-29);
+        // var stats1 = DeserializeStats(fs, (stats1Path, new DaySpan(stats1StartDay, stats1EndDay)));
+        //
+        // var stats2Path = storageDirPath + $"/wiki_stats_{stats2EndDay:yyyy_MM_dd}_30days.json";
+        // var stats2StartDay = stats2EndDay.AddDays(-29);
+        // var stats2 = DeserializeStats(fs, (stats2Path, new DaySpan(stats2StartDay, stats2EndDay)));
 
-        var mergedStats = ValidWikiPagesStats.Merge(new[] { stats1, stats2 });
+        //var mergedStats = ValidWikiPagesStats.Merge(new[] { stats1, stats2 });
 
-        storage.Write(
-            mergedStats.Trim(outputMonth),
-            outputMonth,
-            // kja this duplicates Wikitools.Lib.Storage.MonthlyJsonFilesStorage.FileName
-            $"date_{outputMonth:yyyy_MM}.json").Wait();
-    }
-
-    private static ValidWikiPagesStats DeserializeStats(
-        IFileSystem fs,
-        (string statsPath, DaySpan daySpan) statsData)
-        => new ValidWikiPagesStats(
-            fs.ReadAllText(statsData.statsPath).FromJsonTo<WikiPageStats[]>(),
-            statsData.daySpan);
-
-    // kja StatsFile: de-static-ify and make top-level. Internally it should have a reference to File instance.
-    private record StatsFile(DateTime DateTime, int PageViewsForDays)
-    {
-        internal static string Regex => @"wiki_stats_(\d\d\d\d_\d\d_\d\d)_(\d+)days.json";
-
-        private const string DateFormatString = "yyyy_MM_dd";
-
-        internal string Name => $"wiki_stats_{DateTime.ToString(DateFormatString)}_{PageViewsForDays}days.json";
-
-        public static DaySpan DaySpan(File file)
-        {
-            var (dateTime, pageViewsForDays) = ParseFromFilePath(file.Path);
-            var daySpan = pageViewsForDays.AsDaySpanUntil(new DateDay(dateTime));
-
-            return daySpan;
-
-            (DateTime dateTime, int pageViewsForDays) ParseFromFilePath(string path)
-            {
-                Match match = new Regex(Regex).Match(path);
-                var matchGroup = match.Groups[1];
-                var dateTime = DateTime.ParseExact(matchGroup.Value, DateFormatString, null);
-                var pageViewsForDays = int.Parse(match.Groups[2].Value);
-                return (dateTime, pageViewsForDays);
-            }
-        }
+        //storage.Write(
+        //    mergedStats.Trim(outputMonth),
+        //    outputMonth,
+        //    // kja this duplicates Wikitools.Lib.Storage.MonthlyJsonFilesStorage.FileName
+        //    $"date_{outputMonth:yyyy_MM}.json").Wait();
     }
 }

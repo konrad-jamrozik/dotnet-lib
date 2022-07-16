@@ -16,7 +16,7 @@ public sealed record DateMonth(int Year, int Month, DateTimeKind Kind) :
 
     public static TimeSpan operator -(DateMonth left, DateMonth right) => left._dateTime.Subtract(right._dateTime);
 
-    public static implicit operator DateTime(DateMonth dateDay) => dateDay._dateTime;
+    public static implicit operator DateTime(DateMonth dateMonth) => dateMonth._dateTime;
 
     public static DateMonth[] MonthSpan(DaySpan daySpan)
     {
