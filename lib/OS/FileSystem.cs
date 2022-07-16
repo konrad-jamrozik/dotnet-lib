@@ -26,16 +26,16 @@ public class FileSystem : IFileSystem
     public bool DirectoryExists(string path) => Directory.Exists(path);
 
     public Task WriteAllTextAsync(string path, string contents) 
-        => File.WriteAllTextAsync(path, contents);
+        => System.IO.File.WriteAllTextAsync(path, contents);
 
     public Task WriteAllLinesAsync(string path, IEnumerable<string> lines)
-        => File.WriteAllLinesAsync(path, lines);
+        => System.IO.File.WriteAllLinesAsync(path, lines);
 
     public StreamWriter CreateText(string path)
-        => File.CreateText(path);
+        => System.IO.File.CreateText(path);
 
     public string[] ReadAllLines(string path)
-        => File.ReadAllLines(path);
+        => System.IO.File.ReadAllLines(path);
 
     public Dir CreateDirectory(string path)
     {
@@ -45,13 +45,13 @@ public class FileSystem : IFileSystem
 
     public string JoinPath(string? path1, string? path2) => System.IO.Path.Join(path1, path2);
 
-    public bool FileExists(string path) => File.Exists(path);
+    public bool FileExists(string path) => System.IO.File.Exists(path);
 
     public string CombinePath(string path1, string path2) => System.IO.Path.Combine(path1, path2);
 
-    public string ReadAllText(string path) => File.ReadAllText(path);
+    public string ReadAllText(string path) => System.IO.File.ReadAllText(path);
 
-    public byte[] ReadAllBytes(string path) => File.ReadAllBytes(path);
+    public byte[] ReadAllBytes(string path) => System.IO.File.ReadAllBytes(path);
 
     public JsonElement ReadAllJson(string path) => ReadAllBytes(path).FromJsonTo<JsonElement>();
 

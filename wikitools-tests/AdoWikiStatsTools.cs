@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Wikitools.AzureDevOps;
 using Wikitools.Config;
@@ -9,14 +11,12 @@ using Wikitools.Lib.Primitives;
 using Wikitools.Lib.Storage;
 using Xunit;
 using Environment = Wikitools.Lib.OS.Environment;
+using File = Wikitools.Lib.OS.File;
 
 namespace Wikitools.Tests;
 
 public class AdoWikiStatsTools
 {
-    private string StatsFileName(DateTime dateTime, int pageViewsForDays)
-        => $"wiki_stats_{dateTime:yyyy_MM_dd}_{pageViewsForDays}days.json";
-
     [Fact(Skip = "Tool to be used manually")]
     public async Task ToolGetWikiStats()
     {
@@ -31,17 +31,25 @@ public class AdoWikiStatsTools
 
         var pagesViewsStats = wiki.PagesStats(PageViewsForDays.Max);
 
-        var storage = new MonthlyJsonFilesStorage(new Dir(fs, cfg.StorageDirPath()));
+        var storage = new MonthlyJsonFilesStorage(StorageDirWithStatsFiles(fs, cfg));
 
         await storage.Write(await pagesViewsStats,
             new DateMonth(timeline.UtcNow),
-            StatsFileName(timeline.UtcNow, cfg.AdoWikiPageViewsForDays()));
+            new StatsFile(timeline.UtcNow, cfg.AdoWikiPageViewsForDays()).Name);
     }
-    
+
     [Fact]
     public void ToolTransferStatsFilesIntoMonthlyStorage()
     {
+        IFileSystem  fs   = new FileSystem();
+        IWikitoolsCfg cfg = new Configuration(fs).Load<IWikitoolsCfg>();
+        Dir storageDir = StorageDirWithStatsFiles(fs, cfg);
+
+        List<File> files = storageDir.GetFiles(filterRegexPattern: StatsFile.Regex);
+
         // kja curr work
+        var paths = files.Select(f => f.Path).ToList();
+        
         // 1. obtain references to all wiki_stats_ files in given directory
         //
         //    // This needs to parse not only the file contents, but also data from file name: date and int.
@@ -117,6 +125,9 @@ public class AdoWikiStatsTools
         }
     }
 
+    private static Dir StorageDirWithStatsFiles(IFileSystem fs, IWikitoolsCfg cfg)
+        => new Dir(fs, cfg.StorageDirPath());
+
     private void MergeWikiStatsIntoMonth(
         IFileSystem fs,
         string storageDirPath,
@@ -148,4 +159,11 @@ public class AdoWikiStatsTools
         => new ValidWikiPagesStats(
             fs.ReadAllText(statsData.statsPath).FromJsonTo<WikiPageStats[]>(),
             statsData.daySpan);
+
+    private record StatsFile(DateTime DateTime, int PageViewsForDays)
+    {
+        internal static string Regex => @"wiki_stats_(\d\d\d\d_\d\d_\d\d)_(\d+)days.json";
+
+        internal string Name => $"wiki_stats_{DateTime:yyyy_MM_dd}_{PageViewsForDays}days.json";
+    }
 }
