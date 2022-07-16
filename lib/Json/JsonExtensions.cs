@@ -3,6 +3,7 @@ using System.Linq;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using Newtonsoft.Json.Linq;
+using Wikitools.Lib.Primitives;
 
 namespace Wikitools.Lib.Json;
 
@@ -13,7 +14,8 @@ public static class JsonExtensions
     private static readonly JsonSerializerOptions SerializerOptions = new()
     {
         MaxDepth = MaxDepth,
-        ReadCommentHandling = JsonCommentHandling.Skip
+        ReadCommentHandling = JsonCommentHandling.Skip,
+        Converters = { new DateDayJsonConverter() }
     };
 
     private static readonly JsonSerializerOptions SerializerOptionsUnsafe = new(SerializerOptions)

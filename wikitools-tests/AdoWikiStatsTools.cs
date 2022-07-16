@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Wikitools.AzureDevOps;
 using Wikitools.Config;
@@ -41,21 +42,27 @@ public class AdoWikiStatsTools
     [Fact]
     public void ToolTransferStatsFilesIntoMonthlyStorage()
     {
-        IFileSystem  fs   = new FileSystem();
+        IFileSystem   fs  = new FileSystem();
         IWikitoolsCfg cfg = new Configuration(fs).Load<IWikitoolsCfg>();
         Dir storageDir = StorageDirWithStatsFiles(fs, cfg);
 
-        List<File> files = storageDir.GetFiles(filterRegexPattern: StatsFile.Regex);
+        // kja storageStats.GetFiles().Select(f => new StatsFile(f));
+        // Probably can also move DeserializeStats to be a method on statsFiles
+        List<File> statsFiles = storageDir.GetFiles(filterRegexPattern: StatsFile.Regex);
+
+        List<ValidWikiPagesStats> stats = statsFiles
+            .Select(file => DeserializeStats(fs, (file.Path, StatsFile.DaySpan(file))))
+            .ToList();
 
         // kja curr work
-        var paths = files.Select(f => f.Path).ToList();
+        var paths = statsFiles.Select(f => f.Path).ToList();
         
-        // 1. obtain references to all wiki_stats_ files in given directory
+        // DONE 1. obtain references to all wiki_stats_ files in given directory
         //
         //    // This needs to parse not only the file contents, but also data from file name: date and int.
         //    var statsFiles = GetAllFilesInDir(dir: cfg.StorageDirPath() filePattern: regex for wiki_stats_[yyyy_MM_dd]_[int]days.json")
         //
-        // 2. deserialize stats from these files
+        // DONE 2. deserialize stats from these files
         //
         //    List<ValidWikiPagesStats> stats = statsFiles.Select(file => DeserializeStats(file, GetDaySpan(file.date, file.int)))
         //    
@@ -160,10 +167,30 @@ public class AdoWikiStatsTools
             fs.ReadAllText(statsData.statsPath).FromJsonTo<WikiPageStats[]>(),
             statsData.daySpan);
 
+    // kja StatsFile: de-static-ify and make top-level. Internally it should have a reference to File instance.
     private record StatsFile(DateTime DateTime, int PageViewsForDays)
     {
         internal static string Regex => @"wiki_stats_(\d\d\d\d_\d\d_\d\d)_(\d+)days.json";
 
-        internal string Name => $"wiki_stats_{DateTime:yyyy_MM_dd}_{PageViewsForDays}days.json";
+        private const string DateFormatString = "yyyy_MM_dd";
+
+        internal string Name => $"wiki_stats_{DateTime.ToString(DateFormatString)}_{PageViewsForDays}days.json";
+
+        public static DaySpan DaySpan(File file)
+        {
+            var (dateTime, pageViewsForDays) = ParseFromFilePath(file.Path);
+            var daySpan = pageViewsForDays.AsDaySpanUntil(new DateDay(dateTime));
+
+            return daySpan;
+
+            (DateTime dateTime, int pageViewsForDays) ParseFromFilePath(string path)
+            {
+                Match match = new Regex(Regex).Match(path);
+                var matchGroup = match.Groups[1];
+                var dateTime = DateTime.ParseExact(matchGroup.Value, DateFormatString, null);
+                var pageViewsForDays = int.Parse(match.Groups[2].Value);
+                return (dateTime, pageViewsForDays);
+            }
+        }
     }
 }
