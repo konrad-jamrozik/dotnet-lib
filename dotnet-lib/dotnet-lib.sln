@@ -27,8 +27,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "oxce-configs", "..\..\dotne
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "wikitools-configs", "..\..\dotnet-lib-private\wikitools-configs\wikitools-configs.csproj", "{28307DB7-9048-468B-B137-ECEEC25EAAA8}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "blazor-prototype", "..\blazor-prototype\blazor-prototype\blazor-prototype.csproj", "{FDEE9B22-6322-4913-9AB3-315DE0D92E25}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -83,10 +81,6 @@ Global
 		{28307DB7-9048-468B-B137-ECEEC25EAAA8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{28307DB7-9048-468B-B137-ECEEC25EAAA8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{28307DB7-9048-468B-B137-ECEEC25EAAA8}.Release|Any CPU.Build.0 = Release|Any CPU
-		{FDEE9B22-6322-4913-9AB3-315DE0D92E25}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FDEE9B22-6322-4913-9AB3-315DE0D92E25}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FDEE9B22-6322-4913-9AB3-315DE0D92E25}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FDEE9B22-6322-4913-9AB3-315DE0D92E25}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
