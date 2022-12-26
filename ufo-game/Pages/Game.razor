@@ -1,18 +1,10 @@
 ﻿@page "/game"
+@inject Model.Timeline Timeline;
 
 <PageTitle>UFO game</PageTitle>
 
 <h1>UFO game</h1>
 
-<p role="status">Current time: @currentTime</p>
+<p role="status">Current time: @Timeline.CurrentTime</p>
 
-<button class="btn btn-primary" @onclick="IncrementTime">Advance time</button>
-
-@code {
-    private int currentTime = 0;
-
-    private void IncrementTime()
-    {
-        currentTime++;
-    }
-}
+<button class="btn btn-primary" @onclick="Timeline.IncrementTime">Advance time</button>
