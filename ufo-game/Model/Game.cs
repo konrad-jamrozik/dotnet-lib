@@ -69,6 +69,11 @@ public class Game
         }
 
         Archive.ArchiveMission(missionSuccessful: success);
+        string missionSuccessReport = success ? "successful!" : "a failure.";
+        string missionRollReport =
+            $" (Rolled {roll} against limit of {PendingMission.SuccessChance}.)";
+        string soldiersLostReport = soldiersLost > 0 ? $"Number of soldiers lost: {soldiersLost}." : "We didn't lose any soldiers.";
+        Archive.WriteLastMissionReport($"The last mission was {missionSuccessReport} {missionRollReport} {soldiersLostReport}");
         PendingMission.RandomizeDifficulty();
     }
 

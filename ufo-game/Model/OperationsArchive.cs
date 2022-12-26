@@ -10,7 +10,7 @@ public class OperationsArchive
 
     public int SoldiersLost { get; private set; } = 0;
 
-    public string LastMissionReport { get; private set; } = "";
+    public string LastMissionReport { get; private set; } = "No missions yet!";
 
     public void ArchiveMission(bool missionSuccessful)
     {
@@ -22,6 +22,11 @@ public class OperationsArchive
         
         Console.Out.WriteLine($"Recorded {(missionSuccessful ? "successful" : "failed")} mission.");
 
+    }
+
+    public void WriteLastMissionReport(string missionReport)
+    {
+        LastMissionReport = missionReport;
     }
 
     public void RecordLostSoldiers(int amount)
