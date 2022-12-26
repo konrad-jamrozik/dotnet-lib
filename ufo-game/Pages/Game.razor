@@ -33,11 +33,11 @@
 
 <p role="status">Failed missions: @GameState.Archive.FailedMissions</p>
 
-<p role="status">Mission difficulty: TODO</p>
+<p role="status">Mission difficulty: @GameState.PendingMission.Difficulty</p>
 
 <p role="status">Mission success chance: TODO</p>
 
-<p role="status">Soldiers to send: TODO</p>
+<p role="status">Soldiers to send: @GameState.MissionPrep.SoldiersToSend</p>
 
 <p>
     <button
@@ -46,6 +46,20 @@
         disabled="@(!GameState.CanLaunchMission())">
         Launch mission with TODO soldiers
     </button>
+</p>
+
+<p>
+    <form>
+        <div>
+            <label>Soldiers to send:</label>
+            <input type="range"
+                   min="0" 
+                   max="@GameState.Staff.CurrentSoldiers" 
+                   step="1" 
+                   @bind="GameState.MissionPrep.SoldiersToSend" @bind:event="oninput"
+            />
+        </div>
+    </form>
 </p>
 
 <p role="status">Mission result: TODO</p>
