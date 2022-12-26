@@ -36,31 +36,28 @@
 
 <p role="status">Mission difficulty: @Game.PendingMission.Difficulty</p>
 
-<p role="status">Mission success chance: TODO</p>
+<p role="status">Mission success chance: @Game.PendingMission.SuccessChance</p>
 
-<p role="status">Soldiers to send: @Game.MissionPrep.SoldiersToSend</p>
+<p>
+    <form>
+        <div>
+            <label>Soldiers to send: @Game.MissionPrep.SoldiersToSend</label>
+            <input type="range"
+                   min="0"
+                   max="@Game.Staff.CurrentSoldiers"
+                   step="1"
+            @bind="Game.MissionPrep.SoldiersToSend" @bind:event="oninput" />
+        </div>
+    </form>
+</p>
 
 <p>
     <button
         class="btn btn-primary"
         @onclick="Game.LaunchMission"
         disabled="@(!Game.CanLaunchMission())">
-        Launch mission with TODO soldiers
+        Launch mission with @Game.MissionPrep.SoldiersToSend soldiers
     </button>
 </p>
 
-<p>
-    <form>
-        <div>
-            <label>Soldiers to send:</label>
-            <input type="range"
-                   min="0" 
-                   max="@Game.Staff.CurrentSoldiers" 
-                   step="1" 
-                   @bind="Game.MissionPrep.SoldiersToSend" @bind:event="oninput"
-            />
-        </div>
-    </form>
-</p>
-
-<p role="status">Mission result: TODO</p>
+<p role="status">Last mission result: TODO</p>

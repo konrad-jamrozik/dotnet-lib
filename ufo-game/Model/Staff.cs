@@ -11,5 +11,11 @@ public class Staff
         CurrentSoldiers += 1;
         Console.Out.WriteLine($"Hired solider. Soldiers now at {CurrentSoldiers}.");
     }
+
+    public void SubtractSoldiers(int amount)
+    {
+        CurrentSoldiers -= amount;
+        Console.Out.WriteLine($"Subtracted {amount} soldiers. Soldiers now at {CurrentSoldiers}.");
+    }
 }
 

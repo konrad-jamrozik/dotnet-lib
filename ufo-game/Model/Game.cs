@@ -44,16 +44,37 @@ public class Game
 
     public void LaunchMission()
     {
-        int roll = new Random().Next(100) + 1;
-        int successPercentage = 60;
-        int successfulThreshold = 100 - successPercentage;
-        bool successful = roll >= successfulThreshold;
-        Archive.ArchiveMission(missionSuccessful: successful);
+        // Roll between 1 and 100.
+        // The lower the better.
+        int roll = new Random().Next(101);
+        bool success = roll <= PendingMission.SuccessChance;
+        Console.Out.WriteLine(
+            $"Rolled {roll} against limit of {PendingMission.SuccessChance} resulting in {(success ? "success" : "failure")}");
+
+        // If success, lose 0-50% soldiers, 50% rounded down.
+        // If failure, lose 50-100% soldiers, 50% rounded down.
+        int minSoldiersLost = success ? 0 : MissionPrep.SoldiersToSend / 2;
+        int maxSoldiersLost = success ? MissionPrep.SoldiersToSend / 2 : MissionPrep.SoldiersToSend;
+        
+        int soldiersLost = new Random().Next(minSoldiersLost, maxSoldiersLost + 1);
+
+        if (soldiersLost > 0)
+        {
+            Archive.RecordLostSoldiers(soldiersLost);
+            Staff.SubtractSoldiers(soldiersLost);
+        }
+        else
+        {
+            Console.Out.WriteLine("No soldiers lost! \\o/");
+        }
+
+        Archive.ArchiveMission(missionSuccessful: success);
         PendingMission.RandomizeDifficulty();
     }
 
     public bool CanLaunchMission()
     {
-        return Staff.CurrentSoldiers > 0;
+        return MissionPrep.SoldiersToSend >= 1 &&
+               MissionPrep.SoldiersToSend <= Staff.CurrentSoldiers;
     }
 }
