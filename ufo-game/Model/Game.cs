@@ -35,6 +35,7 @@ public class Game
     {
         Money.SubtractMoney(Staff.SoldierPrice);
         Staff.HireSoldier();
+        Archive.RecordHiredSoldier();
     }
 
     public bool CanHireSoldier()

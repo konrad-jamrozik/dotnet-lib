@@ -34,7 +34,7 @@
             <div class="row">
                 <button
                     class="col btn btn-primary mx-3 mt-2"
-                    @onclick="Game.HireSoldier"
+                @onclick="Game.HireSoldier"
                     disabled="@(!Game.CanHireSoldier())">
                     Hire soldier for $@Game.Staff.SoldierPrice
                 </button>                
@@ -61,12 +61,12 @@
                        min="0"
                        max="@Game.Staff.CurrentSoldiers"
                        step="1"
-                       @bind="Game.MissionPrep.SoldiersToSend" @bind:event="oninput"/>
+                @bind="Game.MissionPrep.SoldiersToSend" @bind:event="oninput"/>
             </div>
             <div class="row">
                 <button
                     class="col btn btn-primary mx-3 my-1"
-                    @onclick="Game.LaunchMission"
+                @onclick="Game.LaunchMission"
                     disabled="@(!Game.CanLaunchMission())">
                     Launch mission with @Game.MissionPrep.SoldiersToSend soldiers
                 </button>
@@ -93,6 +93,10 @@
             <div class="row">
                 <div class="col-7 text-start">Failed missions</div>
                 <div class="col-1 col-2">@Game.Archive.FailedMissions</div>
+            </div>
+            <div class="row">
+                <div class="col-7 text-start">Total soldiers hired</div>
+                <div class="col-1 col-2">@Game.Archive.TotalSoldiersHired</div>
             </div>
             <div class="row">
                 <div class="col-7 text-start">Soldiers lost</div>

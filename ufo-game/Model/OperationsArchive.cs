@@ -8,6 +8,8 @@ public class OperationsArchive
 
     public int FailedMissions { get; private set; } = 0;
 
+    public int TotalSoldiersHired { get; private set; } = 0;
+
     public int SoldiersLost { get; private set; } = 0;
 
     public string LastMissionReport { get; private set; } = "No missions yet!";
@@ -27,6 +29,12 @@ public class OperationsArchive
     public void WriteLastMissionReport(string missionReport)
     {
         LastMissionReport = missionReport;
+    }
+
+    public void RecordHiredSoldier()
+    {
+        TotalSoldiersHired += 1;
+        Console.Out.WriteLine($"Recorded hired soldier. Total: {TotalSoldiersHired}.");
     }
 
     public void RecordLostSoldiers(int amount)

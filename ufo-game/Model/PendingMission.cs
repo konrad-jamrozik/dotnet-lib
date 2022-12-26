@@ -8,7 +8,7 @@ public class PendingMission
 
     public PendingMission(MissionPrep missionPrep)
     {
-        this._missionPrep = missionPrep;
+        _missionPrep = missionPrep;
     }
     public int SuccessChance => Math.Min(100, 100 + _missionPrep.SoldiersToSend - Difficulty);
 
