@@ -13,6 +13,7 @@ builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.
 builder.Services.AddSingleton<Timeline>();
 builder.Services.AddSingleton<Money>();
 builder.Services.AddSingleton<Staff>();
+builder.Services.AddSingleton<OperationsArchive>();
 builder.Services.AddSingleton<GameState>();
 
 await builder.Build().RunAsync();

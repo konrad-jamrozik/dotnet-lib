@@ -16,7 +16,7 @@
 
 <p role="status">Current soldiers: @GameState.Staff.CurrentSoldiers</p>
 
-<p role="status">Soldiers lost: TODO</p>
+<p role="status">Soldiers lost: @GameState.Archive.SoldiersLost</p>
 
 <p>
     <button
@@ -27,11 +27,11 @@
     </button>
 </p>
 
-<p role="status">Missions launched: TODO</p>
+<p role="status">Missions launched: @GameState.Archive.MissionsLaunched</p>
 
-<p role="status">Missions accomplished: TODO</p>
+<p role="status">Successful missions: @GameState.Archive.SuccessfulMissions</p>
 
-<p role="status">Missions failed: TODO</p>
+<p role="status">Failed missions: @GameState.Archive.FailedMissions</p>
 
 <p role="status">Mission difficulty: TODO</p>
 
@@ -40,9 +40,11 @@
 <p role="status">Soldiers to send: TODO</p>
 
 <p>
-    <button 
-        class="btn btn-primary">
-        Launch mission
+    <button
+        class="btn btn-primary"
+        @onclick="GameState.LaunchMission"
+        disabled="@(!GameState.CanLaunchMission())">
+        Launch mission with TODO soldiers
     </button>
 </p>
 
