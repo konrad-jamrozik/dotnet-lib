@@ -14,7 +14,7 @@
                 <div class="col-1 col-2">@Game.Timeline.CurrentTime</div>
             </div>
             <div class="row">
-                <button class="col btn btn-primary m-1" @onclick="Game.AdvanceTime">Advance time</button>
+                <button class="col btn btn-primary mx-3 mt-2" @onclick="Game.AdvanceTime">Advance time</button>
             </div>
         </div>
     </div>
@@ -31,7 +31,7 @@
             </div>
             <div class="row">
                 <button
-                    class="col btn btn-primary m-1"
+                    class="col btn btn-primary mx-3 mt-2"
                     @onclick="Game.HireSoldier"
                     disabled="@(!Game.CanHireSoldier())">
                     Hire soldier for $@Game.Staff.SoldierPrice
