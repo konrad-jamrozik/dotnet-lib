@@ -10,11 +10,11 @@
         <div class="card-body">
             <h5 class="card-title text-start">Time control</h5>
             <div class="row">
-                <div class="col-6 text-start p-2">Current time</div>
-                <div class="col-1 col-2 p-2">@Game.Timeline.CurrentTime</div>
+                <div class="col-7 text-start">Current time</div>
+                <div class="col-1 col-2">@Game.Timeline.CurrentTime</div>
             </div>
             <div class="row">
-                <button class="col btn btn-primary mx-1" @onclick="Game.AdvanceTime">Advance time</button>
+                <button class="col btn btn-primary m-1" @onclick="Game.AdvanceTime">Advance time</button>
             </div>
         </div>
     </div>
@@ -22,20 +22,41 @@
         <div class="card-body">
             <h5 class="card-title text-start">HQ</h5>
             <div class="row">
-                <div class="col-6 text-start p-2">Money</div>
-                <div class="col-1 col-2 p-2">@Game.Money.CurrentMoney</div>
+                <div class="col-7 text-start">Money</div>
+                <div class="col-1 col-2">@Game.Money.CurrentMoney</div>
             </div>
             <div class="row">
-                <div class="col-6 text-start p-2">Soldiers</div>
-                <div class="col-1 col-2 p-2">@Game.Staff.CurrentSoldiers</div>
+                <div class="col-7 text-start">Soldiers</div>
+                <div class="col-1 col-2">@Game.Staff.CurrentSoldiers</div>
             </div>
             <div class="row">
                 <button
-                    class="col btn btn-primary mx-1"
+                    class="col btn btn-primary m-1"
                     @onclick="Game.HireSoldier"
                     disabled="@(!Game.CanHireSoldier())">
                     Hire soldier for $@Game.Staff.SoldierPrice
                 </button>                
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title text-start">Operations archive</h5>
+            <div class="row">
+                <div class="col-7 text-start">Missions launched</div>
+                <div class="col-1 col-2">@Game.Archive.MissionsLaunched</div>
+            </div>
+            <div class="row">
+                <div class="col-7 text-start">Successful missions</div>
+                <div class="col-1 col-2">@Game.Archive.SuccessfulMissions</div>
+            </div>
+            <div class="row">
+                <div class="col-7 text-start">Failed missions</div>
+                <div class="col-1 col-2">@Game.Archive.FailedMissions</div>
+            </div>
+            <div class="row">
+                <div class="col-7 text-start">Soldiers lost</div>
+                <div class="col-1 col-2">@Game.Archive.SoldiersLost</div>
             </div>
         </div>
     </div>
