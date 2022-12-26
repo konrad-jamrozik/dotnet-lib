@@ -7,58 +7,98 @@
 
 <h1>UFO game</h1>
 
-<p role="status">Current time: @Game.Timeline.CurrentTime</p>
-
-<p>
-    <button class="btn btn-primary" @onclick="Game.AdvanceTime">Advance time</button>
-</p>
-
-<p role="status">Current money: @Game.Money.CurrentMoney</p>
-
-<p role="status">Current soldiers: @Game.Staff.CurrentSoldiers</p>
-
-<p role="status">Soldiers lost: @Game.Archive.SoldiersLost</p>
-
-<p>
-    <button
-        class="btn btn-primary"
-        @onclick="Game.HireSoldier"
-        disabled="@(!Game.CanHireSoldier())">
-        Hire soldier for $@Game.Staff.SoldierPrice
-    </button>
-</p>
-
-<p role="status">Missions launched: @Game.Archive.MissionsLaunched</p>
-
-<p role="status">Successful missions: @Game.Archive.SuccessfulMissions</p>
-
-<p role="status">Failed missions: @Game.Archive.FailedMissions</p>
-
-<p role="status">Mission difficulty: @Game.PendingMission.Difficulty</p>
-
-<p role="status">Mission success chance: @Game.PendingMission.SuccessChance</p>
-
-<p>
-    <form>
-        <div>
-            <label>Soldiers to send: @Game.MissionPrep.SoldiersToSend</label>
-            <br/>
-            <input type="range"
-                   min="0"
-                   max="@Game.Staff.CurrentSoldiers"
-                   step="1"
-            @bind="Game.MissionPrep.SoldiersToSend" @bind:event="oninput" />
+<div class="container-fluid text-center px-2">
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title text-start">Time control</h5>
+            <div class="row">
+                <div class="col-7 text-start">Current time</div>
+                <div class="col-1 col-2">@Game.Timeline.CurrentTime</div>
+            </div>
+            <div class="row">
+                <button class="col btn btn-primary mx-3 mt-2" @onclick="Game.AdvanceTime">Advance time</button>
+            </div>
         </div>
-    </form>
-</p>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title text-start">HQ</h5>
+            <div class="row">
+                <div class="col-7 text-start">Money</div>
+                <div class="col-1 col-2">@Game.Money.CurrentMoney</div>
+            </div>
+            <div class="row">
+                <div class="col-7 text-start">Soldiers</div>
+                <div class="col-1 col-2">@Game.Staff.CurrentSoldiers</div>
+            </div>
+            <div class="row">
+                <button
+                    class="col btn btn-primary mx-3 mt-2"
+                    @onclick="Game.HireSoldier"
+                    disabled="@(!Game.CanHireSoldier())">
+                    Hire soldier for $@Game.Staff.SoldierPrice
+                </button>                
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title text-start">Mission</h5>
+            <div class="row">
+                <div class="col-7 text-start">Difficulty</div>
+                <div class="col-1 col-2">@Game.PendingMission.Difficulty</div>
+            </div>
+            <div class="row">
+                <div class="col-7 text-start">Success chance</div>
+                <div class="col-1 col-2">@Game.PendingMission.SuccessChance</div>
+            </div>
+            <div class="row">
+                <div class="col-7 text-start">Soldiers to send</div>
+                <div class="col-1 col-2">@Game.MissionPrep.SoldiersToSend</div>
+            </div>
+            <div class="row">
+                <input class="col mx-3 my-1" type="range"
+                       min="0"
+                       max="@Game.Staff.CurrentSoldiers"
+                       step="1"
+                       @bind="Game.MissionPrep.SoldiersToSend" @bind:event="oninput"/>
+            </div>
+            <div class="row">
+                <button
+                    class="col btn btn-primary mx-3 my-1"
+                    @onclick="Game.LaunchMission"
+                    disabled="@(!Game.CanLaunchMission())">
+                    Launch mission with @Game.MissionPrep.SoldiersToSend soldiers
+                </button>
+            </div>
+            <div class="row">
+                <div class="col">Last mission debriefing:</div>
+            </div>
+            <div class="row">
+                <div class="col">@Game.Archive.LastMissionReport</div>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title text-start">Operations archive</h5>
+            <div class="row">
+                <div class="col-7 text-start">Missions launched</div>
+                <div class="col-1 col-2">@Game.Archive.MissionsLaunched</div>
+            </div>
+            <div class="row">
+                <div class="col-7 text-start">Successful missions</div>
+                <div class="col-1 col-2">@Game.Archive.SuccessfulMissions</div>
+            </div>
+            <div class="row">
+                <div class="col-7 text-start">Failed missions</div>
+                <div class="col-1 col-2">@Game.Archive.FailedMissions</div>
+            </div>
+            <div class="row">
+                <div class="col-7 text-start">Soldiers lost</div>
+                <div class="col-1 col-2">@Game.Archive.SoldiersLost</div>
+            </div>
+        </div>
+    </div>
 
-<p>
-    <button
-        class="btn btn-primary"
-        @onclick="Game.LaunchMission"
-        disabled="@(!Game.CanLaunchMission())">
-        Launch mission with @Game.MissionPrep.SoldiersToSend soldiers
-    </button>
-</p>
-
-<p role="status">Last mission result: @Game.Archive.LastMissionReport</p>
+</div>
