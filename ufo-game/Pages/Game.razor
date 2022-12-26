@@ -7,5 +7,13 @@
 
 <p role="status">Current time: @GameState.Timeline.CurrentTime</p>
 <p role="status">Current money: @GameState.Money.CurrentMoney</p>
+<p role="status">Current soldiers: @GameState.Staff.CurrentSoldiers</p>
 
 <button class="btn btn-primary" @onclick="GameState.AdvanceTime">Advance time</button>
+
+<button
+    class="btn btn-primary"
+    @onclick="GameState.HireSoldier"
+    disabled="@(!GameState.CanHireSoldier())">
+        Hire soldier for $@GameState.Staff.SoldierPrice
+</button>
