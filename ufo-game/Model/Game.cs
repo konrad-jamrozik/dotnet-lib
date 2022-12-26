@@ -1,6 +1,6 @@
 ﻿namespace UfoGame.Model;
 
-public class GameState
+public class Game
 {
     public readonly Timeline Timeline;
     public readonly Money Money;
@@ -9,7 +9,7 @@ public class GameState
     public readonly MissionPrep MissionPrep;
     public readonly PendingMission PendingMission;
 
-    public GameState(Timeline timeline,
+    public Game(Timeline timeline,
         Money money,
         Staff staff,
         OperationsArchive archive,

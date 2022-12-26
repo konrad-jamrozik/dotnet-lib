@@ -1,0 +1,66 @@
+﻿@page "/game"
+@page "/hq"
+@page "/"
+@inject Model.Game Game;
+
+<PageTitle>UFO game</PageTitle>
+
+<h1>UFO game</h1>
+
+<p role="status">Current time: @Game.Timeline.CurrentTime</p>
+
+<p>
+    <button class="btn btn-primary" @onclick="Game.AdvanceTime">Advance time</button>
+</p>
+
+<p role="status">Current money: @Game.Money.CurrentMoney</p>
+
+<p role="status">Current soldiers: @Game.Staff.CurrentSoldiers</p>
+
+<p role="status">Soldiers lost: @Game.Archive.SoldiersLost</p>
+
+<p>
+    <button
+        class="btn btn-primary"
+        @onclick="Game.HireSoldier"
+        disabled="@(!Game.CanHireSoldier())">
+        Hire soldier for $@Game.Staff.SoldierPrice
+    </button>
+</p>
+
+<p role="status">Missions launched: @Game.Archive.MissionsLaunched</p>
+
+<p role="status">Successful missions: @Game.Archive.SuccessfulMissions</p>
+
+<p role="status">Failed missions: @Game.Archive.FailedMissions</p>
+
+<p role="status">Mission difficulty: @Game.PendingMission.Difficulty</p>
+
+<p role="status">Mission success chance: TODO</p>
+
+<p role="status">Soldiers to send: @Game.MissionPrep.SoldiersToSend</p>
+
+<p>
+    <button
+        class="btn btn-primary"
+        @onclick="Game.LaunchMission"
+        disabled="@(!Game.CanLaunchMission())">
+        Launch mission with TODO soldiers
+    </button>
+</p>
+
+<p>
+    <form>
+        <div>
+            <label>Soldiers to send:</label>
+            <input type="range"
+                   min="0" 
+                   max="@Game.Staff.CurrentSoldiers" 
+                   step="1" 
+                   @bind="Game.MissionPrep.SoldiersToSend" @bind:event="oninput"
+            />
+        </div>
+    </form>
+</p>
+
+<p role="status">Mission result: TODO</p>
