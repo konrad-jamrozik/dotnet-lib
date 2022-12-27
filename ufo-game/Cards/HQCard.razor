@@ -1,0 +1,23 @@
+﻿@inject Model.Game Game;
+
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title text-start">HQ</h5>
+        <div class="row">
+            <div class="col-7 text-start">Money</div>
+            <div class="col-1 col-2">@Game.Money.CurrentMoney</div>
+        </div>
+        <div class="row">
+            <div class="col-7 text-start">Soldiers</div>
+            <div class="col-1 col-2">@Game.Staff.CurrentSoldiers</div>
+        </div>
+        <div class="row">
+            <button
+                class="col btn btn-primary mx-3 mt-2"
+                @onclick="Game.HireSoldier"
+                disabled="@(!Game.CanHireSoldier())">
+                Hire soldier for $@Game.Staff.SoldierPrice
+            </button>
+        </div>
+    </div>
+</div>
