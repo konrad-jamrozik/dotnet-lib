@@ -13,10 +13,4 @@
 
     [Parameter]
     public Func<int> Value { get; set; } = () => 0;
-
-    protected override void OnInitialized()
-    {
-        base.OnInitialized();
-        StateRefresh.Refresh += StateHasChanged;
-    }
 }
