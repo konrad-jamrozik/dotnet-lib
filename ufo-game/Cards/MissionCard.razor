@@ -14,10 +14,9 @@
                    @bind="Game.MissionPrep.SoldiersToSend" @bind:event="oninput"/>
         </div>
         <div class="row">
-            <button
-                class="col btn btn-primary mx-3 my-1"
-                @onclick="Game.LaunchMission"
-                disabled="@(!Game.CanLaunchMission())">
+            <button class="col btn btn-primary mx-3 my-1"
+                    @onclick="Game.LaunchMission"
+                    disabled="@(!Game.CanLaunchMission())">
                 Launch mission with @Game.MissionPrep.SoldiersToSend soldiers
             </button>
         </div>
