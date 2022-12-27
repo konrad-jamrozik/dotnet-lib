@@ -5,13 +5,10 @@
         <h5 class="card-title text-start">HQ</h5>
         <CardDataRow Text="Money" Value="@(() => Game.Money.CurrentMoney)"/>
         <CardDataRow Text="Soldiers" Value="@(() => Game.Staff.CurrentSoldiers)"/>
-        <div class="row">
-            <button class="col btn btn-primary mx-3 mt-2"
-                    @onclick="Game.HireSoldier"
-                    disabled="@(!Game.CanHireSoldier())">
-                Hire soldier for $@Game.Staff.SoldierPrice
-            </button>
-        </div>
+        <CardButton OnClick="Game.HireSoldier"
+                    Disabled="@(() => !Game.CanHireSoldier())">
+            Hire soldier for $@Game.Staff.SoldierPrice
+        </CardButton>
     </div>
 </div>
 
