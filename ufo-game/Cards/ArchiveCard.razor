@@ -10,3 +10,12 @@
         <CardDataRow Text="Soldiers lost" Value="@(() => Game.Archive.SoldiersLost)" />
     </div>
 </div>
+
+@code
+{
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        Game.StateRefresh.Refresh += StateHasChanged;
+    }
+}
