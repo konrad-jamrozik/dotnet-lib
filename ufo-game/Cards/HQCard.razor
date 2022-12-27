@@ -1,4 +1,5 @@
-﻿@inject Model.Game Game;
+﻿@using UfoGame.Cards.Components
+@inject Model.Game Game;
 
 <Card Title="HQ">
     <CardDataRow Text="Money" Value="@(() => Game.Money.CurrentMoney)"/>
