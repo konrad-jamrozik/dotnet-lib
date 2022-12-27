@@ -1,0 +1,23 @@
+﻿@inject Model.Game Game;
+
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title text-start">@Title</h5>
+        @ChildContent
+    </div>
+</div>
+
+@code
+{
+    [Parameter, EditorRequired]
+    public string Title { get; set; } = "";
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        Game.StateRefresh.Refresh += StateHasChanged;
+    }
+}

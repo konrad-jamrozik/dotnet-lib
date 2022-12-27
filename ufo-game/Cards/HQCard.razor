@@ -1,22 +1,10 @@
 ﻿@inject Model.Game Game;
 
-<div class="card">
-    <div class="card-body">
-        <h5 class="card-title text-start">HQ</h5>
-        <CardDataRow Text="Money" Value="@(() => Game.Money.CurrentMoney)"/>
-        <CardDataRow Text="Soldiers" Value="@(() => Game.Staff.CurrentSoldiers)"/>
-        <CardButton OnClick="Game.HireSoldier"
-                    Disabled="@(() => !Game.CanHireSoldier())">
-            Hire soldier for $@Game.Staff.SoldierPrice
-        </CardButton>
-    </div>
-</div>
-
-@code
-{
-    protected override void OnInitialized()
-    {
-        base.OnInitialized();
-        Game.StateRefresh.Refresh += StateHasChanged;
-    }
-}
+<Card Title="HQ">
+    <CardDataRow Text="Money" Value="@(() => Game.Money.CurrentMoney)"/>
+    <CardDataRow Text="Soldiers" Value="@(() => Game.Staff.CurrentSoldiers)"/>
+    <CardButton OnClick="Game.HireSoldier"
+                Disabled="@(() => !Game.CanHireSoldier())">
+        Hire soldier for $@Game.Staff.SoldierPrice
+    </CardButton>
+</Card>
