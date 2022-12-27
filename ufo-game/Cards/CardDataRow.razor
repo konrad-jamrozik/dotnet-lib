@@ -1,6 +1,9 @@
-﻿<div class="row">
+﻿@using UfoGame.Model;
+@inject StateRefresh StateRefresh;
+
+<div class="row">
     <div class="col-7 text-start">@Text</div>
-    <div class="col-1 col-2">@Value</div>
+    <div class="col-1 col-2">@Value()</div>
 </div>
 
 @code
@@ -9,5 +12,11 @@
     public string Text { get; set; } = "";
 
     [Parameter]
-    public int Value { get; set; }
+    public Func<int> Value { get; set; } = () => 0;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        StateRefresh.Refresh += StateHasChanged;
+    }
 }

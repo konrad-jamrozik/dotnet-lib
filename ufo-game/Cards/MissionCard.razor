@@ -3,9 +3,9 @@
 <div class="card">
     <div class="card-body">
         <h5 class="card-title text-start">Mission</h5>
-        <CardDataRow Text="Difficulty" Value="@Game.PendingMission.Difficulty" />
-        <CardDataRow Text="Success chance" Value="@Game.PendingMission.SuccessChance" />
-        <CardDataRow Text="Soldiers to send" Value="@Game.MissionPrep.SoldiersToSend" />
+        <CardDataRow Text="Difficulty" Value="@(() => Game.PendingMission.Difficulty)" />
+        <CardDataRow Text="Success chance" Value="@(() => Game.PendingMission.SuccessChance)" />
+        <CardDataRow Text="Soldiers to send" Value="@(() => Game.MissionPrep.SoldiersToSend)" />
         <div class="row">
             <input class="col mx-3 my-1" type="range"
                    min="0"
@@ -28,3 +28,12 @@
         </div>
     </div>
 </div>
+
+@code
+{
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        Game.StateRefresh.Refresh += StateHasChanged;
+    }
+}

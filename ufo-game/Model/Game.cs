@@ -8,13 +8,15 @@ public class Game
     public readonly OperationsArchive Archive;
     public readonly MissionPrep MissionPrep;
     public readonly PendingMission PendingMission;
+    public readonly StateRefresh StateRefresh;
 
     public Game(Timeline timeline,
         Money money,
         Staff staff,
         OperationsArchive archive,
         MissionPrep missionPrep,
-        PendingMission pendingMission)
+        PendingMission pendingMission,
+        StateRefresh stateRefresh)
     {
         Timeline = timeline;
         Money = money;
@@ -22,6 +24,7 @@ public class Game
         Archive = archive;
         MissionPrep = missionPrep;
         PendingMission = pendingMission;
+        StateRefresh = stateRefresh;
     }
 
     public void AdvanceTime()
@@ -29,6 +32,7 @@ public class Game
         Timeline.IncrementTime();
         Money.AddMoney(10);
         PendingMission.RandomizeDifficulty();
+        StateRefresh.Refresh();
     }
 
     public void HireSoldier()
@@ -36,6 +40,7 @@ public class Game
         Money.SubtractMoney(Staff.SoldierPrice);
         Staff.HireSoldier();
         Archive.RecordHiredSoldier();
+        StateRefresh.Refresh();
     }
 
     public bool CanHireSoldier()
@@ -76,6 +81,8 @@ public class Game
         string soldiersLostReport = soldiersLost > 0 ? $"Number of soldiers lost: {soldiersLost}." : "We didn't lose any soldiers.";
         Archive.WriteLastMissionReport($"The last mission was {missionSuccessReport} {missionRollReport} {soldiersLostReport}");
         PendingMission.RandomizeDifficulty();
+
+        StateRefresh.Refresh();
     }
 
     public bool CanLaunchMission()
