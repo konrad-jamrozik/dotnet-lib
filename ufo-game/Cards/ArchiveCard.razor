@@ -3,25 +3,10 @@
 <div class="card">
     <div class="card-body">
         <h5 class="card-title text-start">Operations archive</h5>
-        <div class="row">
-            <div class="col-7 text-start">Missions launched</div>
-            <div class="col-1 col-2">@Game.Archive.MissionsLaunched</div>
-        </div>
-        <div class="row">
-            <div class="col-7 text-start">Successful missions</div>
-            <div class="col-1 col-2">@Game.Archive.SuccessfulMissions</div>
-        </div>
-        <div class="row">
-            <div class="col-7 text-start">Failed missions</div>
-            <div class="col-1 col-2">@Game.Archive.FailedMissions</div>
-        </div>
-        <div class="row">
-            <div class="col-7 text-start">Total soldiers hired</div>
-            <div class="col-1 col-2">@Game.Archive.TotalSoldiersHired</div>
-        </div>
-        <div class="row">
-            <div class="col-7 text-start">Soldiers lost</div>
-            <div class="col-1 col-2">@Game.Archive.SoldiersLost</div>
-        </div>
+        <CardDataRow Text="Missions launched" Value="@Game.Archive.MissionsLaunched" />
+        <CardDataRow Text="Successful missions" Value="@Game.Archive.SuccessfulMissions" />
+        <CardDataRow Text="Failed missions" Value="@Game.Archive.FailedMissions" />
+        <CardDataRow Text="Total soldiers hired" Value="@Game.Archive.TotalSoldiersHired" />
+        <CardDataRow Text="Soldiers lost" Value="@Game.Archive.SoldiersLost" />
     </div>
 </div>

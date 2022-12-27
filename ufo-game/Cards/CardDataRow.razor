@@ -1,0 +1,13 @@
+﻿<div class="row">
+    <div class="col-7 text-start">@Text</div>
+    <div class="col-1 col-2">@Value</div>
+</div>
+
+@code
+{
+    [Parameter]
+    public string Text { get; set; } = "";
+
+    [Parameter]
+    public int Value { get; set; }
+}

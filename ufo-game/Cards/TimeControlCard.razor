@@ -1,12 +1,8 @@
 ﻿@inject Model.Game Game;
-
 <div class="card">
     <div class="card-body">
         <h5 class="card-title text-start">Time control</h5>
-        <div class="row">
-            <div class="col-7 text-start">Current time</div>
-            <div class="col-1 col-2">@Game.Timeline.CurrentTime</div>
-        </div>
+        <CardDataRow Text="Current time" Value="@Game.Timeline.CurrentTime" />
         <div class="row">
             <button class="col btn btn-primary mx-3 mt-2" @onclick="Game.AdvanceTime">Advance time</button>
         </div>
