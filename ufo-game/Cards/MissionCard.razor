@@ -4,21 +4,21 @@
 <Card Title="Mission">
     <CardDataRow Text="Available in" 
                  Value="@(() => Game.PendingMission.AvailableIn)" 
-                 Enabled="@(() => !Game.PendingMission.CurrentlyAvailable)"/>
+                 Enabled="@_missionNotAvailable" />
     <CardDataRow Text="Expires in" 
                  Value="@(() => Game.PendingMission.ExpiresIn)"
-                 Enabled="@(() => Game.PendingMission.CurrentlyAvailable)"/>
+                 Enabled="@_missionAvailable"/>
     <CardDataRow Text="Difficulty" 
                  Value="@(() => Game.PendingMission.Difficulty)"
-                 Enabled="@(() => Game.PendingMission.CurrentlyAvailable)"/>
+                 Enabled="@_missionAvailable"/>
     <CardDataRow Text="Success chance" 
                  Value="@(() => Game.PendingMission.SuccessChance)"
-                 Enabled="@(() => Game.PendingMission.CurrentlyAvailable)" />
+                 Enabled="@_missionAvailable" />
     <CardDataRow Text="Soldiers to send" 
                  Value="@(() => Game.MissionPrep.SoldiersToSend)"
-                 Enabled="@(() => Game.PendingMission.CurrentlyAvailable)" />
+                 Enabled="@_missionAvailable" />
     <CardInput MaxValue="@(() => Game.Staff.CurrentSoldiers)"
-                Enabled="@(() => Game.PendingMission.CurrentlyAvailable)" />
+               Enabled="@_missionAvailable" />
     <CardButton OnClick="Game.LaunchMission"
                 Disabled="@(() => !Game.CanLaunchMission())">
         Launch mission with @Game.MissionPrep.SoldiersToSend soldiers
@@ -30,3 +30,16 @@
         <div class="col">@Game.Archive.LastMissionReport</div>
     </div>
 </Card>
+
+@code{
+
+    private Func<bool> _missionAvailable;
+    private Func<bool> _missionNotAvailable;
+
+    public MissionCard()
+    {
+        _missionAvailable = () => Game.PendingMission.CurrentlyAvailable;
+        _missionNotAvailable = () => !Game.PendingMission.CurrentlyAvailable;
+    }
+
+}
