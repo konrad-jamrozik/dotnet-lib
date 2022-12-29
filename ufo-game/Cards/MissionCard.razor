@@ -20,7 +20,7 @@
     <CardInput MaxValue="@(() => Game.Staff.CurrentSoldiers)"
                Enabled="@_missionAvailable" />
     <CardButton OnClick="Game.LaunchMission"
-                Disabled="@(() => !Game.CanLaunchMission())">
+                Enabled="@(() => Game.CanLaunchMission())">
         Launch mission with @Game.MissionPrep.SoldiersToSend soldiers
     </CardButton>
     <div class="row">

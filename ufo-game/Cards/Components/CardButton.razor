@@ -1,7 +1,7 @@
 ﻿<div class="row">
     <button class="col btn btn-primary mx-3 mt-2"
             @onclick="@OnClick"
-            disabled="@Disabled()">
+            disabled="@(!Enabled())">
         @ChildContent
     </button>
 </div>
@@ -11,9 +11,8 @@
     [Parameter, EditorRequired]
     public EventCallback<MouseEventArgs> OnClick { get; set; }
 
-    // kja change to Enabled
     [Parameter]
-    public Func<bool> Disabled { get; set; } = () => false;
+    public Func<bool> Enabled { get; set; } = () => true;
 
     [Parameter]
     public RenderFragment? ChildContent { get; set; }

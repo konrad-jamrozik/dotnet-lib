@@ -5,7 +5,7 @@
     <CardDataRow Text="Money" Value="@(() => Game.Money.CurrentMoney)"/>
     <CardDataRow Text="Soldiers" Value="@(() => Game.Staff.CurrentSoldiers)"/>
     <CardButton OnClick="Game.HireSoldier"
-                Disabled="@(() => !Game.CanHireSoldier())">
+                Enabled="@(() => Game.CanHireSoldier())">
         Hire soldier for $@Game.Staff.SoldierPrice
     </CardButton>
 </Card>
