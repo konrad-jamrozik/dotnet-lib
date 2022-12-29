@@ -4,24 +4,24 @@
 <Card Title="Mission">
     <CardDataRow Text="Available in" 
                  Value="@Game.PendingMission.AvailableIn" 
-                 Enabled="@_missionNotAvailable" />
+                 Enabled="@(!Game.PendingMission.CurrentlyAvailable)" />
     <CardDataRow Text="Expires in" 
                  Value="@Game.PendingMission.ExpiresIn"
-                 Enabled="@_missionAvailable"/>
+                 Enabled="@Game.PendingMission.CurrentlyAvailable"/>
     <CardDataRow Text="Difficulty" 
                  Value="@Game.PendingMission.Difficulty"
-                 Enabled="@_missionAvailable"/>
+                 Enabled="@Game.PendingMission.CurrentlyAvailable"/>
     <CardDataRow Text="Success chance" 
                  Value="@Game.PendingMission.SuccessChance"
-                 Enabled="@_missionAvailable" />
+                 Enabled="@Game.PendingMission.CurrentlyAvailable" />
     <CardDataRow Text="Soldiers to send" 
                  Value="@Game.MissionPrep.SoldiersToSend"
-                 Enabled="@_missionAvailable" />
+                 Enabled="@Game.PendingMission.CurrentlyAvailable" />
     <CardInput @bind-Input="SoldiersToSend"
-               MaxValue="@(() => Game.Staff.CurrentSoldiers)"
-               Enabled="@_missionAvailable" />
+               MaxValue="@Game.Staff.CurrentSoldiers"
+               Enabled="@Game.PendingMission.CurrentlyAvailable" />
     <CardButton OnClick="Game.LaunchMission"
-                Enabled="@(() => Game.CanLaunchMission())">
+                Enabled="@Game.CanLaunchMission()">
         Launch mission with @Game.MissionPrep.SoldiersToSend soldiers
     </CardButton>
     <div class="row">
@@ -40,14 +40,5 @@
     {
         get => Game.MissionPrep.SoldiersToSend;
         set => Game.MissionPrep.SoldiersToSend = value;
-    }
-
-    private Func<bool> _missionAvailable;
-    private Func<bool> _missionNotAvailable;
-
-    public MissionCard()
-    {
-        _missionAvailable = () => Game.PendingMission.CurrentlyAvailable;
-        _missionNotAvailable = () => !Game.PendingMission.CurrentlyAvailable;
     }
 }

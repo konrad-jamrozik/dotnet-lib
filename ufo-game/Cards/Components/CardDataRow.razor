@@ -14,7 +14,7 @@
     public int Value { get; set; } = 0;
 
     [Parameter]
-    public Func<bool> Enabled { get; set; } = () => true;
+    public bool Enabled { get; set; } = true;
 
-    private string DisplayedValue() => Enabled() ? Value.ToString() : "-";
+    private string DisplayedValue() => Enabled ? Value.ToString() : "-";
 }

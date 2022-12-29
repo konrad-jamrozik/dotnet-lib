@@ -1,14 +1,14 @@
 ﻿<div class="row">
     <input class="col mx-3 my-1" 
-           type="range" min="0" max="@MaxValue()" step="1"
-           disabled="@(!Enabled())"
+           type="range" min="0" max="@MaxValue" step="1"
+           disabled="@(!Enabled)"
            @oninput="OnInputChanged"/>
 </div>
 
 @code
 {
     [Parameter, EditorRequired]
-    public Func<int> MaxValue { get; set; } = () => 0;
+    public int MaxValue { get; set; } = 0;
 
     // This follows the "Binding with component parameters" pattern
     // https://learn.microsoft.com/en-us/aspnet/core/blazor/components/data-binding?view=aspnetcore-7.0#binding-with-component-parameters
@@ -18,7 +18,7 @@
     public EventCallback<int> InputChanged { get; set; }
 
     [Parameter]
-    public Func<bool> Enabled { get; set; } = () => true;
+    public bool Enabled { get; set; } = true;
 
     private async Task OnInputChanged(ChangeEventArgs e)
     {
