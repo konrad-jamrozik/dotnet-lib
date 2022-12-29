@@ -31,7 +31,7 @@ public class Game
     {
         Timeline.IncrementTime();
         Money.AddMoney(10);
-        PendingMission.RandomizeDifficulty();
+        PendingMission.AdvanceTime();
         StateRefresh.Refresh();
     }
 
@@ -80,14 +80,14 @@ public class Game
             $" (Rolled {roll} against limit of {PendingMission.SuccessChance}.)";
         string soldiersLostReport = soldiersLost > 0 ? $"Number of soldiers lost: {soldiersLost}." : "We didn't lose any soldiers.";
         Archive.WriteLastMissionReport($"The last mission was {missionSuccessReport} {missionRollReport} {soldiersLostReport}");
-        PendingMission.RandomizeDifficulty();
-
+        PendingMission.GenerateNew();
         StateRefresh.Refresh();
     }
 
     public bool CanLaunchMission()
     {
-        return MissionPrep.SoldiersToSend >= 1 &&
-               MissionPrep.SoldiersToSend <= Staff.CurrentSoldiers;
+        return PendingMission.CurrentlyAvailable 
+               && MissionPrep.SoldiersToSend >= 1
+               && MissionPrep.SoldiersToSend <= Staff.CurrentSoldiers;
     }
 }

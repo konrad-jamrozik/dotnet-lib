@@ -11,6 +11,7 @@
     [Parameter, EditorRequired]
     public EventCallback<MouseEventArgs> OnClick { get; set; }
 
+    // kja change to Enabled
     [Parameter]
     public Func<bool> Disabled { get; set; } = () => false;
 

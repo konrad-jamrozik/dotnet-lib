@@ -2,17 +2,30 @@
 @inject Model.Game Game;
 
 <Card Title="Mission">
-    <CardDataRow Text="Difficulty" Value="@(() => Game.PendingMission.Difficulty)" />
-    <CardDataRow Text="Success chance" Value="@(() => Game.PendingMission.SuccessChance)" />
-    <CardDataRow Text="Soldiers to send" Value="@(() => Game.MissionPrep.SoldiersToSend)" />
+    <CardDataRow Text="Available in" 
+                 Value="@(() => Game.PendingMission.AvailableIn)" 
+                 Enabled="@(() => !Game.PendingMission.CurrentlyAvailable)"/>
+    <CardDataRow Text="Expires in" 
+                 Value="@(() => Game.PendingMission.ExpiresIn)"
+                 Enabled="@(() => Game.PendingMission.CurrentlyAvailable)"/>
+    <CardDataRow Text="Difficulty" 
+                 Value="@(() => Game.PendingMission.Difficulty)"
+                 Enabled="@(() => Game.PendingMission.CurrentlyAvailable)"/>
+    <CardDataRow Text="Success chance" 
+                 Value="@(() => Game.PendingMission.SuccessChance)"
+                 Enabled="@(() => Game.PendingMission.CurrentlyAvailable)" />
+    <CardDataRow Text="Soldiers to send" 
+                 Value="@(() => Game.MissionPrep.SoldiersToSend)"
+                 Enabled="@(() => Game.PendingMission.CurrentlyAvailable)" />
+    @* kja TODO *@
+    @* <CardInput Enabled="@(() => Game.PendingMission.CurrentlyAvailable)" /> *@
     <div class="row">
-        <input class="col mx-3 my-1" type="range"
-               min="0"
-               max="@Game.Staff.CurrentSoldiers"
-               step="1"
+        <input class="col mx-3 my-1"
+               type="range" min="0" max="@Game.Staff.CurrentSoldiers" step="1"
+               disabled="@(!Game.PendingMission.CurrentlyAvailable)"
                @bind="Game.MissionPrep.SoldiersToSend" @bind:event="oninput"/>
     </div>
-    <CardButton OnClick="Game.LaunchMission" 
+    <CardButton OnClick="Game.LaunchMission"
                 Disabled="@(() => !Game.CanLaunchMission())">
         Launch mission with @Game.MissionPrep.SoldiersToSend soldiers
     </CardButton>
@@ -23,3 +36,13 @@
         <div class="col">@Game.Archive.LastMissionReport</div>
     </div>
 </Card>
+
+@code
+{
+    // kja temporary solution, to remove
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        Game.StateRefresh.Refresh += StateHasChanged;
+    }
+}

@@ -1,9 +1,12 @@
 ﻿@using UfoGame.Model;
 
-<div class="row">
-    <div class="col-7 text-start">@Text</div>
-    <div class="col-1 col-2">@Value()</div>
-</div>
+@if (Enabled())
+{
+    <div class="row">
+        <div class="col-7 text-start">@Text</div>
+        <div class="col-1 col-2">@Value()</div>
+    </div>
+}
 
 @code
 {
@@ -12,4 +15,8 @@
 
     [Parameter]
     public Func<int> Value { get; set; } = () => 0;
+
+    [Parameter]
+    public Func<bool> Enabled { get; set; } = () => true;
+
 }
