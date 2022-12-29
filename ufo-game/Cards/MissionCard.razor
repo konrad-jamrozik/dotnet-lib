@@ -17,7 +17,7 @@
     <CardDataRow Text="Soldiers to send" 
                  Value="@Game.MissionPrep.SoldiersToSend"
                  Enabled="@Game.PendingMission.CurrentlyAvailable" />
-    <CardInput @bind-Input="SoldiersToSend"
+    <CardInput @bind-Input="@Game.MissionPrep.SoldiersToSend"
                MaxValue="@Game.Staff.CurrentSoldiers"
                Enabled="@Game.PendingMission.CurrentlyAvailable" />
     <CardButton OnClick="Game.LaunchMission"
@@ -31,14 +31,3 @@
         <div class="col">@Game.Archive.LastMissionReport</div>
     </div>
 </Card>
-
-@code{
-
-    // This follows the "Binding with component parameters" pattern
-    // https://learn.microsoft.com/en-us/aspnet/core/blazor/components/data-binding?view=aspnetcore-7.0#binding-with-component-parameters
-    private int SoldiersToSend
-    {
-        get => Game.MissionPrep.SoldiersToSend;
-        set => Game.MissionPrep.SoldiersToSend = value;
-    }
-}
