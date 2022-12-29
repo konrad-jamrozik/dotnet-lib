@@ -52,7 +52,7 @@ public class Game
     {
         // Roll between 1 and 100.
         // The lower the better.
-        int roll = new Random().Next(101);
+        int roll = new Random().Next(100) + 1;
         bool success = roll <= PendingMission.SuccessChance;
         Console.Out.WriteLine(
             $"Rolled {roll} against limit of {PendingMission.SuccessChance} resulting in {(success ? "success" : "failure")}");
