@@ -2,7 +2,7 @@
 
 <div class="row">
     <div class="col-7 text-start">@Text</div>
-    <div class="col-1 col-2">@DisplayValue()</div>
+    <div class="col-1 col-2">@DisplayedValue()</div>
 </div>
 
 @code
@@ -11,10 +11,10 @@
     public string Text { get; set; } = "";
 
     [Parameter]
-    public Func<int> Value { get; set; } = () => 0;
+    public int Value { get; set; } = 0;
 
     [Parameter]
     public Func<bool> Enabled { get; set; } = () => true;
 
-    private string DisplayValue() => Enabled() ? Value().ToString() : "-";
+    private string DisplayedValue() => Enabled() ? Value.ToString() : "-";
 }

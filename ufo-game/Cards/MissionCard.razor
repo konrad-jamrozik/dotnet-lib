@@ -3,19 +3,19 @@
 
 <Card Title="Mission">
     <CardDataRow Text="Available in" 
-                 Value="@(() => Game.PendingMission.AvailableIn)" 
+                 Value="@Game.PendingMission.AvailableIn" 
                  Enabled="@_missionNotAvailable" />
     <CardDataRow Text="Expires in" 
-                 Value="@(() => Game.PendingMission.ExpiresIn)"
+                 Value="@Game.PendingMission.ExpiresIn"
                  Enabled="@_missionAvailable"/>
     <CardDataRow Text="Difficulty" 
-                 Value="@(() => Game.PendingMission.Difficulty)"
+                 Value="@Game.PendingMission.Difficulty"
                  Enabled="@_missionAvailable"/>
     <CardDataRow Text="Success chance" 
-                 Value="@(() => Game.PendingMission.SuccessChance)"
+                 Value="@Game.PendingMission.SuccessChance"
                  Enabled="@_missionAvailable" />
     <CardDataRow Text="Soldiers to send" 
-                 Value="@(() => Game.MissionPrep.SoldiersToSend)"
+                 Value="@Game.MissionPrep.SoldiersToSend"
                  Enabled="@_missionAvailable" />
     <CardInput @bind-Input="SoldiersToSend"
                MaxValue="@(() => Game.Staff.CurrentSoldiers)"

@@ -2,7 +2,7 @@
 @inject Model.Game Game;
 
 <Card Title="Time Control">
-    <CardDataRow Text="Current time" Value="@(() => Game.Timeline.CurrentTime)" />
+    <CardDataRow Text="Current time" Value="@Game.Timeline.CurrentTime" />
     <CardButton OnClick="Game.AdvanceTime">
         Advance time
     </CardButton>

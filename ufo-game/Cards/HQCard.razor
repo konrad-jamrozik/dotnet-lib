@@ -2,8 +2,8 @@
 @inject Model.Game Game;
 
 <Card Title="HQ">
-    <CardDataRow Text="Money" Value="@(() => Game.Money.CurrentMoney)"/>
-    <CardDataRow Text="Soldiers" Value="@(() => Game.Staff.CurrentSoldiers)"/>
+    <CardDataRow Text="Money" Value="@Game.Money.CurrentMoney"/>
+    <CardDataRow Text="Soldiers" Value="@Game.Staff.CurrentSoldiers"/>
     <CardButton OnClick="Game.HireSoldier"
                 Enabled="@(() => Game.CanHireSoldier())">
         Hire soldier for $@Game.Staff.SoldierPrice
