@@ -18,13 +18,7 @@
                  Value="@(() => Game.MissionPrep.SoldiersToSend)"
                  Enabled="@(() => Game.PendingMission.CurrentlyAvailable)" />
     @* kja TODO *@
-    @* <CardInput Enabled="@(() => Game.PendingMission.CurrentlyAvailable)" /> *@
-    <div class="row">
-        <input class="col mx-3 my-1"
-               type="range" min="0" max="@Game.Staff.CurrentSoldiers" step="1"
-               disabled="@(!Game.PendingMission.CurrentlyAvailable)"
-               @bind="Game.MissionPrep.SoldiersToSend" @bind:event="oninput"/>
-    </div>
+    <CardInput Enabled="@(() => Game.PendingMission.CurrentlyAvailable)" />
     <CardButton OnClick="Game.LaunchMission"
                 Disabled="@(() => !Game.CanLaunchMission())">
         Launch mission with @Game.MissionPrep.SoldiersToSend soldiers
