@@ -3,14 +3,19 @@
 
 <div class="row">
     <input class="col mx-3 my-1" 
-           type="range" min="0" max="@Game.Staff.CurrentSoldiers" step="1"
+           type="range" min="0" max="@MaxValue()" step="1"
            disabled="@(!Enabled())"
            @bind="Game.MissionPrep.SoldiersToSend" @bind:event="oninput"/>
 </div>
 
 @code
 {
-    // kja WIP, currently unused
+    
     [Parameter]
     public Func<bool> Enabled { get; set; } = () => true;
+
+    [Parameter]
+    public Func<int> MaxValue { get; set; } = () => 0;
+
+    // kja WIP
 }

@@ -17,8 +17,8 @@
     <CardDataRow Text="Soldiers to send" 
                  Value="@(() => Game.MissionPrep.SoldiersToSend)"
                  Enabled="@(() => Game.PendingMission.CurrentlyAvailable)" />
-    @* kja TODO *@
-    <CardInput Enabled="@(() => Game.PendingMission.CurrentlyAvailable)" />
+    <CardInput MaxValue="@(() => Game.Staff.CurrentSoldiers)"
+                Enabled="@(() => Game.PendingMission.CurrentlyAvailable)" />
     <CardButton OnClick="Game.LaunchMission"
                 Disabled="@(() => !Game.CanLaunchMission())">
         Launch mission with @Game.MissionPrep.SoldiersToSend soldiers
