@@ -17,7 +17,8 @@
     <CardDataRow Text="Soldiers to send" 
                  Value="@(() => Game.MissionPrep.SoldiersToSend)"
                  Enabled="@_missionAvailable" />
-    <CardInput MaxValue="@(() => Game.Staff.CurrentSoldiers)"
+    <CardInput @bind-Input="SoldiersToSend"
+               MaxValue="@(() => Game.Staff.CurrentSoldiers)"
                Enabled="@_missionAvailable" />
     <CardButton OnClick="Game.LaunchMission"
                 Enabled="@(() => Game.CanLaunchMission())">
@@ -33,6 +34,14 @@
 
 @code{
 
+    // This follows the "Binding with component parameters" pattern
+    // https://learn.microsoft.com/en-us/aspnet/core/blazor/components/data-binding?view=aspnetcore-7.0#binding-with-component-parameters
+    private int SoldiersToSend
+    {
+        get => Game.MissionPrep.SoldiersToSend;
+        set => Game.MissionPrep.SoldiersToSend = value;
+    }
+
     private Func<bool> _missionAvailable;
     private Func<bool> _missionNotAvailable;
 
@@ -41,5 +50,4 @@
         _missionAvailable = () => Game.PendingMission.CurrentlyAvailable;
         _missionNotAvailable = () => !Game.PendingMission.CurrentlyAvailable;
     }
-
 }
