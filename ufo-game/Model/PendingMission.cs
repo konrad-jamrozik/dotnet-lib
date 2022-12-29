@@ -32,17 +32,18 @@ public class PendingMission
 
     public void AdvanceTime()
     {
-        if (ExpiresIn == 1)
-            GenerateNew();
-        else if (CurrentlyAvailable)
+        if (CurrentlyAvailable)
         {
-            ExpiresIn--;
-            Debug.Assert(ExpiresIn >= 0);
+            Debug.Assert(ExpiresIn >= 1);
+            if (ExpiresIn == 1)
+                GenerateNew();
+            else
+                ExpiresIn--;
         }
         else
         {
+            Debug.Assert(AvailableIn >= 1);
             AvailableIn--;
-            Debug.Assert(AvailableIn >= 0);
         }
     }
 
