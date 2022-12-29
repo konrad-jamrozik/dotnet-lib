@@ -86,6 +86,7 @@ public class Game
 
     public bool CanLaunchMission()
     {
+        Console.Out.WriteLine("Can launch mission?");
         return PendingMission.CurrentlyAvailable 
                && MissionPrep.SoldiersToSend >= 1
                && MissionPrep.SoldiersToSend <= Staff.CurrentSoldiers;

@@ -32,6 +32,7 @@ public class PendingMission
 
     public void AdvanceTime()
     {
+        Console.Out.WriteLine("PendingMission - AdvanceTime");
         if (CurrentlyAvailable)
         {
             Debug.Assert(ExpiresIn >= 1);
