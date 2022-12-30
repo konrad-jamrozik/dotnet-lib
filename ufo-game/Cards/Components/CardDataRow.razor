@@ -7,14 +7,17 @@
 
 @code
 {
-    [Parameter]
+    [Parameter] // kja rename to label
     public string Text { get; set; } = "";
 
     [Parameter]
-    public int Value { get; set; } = 0;
+    public object Value { get; set; } = "";
 
     [Parameter]
     public bool Enabled { get; set; } = true;
 
-    private string DisplayedValue() => Enabled ? Value.ToString() : "-";
+    private string DisplayedValue()
+    {
+        return Enabled ? Value.ToString() ?? string.Empty : "-";
+    }
 }

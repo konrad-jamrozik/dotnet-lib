@@ -3,7 +3,10 @@
 
 <Card Title="Score">
     @{
-        foreach (var faction in Game.Factions.Data.Where(faction => faction.Discovered))
+        var factions = Game.Factions.Data
+            .Where(faction => faction.Discovered)
+            .OrderBy(faction => faction.Name);
+        foreach (var faction in factions)
         {
             <CardDataRow Text="@faction.Name" Value="faction.Score" />
         }

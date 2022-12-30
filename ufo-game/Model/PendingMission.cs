@@ -12,13 +12,20 @@ public class PendingMission
 
     public bool CurrentlyAvailable => AvailableIn == 0 && ExpiresIn > 0;
 
+    // kja refactor so there is no placeholder; will need to split class ctor into 
+    // initial app startup and instance creation. I.e. GenerateNew() should return new instance of 
+    // PendingMission instead of assigning fields.
+    public Faction Faction { get; private set; } = new Faction(name: "placeholder");
+
     private readonly MissionPrep _missionPrep;
     private readonly OperationsArchive _archive;
+    private readonly Factions _factions;
 
-    public PendingMission(MissionPrep missionPrep, OperationsArchive archive)
+    public PendingMission(MissionPrep missionPrep, OperationsArchive archive, Factions factions)
     {
         _missionPrep = missionPrep;
         _archive = archive;
+        _factions = factions;
         GenerateNew();
     }
 
@@ -43,6 +50,14 @@ public class PendingMission
         {
             Debug.Assert(AvailableIn >= 1);
             AvailableIn--;
+            if (CurrentlyAvailable)
+            {
+                if (!Faction.Discovered)
+                {
+                    Console.Out.WriteLine("Discovered faction! " + Faction.Name);
+                    Faction.Discovered = true;
+                }
+            }
         }
     }
 
@@ -54,5 +69,7 @@ public class PendingMission
         // Difficulty between 0 (guaranteed baseline success)
         // and 100 (guaranteed baseline failure).
         Difficulty = random.Next(101);
+        // For now just randomize
+        Faction = _factions.Data[random.Next(_factions.Data.Count)];
     }
 }

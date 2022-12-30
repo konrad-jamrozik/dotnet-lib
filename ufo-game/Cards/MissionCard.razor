@@ -8,6 +8,9 @@
     <CardDataRow Text="Expires in" 
                  Value="@Game.PendingMission.ExpiresIn"
                  Enabled="@Game.PendingMission.CurrentlyAvailable"/>
+    <CardDataRow Text="Enemy faction"
+                 Value="@Game.PendingMission.Faction.Name"
+                 Enabled="@Game.PendingMission.CurrentlyAvailable" />
     <CardDataRow Text="Difficulty" 
                  Value="@Game.PendingMission.Difficulty"
                  Enabled="@Game.PendingMission.CurrentlyAvailable"/>
