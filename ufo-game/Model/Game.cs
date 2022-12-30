@@ -32,7 +32,7 @@ public class Game
         Timeline.IncrementTime();
         Money.AddMoney(10);
         PendingMission.AdvanceTime();
-        StateRefresh.Refresh();
+        StateRefresh.Trigger();
     }
 
     public void HireSoldier()
@@ -40,7 +40,7 @@ public class Game
         Money.SubtractMoney(Staff.SoldierPrice);
         Staff.HireSoldier();
         Archive.RecordHiredSoldier();
-        StateRefresh.Refresh();
+        StateRefresh.Trigger();
     }
 
     public bool CanHireSoldier()
@@ -81,7 +81,7 @@ public class Game
         string soldiersLostReport = soldiersLost > 0 ? $"Number of soldiers lost: {soldiersLost}." : "We didn't lose any soldiers.";
         Archive.WriteLastMissionReport($"The last mission was {missionSuccessReport} {missionRollReport} {soldiersLostReport}");
         PendingMission.GenerateNew();
-        StateRefresh.Refresh();
+        StateRefresh.Trigger();
     }
 
     public bool CanLaunchMission()

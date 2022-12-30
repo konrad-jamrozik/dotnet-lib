@@ -10,14 +10,7 @@ public class PendingMission
 
     public int ExpiresIn { get; private set; }
 
-    public bool CurrentlyAvailable
-    {
-        get
-        {
-            Console.Out.WriteLine($"Currently available? AvailableIn = 0 ({AvailableIn}) && ExpiresIn > 0 ({ExpiresIn})");
-            return AvailableIn == 0 && ExpiresIn > 0;
-        }
-    }
+    public bool CurrentlyAvailable => AvailableIn == 0 && ExpiresIn > 0;
 
     private readonly MissionPrep _missionPrep;
 

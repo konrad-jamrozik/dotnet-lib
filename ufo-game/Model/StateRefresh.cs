@@ -1,4 +1,6 @@
-﻿namespace UfoGame.Model;
+﻿using System.Runtime.CompilerServices;
+
+namespace UfoGame.Model;
 
 /// <summary>
 /// Implements "In-memory container service" pattern:
@@ -9,7 +11,13 @@
 /// </summary>
 public class StateRefresh
 {
-    public Action Refresh = () =>
+    public void Trigger([CallerMemberName] string callerMemberName = "") 
+    {
+        Console.Out.WriteLine("Triggering refresh from " + callerMemberName);
+        Event();
+    }
+
+    public Action Event = () =>
     {
         Console.Out.WriteLine("On refresh!");
     };
