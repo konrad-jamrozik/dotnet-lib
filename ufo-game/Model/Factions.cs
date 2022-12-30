@@ -7,7 +7,15 @@ public class Factions
     public Factions()
     {
         Data = new List<string>
-                { "Black Lotus", "Red Dawn", "Exalt", "The Syndicate", "Cyberweb", "UAC", "MiB" }
+            {
+                "Strange Life Forms", "Zombies",
+                "Black Lotus cult", "Red Dawn remnants", "Exalt organization", "Followers of Dagon cult", 
+                "Osiron",
+                // "Cult of Apocalypse", "The Syndicate",
+                // "Cyberweb", "UAC", "MiB", "Hybrids", "Deep Ones"
+                // // Non-canon:
+                // "Man-Bear-Pigs, "Vampires", "Werewolves",  "Shapeshifters",
+            }
             .Select(name => new Faction(name))
             .ToList();
     }
