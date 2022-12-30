@@ -7,3 +7,8 @@ This repository contains personal code of Konrad Jamrozik, written by leveraging
 # License
 
 See [LICENSE](LICENSE)
+
+# Attribution
+
+Code in [ufo-game](ufo-game) leverages faction names X-COM Files by SolariusScorch.
+[Link to SolariusScorch / XComFiles repository](https://github.com/SolariusScorch/XComFiles).

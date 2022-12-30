@@ -9,6 +9,7 @@ public class Game
     public readonly MissionPrep MissionPrep;
     public readonly PendingMission PendingMission;
     public readonly StateRefresh StateRefresh;
+    public readonly Factions Factions;
 
     public Game(Timeline timeline,
         Money money,
@@ -16,7 +17,8 @@ public class Game
         OperationsArchive archive,
         MissionPrep missionPrep,
         PendingMission pendingMission,
-        StateRefresh stateRefresh)
+        StateRefresh stateRefresh,
+        Factions factions)
     {
         Timeline = timeline;
         Money = money;
@@ -25,6 +27,7 @@ public class Game
         MissionPrep = missionPrep;
         PendingMission = pendingMission;
         StateRefresh = stateRefresh;
+        Factions = factions;
     }
 
     public void AdvanceTime()

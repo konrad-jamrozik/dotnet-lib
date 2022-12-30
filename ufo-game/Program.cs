@@ -17,6 +17,7 @@ builder.Services.AddSingleton<OperationsArchive>();
 builder.Services.AddSingleton<MissionPrep>();
 builder.Services.AddSingleton<PendingMission>();
 builder.Services.AddSingleton<StateRefresh>();
+builder.Services.AddSingleton<Factions>();
 builder.Services.AddSingleton<Game>();
 
 await builder.Build().RunAsync();
