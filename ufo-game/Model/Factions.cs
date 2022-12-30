@@ -10,7 +10,7 @@ public class Factions
             {
                 "Strange Life Forms", "Zombies",
                 "Black Lotus cult", "Red Dawn remnants", "Exalt organization", "Followers of Dagon cult", 
-                "Osiron",
+                "Osiron organization",
                 // "Cult of Apocalypse", "The Syndicate",
                 // "Cyberweb", "UAC", "MiB", "Hybrids", "Deep Ones"
                 // // Non-canon:
