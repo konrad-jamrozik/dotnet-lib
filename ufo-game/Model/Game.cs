@@ -30,6 +30,8 @@ public class Game
         Factions = factions;
     }
 
+    public int PlayerScore { get; set; } = 0;
+
     public void AdvanceTime()
     {
         Timeline.IncrementTime();
