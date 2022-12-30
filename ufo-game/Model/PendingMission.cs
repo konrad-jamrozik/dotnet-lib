@@ -13,10 +13,12 @@ public class PendingMission
     public bool CurrentlyAvailable => AvailableIn == 0 && ExpiresIn > 0;
 
     private readonly MissionPrep _missionPrep;
+    private readonly OperationsArchive _archive;
 
-    public PendingMission(MissionPrep missionPrep)
+    public PendingMission(MissionPrep missionPrep, OperationsArchive archive)
     {
         _missionPrep = missionPrep;
+        _archive = archive;
         GenerateNew();
     }
 
@@ -30,7 +32,10 @@ public class PendingMission
         {
             Debug.Assert(ExpiresIn >= 1);
             if (ExpiresIn == 1)
+            {
+                _archive.RecordIgnoredMission();
                 GenerateNew();
+            }
             else
                 ExpiresIn--;
         }

@@ -8,6 +8,8 @@ public class OperationsArchive
 
     public int FailedMissions { get; private set; } = 0;
 
+    public int IgnoredMissions { get; private set; } = 0;
+
     public int TotalSoldiersHired { get; private set; } = 0;
 
     public int SoldiersLost { get; private set; } = 0;
@@ -29,6 +31,12 @@ public class OperationsArchive
     public void WriteLastMissionReport(string missionReport)
     {
         LastMissionReport = missionReport;
+    }
+
+    public void RecordIgnoredMission()
+    {
+        IgnoredMissions += 1;
+        Console.Out.WriteLine($"Recorded ignored mission. Total: {IgnoredMissions}.");
     }
 
     public void RecordHiredSoldier()
