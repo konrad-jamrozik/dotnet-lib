@@ -1,2 +1,9 @@
-# dotnet-lib
-A library of my code written for the .NET platform.
+[![License: CC BY-NC 4.0](https://licensebuttons.net/l/by-nc/4.0/88x31.png)](https://creativecommons.org/licenses/by-nc/4.0/)
+
+# About
+
+This repository contains personal code of Konrad Jamrozik, written by leveraging the .NET platform.
+
+# License
+
+See [LICENSE](LICENSE)
