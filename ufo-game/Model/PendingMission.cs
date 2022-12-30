@@ -72,6 +72,7 @@ public class PendingMission
 
         // kja this won't properly handle a case where all factions were defeated.
         // In such case, the game should end anyway.
+        // It will throw index OOB on line 78.
         var undefeatedFactions = _factions.Data.Where(faction => !faction.Defeated).ToArray();
         // For now just randomize
         Faction = undefeatedFactions[random.Next(undefeatedFactions.Length)];

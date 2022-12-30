@@ -76,6 +76,8 @@ public class Game
         }
         else
         {
+            // kja need to end the game when player score reaches zero;
+            // some pop-up + grey out all buttons, like "advance time" and "launch mission" ?
             PlayerScore.Value -= LoseScore;
             PendingMission.Faction.Score += LoseScore;
         }
