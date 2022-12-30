@@ -36,7 +36,7 @@ public class Game
     {
         Timeline.IncrementTime();
         Money.AddMoney(10);
-        PendingMission.AdvanceTime();
+        PendingMission.AdvanceMissionTime();
         Factions.AdvanceFactionsTime();
         StateRefresh.Trigger();
     }
