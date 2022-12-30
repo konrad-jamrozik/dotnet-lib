@@ -3,8 +3,15 @@
 public class Faction
 {
     public readonly string Name;
-    public int Score;
+
+    public int Score
+    {
+        get => _score;
+        set => _score = Math.Max(value, 0);
+    }
+
     public readonly int ScoreTick;
+    private int _score;
     public bool Discovered { get; set; } = false;
     public bool Defeated => Score <= 0;
 

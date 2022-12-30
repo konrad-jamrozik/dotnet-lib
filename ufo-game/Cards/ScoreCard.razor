@@ -2,7 +2,7 @@
 @inject Model.Game Game;
 
 <Card Title="Faction Score">
-    <CardDataRow Text="Player" Value="@Game.PlayerScore" />
+    <CardDataRow Text="Player" Value="@Game.PlayerScore.Value" />
     @{
         var factions = Game.Factions.Data
             .Where(faction => faction.Discovered)

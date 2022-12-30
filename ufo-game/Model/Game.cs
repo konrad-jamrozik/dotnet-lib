@@ -2,6 +2,9 @@
 
 public class Game
 {
+    private const int WinScore = 500;
+    private const int LoseScore = 100;
+
     public readonly Timeline Timeline;
     public readonly Money Money;
     public readonly Staff Staff;
@@ -10,6 +13,7 @@ public class Game
     public readonly PendingMission PendingMission;
     public readonly StateRefresh StateRefresh;
     public readonly Factions Factions;
+    public readonly PlayerScore PlayerScore;
 
     public Game(Timeline timeline,
         Money money,
@@ -18,7 +22,8 @@ public class Game
         MissionPrep missionPrep,
         PendingMission pendingMission,
         StateRefresh stateRefresh,
-        Factions factions)
+        Factions factions,
+        PlayerScore playerScore)
     {
         Timeline = timeline;
         Money = money;
@@ -28,9 +33,8 @@ public class Game
         PendingMission = pendingMission;
         StateRefresh = stateRefresh;
         Factions = factions;
+        PlayerScore = playerScore;
     }
-
-    public int PlayerScore { get; set; } = 0;
 
     public void AdvanceTime()
     {
@@ -63,6 +67,19 @@ public class Game
         Console.Out.WriteLine(
             $"Rolled {roll} against limit of {PendingMission.SuccessChance} resulting in {(success ? "success" : "failure")}");
 
+        if (success)
+        {
+            // kja what if enemy had less than WinScore left? Does all of it go to player? 
+            // Some other bonus for finishing off an enemy faction?
+            PlayerScore.Value += WinScore;
+            PendingMission.Faction.Score -= WinScore;
+        }
+        else
+        {
+            PlayerScore.Value -= LoseScore;
+            PendingMission.Faction.Score += LoseScore;
+        }
+
         // If success, lose 0-50% soldiers, 50% rounded down.
         // If failure, lose 50-100% soldiers, 50% rounded down.
         int minSoldiersLost = success ? 0 : MissionPrep.SoldiersToSend / 2;
@@ -81,7 +98,9 @@ public class Game
         }
 
         Archive.ArchiveMission(missionSuccessful: success);
-        string missionSuccessReport = success ? "successful!" : "a failure.";
+        string missionSuccessReport = success 
+            ? $"successful! We took {WinScore} score from {PendingMission.Faction.Name}" 
+            : $"a failure. We lost {LoseScore} score to {PendingMission.Faction.Name}.";
         string missionRollReport =
             $" (Rolled {roll} against limit of {PendingMission.SuccessChance}.)";
         string soldiersLostReport = soldiersLost > 0 ? $"Number of soldiers lost: {soldiersLost}." : "We didn't lose any soldiers.";

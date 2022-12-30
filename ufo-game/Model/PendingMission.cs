@@ -30,7 +30,7 @@ public class PendingMission
     }
 
     // kja this should be in a separate type
-    public int SuccessChance => Math.Min(100, 100 + _missionPrep.SoldiersToSend - Difficulty);
+    public int SuccessChance => Math.Min(100, 100 + _missionPrep.SoldiersToSend * 5 - Difficulty);
 
     public void AdvanceMissionTime()
     {
