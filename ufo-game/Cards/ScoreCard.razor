@@ -11,8 +11,17 @@
         {
             <CardDataRow Text="@faction.Name" Value="faction.Score"/>
         }
+        if (Game.Factions.Data.Any(faction => !faction.Discovered))
+        {
+            <div class="row">
+                <div class="col">More factions may appear here as you discover them!</div>
+            </div>
+        }
+        else
+        {
+            <div class="row">
+                <div class="col">All factions discovered! Now ensure their score is zero!</div>
+            </div>
+        }
     }
-    <div class="row">
-        <div class="col">More factions may appear here as you discover them!</div>
-    </div>
 </Card>

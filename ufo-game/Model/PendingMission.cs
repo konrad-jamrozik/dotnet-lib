@@ -15,7 +15,7 @@ public class PendingMission
     // kja refactor so there is no placeholder; will need to split class ctor into 
     // initial app startup and instance creation. I.e. GenerateNew() should return new instance of 
     // PendingMission instead of assigning fields.
-    public Faction Faction { get; private set; } = new Faction(name: "placeholder");
+    public Faction Faction { get; private set; } = new Faction(name: "placeholder", 0, 0);
 
     private readonly MissionPrep _missionPrep;
     private readonly OperationsArchive _archive;
@@ -32,6 +32,7 @@ public class PendingMission
     // kja this should be in a separate type
     public int SuccessChance => Math.Min(100, 100 + _missionPrep.SoldiersToSend - Difficulty);
 
+    // kja rename to AdvanceMissionTime
     public void AdvanceTime()
     {
         Console.Out.WriteLine("PendingMission - AdvanceTime");

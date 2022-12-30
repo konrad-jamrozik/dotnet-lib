@@ -6,17 +6,29 @@ public class Factions
 
     public Factions()
     {
-        Data = new List<string>
+        Data = new List<(string name, int score, int scoreTick)>
             {
-                "Strange Life Forms", "Zombies",
-                "Black Lotus cult", "Red Dawn remnants", "Exalt organization", "Followers of Dagon cult", 
-                "Osiron organization",
+                ("Strange Life Forms", 5000, 1), 
+                ("Zombies", 10000, 1),
+                ("Black Lotus cult", 1000, 10), 
+                ("Red Dawn remnants", 2000, 5), 
+                ("Exalt organization", 1000, 15), 
+                ("Followers of Dagon cult", 2000, 5), 
+                ("Osiron organization", 500, 20),
                 // "Cult of Apocalypse", "The Syndicate",
                 // "Cyberweb", "UAC", "MiB", "Hybrids", "Deep Ones"
                 // // Non-canon:
-                // "Man-Bear-Pigs, "Vampires", "Werewolves",  "Shapeshifters",
+                // "Man-Bear-Pigs, "Vampires", "Werewolves", "Shapeshifters",
             }
-            .Select(name => new Faction(name))
+            .Select(faction => new Faction(faction.name, faction.score, faction.scoreTick))
             .ToList();
+    }
+
+    public void AdvanceFactionsTime()
+    {
+        foreach (var faction in Data.Where(faction => faction.Score > 0))
+        {
+            faction.Score += faction.ScoreTick;
+        }
     }
 }
