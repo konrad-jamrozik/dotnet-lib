@@ -69,7 +69,11 @@ public class PendingMission
         // Difficulty between 0 (guaranteed baseline success)
         // and 100 (guaranteed baseline failure).
         Difficulty = random.Next(101);
+
+        // kja this won't properly handle a case where all factions were defeated.
+        // In such case, the game should end anyway.
+        var undefeatedFactions = _factions.Data.Where(faction => !faction.Defeated).ToArray();
         // For now just randomize
-        Faction = _factions.Data[random.Next(_factions.Data.Count)];
+        Faction = undefeatedFactions[random.Next(undefeatedFactions.Length)];
     }
 }

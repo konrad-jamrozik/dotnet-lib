@@ -26,7 +26,7 @@ public class Factions
 
     public void AdvanceFactionsTime()
     {
-        foreach (var faction in Data.Where(faction => faction.Score > 0))
+        foreach (var faction in Data.Where(faction => !faction.Defeated))
         {
             faction.Score += faction.ScoreTick;
         }

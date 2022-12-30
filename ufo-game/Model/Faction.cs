@@ -6,6 +6,7 @@ public class Faction
     public int Score;
     public readonly int ScoreTick;
     public bool Discovered { get; set; } = false;
+    public bool Defeated => Score <= 0;
 
     public Faction(string name, int score, int scoreTick)
     {
