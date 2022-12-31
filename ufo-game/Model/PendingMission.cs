@@ -6,6 +6,8 @@ public class PendingMission
 {
     public int EnemyPower => (int)(Faction.Score * _enemyPowerCoefficient);
 
+    public int MoneyReward;
+
     public int OurPower => _missionPrep.SoldiersToSend * _staff.SoldierEffectiveness;
 
     public int SuccessChance => Math.Min(100, (int)(OurPower / (float)(EnemyPower + OurPower) * 100));
@@ -94,13 +96,12 @@ public class PendingMission
     private void GenerateNewMission()
     {
         Debug.Assert(!_playerScore.GameOver);
-        var random = new Random();
-        AvailableIn = random.Next(1, 6+1);
-        ExpiresIn = random.Next(1, 6+1);
+        AvailableIn = _random.Next(1, 6+1);
+        ExpiresIn = _random.Next(1, 6+1);
+        MoneyReward = _random.Next(10, 200 + 1);
         _enemyPowerCoefficient = _random.Next(5, 15 + 1) / (float)10;
         var undefeatedFactions = _factions.Data.Where(faction => !faction.Defeated).ToArray();
-        // For now just randomize
-        Faction = undefeatedFactions[random.Next(undefeatedFactions.Length)];
+        Faction = undefeatedFactions[_random.Next(undefeatedFactions.Length)];
     }
 
     private void RemoveMission()

@@ -11,6 +11,9 @@
     <CardDataRow Text="Enemy faction"
                  Value="@Game.PendingMission.Faction.Name"
                  Enabled="@Game.PendingMission.CurrentlyAvailable" />
+    <CardDataRow Text="Money reward if successful"
+                 Value="@("$"+Game.PendingMission.MoneyReward)"
+                 Enabled="@Game.PendingMission.CurrentlyAvailable" />
     <CardDataRow Text="Enemy power"
                  Value="@Game.PendingMission.EnemyPower"
                  Enabled="@Game.PendingMission.CurrentlyAvailable" />

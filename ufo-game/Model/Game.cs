@@ -138,6 +138,7 @@ public class Game
             scoreDiff = Math.Min(PlayerScore.WinScore, PendingMission.Faction.Score);
             PlayerScore.Value += scoreDiff;
             PendingMission.Faction.Score -= scoreDiff;
+            Money.AddMoney(PendingMission.MoneyReward);
         }
         else
         {
@@ -171,13 +172,14 @@ public class Game
         }
 
         Archive.ArchiveMission(missionSuccessful: success);
-        string missionSuccessReport = success 
-            ? $"successful! We took {scoreDiff} score from {PendingMission.Faction.Name}" 
-            : $"a failure. We lost {scoreDiff} score to {PendingMission.Faction.Name}.";
         string missionRollReport =
             $" (Rolled {roll} against (inclusive) limit of {PendingMission.SuccessChance}.)";
+        string missionSuccessReport = success 
+            ? $"successful! {missionRollReport} We took {scoreDiff} score from {PendingMission.Faction.Name} and earned ${PendingMission.MoneyReward}." 
+            : $"a failure. {missionRollReport} We lost {scoreDiff} score to {PendingMission.Faction.Name}.";
+        
         string soldiersLostReport = soldiersLost > 0 ? $"Number of soldiers lost: {soldiersLost}." : "We didn't lose any soldiers.";
-        Archive.WriteLastMissionReport($"The last mission was {missionSuccessReport} {missionRollReport} {soldiersLostReport}");
+        Archive.WriteLastMissionReport($"The last mission was {missionSuccessReport} {soldiersLostReport}");
         PendingMission.GenerateNewOrClearMission();
         StateRefresh.Trigger();
     }
