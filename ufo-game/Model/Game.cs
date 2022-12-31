@@ -8,6 +8,8 @@ public class Game
     public const int LoseScore = 100;
 
     public int MoneyRaisedAmount = 50;
+    // Currently zero, as it offsets costs of actions, resulting in confusing
+    // balance.
     public const int MoneyPerTurnAmount = 0;
     
     public int MoneyRaisingMethodsResearchCost = 100;
