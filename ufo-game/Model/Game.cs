@@ -18,6 +18,7 @@ public class Game
     public int SoldierSurvivabilityResearchCost = 100;
     public const int SoldierSurvivabilityResearchCostIncrement = 10;
 
+    private readonly Random _random = new Random();
     public readonly Timeline Timeline;
     public readonly Money Money;
     public readonly Staff Staff;
@@ -126,32 +127,38 @@ public class Game
     {
         // Roll between 1 and 100.
         // The lower the better.
-        int roll = new Random().Next(100) + 1;
+        int roll = _random.Next(1, 100+1);
         bool success = roll <= PendingMission.SuccessChance;
         Console.Out.WriteLine(
             $"Rolled {roll} against limit of {PendingMission.SuccessChance} resulting in {(success ? "success" : "failure")}");
 
+        int scoreDiff;
         if (success)
         {
-            // kja what if enemy had less than WinScore left? Does all of it go to player? 
-            // Some other bonus for finishing off an enemy faction?
-            PlayerScore.Value += PlayerScore.WinScore;
-            PendingMission.Faction.Score -= PlayerScore.WinScore;
+            scoreDiff = Math.Min(PlayerScore.WinScore, PendingMission.Faction.Score);
+            PlayerScore.Value += scoreDiff;
+            PendingMission.Faction.Score -= scoreDiff;
         }
         else
         {
-            // kja need to end the game when player score reaches zero;
-            // some pop-up + grey out all buttons, like "advance time" and "launch mission" ?
-            PlayerScore.Value -= PlayerScore.LoseScore;
-            PendingMission.Faction.Score += PlayerScore.LoseScore;
+            scoreDiff = PlayerScore.LoseScore;
+            PlayerScore.Value -= scoreDiff;
+            PendingMission.Faction.Score += scoreDiff;
         }
 
-        // If success, lose 0-50% soldiers, 50% rounded down.
-        // If failure, lose 50-100% soldiers, 50% rounded down.
-        int minSoldiersLost = success ? 0 : MissionPrep.SoldiersToSend / 2;
-        int maxSoldiersLost = success ? MissionPrep.SoldiersToSend / 2 : MissionPrep.SoldiersToSend;
-        
-        int soldiersLost = new Random().Next(minSoldiersLost, maxSoldiersLost + 1);
+        int soldiersLost = 0;
+        for (int i = 0; i < MissionPrep.SoldiersToSend; i++)
+        {
+            // Roll between 1 and 100.
+            // The lower the better.
+            int soldierRoll = _random.Next(1, 100+1);
+            bool soldierSurvived = soldierRoll <= PendingMission.SoldierSurvivalChance;
+            Console.Out.WriteLine(
+                $"Soldier {i} {(soldierSurvived ? "survived" : "lost")}. " +
+                $"Rolled {soldierRoll} <= {PendingMission.SoldierSurvivalChance}");
+            if (!soldierSurvived)
+                soldiersLost++;
+        }
 
         if (soldiersLost > 0)
         {
@@ -165,10 +172,10 @@ public class Game
 
         Archive.ArchiveMission(missionSuccessful: success);
         string missionSuccessReport = success 
-            ? $"successful! We took {PlayerScore.WinScore} score from {PendingMission.Faction.Name}" 
-            : $"a failure. We lost {PlayerScore.LoseScore} score to {PendingMission.Faction.Name}.";
+            ? $"successful! We took {scoreDiff} score from {PendingMission.Faction.Name}" 
+            : $"a failure. We lost {scoreDiff} score to {PendingMission.Faction.Name}.";
         string missionRollReport =
-            $" (Rolled {roll} against limit of {PendingMission.SuccessChance}.)";
+            $" (Rolled {roll} against (inclusive) limit of {PendingMission.SuccessChance}.)";
         string soldiersLostReport = soldiersLost > 0 ? $"Number of soldiers lost: {soldiersLost}." : "We didn't lose any soldiers.";
         Archive.WriteLastMissionReport($"The last mission was {missionSuccessReport} {missionRollReport} {soldiersLostReport}");
         PendingMission.GenerateNewOrClearMission();

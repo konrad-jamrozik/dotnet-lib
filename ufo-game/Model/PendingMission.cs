@@ -4,7 +4,16 @@ namespace UfoGame.Model;
 
 public class PendingMission
 {
-    public int Difficulty { get; private set; }
+    public int EnemyPower => (int)(Faction.Score * _enemyPowerCoefficient);
+
+    public int OurPower => _missionPrep.SoldiersToSend * _staff.SoldierEffectiveness;
+
+    public int SuccessChance => Math.Min(100, (int)(OurPower / (float)(EnemyPower + OurPower) * 100));
+
+    public int SoldierSurvivalChance => 
+        (int)(SoldierSurvivabilityPower / (float)(EnemyPower + SoldierSurvivabilityPower) * 100);
+
+    public int SoldierSurvivabilityPower => (_missionPrep.SoldiersToSend * _staff.SoldierSurvivability);
 
     public int AvailableIn { get; private set; }
 
@@ -17,26 +26,29 @@ public class PendingMission
     // PendingMission instead of assigning fields.
     public Faction Faction { get; private set; } = new Faction(name: "placeholder", 0, 0);
 
+    private float _enemyPowerCoefficient = 1;
+
+    private readonly Random _random = new Random();
     private readonly MissionPrep _missionPrep;
     private readonly OperationsArchive _archive;
     private readonly Factions _factions;
     private readonly PlayerScore _playerScore;
+    private readonly Staff _staff;
 
     public PendingMission(
         MissionPrep missionPrep,
         OperationsArchive archive,
         Factions factions,
-        PlayerScore playerScore)
+        PlayerScore playerScore,
+        Staff staff)
     {
         _missionPrep = missionPrep;
         _archive = archive;
         _factions = factions;
         _playerScore = playerScore;
+        _staff = staff;
         GenerateNewMission();
     }
-
-    // kja this should be in a separate type
-    public int SuccessChance => Math.Min(100, 100 + _missionPrep.SoldiersToSend * 5 - Difficulty);
 
     public bool MissionAboutToExpire => CurrentlyAvailable && ExpiresIn == 1;
 
@@ -83,15 +95,9 @@ public class PendingMission
     {
         Debug.Assert(!_playerScore.GameOver);
         var random = new Random();
-        AvailableIn = random.Next(1, 4); // random.Next(3, 11);
-        ExpiresIn = random.Next(1, 4);
-        // Difficulty between 0 (guaranteed baseline success)
-        // and 100 (guaranteed baseline failure).
-        Difficulty = random.Next(101);
-
-        // kja this won't properly handle a case where all factions were defeated.
-        // In such case, the game should end anyway.
-        // It will throw index OOB on line 78.
+        AvailableIn = random.Next(1, 6+1);
+        ExpiresIn = random.Next(1, 6+1);
+        _enemyPowerCoefficient = _random.Next(5, 15 + 1) / (float)10;
         var undefeatedFactions = _factions.Data.Where(faction => !faction.Defeated).ToArray();
         // For now just randomize
         Faction = undefeatedFactions[random.Next(undefeatedFactions.Length)];
@@ -101,7 +107,7 @@ public class PendingMission
     {
         AvailableIn = 0;
         ExpiresIn = 0;
-        Difficulty = 0;
+        _enemyPowerCoefficient = 1;
         Faction = new Faction(name: "-", score: 0, scoreTick: 0);
     }
 }
