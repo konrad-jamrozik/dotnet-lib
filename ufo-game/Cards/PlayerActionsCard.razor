@@ -1,20 +1,31 @@
 ﻿@using UfoGame.Cards.Components
-@inject Model.Game Game;
+@using UfoGame.Model
+@using System.Diagnostics.CodeAnalysis
+@inject Game Game;
 
 <Card Title="Actions">
     <CardDataRow Text="Current time" Value="Game.Timeline.CurrentTime" />
     <CardButton OnClick="Game.RaiseMoney">Raise $@Game.MoneyRaisedAmount</CardButton>
     <CardButton Enabled="Game.CanResearchMoneyRaisingMethods()"
                 OnClick="Game.ResearchMoneyRaisingMethods">
-        Research money raising methods for $@Game.MoneyRaisingMethodsResearchCost.
+        Research money raising methods for $@Game.MoneyRaisingMethodsResearchCost
     </CardButton>
     <CardButton Enabled="Game.CanResearchSoldierEffectiveness()"
                 OnClick="Game.ResearchSoldierEffectiveness">
-        Research soldier effectiveness for $@Game.SoldierEffectivenessResearchCost.
+        Research soldier effectiveness for $@Game.SoldierEffectivenessResearchCost
     </CardButton>
     <CardButton Enabled="Game.CanResearchSoldierSurvivability()"
                 OnClick="Game.ResearchSoldierSurvivability">
-        Research soldier survivability for $@Game.SoldierSurvivabilityResearchCost.
+        Research soldier survivability for $@Game.SoldierSurvivabilityResearchCost
     </CardButton>
     <CardButton OnClick="Game.DoNothing">Do nothing & advance time</CardButton>
+    @if (Game.PendingMission.MissionAboutToExpire)
+    {
+        <div class="row mt-2">
+            <div class="col text-danger">
+                If you don't launch mission now, you will lose
+                @PlayerScore.IgnoreMissionScoreLoss score for ignoring pending mission!
+            </div>
+        </div>
+    }
 </Card>

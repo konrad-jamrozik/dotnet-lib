@@ -34,16 +34,17 @@ public class PendingMission
     // kja this should be in a separate type
     public int SuccessChance => Math.Min(100, 100 + _missionPrep.SoldiersToSend * 5 - Difficulty);
 
+    public bool MissionAboutToExpire => CurrentlyAvailable && ExpiresIn == 1;
+
     public void AdvanceMissionTime()
     {
         Console.Out.WriteLine("PendingMission - AdvanceTime");
         if (CurrentlyAvailable)
         {
             Debug.Assert(ExpiresIn >= 1);
-            if (ExpiresIn == 1)
+            if (MissionAboutToExpire)
             {
                 _archive.RecordIgnoredMission();
-                // kja need to output it somewhere so player knows why they lost score
                 _playerScore.Value -= PlayerScore.IgnoreMissionScoreLoss;
                 GenerateNew();
             }
