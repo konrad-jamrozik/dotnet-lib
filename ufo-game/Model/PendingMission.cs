@@ -20,12 +20,14 @@ public class PendingMission
     private readonly MissionPrep _missionPrep;
     private readonly OperationsArchive _archive;
     private readonly Factions _factions;
+    private readonly PlayerScore _playerScore;
 
-    public PendingMission(MissionPrep missionPrep, OperationsArchive archive, Factions factions)
+    public PendingMission(MissionPrep missionPrep, OperationsArchive archive, Factions factions, PlayerScore playerScore)
     {
         _missionPrep = missionPrep;
         _archive = archive;
         _factions = factions;
+        _playerScore = playerScore;
         GenerateNew();
     }
 
@@ -41,6 +43,8 @@ public class PendingMission
             if (ExpiresIn == 1)
             {
                 _archive.RecordIgnoredMission();
+                // kja need to output it somewhere so player knows why they lost score
+                _playerScore.Value -= PlayerScore.IgnoreMissionScoreLoss;
                 GenerateNew();
             }
             else

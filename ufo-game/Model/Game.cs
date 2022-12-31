@@ -4,9 +4,6 @@ namespace UfoGame.Model;
 
 public class Game
 {
-    public const int WinScore = 500;
-    public const int LoseScore = 100;
-
     public int MoneyRaisedAmount = 50;
     // Currently zero, as it offsets costs of actions, resulting in confusing
     // balance.
@@ -133,15 +130,15 @@ public class Game
         {
             // kja what if enemy had less than WinScore left? Does all of it go to player? 
             // Some other bonus for finishing off an enemy faction?
-            PlayerScore.Value += WinScore;
-            PendingMission.Faction.Score -= WinScore;
+            PlayerScore.Value += PlayerScore.WinScore;
+            PendingMission.Faction.Score -= PlayerScore.WinScore;
         }
         else
         {
             // kja need to end the game when player score reaches zero;
             // some pop-up + grey out all buttons, like "advance time" and "launch mission" ?
-            PlayerScore.Value -= LoseScore;
-            PendingMission.Faction.Score += LoseScore;
+            PlayerScore.Value -= PlayerScore.LoseScore;
+            PendingMission.Faction.Score += PlayerScore.LoseScore;
         }
 
         // If success, lose 0-50% soldiers, 50% rounded down.
@@ -163,8 +160,8 @@ public class Game
 
         Archive.ArchiveMission(missionSuccessful: success);
         string missionSuccessReport = success 
-            ? $"successful! We took {WinScore} score from {PendingMission.Faction.Name}" 
-            : $"a failure. We lost {LoseScore} score to {PendingMission.Faction.Name}.";
+            ? $"successful! We took {PlayerScore.WinScore} score from {PendingMission.Faction.Name}" 
+            : $"a failure. We lost {PlayerScore.LoseScore} score to {PendingMission.Faction.Name}.";
         string missionRollReport =
             $" (Rolled {roll} against limit of {PendingMission.SuccessChance}.)";
         string soldiersLostReport = soldiersLost > 0 ? $"Number of soldiers lost: {soldiersLost}." : "We didn't lose any soldiers.";
