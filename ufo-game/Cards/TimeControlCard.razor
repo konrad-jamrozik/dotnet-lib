@@ -3,7 +3,18 @@
 
 <Card Title="Time Control">
     <CardDataRow Text="Current time" Value="@Game.Timeline.CurrentTime" />
-    <CardButton OnClick="Game.AdvanceTime">
-        Advance time
+    <CardButton OnClick="Game.RaiseMoney">Raise @Game.MoneyRaisedAmount money</CardButton>
+    <CardButton Enabled="Game.CanResearchMoneyRaisingMethods()"
+                OnClick="Game.ResearchMoneyRaisingMethods">
+        Research money raising methods for @Game.MoneyRaisingMethodsResearchCost.
     </CardButton>
+    <CardButton Enabled="Game.CanResearchSoldierEffectiveness()"
+                OnClick="Game.ResearchSoldierEffectiveness">
+        Research soldier effectiveness for @Game.SoldierEffectivenessResearchCost.
+    </CardButton>
+    <CardButton Enabled="Game.CanResearchSoldierSurvivability()"
+                OnClick="Game.ResearchSoldierSurvivability">
+        Research soldier survivability for @Game.SoldierSurvivabilityResearchCost.
+    </CardButton>
+    <CardButton OnClick="Game.DoNothing">Do nothing & advance time</CardButton>
 </Card>

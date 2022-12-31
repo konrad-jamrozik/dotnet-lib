@@ -2,9 +2,14 @@
 
 public class Staff
 {
+    // kja sort out story with setters/getters.
     public int CurrentSoldiers { get; private set; } = 0;
 
     public int SoldierPrice { get; private set; } = 30;
+
+    public int SoldierEffectiveness = 100;
+
+    public int SoldierSurvivability = 100;
 
     public void HireSoldier()
     {

@@ -1,9 +1,23 @@
-﻿namespace UfoGame.Model;
+﻿using System.Diagnostics;
+
+namespace UfoGame.Model;
 
 public class Game
 {
-    private const int WinScore = 500;
-    private const int LoseScore = 100;
+    public const int WinScore = 500;
+    public const int LoseScore = 100;
+
+    public int MoneyRaisedAmount = 50;
+    public const int MoneyPerTurnAmount = 0;
+    
+    public int MoneyRaisingMethodsResearchCost = 100;
+    public const int MoneyRaisingMethodsResearchCostIncrement = 10;
+
+    public int SoldierEffectivenessResearchCost = 100;
+    public const int SoldierEffectivenessResearchCostIncrement = 10;
+
+    public int SoldierSurvivabilityResearchCost = 100;
+    public const int SoldierSurvivabilityResearchCostIncrement = 10;
 
     public readonly Timeline Timeline;
     public readonly Money Money;
@@ -36,17 +50,63 @@ public class Game
         PlayerScore = playerScore;
     }
 
-    public void AdvanceTime()
+    public void DoNothing() => AdvanceTime();
+
+    public void AdvanceTime(bool addMoney = true)
     {
         Timeline.IncrementTime();
-        Money.AddMoney(10);
+        if (addMoney)
+            Money.AddMoney(MoneyPerTurnAmount);
         PendingMission.AdvanceMissionTime();
         Factions.AdvanceFactionsTime();
         StateRefresh.Trigger();
     }
 
+    public void RaiseMoney()
+    {
+        Money.AddMoney(MoneyRaisedAmount);
+        AdvanceTime(addMoney: false);
+    }
+
+    public bool CanResearchMoneyRaisingMethods()
+        => Money.CurrentMoney >= MoneyRaisingMethodsResearchCost;
+
+    public void ResearchMoneyRaisingMethods()
+    {
+        Debug.Assert(CanResearchMoneyRaisingMethods());
+        Money.SubtractMoney(MoneyRaisingMethodsResearchCost);
+        MoneyRaisingMethodsResearchCost += MoneyRaisingMethodsResearchCostIncrement;
+        MoneyRaisedAmount += 5;
+        AdvanceTime();
+    }
+
+    public bool CanResearchSoldierEffectiveness()
+        => Money.CurrentMoney >= SoldierEffectivenessResearchCost;
+
+    public void ResearchSoldierEffectiveness()
+    {
+        Debug.Assert(CanResearchSoldierEffectiveness());
+        Money.SubtractMoney(SoldierEffectivenessResearchCost);
+        SoldierEffectivenessResearchCost += SoldierEffectivenessResearchCostIncrement;
+        Staff.SoldierEffectiveness += 10;
+        AdvanceTime();
+    }
+
+    public bool CanResearchSoldierSurvivability()
+        => Money.CurrentMoney >= SoldierSurvivabilityResearchCost;
+
+    public void ResearchSoldierSurvivability()
+    {
+        Debug.Assert(CanResearchSoldierSurvivability());
+        Money.SubtractMoney(SoldierSurvivabilityResearchCost);
+        SoldierSurvivabilityResearchCost += SoldierSurvivabilityResearchCostIncrement;
+        Staff.SoldierSurvivability += 10;
+        AdvanceTime();
+    }
+
     public void HireSoldier()
     {
+        Debug.Assert(CanHireSoldier());
         Money.SubtractMoney(Staff.SoldierPrice);
         Staff.HireSoldier();
         Archive.RecordHiredSoldier();
