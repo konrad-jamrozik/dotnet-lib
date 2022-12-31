@@ -49,10 +49,13 @@ public class Game
         PlayerScore = playerScore;
     }
 
+    public bool CanDoNothing() => !PlayerScore.GameOver;
+
     public void DoNothing() => AdvanceTime();
 
     public void AdvanceTime(bool addMoney = true)
     {
+        Debug.Assert(!PlayerScore.GameOver);
         Timeline.IncrementTime();
         if (addMoney)
             Money.AddMoney(MoneyPerTurnAmount);
@@ -61,6 +64,8 @@ public class Game
         StateRefresh.Trigger();
     }
 
+    public bool CanRaiseMoney() => !PlayerScore.GameOver;
+
     public void RaiseMoney()
     {
         Money.AddMoney(MoneyRaisedAmount);
@@ -68,7 +73,7 @@ public class Game
     }
 
     public bool CanResearchMoneyRaisingMethods()
-        => Money.CurrentMoney >= MoneyRaisingMethodsResearchCost;
+        => !PlayerScore.GameOver && Money.CurrentMoney >= MoneyRaisingMethodsResearchCost;
 
     public void ResearchMoneyRaisingMethods()
     {
@@ -80,7 +85,7 @@ public class Game
     }
 
     public bool CanResearchSoldierEffectiveness()
-        => Money.CurrentMoney >= SoldierEffectivenessResearchCost;
+        => !PlayerScore.GameOver && Money.CurrentMoney >= SoldierEffectivenessResearchCost;
 
     public void ResearchSoldierEffectiveness()
     {
@@ -92,7 +97,7 @@ public class Game
     }
 
     public bool CanResearchSoldierSurvivability()
-        => Money.CurrentMoney >= SoldierSurvivabilityResearchCost;
+        => !PlayerScore.GameOver && Money.CurrentMoney >= SoldierSurvivabilityResearchCost;
 
     public void ResearchSoldierSurvivability()
     {
@@ -114,7 +119,7 @@ public class Game
 
     public bool CanHireSoldier()
     {
-        return Money.CurrentMoney >= Staff.SoldierPrice;
+        return !PlayerScore.GameOver && Money.CurrentMoney >= Staff.SoldierPrice;
     }
 
     public void LaunchMission()
@@ -166,14 +171,15 @@ public class Game
             $" (Rolled {roll} against limit of {PendingMission.SuccessChance}.)";
         string soldiersLostReport = soldiersLost > 0 ? $"Number of soldiers lost: {soldiersLost}." : "We didn't lose any soldiers.";
         Archive.WriteLastMissionReport($"The last mission was {missionSuccessReport} {missionRollReport} {soldiersLostReport}");
-        PendingMission.GenerateNew();
+        PendingMission.GenerateNewOrClearMission();
         StateRefresh.Trigger();
     }
 
     public bool CanLaunchMission()
     {
         Console.Out.WriteLine("Can launch mission?");
-        return PendingMission.CurrentlyAvailable 
+        return !PlayerScore.GameOver
+               && PendingMission.CurrentlyAvailable
                && MissionPrep.SoldiersToSend >= 1
                && MissionPrep.SoldiersToSend <= Staff.CurrentSoldiers;
     }

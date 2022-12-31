@@ -24,6 +24,8 @@ public class Factions
             .ToList();
     }
 
+    public bool AllFactionsDefeated => Data.TrueForAll(f => f.Defeated);
+
     public void AdvanceFactionsTime()
     {
         foreach (var faction in Data.Where(faction => !faction.Defeated))

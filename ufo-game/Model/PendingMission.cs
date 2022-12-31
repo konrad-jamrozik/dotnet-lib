@@ -22,13 +22,17 @@ public class PendingMission
     private readonly Factions _factions;
     private readonly PlayerScore _playerScore;
 
-    public PendingMission(MissionPrep missionPrep, OperationsArchive archive, Factions factions, PlayerScore playerScore)
+    public PendingMission(
+        MissionPrep missionPrep,
+        OperationsArchive archive,
+        Factions factions,
+        PlayerScore playerScore)
     {
         _missionPrep = missionPrep;
         _archive = archive;
         _factions = factions;
         _playerScore = playerScore;
-        GenerateNew();
+        GenerateNewMission();
     }
 
     // kja this should be in a separate type
@@ -38,6 +42,7 @@ public class PendingMission
 
     public void AdvanceMissionTime()
     {
+        Debug.Assert(!_playerScore.GameOver);
         Console.Out.WriteLine("PendingMission - AdvanceTime");
         if (CurrentlyAvailable)
         {
@@ -46,7 +51,7 @@ public class PendingMission
             {
                 _archive.RecordIgnoredMission();
                 _playerScore.Value -= PlayerScore.IgnoreMissionScoreLoss;
-                GenerateNew();
+                GenerateNewOrClearMission();
             }
             else
                 ExpiresIn--;
@@ -66,8 +71,17 @@ public class PendingMission
         }
     }
 
-    public void GenerateNew()
+    public void GenerateNewOrClearMission()
     {
+        if (!_playerScore.GameOver)
+            GenerateNewMission();
+        else
+            RemoveMission();
+    }
+
+    private void GenerateNewMission()
+    {
+        Debug.Assert(!_playerScore.GameOver);
         var random = new Random();
         AvailableIn = random.Next(1, 4); // random.Next(3, 11);
         ExpiresIn = random.Next(1, 4);
@@ -81,5 +95,13 @@ public class PendingMission
         var undefeatedFactions = _factions.Data.Where(faction => !faction.Defeated).ToArray();
         // For now just randomize
         Faction = undefeatedFactions[random.Next(undefeatedFactions.Length)];
+    }
+
+    private void RemoveMission()
+    {
+        AvailableIn = 0;
+        ExpiresIn = 0;
+        Difficulty = 0;
+        Faction = new Faction(name: "-", score: 0, scoreTick: 0);
     }
 }
