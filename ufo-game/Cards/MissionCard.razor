@@ -11,7 +11,7 @@
     <CardDataRow Text="Enemy faction"
                  Value="@Game.PendingMission.Faction.Name"
                  Enabled="@Game.PendingMission.CurrentlyAvailable" />
-    <CardDataRow Text="Money reward if successful"
+    <CardDataRow Text="Money reward"
                  Value="@("$"+Game.PendingMission.MoneyReward)"
                  Enabled="@Game.PendingMission.CurrentlyAvailable" />
     <CardDataRow Text="Enemy power"
@@ -20,10 +20,10 @@
     <CardDataRow Text="Our power"
                  Value="@Game.PendingMission.OurPower"
                  Enabled="@Game.PendingMission.CurrentlyAvailable" />
-    <CardDataRow Text="Mission success chance"
+    <CardDataRow Text="Mission success %"
                  Value="@(Game.PendingMission.SuccessChance + "%")"
                  Enabled="@Game.PendingMission.CurrentlyAvailable" />
-    <CardDataRow Text="Each soldier survival chance"
+    <CardDataRow Text="Each soldier survival %"
                  Value="@(Game.PendingMission.SoldierSurvivalChance + "%")"
                  Enabled="@Game.PendingMission.CurrentlyAvailable" />
     <CardDataRow Text="Soldiers to send" 
