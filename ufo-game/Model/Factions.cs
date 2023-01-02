@@ -12,8 +12,8 @@ public class Factions
                 ("Zombies", 10000, 1),
                 ("Black Lotus cult", 1000, 10), 
                 ("Red Dawn remnants", 2000, 5), 
-                ("Exalt organization", 1000, 15), 
-                ("Followers of Dagon cult", 2000, 5), 
+                ("EXALT", 1000, 15), 
+                ("Followers of Dagon", 2000, 5), 
                 ("Osiron organization", 500, 20),
                 // "Cult of Apocalypse", "The Syndicate",
                 // "Cyberweb", "UAC", "MiB", "Hybrids", "Deep Ones"
