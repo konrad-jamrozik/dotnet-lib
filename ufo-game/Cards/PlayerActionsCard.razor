@@ -5,26 +5,32 @@
 
 <Card Title="Actions">
     <CardDataRow Text="Current time" Value="Game.Timeline.CurrentTime" />
-    <CardButton Enabled="Game.CanRaiseMoney()"
-                OnClick="Game.RaiseMoney">
-        Raise money: $@Game.MoneyRaisedAmount
-    </CardButton>
-    <CardButton Enabled="Game.CanResearchMoneyRaisingMethods()"
-                OnClick="Game.ResearchMoneyRaisingMethods">
-        Research money raising methods for $@Game.MoneyRaisingMethodsResearchCost
-    </CardButton>
-    <CardButton Enabled="Game.CanResearchSoldierEffectiveness()"
-                OnClick="Game.ResearchSoldierEffectiveness">
-        Research soldier effectiveness for $@Game.SoldierEffectivenessResearchCost
-    </CardButton>
-    <CardButton Enabled="Game.CanResearchSoldierSurvivability()"
-                OnClick="Game.ResearchSoldierSurvivability">
-        Research soldier survivability for $@Game.SoldierSurvivabilityResearchCost
-    </CardButton>
-    <CardButton Enabled="Game.CanDoNothing()"
-                OnClick="Game.DoNothing">
-        Do nothing & advance time
-    </CardButton>
+    <div class="row">
+        <CardButton Enabled="Game.CanRaiseMoney()"
+                    OnClick="Game.RaiseMoney">
+            Raise money: $@Game.MoneyRaisedAmount
+        </CardButton>
+        <CardButton Enabled="Game.CanResearchMoneyRaisingMethods()"
+                    OnClick="Game.ResearchMoneyRaisingMethods">
+            Research money raising methods for $@Game.MoneyRaisingMethodsResearchCost
+        </CardButton>
+    </div>
+    <div class="row">
+        <CardButton Enabled="Game.CanResearchSoldierEffectiveness()"
+                    OnClick="Game.ResearchSoldierEffectiveness">
+            Research soldier effectiveness for $@Game.SoldierEffectivenessResearchCost
+        </CardButton>
+        <CardButton Enabled="Game.CanResearchSoldierSurvivability()"
+                    OnClick="Game.ResearchSoldierSurvivability">
+            Research soldier survivability for $@Game.SoldierSurvivabilityResearchCost
+        </CardButton>
+    </div>
+    <div class="row">
+        <CardButton Enabled="Game.CanDoNothing()"
+                    OnClick="Game.DoNothing">
+            Do nothing & advance time
+        </CardButton>
+    </div>
     <div class="row mt-2 @(WarningMessagePresent ? "visible" : "invisible") ">
         <div class="col text-danger">
             @WarningMessage()

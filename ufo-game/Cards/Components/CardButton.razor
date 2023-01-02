@@ -1,11 +1,8 @@
-﻿<div class="row">
-    <button class="col btn btn-primary mx-3 mt-2"
-            @onclick="@OnClick"
-            disabled="@(!Enabled)">
-        @ChildContent
-    </button>
-</div>
-
+﻿<button class="col btn btn-primary m-1"
+        @onclick="@OnClick"
+        disabled="@(!Enabled)">
+    @ChildContent
+</button>
 @code
 {
     [Parameter, EditorRequired]
