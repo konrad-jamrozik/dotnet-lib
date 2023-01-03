@@ -37,9 +37,8 @@
         ButtonEnabled = "Game.PendingMission.CanLaunchMission()"
         UpEnabled     = "Game.PendingMission.CanLaunchMission(Game.MissionPrep.SoldiersToSend + 1)"
         DownEnabled   = "Game.PendingMission.CanLaunchMission(Game.MissionPrep.SoldiersToSend - 1)"
-        InputEnabled  = "Game.PendingMission.CanLaunchMission(Game.MissionPrep.MaxSoldiersToSend)"
         InputMaxValue = "Game.MissionPrep.MaxSoldiersToSend"
-        InputMinValue = "1"
+        InputMinValue = "Game.MissionPrep.MinSoldiersToSend"
     >
         Launch with @Game.MissionPrep.SoldiersToSend soldiers
     </CardButtonWithRangeInput>

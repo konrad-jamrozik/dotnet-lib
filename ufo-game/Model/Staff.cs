@@ -21,6 +21,8 @@ public class Staff
 
     public int SoldiersToHireCost => SoldiersToHire * SoldierPrice;
 
+    public int MinSoldiersToHire => 1;
+
     public int MaxSoldiersToHire => _money.CurrentMoney / SoldierPrice;
 
     private readonly Money _money;
@@ -40,7 +42,7 @@ public class Staff
         soldiersToHire ??= SoldiersToHire;
         return !_playerScore.GameOver 
                && soldiersToHire <= MaxSoldiersToHire
-               && soldiersToHire >= 1;
+               && soldiersToHire >= MinSoldiersToHire;
     }
 
     public void HireSoldiers()
@@ -55,7 +57,7 @@ public class Staff
 
     private void NarrowSoldiersToHire()
     {
-        SoldiersToHire = Math.Max(1, Math.Min(SoldiersToHire, MaxSoldiersToHire));
+        SoldiersToHire = Math.Max(MinSoldiersToHire, Math.Min(SoldiersToHire, MaxSoldiersToHire));
     }
 
     public void SubtractSoldiers(int amount)

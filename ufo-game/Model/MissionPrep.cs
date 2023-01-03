@@ -10,13 +10,16 @@ public class MissionPrep
 
     public int MaxSoldiersToSend => _staff.CurrentSoldiers;
 
+    public int MinSoldiersToSend => 1;
+
     public void NarrowSoldiersToSend()
-        => SoldiersToSend = Math.Max(1, Math.Min(SoldiersToSend, MaxSoldiersToSend));
+        => SoldiersToSend = Math.Max(MinSoldiersToSend, Math.Min(SoldiersToSend, MaxSoldiersToSend));
     
     private readonly Staff _staff;
 
     public MissionPrep(Staff staff)
     {
         _staff = staff;
+        SoldiersToSend = MinSoldiersToSend;
     }
 }

@@ -99,7 +99,7 @@ public class PendingMission
         return !_playerScore.GameOver
                && CurrentlyAvailable
                && soldiersToSend <= _missionPrep.MaxSoldiersToSend
-               && soldiersToSend >= 1;
+               && soldiersToSend >= _missionPrep.MinSoldiersToSend;
     }
 
     private void GenerateNewMission()

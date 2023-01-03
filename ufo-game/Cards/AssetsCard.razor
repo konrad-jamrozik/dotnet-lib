@@ -14,9 +14,8 @@
         ButtonEnabled = "Game.Staff.CanHireSoldiers()"
         UpEnabled     = "Game.Staff.CanHireSoldiers(Game.Staff.SoldiersToHire + 1)"
         DownEnabled   = "Game.Staff.CanHireSoldiers(Game.Staff.SoldiersToHire - 1)"
-        InputEnabled  = "Game.Staff.MaxSoldiersToHire >= 1"
         InputMaxValue = "Game.Staff.MaxSoldiersToHire"
-        InputMinValue = "1"
+        InputMinValue = "Game.Staff.MinSoldiersToHire"
     >
         Hire @Game.Staff.SoldiersToHire soldiers for $@Game.Staff.SoldiersToHireCost
     </CardButtonWithRangeInput>

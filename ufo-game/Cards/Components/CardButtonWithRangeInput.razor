@@ -15,7 +15,7 @@
            MinValue="InputMinValue"
            Value="Input"
            MaxValue="InputMaxValue"
-           Enabled="InputEnabled" />
+           Enabled="UpEnabled || DownEnabled" />
 
 @code
 {
@@ -25,7 +25,7 @@
     public EventCallback<MouseEventArgs> ButtonOnClick { get; set; }
 
     [Parameter, EditorRequired]
-    public bool ButtonEnabled { get; set; } = true;
+    public bool ButtonEnabled { get; set; }
 
     [Parameter]
     public RenderFragment? ChildContent { get; set; }
@@ -41,20 +41,20 @@
     public EventCallback<MouseEventArgs> DownOnClick { get; set; }
 
     [Parameter, EditorRequired]
-    public bool UpEnabled { get; set; } = true;
+    public bool UpEnabled { get; set; }
 
     [Parameter, EditorRequired]
-    public bool DownEnabled { get; set; } = true;
+    public bool DownEnabled { get; set; }
 
     #endregion
 
     #region Range Input
     
     [Parameter, EditorRequired]
-    public int InputMaxValue { get; set; } = 0;
+    public int InputMaxValue { get; set; }
     
-    [Parameter]
-    public int InputMinValue { get; set; } = 0;
+    [Parameter, EditorRequired]
+    public int InputMinValue { get; set; }
 
     #region Input binding handling
 
@@ -66,9 +66,6 @@
     
     [Parameter]
     public EventCallback<int> InputChanged { get; set; }
-    
-    [Parameter]
-    public bool InputEnabled { get; set; } = true;
     
     private async Task OnInputChanged(ChangeEventArgs e)
     {
