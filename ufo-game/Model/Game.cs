@@ -115,8 +115,10 @@ public class Game
         StateRefresh.Trigger();
     }
 
+    // kja this should be in PendingMission
     public void LaunchMission()
     {
+        Debug.Assert(PendingMission.CanLaunchMission());
         // Roll between 1 and 100.
         // The lower the better.
         int roll = _random.Next(1, 100+1);
@@ -174,14 +176,5 @@ public class Game
         Archive.WriteLastMissionReport($"The last mission was {missionSuccessReport} {soldiersLostReport}");
         PendingMission.GenerateNewOrClearMission();
         StateRefresh.Trigger();
-    }
-
-    public bool CanLaunchMission()
-    {
-        Console.Out.WriteLine("Can launch mission?");
-        return !PlayerScore.GameOver
-               && PendingMission.CurrentlyAvailable
-               && MissionPrep.SoldiersToSend >= 1
-               && MissionPrep.SoldiersToSend <= Staff.CurrentSoldiers;
     }
 }

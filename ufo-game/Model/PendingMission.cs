@@ -93,6 +93,15 @@ public class PendingMission
             RemoveMission();
     }
 
+    public bool CanLaunchMission(int? soldiersToSend = null)
+    {
+        soldiersToSend ??= _missionPrep.SoldiersToSend;
+        return !_playerScore.GameOver
+               && CurrentlyAvailable
+               && soldiersToSend <= _staff.CurrentSoldiers
+               && soldiersToSend >= 1;
+    }
+
     private void GenerateNewMission()
     {
         Debug.Assert(!_playerScore.GameOver);
