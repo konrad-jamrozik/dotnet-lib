@@ -13,8 +13,7 @@ class LaunchMissionPlayerAction : IPlayerActionOnRangeInput
         _pendingMission = pendingMission;
     }
 
-    public void Act()
-        => _pendingMission.LaunchMission();
+    public void Act() => _pendingMission.LaunchMission();
 
     public string ActLabel()
         => $"Launch with {_missionPrep.SoldiersToSend} soldiers";
@@ -25,21 +24,15 @@ class LaunchMissionPlayerAction : IPlayerActionOnRangeInput
         set => _missionPrep.SoldiersToSend = value;
     }
 
-    public void IncrementInput()
-        => _missionPrep.IncrementSoldiersToSend();
+    public void IncrementInput() => _missionPrep.SoldiersToSend += 1;
 
-    public void DecrementInput()
-        => _missionPrep.DecrementSoldiersToSend();
+    public void DecrementInput() => _missionPrep.SoldiersToSend -= 1;
 
-    public bool CanAct()
-        => _pendingMission.CanLaunchMission();
+    public bool CanAct() => _pendingMission.CanLaunchMission();
 
-    public bool CanAct(int value)
-        => _pendingMission.CanLaunchMission(value);
+    public bool CanAct(int value) => _pendingMission.CanLaunchMission(value);
 
-    public int InputMax()
-        => _missionPrep.MaxSoldiersToSend;
+    public int InputMax() => _missionPrep.MaxSoldiersToSend;
 
-    public int InputMin()
-        => _missionPrep.MinSoldiersToSend;
+    public int InputMin() => _missionPrep.MinSoldiersToSend;
 }

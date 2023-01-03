@@ -15,10 +15,6 @@ public class Staff
 
     public int SoldiersToHire = 1;
 
-    public void IncrementSoldiersToHire() => SoldiersToHire += 1;
-
-    public void DecrementSoldiersToHire() => SoldiersToHire -= 1;
-
     public int SoldiersToHireCost => SoldiersToHire * SoldierPrice;
 
     public int MinSoldiersToHire => 1;

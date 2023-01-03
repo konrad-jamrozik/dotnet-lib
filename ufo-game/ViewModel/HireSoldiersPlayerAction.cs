@@ -6,11 +6,9 @@ class HireSoldiersPlayerAction : IPlayerActionOnRangeInput
 {
     private readonly Staff _staff;
 
-    public HireSoldiersPlayerAction(Staff staff)
-        => _staff = staff;
+    public HireSoldiersPlayerAction(Staff staff) => _staff = staff;
 
-    public void Act()
-        => _staff.HireSoldiers();
+    public void Act() => _staff.HireSoldiers();
 
     public string ActLabel()
         => $"Hire {_staff.SoldiersToHire} soldiers for ${_staff.SoldiersToHireCost}";
@@ -21,21 +19,15 @@ class HireSoldiersPlayerAction : IPlayerActionOnRangeInput
         set => _staff.SoldiersToHire = value;
     }
 
-    public void IncrementInput()
-        => _staff.IncrementSoldiersToHire();
+    public void IncrementInput() => _staff.SoldiersToHire += 1;
 
-    public void DecrementInput()
-        => _staff.DecrementSoldiersToHire();
+    public void DecrementInput() => _staff.SoldiersToHire -= 1;
 
-    public bool CanAct()
-        => _staff.CanHireSoldiers();
+    public bool CanAct() => _staff.CanHireSoldiers();
 
-    public bool CanAct(int value)
-        => _staff.CanHireSoldiers(value);
+    public bool CanAct(int value) => _staff.CanHireSoldiers(value);
 
-    public int InputMax()
-        => _staff.MaxSoldiersToHire;
+    public int InputMax() => _staff.MaxSoldiersToHire;
 
-    public int InputMin()
-        => _staff.MinSoldiersToHire;
+    public int InputMin() => _staff.MinSoldiersToHire;
 }
