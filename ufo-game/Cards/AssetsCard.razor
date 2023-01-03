@@ -6,17 +6,16 @@
     <CardDataRow Text="Soldiers" Value="Game.Staff.CurrentSoldiers"/>
     <CardDataRow Text="Soldier effectiveness" Value="Game.Staff.SoldierEffectiveness" />
     <CardDataRow Text="Soldier survivability" Value="Game.Staff.SoldierSurvivability" />
-    <div class="row align-items-center">
-        <CardButton OnClick="Game.HireSoldier"
-                    Enabled="Game.Staff.CanHireSoldiers()"
-                    CssClass="col-8 ms-3">
-            Hire @Game.Staff.SoldiersToHire soldiers for $@Game.Staff.SoldiersToHireCost
-        </CardButton>
-        <CardUpDownArrows OnClickUp="Game.Staff.IncrementSoldiersToHire"
-                          OnClickDown="Game.Staff.DecrementSoldiersToHire"
-                          EnabledUp="Game.Staff.CanHireSoldiers(Game.Staff.SoldiersToHire + 1)"
-                          EnabledDown="Game.Staff.CanHireSoldiers(Game.Staff.SoldiersToHire - 1)" />
-    </div>
+    <CardButtonWithRangeInput 
+        OnClickButton    = "Game.HireSoldier"
+        EnabledButton    = "Game.Staff.CanHireSoldiers()"
+        OnClickArrowUp   = "Game.Staff.IncrementSoldiersToHire"
+        OnClickArrowDown = "Game.Staff.DecrementSoldiersToHire"
+        EnabledArrowUp   = "Game.Staff.CanHireSoldiers(Game.Staff.SoldiersToHire + 1)"
+        EnabledArrowDown = "Game.Staff.CanHireSoldiers(Game.Staff.SoldiersToHire - 1)"
+    >
+        Hire @Game.Staff.SoldiersToHire soldiers for $@Game.Staff.SoldiersToHireCost
+    </CardButtonWithRangeInput>
     <CardInput @bind-Input="@Game.Staff.SoldiersToHire"
                MinValue="1"
                MaxValue="@Game.Staff.MaxSoldiersToHire"

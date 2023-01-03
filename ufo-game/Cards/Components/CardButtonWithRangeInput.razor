@@ -1,0 +1,79 @@
+﻿@inject Model.Game Game;
+
+<div class="row align-items-center">
+    <CardButton OnClick="OnClickButton"
+                Enabled="EnabledButton"
+                CssClass="col-8 ms-3">
+        Hire @Game.Staff.SoldiersToHire soldiers for $@Game.Staff.SoldiersToHireCost
+    </CardButton>
+    <CardUpDownArrows OnClickUp="OnClickArrowUp"
+                      OnClickDown="OnClickArrowDown"
+                      EnabledUp="EnabledArrowUp"
+                      EnabledDown="EnabledArrowDown" />
+</div>
+@* <CardInput @bind-Input="@Game.Staff.SoldiersToHire" *@
+@*            MinValue="1" *@
+@*            MaxValue="@Game.Staff.MaxSoldiersToHire" *@
+@*            Value="@Game.Staff.SoldiersToHire" *@
+@*            Enabled="@(Game.Staff.MaxSoldiersToHire >= 1)" /> *@
+           
+@code
+{
+    #region Action Button
+
+    [Parameter, EditorRequired]
+    public EventCallback<MouseEventArgs> OnClickButton { get; set; }
+
+    [Parameter, EditorRequired]
+    public bool EnabledButton { get; set; } = true;
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    #endregion
+
+    #region Up & Down Arrows
+
+    [Parameter, EditorRequired]
+    public EventCallback<MouseEventArgs> OnClickArrowUp { get; set; }
+
+    [Parameter, EditorRequired]
+    public EventCallback<MouseEventArgs> OnClickArrowDown { get; set; }
+
+    [Parameter, EditorRequired]
+    public bool EnabledArrowUp { get; set; } = true;
+
+    [Parameter, EditorRequired]
+    public bool EnabledArrowDown { get; set; } = true;
+
+    #endregion
+
+    // #region Range Input
+    //
+    // [Parameter, EditorRequired]
+    // public int MaxValue { get; set; } = 0;
+    //
+    // [Parameter]
+    // public int Value { get; set; } = 0;
+    //
+    // [Parameter]
+    // public int MinValue { get; set; } = 0;
+    //
+    // // This follows the "Binding with component parameters" pattern
+    // // https://learn.microsoft.com/en-us/aspnet/core/blazor/components/data-binding?view=aspnetcore-7.0#binding-with-component-parameters
+    // [Parameter]
+    // public int Input { get; set; }
+    // [Parameter]
+    // public EventCallback<int> InputChanged { get; set; }
+    //
+    // [Parameter]
+    // public bool Enabled { get; set; } = true;
+    //
+    // private async Task OnInputChanged(ChangeEventArgs e)
+    // {
+    //     int value = int.Parse(e.Value?.ToString() ?? string.Empty);
+    //     await InputChanged.InvokeAsync(value);
+    // }
+    //
+    // #endregion
+}
