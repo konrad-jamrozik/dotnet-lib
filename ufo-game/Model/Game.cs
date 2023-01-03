@@ -175,6 +175,7 @@ public class Game
         string soldiersLostReport = soldiersLost > 0 ? $"Number of soldiers lost: {soldiersLost}." : "We didn't lose any soldiers.";
         Archive.WriteLastMissionReport($"The last mission was {missionSuccessReport} {soldiersLostReport}");
         PendingMission.GenerateNewOrClearMission();
+        MissionPrep.NarrowSoldiersToSend();
         StateRefresh.Trigger();
     }
 }

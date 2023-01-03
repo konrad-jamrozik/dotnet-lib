@@ -14,7 +14,7 @@
         <CardUpDownArrows OnClickUp="Game.Staff.IncrementSoldiersToHire"
                           OnClickDown="Game.Staff.DecrementSoldiersToHire"
                           EnabledUp="Game.Staff.CanHireSoldiers(Game.Staff.SoldiersToHire + 1)"
-                          EnabledDown="Game.Staff.SoldiersToHire >= 2" />
+                          EnabledDown="Game.Staff.CanHireSoldiers(Game.Staff.SoldiersToHire - 1)" />
     </div>
     <CardInput @bind-Input="@Game.Staff.SoldiersToHire"
                MinValue="1"

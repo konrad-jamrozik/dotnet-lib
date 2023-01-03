@@ -37,13 +37,13 @@
         <CardUpDownArrows OnClickUp="Game.MissionPrep.IncrementSoldiersToSend"
                           OnClickDown="Game.MissionPrep.DecrementSoldiersToSend"
                           EnabledUp="Game.PendingMission.CanLaunchMission(Game.MissionPrep.SoldiersToSend + 1)"
-                          EnabledDown="Game.MissionPrep.SoldiersToSend >= 2" />
+                          EnabledDown="Game.PendingMission.CanLaunchMission(Game.MissionPrep.SoldiersToSend - 1)" />
     </div>
     <CardInput @bind-Input="@Game.MissionPrep.SoldiersToSend"
                MinValue="1"
-               MaxValue="@Game.Staff.CurrentSoldiers"
+               MaxValue="@Game.MissionPrep.MaxSoldiersToSend"
                Value="@Game.MissionPrep.SoldiersToSend"
-               Enabled="@(Game.MissionPrep.SoldiersToSend >= 1)" />
+               Enabled="Game.PendingMission.CanLaunchMission(Game.MissionPrep.MaxSoldiersToSend)" />
     <div class="row">
         <div class="col">Last mission debriefing:</div>
     </div>

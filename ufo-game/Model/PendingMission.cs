@@ -98,7 +98,7 @@ public class PendingMission
         soldiersToSend ??= _missionPrep.SoldiersToSend;
         return !_playerScore.GameOver
                && CurrentlyAvailable
-               && soldiersToSend <= _staff.CurrentSoldiers
+               && soldiersToSend <= _missionPrep.MaxSoldiersToSend
                && soldiersToSend >= 1;
     }
 

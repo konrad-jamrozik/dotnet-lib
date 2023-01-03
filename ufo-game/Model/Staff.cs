@@ -49,8 +49,13 @@ public class Staff
         _money.SubtractMoney(SoldiersToHireCost);
         _archive.RecordHiredSoldiers(SoldiersToHire);
         CurrentSoldiers += SoldiersToHire;
-        SoldiersToHire = Math.Max(1, Math.Min(SoldiersToHire, MaxSoldiersToHire));
+        NarrowSoldiersToHire();
         Console.Out.WriteLine($"Hired {SoldiersToHire} soldiers. Soldiers now at {CurrentSoldiers}.");
+    }
+
+    private void NarrowSoldiersToHire()
+    {
+        SoldiersToHire = Math.Max(1, Math.Min(SoldiersToHire, MaxSoldiersToHire));
     }
 
     public void SubtractSoldiers(int amount)
