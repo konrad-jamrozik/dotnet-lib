@@ -28,7 +28,7 @@ public class Staff
     private readonly PlayerScore _playerScore;
 
 
-    public Staff(Money money, PlayerScore playerScore, OperationsArchive archive, StateRefresh stateRefresh)
+    public Staff(Money money, PlayerScore playerScore, OperationsArchive archive)
     {
         _money = money;
         _playerScore = playerScore;

@@ -167,7 +167,7 @@ public class Game
 
         Archive.ArchiveMission(missionSuccessful: success);
         string missionRollReport =
-            $" (Rolled {roll} against (inclusive) limit of {PendingMission.SuccessChance}.)";
+            $" (Rolled {roll} against limit of {PendingMission.SuccessChance}.)";
         string missionSuccessReport = success 
             ? $"successful! {missionRollReport} We took {scoreDiff} score from {PendingMission.Faction.Name} and earned ${PendingMission.MoneyReward}." 
             : $"a failure. {missionRollReport} We lost {scoreDiff} score to {PendingMission.Faction.Name}.";
