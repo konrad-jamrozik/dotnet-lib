@@ -31,8 +31,9 @@
                  Enabled="@Game.PendingMission.CurrentlyAvailable" />
     <div class="row align-items-center">
         <CardButton OnClick="Game.LaunchMission"
-                    Enabled="Game.PendingMission.CanLaunchMission()">
-            Launch mission with @Game.MissionPrep.SoldiersToSend soldiers
+                    Enabled="Game.PendingMission.CanLaunchMission()"
+                    CssClass="col-8 ms-3">
+            Launch with @Game.MissionPrep.SoldiersToSend soldiers
         </CardButton>
         <CardUpDownArrows OnClickUp="Game.MissionPrep.IncrementSoldiersToSend"
                           OnClickDown="Game.MissionPrep.DecrementSoldiersToSend"

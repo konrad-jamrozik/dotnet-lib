@@ -8,7 +8,8 @@
     <CardDataRow Text="Soldier survivability" Value="Game.Staff.SoldierSurvivability" />
     <div class="row align-items-center">
         <CardButton OnClick="Game.HireSoldier"
-                    Enabled="Game.Staff.CanHireSoldiers()">
+                    Enabled="Game.Staff.CanHireSoldiers()"
+                    CssClass="col-8 ms-3">
             Hire @Game.Staff.SoldiersToHire soldiers for $@Game.Staff.SoldiersToHireCost
         </CardButton>
         <CardUpDownArrows OnClickUp="Game.Staff.IncrementSoldiersToHire"
