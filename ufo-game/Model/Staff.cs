@@ -38,18 +38,17 @@ public class Staff
         _stateRefresh = stateRefresh;
     }
 
-    public bool CanHireSoldiers(int? soldiersToHire = null)
+    public bool CanHireSoldiers(int offset = 0)
     {
-        soldiersToHire ??= SoldiersToHire;
         if (_playerScore.GameOver)
             return false;
-        if (!WithinRange())
-            // We need to narrow here, otherwise we are risking forgetting to narrow
-            // the value, thus disabling the input control until this "Can" method returns true again.
-            NarrowSoldiersToHire();
-        return WithinRange();
 
-        bool WithinRange()
+        if (!WithinRange(SoldiersToHire))
+            NarrowSoldiersToHire();
+
+        return WithinRange(SoldiersToHire + offset);
+
+        bool WithinRange(int soldiersToHire)
         {
             return MinSoldiersToHire <= soldiersToHire && soldiersToHire <= MaxSoldiersToHire;
         }
@@ -67,8 +66,9 @@ public class Staff
 
     private void NarrowSoldiersToHire()
     {
-        Console.Out.WriteLine("Narrowing soldiers to hire!");
+        Console.Out.WriteLine("Narrowing soldiers to hire! " + SoldiersToHire);
         SoldiersToHire = Math.Max(MinSoldiersToHire, Math.Min(SoldiersToHire, MaxSoldiersToHire));
+        Console.Out.WriteLine("DONE Narrowing soldiers to hire! " + SoldiersToHire);
     }
 
     public void SubtractSoldiers(int amount)

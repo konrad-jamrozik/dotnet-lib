@@ -99,13 +99,21 @@ public class PendingMission
             RemoveMission();
     }
 
-    public bool CanLaunchMission(int? soldiersToSend = null)
+    public bool CanLaunchMission(int offset = 0)
     {
-        soldiersToSend ??= _missionPrep.SoldiersToSend;
-        return !_playerScore.GameOver
-               && CurrentlyAvailable
-               && soldiersToSend <= _missionPrep.MaxSoldiersToSend
-               && soldiersToSend >= _missionPrep.MinSoldiersToSend;
+        if (_playerScore.GameOver || !CurrentlyAvailable)
+            return false;
+
+        if (!WithinRange(_missionPrep.SoldiersToSend))
+            _missionPrep.NarrowSoldiersToSend();
+
+        return WithinRange(_missionPrep.SoldiersToSend + offset);
+
+        bool WithinRange(int soldiersToSend)
+        {
+            return _missionPrep.MinSoldiersToSend <= soldiersToSend 
+                   && soldiersToSend <= _missionPrep.MaxSoldiersToSend;
+        }
     }
 
     public void LaunchMission()
