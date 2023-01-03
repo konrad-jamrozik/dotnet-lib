@@ -29,22 +29,20 @@
     <CardDataRow Text="Soldiers to send" 
                  Value="@Game.MissionPrep.SoldiersToSend"
                  Enabled="@Game.PendingMission.CurrentlyAvailable" />
-    <div class="row align-items-center">
-        <CardButton OnClick="Game.LaunchMission"
-                    Enabled="Game.PendingMission.CanLaunchMission()"
-                    CssClass="col-8 ms-3">
-            Launch with @Game.MissionPrep.SoldiersToSend soldiers
-        </CardButton>
-        <CardUpDownArrows OnClickUp="Game.MissionPrep.IncrementSoldiersToSend"
-                          OnClickDown="Game.MissionPrep.DecrementSoldiersToSend"
-                          EnabledUp="Game.PendingMission.CanLaunchMission(Game.MissionPrep.SoldiersToSend + 1)"
-                          EnabledDown="Game.PendingMission.CanLaunchMission(Game.MissionPrep.SoldiersToSend - 1)" />
-    </div>
-    <CardInput @bind-Input="@Game.MissionPrep.SoldiersToSend"
-               MinValue="1"
-               MaxValue="@Game.MissionPrep.MaxSoldiersToSend"
-               Value="@Game.MissionPrep.SoldiersToSend"
-               Enabled="Game.PendingMission.CanLaunchMission(Game.MissionPrep.MaxSoldiersToSend)" />
+    <CardButtonWithRangeInput 
+        ButtonOnClick = "Game.LaunchMission"
+        UpOnClick     = "Game.MissionPrep.IncrementSoldiersToSend"
+        DownOnClick   = "Game.MissionPrep.DecrementSoldiersToSend"
+        @bind-Input=    "Game.MissionPrep.SoldiersToSend"
+        ButtonEnabled = "Game.PendingMission.CanLaunchMission()"
+        UpEnabled     = "Game.PendingMission.CanLaunchMission(Game.MissionPrep.SoldiersToSend + 1)"
+        DownEnabled   = "Game.PendingMission.CanLaunchMission(Game.MissionPrep.SoldiersToSend - 1)"
+        InputEnabled  = "Game.PendingMission.CanLaunchMission(Game.MissionPrep.MaxSoldiersToSend)"
+        InputMaxValue = "Game.MissionPrep.MaxSoldiersToSend"
+        InputMinValue = "1"
+    >
+        Launch with @Game.MissionPrep.SoldiersToSend soldiers
+    </CardButtonWithRangeInput>
     <div class="row">
         <div class="col">Last mission debriefing:</div>
     </div>

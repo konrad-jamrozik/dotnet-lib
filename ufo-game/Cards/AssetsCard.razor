@@ -7,18 +7,17 @@
     <CardDataRow Text="Soldier effectiveness" Value="Game.Staff.SoldierEffectiveness" />
     <CardDataRow Text="Soldier survivability" Value="Game.Staff.SoldierSurvivability" />
     <CardButtonWithRangeInput 
-        OnClickButton    = "Game.HireSoldier"
-        EnabledButton    = "Game.Staff.CanHireSoldiers()"
-        OnClickArrowUp   = "Game.Staff.IncrementSoldiersToHire"
-        OnClickArrowDown = "Game.Staff.DecrementSoldiersToHire"
-        EnabledArrowUp   = "Game.Staff.CanHireSoldiers(Game.Staff.SoldiersToHire + 1)"
-        EnabledArrowDown = "Game.Staff.CanHireSoldiers(Game.Staff.SoldiersToHire - 1)"
-        @bind-Input="@Game.Staff.SoldiersToHire"
-        InputMinValue="1"
-        InputMaxValue="@Game.Staff.MaxSoldiersToHire"
-        InputValue="@Game.Staff.SoldiersToHire"
-        InputEnabled="@(Game.Staff.MaxSoldiersToHire >= 1)"
-        >
+        ButtonOnClick = "Game.HireSoldier"
+        UpOnClick     = "Game.Staff.IncrementSoldiersToHire"
+        DownOnClick   = "Game.Staff.DecrementSoldiersToHire"
+        @bind-Input=    "Game.Staff.SoldiersToHire"
+        ButtonEnabled = "Game.Staff.CanHireSoldiers()"
+        UpEnabled     = "Game.Staff.CanHireSoldiers(Game.Staff.SoldiersToHire + 1)"
+        DownEnabled   = "Game.Staff.CanHireSoldiers(Game.Staff.SoldiersToHire - 1)"
+        InputEnabled  = "Game.Staff.MaxSoldiersToHire >= 1"
+        InputMaxValue = "Game.Staff.MaxSoldiersToHire"
+        InputMinValue = "1"
+    >
         Hire @Game.Staff.SoldiersToHire soldiers for $@Game.Staff.SoldiersToHireCost
     </CardButtonWithRangeInput>
 </Card>

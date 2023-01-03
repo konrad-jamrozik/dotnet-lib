@@ -1,19 +1,19 @@
 ﻿@inject Model.Game Game;
 
 <div class="row align-items-center">
-    <CardButton OnClick="OnClickButton"
-                Enabled="EnabledButton"
+    <CardButton OnClick="ButtonOnClick"
+                Enabled="ButtonEnabled"
                 CssClass="col-8 ms-3">
-        Hire @Game.Staff.SoldiersToHire soldiers for $@Game.Staff.SoldiersToHireCost
+        @ChildContent
     </CardButton>
-    <CardUpDownArrows OnClickUp="OnClickArrowUp"
-                      OnClickDown="OnClickArrowDown"
-                      EnabledUp="EnabledArrowUp"
-                      EnabledDown="EnabledArrowDown" />
+    <CardUpDownArrows OnClickUp="UpOnClick"
+                      OnClickDown="DownOnClick"
+                      EnabledUp="UpEnabled"
+                      EnabledDown="DownEnabled" />
 </div>
 <CardInput @bind-Input="InputPropagation"
            MinValue="InputMinValue"
-           Value="InputValue"
+           Value="Input"
            MaxValue="InputMaxValue"
            Enabled="InputEnabled" />
 
@@ -22,10 +22,10 @@
     #region Action Button
 
     [Parameter, EditorRequired]
-    public EventCallback<MouseEventArgs> OnClickButton { get; set; }
+    public EventCallback<MouseEventArgs> ButtonOnClick { get; set; }
 
     [Parameter, EditorRequired]
-    public bool EnabledButton { get; set; } = true;
+    public bool ButtonEnabled { get; set; } = true;
 
     [Parameter]
     public RenderFragment? ChildContent { get; set; }
@@ -35,16 +35,16 @@
     #region Up & Down Arrows
 
     [Parameter, EditorRequired]
-    public EventCallback<MouseEventArgs> OnClickArrowUp { get; set; }
+    public EventCallback<MouseEventArgs> UpOnClick { get; set; }
 
     [Parameter, EditorRequired]
-    public EventCallback<MouseEventArgs> OnClickArrowDown { get; set; }
+    public EventCallback<MouseEventArgs> DownOnClick { get; set; }
 
     [Parameter, EditorRequired]
-    public bool EnabledArrowUp { get; set; } = true;
+    public bool UpEnabled { get; set; } = true;
 
     [Parameter, EditorRequired]
-    public bool EnabledArrowDown { get; set; } = true;
+    public bool DownEnabled { get; set; } = true;
 
     #endregion
 
@@ -52,9 +52,6 @@
     
     [Parameter, EditorRequired]
     public int InputMaxValue { get; set; } = 0;
-    
-    [Parameter]
-    public int InputValue { get; set; } = 0;
     
     [Parameter]
     public int InputMinValue { get; set; } = 0;
