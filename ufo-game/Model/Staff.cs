@@ -52,6 +52,15 @@ public class Staff
         _money.SubtractMoney(SoldiersToHireCost);
         _archive.RecordHiredSoldiers(SoldiersToHire);
         CurrentSoldiers += SoldiersToHire;
+        // kja bug: discovered bug with blocked input controls if money was spent in another way
+        // Consider following scenario / repro:
+        // 1. slider set to hire soldiers for 300$,
+        // 2. player does research, money goes below 300$,
+        // 3. but Narrow method is not executed on research, so the input controls get disabled
+        // and player cannot change them until they get at least 300$ again.
+        // Proposed solutions:
+        // - call money-dependent narrow every time money is reduced
+        // - OR if "CarHire" or equivalent returns false, try to narrow. This can be done in the getter.
         NarrowSoldiersToHire();
         Console.Out.WriteLine($"Hired {SoldiersToHire} soldiers. Soldiers now at {CurrentSoldiers}.");
         _stateRefresh.Trigger();
