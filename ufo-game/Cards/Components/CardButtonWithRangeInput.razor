@@ -1,85 +1,27 @@
-﻿@inject Model.Game Game;
-
+﻿@using UfoGame.ViewModel
 <div class="row align-items-center">
-    <CardButton OnClick="ButtonOnClick"
-                Enabled="ButtonEnabled"
+    <CardButton OnClick="PlayerAction.Act"
+                Enabled="PlayerAction.CanAct()"
                 CssClass="col-8 ms-3">
         @ChildContent
     </CardButton>
-    <CardUpDownArrows OnClickUp="UpOnClick"
-                      OnClickDown="DownOnClick"
-                      EnabledUp="UpEnabled"
-                      EnabledDown="DownEnabled" />
+    <CardUpDownArrows OnClickUp="PlayerAction.IncrementInput"
+                      OnClickDown="PlayerAction.DecrementInput"
+                      EnabledUp="PlayerAction.CanActOnIncrementedInput"
+                      EnabledDown="PlayerAction.CanActOnDecrementedInput" />
 </div>
-<CardInput @bind-Input="InputPropagation"
-           MinValue="InputMinValue"
-           Value="Input"
-           MaxValue="InputMaxValue"
-           Enabled="UpEnabled || DownEnabled" />
+<CardInput @bind-Input="PlayerAction.Input"
+           Value="PlayerAction.Input"
+           MaxValue="PlayerAction.InputMax()"
+           MinValue="PlayerAction.InputMin()"
+           Enabled="PlayerAction.CanActOnIncrementedInput || PlayerAction.CanActOnDecrementedInput" />
 
 @code
 {
-    #region Action Button
-
-    [Parameter, EditorRequired]
-    public EventCallback<MouseEventArgs> ButtonOnClick { get; set; }
-
-    [Parameter, EditorRequired]
-    public bool ButtonEnabled { get; set; }
+    [Parameter]
+    public IPlayerActionOnRangeInput PlayerAction { get; set; } 
+        = new NoOpPlayerActionOnRangeInput();
 
     [Parameter]
     public RenderFragment? ChildContent { get; set; }
-
-    #endregion
-
-    #region Up & Down Arrows
-
-    [Parameter, EditorRequired]
-    public EventCallback<MouseEventArgs> UpOnClick { get; set; }
-
-    [Parameter, EditorRequired]
-    public EventCallback<MouseEventArgs> DownOnClick { get; set; }
-
-    [Parameter, EditorRequired]
-    public bool UpEnabled { get; set; }
-
-    [Parameter, EditorRequired]
-    public bool DownEnabled { get; set; }
-
-    #endregion
-
-    #region Range Input
-    
-    [Parameter, EditorRequired]
-    public int InputMaxValue { get; set; }
-    
-    [Parameter, EditorRequired]
-    public int InputMinValue { get; set; }
-
-    #region Input binding handling
-
-    // Logic in this region follows the "Bind across more than two components" pattern:
-    // https://learn.microsoft.com/en-us/aspnet/core/blazor/components/data-binding?view=aspnetcore-7.0#bind-across-more-than-two-components
-
-    [Parameter]
-    public int Input { get; set; }
-    
-    [Parameter]
-    public EventCallback<int> InputChanged { get; set; }
-    
-    private async Task OnInputChanged(ChangeEventArgs e)
-    {
-        int value = int.Parse(e.Value?.ToString() ?? string.Empty);
-        await InputChanged.InvokeAsync(value);
-    }
-
-    private int InputPropagation
-    {
-        get => Input;
-        set => InputChanged.InvokeAsync(value);
-    }
-
-    #endregion
-    
-    #endregion
 }

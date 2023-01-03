@@ -28,13 +28,18 @@ public class Staff
     private readonly Money _money;
     private readonly OperationsArchive _archive;
     private readonly PlayerScore _playerScore;
+    private readonly StateRefresh _stateRefresh;
 
-
-    public Staff(Money money, PlayerScore playerScore, OperationsArchive archive)
+    public Staff(
+        Money money,
+        PlayerScore playerScore,
+        OperationsArchive archive,
+        StateRefresh stateRefresh)
     {
         _money = money;
         _playerScore = playerScore;
         _archive = archive;
+        _stateRefresh = stateRefresh;
     }
 
     public bool CanHireSoldiers(int? soldiersToHire = null)
@@ -53,6 +58,7 @@ public class Staff
         CurrentSoldiers += SoldiersToHire;
         NarrowSoldiersToHire();
         Console.Out.WriteLine($"Hired {SoldiersToHire} soldiers. Soldiers now at {CurrentSoldiers}.");
+        _stateRefresh.Trigger();
     }
 
     private void NarrowSoldiersToHire()

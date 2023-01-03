@@ -1,22 +1,13 @@
 ﻿@using UfoGame.Cards.Components
 @inject Model.Game Game;
+@inject ViewModel.HireSoldiersPlayerAction HireSoldiers;
 
 <Card Title="Assets">
     <CardDataRow Text="Money" Value="Game.Money.CurrentMoney"/>
     <CardDataRow Text="Soldiers" Value="Game.Staff.CurrentSoldiers"/>
     <CardDataRow Text="Soldier effectiveness" Value="Game.Staff.SoldierEffectiveness" />
     <CardDataRow Text="Soldier survivability" Value="Game.Staff.SoldierSurvivability" />
-    <CardButtonWithRangeInput 
-        ButtonOnClick = "Game.HireSoldier"
-        UpOnClick     = "Game.Staff.IncrementSoldiersToHire"
-        DownOnClick   = "Game.Staff.DecrementSoldiersToHire"
-        @bind-Input=    "Game.Staff.SoldiersToHire"
-        ButtonEnabled = "Game.Staff.CanHireSoldiers()"
-        UpEnabled     = "Game.Staff.CanHireSoldiers(Game.Staff.SoldiersToHire + 1)"
-        DownEnabled   = "Game.Staff.CanHireSoldiers(Game.Staff.SoldiersToHire - 1)"
-        InputMaxValue = "Game.Staff.MaxSoldiersToHire"
-        InputMinValue = "Game.Staff.MinSoldiersToHire"
-    >
+    <CardButtonWithRangeInput PlayerAction = "HireSoldiers">
         Hire @Game.Staff.SoldiersToHire soldiers for $@Game.Staff.SoldiersToHireCost
     </CardButtonWithRangeInput>
 </Card>

@@ -1,5 +1,6 @@
 ﻿@using UfoGame.Cards.Components
 @inject Model.Game Game;
+@inject ViewModel.LaunchMissionPlayerAction LaunchMission;
 
 <Card Title="Mission">
     <CardDataRow Text="Available in" 
@@ -29,17 +30,7 @@
     <CardDataRow Text="Soldiers to send" 
                  Value="@Game.MissionPrep.SoldiersToSend"
                  Enabled="@Game.PendingMission.CurrentlyAvailable" />
-    <CardButtonWithRangeInput 
-        ButtonOnClick = "Game.LaunchMission"
-        UpOnClick     = "Game.MissionPrep.IncrementSoldiersToSend"
-        DownOnClick   = "Game.MissionPrep.DecrementSoldiersToSend"
-        @bind-Input=    "Game.MissionPrep.SoldiersToSend"
-        ButtonEnabled = "Game.PendingMission.CanLaunchMission()"
-        UpEnabled     = "Game.PendingMission.CanLaunchMission(Game.MissionPrep.SoldiersToSend + 1)"
-        DownEnabled   = "Game.PendingMission.CanLaunchMission(Game.MissionPrep.SoldiersToSend - 1)"
-        InputMaxValue = "Game.MissionPrep.MaxSoldiersToSend"
-        InputMinValue = "Game.MissionPrep.MinSoldiersToSend"
-    >
+    <CardButtonWithRangeInput PlayerAction="LaunchMission">
         Launch with @Game.MissionPrep.SoldiersToSend soldiers
     </CardButtonWithRangeInput>
     <div class="row">
