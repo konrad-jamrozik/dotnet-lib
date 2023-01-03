@@ -13,7 +13,7 @@ public class Staff
 
     public int SoldierSurvivability = 100;
 
-    public int SoldiersToHire = 0;
+    public int SoldiersToHire = 1;
 
     public void IncrementSoldiersToHire() => SoldiersToHire += 1;
 
