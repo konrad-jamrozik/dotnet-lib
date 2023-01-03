@@ -35,18 +35,12 @@ public class Staff
         _archive = archive;
     }
 
-    public bool CanHireSoldiers()
+    public bool CanHireSoldiers(int? soldiersToHire = null)
     {
+        soldiersToHire ??= SoldiersToHire;
         return !_playerScore.GameOver 
-               && SoldiersToHireCost <= _money.CurrentMoney
-               && SoldiersToHire >= 1;
-    }
-
-    public bool CanHireSoldiers(int count)
-    {
-        return !_playerScore.GameOver 
-               && count * SoldierPrice <= _money.CurrentMoney
-               && count >= 1;
+               && soldiersToHire <= MaxSoldiersToHire
+               && soldiersToHire >= 1;
     }
 
     public void HireSoldiers()
@@ -55,6 +49,7 @@ public class Staff
         _money.SubtractMoney(SoldiersToHireCost);
         _archive.RecordHiredSoldiers(SoldiersToHire);
         CurrentSoldiers += SoldiersToHire;
+        SoldiersToHire = Math.Max(1, Math.Min(SoldiersToHire, MaxSoldiersToHire));
         Console.Out.WriteLine($"Hired {SoldiersToHire} soldiers. Soldiers now at {CurrentSoldiers}.");
     }
 
