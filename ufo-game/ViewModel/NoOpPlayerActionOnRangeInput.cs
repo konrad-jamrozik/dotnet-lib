@@ -4,6 +4,8 @@ class NoOpPlayerActionOnRangeInput : IPlayerActionOnRangeInput
 {
     public void Act() { }
 
+    public string ActLabel() => string.Empty;
+
     public bool CanAct() => false;
 
     public bool CanAct(int value) => false;

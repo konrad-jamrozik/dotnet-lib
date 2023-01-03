@@ -30,9 +30,7 @@
     <CardDataRow Text="Soldiers to send" 
                  Value="@Game.MissionPrep.SoldiersToSend"
                  Enabled="@Game.PendingMission.CurrentlyAvailable" />
-    <CardButtonWithRangeInput PlayerAction="LaunchMission">
-        Launch with @Game.MissionPrep.SoldiersToSend soldiers
-    </CardButtonWithRangeInput>
+    <CardButtonWithRangeInput PlayerAction="LaunchMission" />
     <div class="row">
         <div class="col">Last mission debriefing:</div>
     </div>

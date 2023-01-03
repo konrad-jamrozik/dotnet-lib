@@ -16,6 +16,9 @@ class LaunchMissionPlayerAction : IPlayerActionOnRangeInput
     public void Act()
         => _pendingMission.LaunchMission();
 
+    public string ActLabel()
+        => $"Launch with {_missionPrep.SoldiersToSend} soldiers";
+
     public int Input
     {
         get => _missionPrep.SoldiersToSend;

@@ -12,6 +12,9 @@ class HireSoldiersPlayerAction : IPlayerActionOnRangeInput
     public void Act()
         => _staff.HireSoldiers();
 
+    public string ActLabel()
+        => $"Hire {_staff.SoldiersToHire} soldiers for ${_staff.SoldiersToHireCost}";
+
     public int Input
     {
         get => _staff.SoldiersToHire;

@@ -3,6 +3,7 @@
 public interface IPlayerActionOnRangeInput
 {
     void Act();
+    string ActLabel();
     bool CanAct();
     bool CanAct(int value);
     int Input { get; set; }

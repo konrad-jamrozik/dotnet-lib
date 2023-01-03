@@ -3,7 +3,7 @@
     <CardButton OnClick="PlayerAction.Act"
                 Enabled="PlayerAction.CanAct()"
                 CssClass="col-8 ms-3">
-        @ChildContent
+        @PlayerAction.ActLabel()
     </CardButton>
     <CardUpDownArrows OnClickUp="PlayerAction.IncrementInput"
                       OnClickDown="PlayerAction.DecrementInput"
@@ -21,7 +21,4 @@
     [Parameter]
     public IPlayerActionOnRangeInput PlayerAction { get; set; } 
         = new NoOpPlayerActionOnRangeInput();
-
-    [Parameter]
-    public RenderFragment? ChildContent { get; set; }
 }
