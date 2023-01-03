@@ -13,12 +13,12 @@
         OnClickArrowDown = "Game.Staff.DecrementSoldiersToHire"
         EnabledArrowUp   = "Game.Staff.CanHireSoldiers(Game.Staff.SoldiersToHire + 1)"
         EnabledArrowDown = "Game.Staff.CanHireSoldiers(Game.Staff.SoldiersToHire - 1)"
-    >
+        @bind-Input="@Game.Staff.SoldiersToHire"
+        InputMinValue="1"
+        InputMaxValue="@Game.Staff.MaxSoldiersToHire"
+        InputValue="@Game.Staff.SoldiersToHire"
+        InputEnabled="@(Game.Staff.MaxSoldiersToHire >= 1)"
+        >
         Hire @Game.Staff.SoldiersToHire soldiers for $@Game.Staff.SoldiersToHireCost
     </CardButtonWithRangeInput>
-    <CardInput @bind-Input="@Game.Staff.SoldiersToHire"
-               MinValue="1"
-               MaxValue="@Game.Staff.MaxSoldiersToHire"
-               Value="@Game.Staff.SoldiersToHire"
-               Enabled="@(Game.Staff.MaxSoldiersToHire >= 1)" />
 </Card>
