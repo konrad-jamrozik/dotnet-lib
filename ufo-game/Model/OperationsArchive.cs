@@ -39,10 +39,10 @@ public class OperationsArchive
         Console.Out.WriteLine($"Recorded ignored mission. Total: {IgnoredMissions}.");
     }
 
-    public void RecordHiredSoldier()
+    public void RecordHiredSoldiers(int count)
     {
-        TotalSoldiersHired += 1;
-        Console.Out.WriteLine($"Recorded hired soldier. Total: {TotalSoldiersHired}.");
+        TotalSoldiersHired += count;
+        Console.Out.WriteLine($"Recorded hired {count} soldiers. Total: {TotalSoldiersHired}.");
     }
 
     public void RecordLostSoldiers(int amount)

@@ -1,4 +1,6 @@
-﻿namespace UfoGame.Model;
+﻿using System.Diagnostics;
+
+namespace UfoGame.Model;
 
 public class Staff
 {
@@ -11,10 +13,49 @@ public class Staff
 
     public int SoldierSurvivability = 100;
 
-    public void HireSoldier()
+    public int SoldiersToHire = 0;
+
+    public void IncrementSoldiersToHire() => SoldiersToHire += 1;
+
+    public void DecrementSoldiersToHire() => SoldiersToHire -= 1;
+
+    public int SoldiersToHireCost => SoldiersToHire * SoldierPrice;
+
+    public int MaxSoldiersToHire => _money.CurrentMoney / SoldierPrice;
+
+    private readonly Money _money;
+    private readonly OperationsArchive _archive;
+    private readonly PlayerScore _playerScore;
+
+
+    public Staff(Money money, PlayerScore playerScore, OperationsArchive archive, StateRefresh stateRefresh)
     {
-        CurrentSoldiers += 1;
-        Console.Out.WriteLine($"Hired solider. Soldiers now at {CurrentSoldiers}.");
+        _money = money;
+        _playerScore = playerScore;
+        _archive = archive;
+    }
+
+    public bool CanHireSoldiers()
+    {
+        return !_playerScore.GameOver 
+               && SoldiersToHireCost <= _money.CurrentMoney
+               && SoldiersToHire >= 1;
+    }
+
+    public bool CanHireSoldiers(int count)
+    {
+        return !_playerScore.GameOver 
+               && count * SoldierPrice <= _money.CurrentMoney
+               && count >= 1;
+    }
+
+    public void HireSoldiers()
+    {
+        Debug.Assert(CanHireSoldiers());
+        _money.SubtractMoney(SoldiersToHireCost);
+        _archive.RecordHiredSoldiers(SoldiersToHire);
+        CurrentSoldiers += SoldiersToHire;
+        Console.Out.WriteLine($"Hired {SoldiersToHire} soldiers. Soldiers now at {CurrentSoldiers}.");
     }
 
     public void SubtractSoldiers(int amount)

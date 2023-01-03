@@ -111,16 +111,8 @@ public class Game
 
     public void HireSoldier()
     {
-        Debug.Assert(CanHireSoldier());
-        Money.SubtractMoney(Staff.SoldierPrice);
-        Staff.HireSoldier();
-        Archive.RecordHiredSoldier();
+        Staff.HireSoldiers();
         StateRefresh.Trigger();
-    }
-
-    public bool CanHireSoldier()
-    {
-        return !PlayerScore.GameOver && Money.CurrentMoney >= Staff.SoldierPrice;
     }
 
     public void LaunchMission()
