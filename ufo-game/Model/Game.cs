@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using Blazored.LocalStorage;
 
 namespace UfoGame.Model;
 
@@ -28,6 +29,7 @@ public class Game
     public readonly StateRefresh StateRefresh;
     public readonly Factions Factions;
     public readonly PlayerScore PlayerScore;
+    public readonly ISyncLocalStorageService  LocalStorage;
 
     public Game(Timeline timeline,
         Money money,
@@ -37,7 +39,8 @@ public class Game
         PendingMission pendingMission,
         StateRefresh stateRefresh,
         Factions factions,
-        PlayerScore playerScore)
+        PlayerScore playerScore,
+        ISyncLocalStorageService localStorage)
     {
         Timeline = timeline;
         Money = money;
@@ -48,6 +51,7 @@ public class Game
         StateRefresh = stateRefresh;
         Factions = factions;
         PlayerScore = playerScore;
+        LocalStorage = localStorage;
     }
 
     public bool CanDoNothing() => !PlayerScore.GameOver;
@@ -63,6 +67,9 @@ public class Game
         PendingMission.AdvanceMissionTime();
         Factions.AdvanceFactionsTime();
         StateRefresh.Trigger();
+        // kja experimental
+        LocalStorage.SetItem("currentTime", Timeline.CurrentTime);
+
     }
 
     public bool CanRaiseMoney() => !PlayerScore.GameOver;
