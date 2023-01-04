@@ -8,21 +8,19 @@ main {
     flex: 1;
 }
 
-.sidebar {
-    background-image: linear-gradient(180deg, rgb(5, 39, 103) 0%, #3a0647 70%);
+.page {
+    /* 
+        Required to avoid fixed navbar overlapping the page, per:
+        https://getbootstrap.com/docs/5.3/components/navbar/#placement
+        
+        56px is the height of the navbar, as measured with Chrome dev tools.
+    */
+    padding-top: 56px;
 }
-
 
 @media (min-width: 641px) {
     .page {
         flex-direction: row;
-    }
-
-    .sidebar {
-        width: 160px;
-        height: 100vh;
-        position: sticky;
-        top: 0;
     }
 
     article {
