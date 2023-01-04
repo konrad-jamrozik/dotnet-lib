@@ -4,7 +4,7 @@
 }
 
 .top-row {
-    height: 3.5rem;
+    height: 4rem;
     background-color: rgba(0,0,0,0.4);
 }
 
@@ -24,17 +24,29 @@
     width: 1.1rem;
 }
 
-.top-row .oi.oi-people {
-    width: 1.6rem;
+.top-row .oi.oi-badge {
+    padding-left: 0.25rem;
+    width: 1.5rem;
 }
-
 .top-row .oi.oi-calendar {
     width: 1.5rem;
+}
+
+.top-row .oi.oi-dollar {
+    width: 1.6rem;
 }
 
 .top-row .oi.oi-timer {
     width: 1.5rem;
 }
+
+.top-row .oi.oi-people {
+    width: 1.6rem;
+}
+
+
+
+
 
 .nav-item {
     font-size: 0.9rem;

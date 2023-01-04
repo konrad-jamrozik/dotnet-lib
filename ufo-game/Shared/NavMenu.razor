@@ -2,32 +2,41 @@
 
 <div class="top-row ps-2 navbar fixed-top bg-body-tertiary" data-bs-theme="dark">
     <div class="container-fluid">
-        <div class="row">
-            <div class="col hstack gap-0 px-1" style="width: 100px">
-                <span class="oi oi-badge" aria-hidden="true"></span>
-                @Game.PlayerScore.Value
+        @* col-auto here ensures the column of the "NavigationMenu" button is pushed away to the right. See https://getbootstrap.com/docs/5.3/layout/columns/ *@
+        <div class="col col-auto">
+            <div class="row">
+                <div class="col hstack gap-0 px-1" style="width: 100px">
+                    <span class="oi oi-badge" aria-hidden="true"></span>
+                    @Game.PlayerScore.Value
+                </div>
+                <div class="col hstack gap-0 px-1" style="width: 100px">
+                    <span class="oi oi-dollar" aria-hidden="true"></span>
+                    @Game.Money.CurrentMoney
+                </div>
+                <div class="col hstack gap-0 px-1" style="width: 60px">
+                    <span class="oi oi-people" aria-hidden="true"></span>
+                    @Game.Staff.CurrentSoldiers
+                </div>
             </div>
-            <div class="col hstack gap-0 px-1" style="width: 100px">
-                <span class="oi oi-dollar" aria-hidden="true"></span>
-                @Game.Money.CurrentMoney
-            </div>
-            <div class="col hstack gap-0 px-1" style="width: 60px">
-                <span class="oi oi-people" aria-hidden="true"></span>
-                @Game.Staff.CurrentSoldiers
-            </div>
-            @* <div class="col hstack gap-0 px-1" style="width: 40px"> *@
-            @*     <span class="oi oi-calendar" aria-hidden="true"></span> *@
-            @*     @Game.Timeline.CurrentTime *@
-            @* </div> *@
-            <div class="col hstack gap-0 px-1" style="width: 40px">
-                <span class="oi oi-timer" aria-hidden="true"></span>
-                @Game.PendingMission.CountDown
+            <div class="row">
+                <div class="col hstack gap-0 px-1" style="width: 83px">
+                    <span class="oi oi-calendar" aria-hidden="true"></span>
+                    @Game.Timeline.CurrentTime
+                </div>
+                <div class="col hstack gap-0 px-1" style="width: 100px">
+                    <span class="oi oi-timer" aria-hidden="true"></span>
+                    @Game.PendingMission.CountDown
+                </div>
             </div>
         </div>
-        <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
-            <span class="navbar-toggler-icon"></span>
-        </button>        
+        @* See description of "col-auto" in comment above. *@
+        <div class="col col-auto">
+            <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+        </div>
     </div>
+
 </div>
 
 <div class="@NavMenuCssClass nav-scrollable" @onclick="ToggleNavMenu">
