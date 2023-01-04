@@ -37,10 +37,11 @@
 }
 
 .top-row .oi.oi-timer {
-    width: 1.5rem;
+    width: 1.8rem;
 }
 
 .top-row .oi.oi-people {
+    top: -1px;
     width: 1.6rem;
 }
 
