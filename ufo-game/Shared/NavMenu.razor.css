@@ -19,6 +19,23 @@
     top: -2px;
 }
 
+.top-row .oi {
+    top: -3px;
+    width: 1.1rem;
+}
+
+.top-row .oi.oi-people {
+    width: 1.6rem;
+}
+
+.top-row .oi.oi-calendar {
+    width: 1.5rem;
+}
+
+.top-row .oi.oi-timer {
+    width: 1.5rem;
+}
+
 .nav-item {
     font-size: 0.9rem;
     padding-bottom: 0.5rem;

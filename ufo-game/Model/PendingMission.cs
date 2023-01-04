@@ -21,6 +21,8 @@ public class PendingMission
 
     public int ExpiresIn { get; private set; }
 
+    public int CountDown => CurrentlyAvailable ? ExpiresIn : -AvailableIn;
+
     public bool CurrentlyAvailable => AvailableIn == 0 && ExpiresIn > 0;
 
     // kja refactor so there is no placeholder; will need to split class ctor into 
