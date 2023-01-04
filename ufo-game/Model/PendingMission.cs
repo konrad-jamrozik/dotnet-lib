@@ -104,7 +104,8 @@ public class PendingMission
         if (_playerScore.GameOver || !CurrentlyAvailable)
             return false;
 
-        if (!WithinRange(_missionPrep.SoldiersToSend))
+        if (!WithinRange(_missionPrep.SoldiersToSend) 
+            && _missionPrep.SoldiersToSend > _missionPrep.MinSoldiersToSend)
             _missionPrep.NarrowSoldiersToSend();
 
         return WithinRange(_missionPrep.SoldiersToSend + offset);

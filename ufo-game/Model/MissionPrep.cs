@@ -13,7 +13,7 @@ public class MissionPrep
     
     private readonly Staff _staff;
 
-    public MissionPrep(Staff staff)
+    public MissionPrep(Staff staff, StateRefresh stateRefresh)
     {
         _staff = staff;
         SoldiersToSend = MinSoldiersToSend;

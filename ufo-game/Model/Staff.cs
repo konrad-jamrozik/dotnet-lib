@@ -43,7 +43,7 @@ public class Staff
         if (_playerScore.GameOver)
             return false;
 
-        if (!WithinRange(SoldiersToHire))
+        if (!WithinRange(SoldiersToHire) && SoldiersToHire > MinSoldiersToHire)
             NarrowSoldiersToHire();
 
         return WithinRange(SoldiersToHire + offset);
