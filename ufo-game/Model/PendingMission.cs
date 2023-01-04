@@ -21,7 +21,7 @@ public class PendingMission
 
     public int ExpiresIn { get; private set; }
 
-    public int CountDown => CurrentlyAvailable ? ExpiresIn : -AvailableIn;
+    public int CountDown => CurrentlyAvailable ? -ExpiresIn : AvailableIn;
 
     public bool CurrentlyAvailable => AvailableIn == 0 && ExpiresIn > 0;
 
