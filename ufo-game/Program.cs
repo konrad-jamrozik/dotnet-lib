@@ -15,7 +15,6 @@ builder.Services.AddBlazoredLocalStorageAsSingleton(config =>
     config.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve
 );
 builder.Services.AddSingleton<PersistentStorage>();
-
 var storage = builder.Build().Services.GetService<PersistentStorage>()!;
 
 Factions? factions = SavedGameState.ReadSaveGame(storage);
@@ -29,9 +28,6 @@ builder.Services.AddSingleton<OperationsArchive>();
 builder.Services.AddSingleton<MissionPrep>();
 if (factions != null)
 {
-    // kja: if I register instance of "Game", will all its dependencies be also registered,
-    // like I am doing with factions here,
-    // or do I need to register them one by one?
     builder.Services.AddSingleton(factions);
 }
 else
@@ -40,13 +36,12 @@ else
 }
 builder.Services.AddSingleton<PendingMission>();
 builder.Services.AddSingleton<PlayerScore>();
+builder.Services.AddSingleton<Game>();
 
 #endregion
 
-builder.Services.AddSingleton<StateRefresh>();
-builder.Services.AddSingleton<Game>();
-
 // ViewModel
+builder.Services.AddSingleton<StateRefresh>();
 builder.Services.AddSingleton<HireSoldiersPlayerAction>();
 builder.Services.AddSingleton<LaunchMissionPlayerAction>();
 

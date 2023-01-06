@@ -5,6 +5,20 @@ namespace UfoGame.Model;
 
 public class SavedGameState
 {
+    // kja this should work like that:
+    //
+    // Overall:
+    // if (PersistentStorage.HasSavedGame)
+    // {
+    //     var savedGame = new SavedGame(PersistentStorage);
+    //     savedGame.AddTo(IServiceCollection builder.services);
+    // }
+    // else
+    // {
+    //     // register as normal:
+    //     builder.services.AddSingleton<Game>(...)
+    //     // ...
+    // }
     public static Factions? ReadSaveGame(PersistentStorage storage)
     {
         Factions? factions = null;
@@ -24,6 +38,9 @@ public class SavedGameState
             factions = new Factions(new List<Faction> { faction });
         }
 
+        // kja note that even though I build Game singleton from bottom up, just registering
+        // Game is not enough, I need to register all dependencies in the entire Game
+        // dependency tree. I confirmed this empirically.
         return factions;
     }
 }
