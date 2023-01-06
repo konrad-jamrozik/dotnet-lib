@@ -1,8 +1,10 @@
-﻿namespace UfoGame.Model;
+﻿using System.Text.Json.Serialization;
+
+namespace UfoGame.Model;
 
 public class Factions
 {
-    public readonly List<Faction> Data;
+    public List<Faction> Data { get; }
 
     public Factions()
     {
@@ -24,6 +26,7 @@ public class Factions
             .ToList();
     }
 
+    [JsonIgnore]
     public bool AllFactionsDefeated => Data.TrueForAll(f => f.Defeated);
 
     public void AdvanceFactionsTime()

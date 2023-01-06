@@ -1,8 +1,10 @@
-﻿namespace UfoGame.Model;
+﻿using System.Text.Json.Serialization;
+
+namespace UfoGame.Model;
 
 public class Faction
 {
-    public readonly string Name;
+    public string Name { get; }
 
     public int Score
     {
@@ -10,15 +12,18 @@ public class Faction
         set => _score = Math.Max(value, 0);
     }
 
-    public readonly int ScoreTick;
+    public int ScoreTick { get; }
     private int _score;
     public bool Discovered { get; set; } = false;
+
+    [JsonIgnore]
     public bool Defeated => Score <= 0;
 
-    public Faction(string name, int score, int scoreTick)
+    public Faction(string name, int score, int scoreTick, bool discovered = false)
     {
         Name = name;
         Score = score;
         ScoreTick = scoreTick;
+        Discovered = discovered;
     }
 }
