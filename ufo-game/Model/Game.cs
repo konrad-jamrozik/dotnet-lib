@@ -55,7 +55,7 @@ public class Game
         Factions = factions;
         PlayerScore = playerScore;
         Storage = storage;
-        LoadGameState();
+        // LoadGameState();
     }
 
     public bool CanDoNothing() => !PlayerScore.GameOver;
