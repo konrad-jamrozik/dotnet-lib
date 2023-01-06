@@ -7,8 +7,6 @@ namespace UfoGame.Model;
 public class PendingMission
 {
     #region Persisted state
-    // ReSharper disable MemberCanBePrivate.Global
-    // ReSharper disable UnusedMember.Global
     
     public int AvailableIn { get; private set; }
 
@@ -19,9 +17,12 @@ public class PendingMission
     public float EnemyPowerCoefficient { get; private set; } 
 
     public string FactionName => Faction.Name;
+    
+    // kja refactor so there is no placeholder; will need to split class ctor into 
+    // initial app startup and instance creation. I.e. GenerateNew() should return new instance of 
+    // PendingMission instead of assigning fields.
+    public Faction Faction { get; private set; } = new Faction(name: "placeholder", 0, 0);
 
-    // ReSharper restore MemberCanBePrivate.Global
-    // ReSharper restore UnusedMember.Global
     #endregion
 
     public void Hydrate(JsonNode node)
@@ -58,11 +59,6 @@ public class PendingMission
     
     [JsonIgnore]
     public bool MissionAboutToExpire => CurrentlyAvailable && ExpiresIn == 1;
-
-    // kja refactor so there is no placeholder; will need to split class ctor into 
-    // initial app startup and instance creation. I.e. GenerateNew() should return new instance of 
-    // PendingMission instead of assigning fields.
-    public Faction Faction = new Faction(name: "placeholder", 0, 0);
 
     private readonly Random _random = new Random();
     private readonly MissionPrep _missionPrep;

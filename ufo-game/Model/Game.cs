@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Text.Json.Nodes;
+using System.Text.Json.Serialization;
 
 namespace UfoGame.Model;
 
@@ -24,8 +25,10 @@ public class Game
     public readonly Staff Staff;
     public readonly OperationsArchive Archive;
     public readonly MissionPrep MissionPrep;
+    [JsonInclude]
     public readonly PendingMission PendingMission;
     public readonly StateRefresh StateRefresh;
+    [JsonInclude]
     public readonly Factions Factions;
     public readonly PlayerScore PlayerScore;
     public readonly PersistentStorage Storage;
@@ -90,6 +93,15 @@ public class Game
             Console.Out.WriteLine("Loading PendingMission");
             PendingMission.Hydrate(Storage.GetItem<JsonNode>(nameof(PendingMission)));
         }
+
+        if (Storage.ContainKey(nameof(Game)))
+        {
+            Console.Out.WriteLine("Deserializing Game");
+            var game = Storage.GetItem<JsonNode>(nameof(Game));
+            Console.Out.WriteLine("Deserialized Game");
+            Console.Out.WriteLine("game.PendingMission.Faction.Name: " + game?["PendingMission"]?["Faction"]?["Name"]);
+            Console.Out.WriteLine("game.Factions.Data: " + game?["Factions"]?["Data"]);
+        }
     }
 
     private void PersistGameState()
@@ -97,8 +109,9 @@ public class Game
         Console.Out.WriteLine("Persisting game state");
         var itemsToSave = new List<(string key, object value)>
         {
-            ("Timeline", Timeline),
-            ("PendingMission", PendingMission)
+            ("Game", this),
+            // ("Timeline", Timeline),
+            // ("PendingMission", PendingMission)
         };
         // foreach (var faction in Factions.Data)
         // {
