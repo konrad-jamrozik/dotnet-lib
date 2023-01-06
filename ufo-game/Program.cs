@@ -1,5 +1,3 @@
-using System.Text.Json;
-using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
 using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components.Web;
@@ -20,38 +18,32 @@ builder.Services.AddSingleton<PersistentStorage>();
 
 var storage = builder.Build().Services.GetService<PersistentStorage>()!;
 
-Factions? factions = null;
-if (storage.ContainKey(nameof(Game)))
-{
-    Console.Out.WriteLine("Deserializing Game in Program.cs");
-    var game = storage.GetItem<JsonNode>(nameof(Game));
-    Console.Out.WriteLine("Deserialized Game in Program.cs");
-    Console.Out.WriteLine("game.PendingMission.Faction.Name: " + game?["PendingMission"]?["Faction"]?["Name"]);
-    Console.Out.WriteLine("game.Factions.Data: " + game?["Factions"]?["Data"]);
-    // kja plan of action: manually deserialize all the classes from JsonNode bottom-up, wiring the ctors,
-    // then add as singletons.
-    Faction faction = (game?["Factions"]?["Data"]?["$values"]?[0]).Deserialize<Faction>()!;
-    Console.Out.WriteLine("game.Factions.Data[0]:" + faction.Name);
-    factions = new Factions(new List<Faction> { faction });
-}
+Factions? factions = SavedGameState.ReadSaveGame(storage);
 
-// Model
+#region Model with persistable state
+
 builder.Services.AddSingleton<Timeline>();
 builder.Services.AddSingleton<Money>();
 builder.Services.AddSingleton<Staff>();
 builder.Services.AddSingleton<OperationsArchive>();
 builder.Services.AddSingleton<MissionPrep>();
-builder.Services.AddSingleton<PendingMission>();
-builder.Services.AddSingleton<StateRefresh>();
 if (factions != null)
 {
-    builder.Services.AddSingleton<Factions>(factions);
+    // kja: if I register instance of "Game", will all its dependencies be also registered,
+    // like I am doing with factions here,
+    // or do I need to register them one by one?
+    builder.Services.AddSingleton(factions);
 }
 else
 {
     builder.Services.AddSingleton<Factions>();
 }
+builder.Services.AddSingleton<PendingMission>();
 builder.Services.AddSingleton<PlayerScore>();
+
+#endregion
+
+builder.Services.AddSingleton<StateRefresh>();
 builder.Services.AddSingleton<Game>();
 
 // ViewModel

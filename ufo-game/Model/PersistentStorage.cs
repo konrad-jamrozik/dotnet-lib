@@ -2,6 +2,7 @@
 
 namespace UfoGame.Model;
 
+// kja move this and other supporting infra classes to different namespace than "model"
 public class PersistentStorage
 {
     private readonly ISyncLocalStorageService _localStorage;
