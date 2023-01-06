@@ -8,7 +8,7 @@
 <div class="container text-center" style="max-width: 500px">
     <div class="row">
         <div class="col btn btn-danger" data-bs-toggle="modal" data-bs-target="#resetGameModal">
-            Reset game
+            RESET game
         </div>
     </div>
 </div>
@@ -23,9 +23,9 @@
             <div class="modal-body">
                 The game will be reset and you will LOSE ALL PROGRESS. Are you sure?
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <div class="modal-footer justify-content-between">
                 <button type="button" class="btn btn-danger" data-bs-dismiss="modal" @onclick="Game.Reset">Yes, RESET</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
             </div>
         </div>
     </div>
