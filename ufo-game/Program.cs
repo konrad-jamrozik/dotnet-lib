@@ -22,6 +22,7 @@ builder.Services.AddSingleton<PendingMission>();
 builder.Services.AddSingleton<StateRefresh>();
 builder.Services.AddSingleton<Factions>();
 builder.Services.AddSingleton<PlayerScore>();
+builder.Services.AddSingleton<PersistentStorage>();
 builder.Services.AddSingleton<Game>();
 
 // ViewModel

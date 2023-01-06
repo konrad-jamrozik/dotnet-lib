@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using Blazored.LocalStorage;
 
 namespace UfoGame.Model;
 
@@ -19,7 +18,6 @@ public class Game
     public int SoldierSurvivabilityResearchCost = 100;
     public const int SoldierSurvivabilityResearchCostIncrement = 10;
 
-    private readonly Random _random = new Random();
     public readonly Timeline Timeline;
     public readonly Money Money;
     public readonly Staff Staff;
@@ -29,7 +27,7 @@ public class Game
     public readonly StateRefresh StateRefresh;
     public readonly Factions Factions;
     public readonly PlayerScore PlayerScore;
-    public readonly ISyncLocalStorageService  LocalStorage;
+    public readonly PersistentStorage Storage;
 
     public Game(Timeline timeline,
         Money money,
@@ -40,7 +38,7 @@ public class Game
         StateRefresh stateRefresh,
         Factions factions,
         PlayerScore playerScore,
-        ISyncLocalStorageService localStorage)
+        PersistentStorage storage)
     {
         Timeline = timeline;
         Money = money;
@@ -51,7 +49,7 @@ public class Game
         StateRefresh = stateRefresh;
         Factions = factions;
         PlayerScore = playerScore;
-        LocalStorage = localStorage;
+        Storage = storage;
     }
 
     public bool CanDoNothing() => !PlayerScore.GameOver;
@@ -68,7 +66,7 @@ public class Game
         Factions.AdvanceFactionsTime();
         StateRefresh.Trigger();
         // kja experimental
-        LocalStorage.SetItem("currentTime", Timeline.CurrentTime);
+        Storage.SetItem("currentTime", Timeline.CurrentTime);
 
     }
 
@@ -114,5 +112,12 @@ public class Game
         SoldierSurvivabilityResearchCost += SoldierSurvivabilityResearchCostIncrement;
         Staff.SoldierSurvivability += 10;
         AdvanceTime();
+    }
+
+    public void Reset()
+    {
+        Storage.Reset();
+        Timeline.Reset();
+        StateRefresh.Trigger();
     }
 }
