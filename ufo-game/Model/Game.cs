@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Text.Json.Nodes;
 
 namespace UfoGame.Model;
 
@@ -29,7 +30,8 @@ public class Game
     public readonly PlayerScore PlayerScore;
     public readonly PersistentStorage Storage;
 
-    public Game(Timeline timeline,
+    public Game(
+        Timeline timeline,
         Money money,
         Staff staff,
         OperationsArchive archive,
@@ -50,6 +52,7 @@ public class Game
         Factions = factions;
         PlayerScore = playerScore;
         Storage = storage;
+        LoadGameState();
     }
 
     public bool CanDoNothing() => !PlayerScore.GameOver;
@@ -65,9 +68,47 @@ public class Game
         PendingMission.AdvanceMissionTime();
         Factions.AdvanceFactionsTime();
         StateRefresh.Trigger();
-        // kja experimental
-        Storage.SetItem("currentTime", Timeline.CurrentTime);
 
+        // kja experimental
+        PersistGameState();
+
+    }
+
+    private void LoadGameState()
+    {
+        Console.Out.WriteLine("Loading game state");
+
+        if (Storage.ContainKey(nameof(Timeline)))
+        {
+            Console.Out.WriteLine("Loading Timeline");
+            var timeline = Storage.GetItem<Timeline>(nameof(Timeline));
+            Timeline.CurrentTime = timeline.CurrentTime;
+        }
+
+        if (Storage.ContainKey(nameof(PendingMission)))
+        {
+            Console.Out.WriteLine("Loading PendingMission");
+            PendingMission.Hydrate(Storage.GetItem<JsonNode>(nameof(PendingMission)));
+        }
+    }
+
+    private void PersistGameState()
+    {
+        Console.Out.WriteLine("Persisting game state");
+        var itemsToSave = new List<(string key, object value)>
+        {
+            ("Timeline", Timeline),
+            ("PendingMission", PendingMission)
+        };
+        // foreach (var faction in Factions.Data)
+        // {
+        //     itemsToSave.Add(($"Faction.Name:\"{faction.Name}\"", faction));
+        // }
+        foreach (var item in itemsToSave)
+        {
+            Console.Out.WriteLine("Persisting item: " + item.key + " : " + item.value);
+            Storage.SetItem(item.key, item.value);
+        }
     }
 
     public bool CanRaiseMoney() => !PlayerScore.GameOver;

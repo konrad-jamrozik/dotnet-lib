@@ -1,17 +1,8 @@
-﻿using Blazored.LocalStorage;
-
-namespace UfoGame.Model;
+﻿namespace UfoGame.Model;
 
 public class Timeline
 {
-    public int CurrentTime { get; private set; } = 0;
-
-    public Timeline(PersistentStorage storage)
-    {
-        // kja experimental
-        if (storage.ContainKey("currentTime"))
-            CurrentTime = storage.GetItem<int>("currentTime");
-    }
+    public int CurrentTime { get; set; } = 0;
 
     public void IncrementTime()
     {

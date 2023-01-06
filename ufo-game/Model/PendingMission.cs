@@ -1,36 +1,68 @@
 ﻿using System.Diagnostics;
+using System.Text.Json.Nodes;
+using System.Text.Json.Serialization;
 
 namespace UfoGame.Model;
 
 public class PendingMission
 {
-    public int EnemyPower => (int)(Faction.Score * _enemyPowerCoefficient);
-
-    public int MoneyReward;
-
-    public int OurPower => _missionPrep.SoldiersToSend * _staff.SoldierEffectiveness;
-
-    public int SuccessChance => Math.Min(100, (int)(OurPower / (float)(EnemyPower + OurPower) * 100));
-
-    public int SoldierSurvivalChance => 
-        (int)(SoldierSurvivabilityPower / (float)(EnemyPower + SoldierSurvivabilityPower) * 100);
-
-    public int SoldierSurvivabilityPower => (_missionPrep.SoldiersToSend * _staff.SoldierSurvivability);
-
+    #region Persisted state
+    // ReSharper disable MemberCanBePrivate.Global
+    // ReSharper disable UnusedMember.Global
+    
     public int AvailableIn { get; private set; }
 
     public int ExpiresIn { get; private set; }
 
+    public int MoneyReward { get; private set; }
+    
+    public float EnemyPowerCoefficient { get; private set; } 
+
+    public string FactionName => Faction.Name;
+
+    // ReSharper restore MemberCanBePrivate.Global
+    // ReSharper restoreUnusedMember.Global
+    #endregion
+
+    public void Hydrate(JsonNode node)
+    {
+        AvailableIn = (int)node[nameof(AvailableIn)]!;
+        ExpiresIn = (int)node[nameof(ExpiresIn)]!;
+        MoneyReward = (int)node[nameof(MoneyReward)]!;
+        EnemyPowerCoefficient = (float)node[nameof(EnemyPowerCoefficient)]!;
+        Faction = _factions.Data.Single(faction
+            => faction.Name == (string)node[nameof(FactionName)]!);
+    }
+
+    [JsonIgnore]
+    public int EnemyPower => (int)(Faction.Score * EnemyPowerCoefficient);
+
+    [JsonIgnore]
+    public int OurPower => _missionPrep.SoldiersToSend * _staff.SoldierEffectiveness;
+
+    [JsonIgnore]
+    public int SuccessChance => Math.Min(100, (int)(OurPower / (float)(EnemyPower + OurPower) * 100));
+
+    [JsonIgnore]
+    public int SoldierSurvivalChance => 
+        (int)(SoldierSurvivabilityPower / (float)(EnemyPower + SoldierSurvivabilityPower) * 100);
+
+    [JsonIgnore] 
+    private int SoldierSurvivabilityPower => _missionPrep.SoldiersToSend * _staff.SoldierSurvivability;
+
+    [JsonIgnore]
     public int CountDown => CurrentlyAvailable ? -ExpiresIn : AvailableIn;
 
+    [JsonIgnore]
     public bool CurrentlyAvailable => AvailableIn == 0 && ExpiresIn > 0;
+    
+    [JsonIgnore]
+    public bool MissionAboutToExpire => CurrentlyAvailable && ExpiresIn == 1;
 
     // kja refactor so there is no placeholder; will need to split class ctor into 
     // initial app startup and instance creation. I.e. GenerateNew() should return new instance of 
     // PendingMission instead of assigning fields.
-    public Faction Faction { get; private set; } = new Faction(name: "placeholder", 0, 0);
-
-    private float _enemyPowerCoefficient = 1;
+    public Faction Faction = new Faction(name: "placeholder", 0, 0);
 
     private readonly Random _random = new Random();
     private readonly MissionPrep _missionPrep;
@@ -59,8 +91,6 @@ public class PendingMission
         _stateRefresh = stateRefresh;
         GenerateNewMission();
     }
-
-    public bool MissionAboutToExpire => CurrentlyAvailable && ExpiresIn == 1;
 
     public void AdvanceMissionTime()
     {
@@ -182,14 +212,13 @@ public class PendingMission
         _stateRefresh.Trigger();
     }
 
-
     private void GenerateNewMission()
     {
         Debug.Assert(!_playerScore.GameOver);
         AvailableIn = _random.Next(1, 6+1);
         ExpiresIn = _random.Next(1, 6+1);
         MoneyReward = _random.Next(10, 200 + 1);
-        _enemyPowerCoefficient = _random.Next(5, 15 + 1) / (float)10;
+        EnemyPowerCoefficient = _random.Next(5, 15 + 1) / (float)10;
         var undefeatedFactions = _factions.Data.Where(faction => !faction.Defeated).ToArray();
         Faction = undefeatedFactions[_random.Next(undefeatedFactions.Length)];
     }
@@ -198,7 +227,9 @@ public class PendingMission
     {
         AvailableIn = 0;
         ExpiresIn = 0;
-        _enemyPowerCoefficient = 1;
+        EnemyPowerCoefficient = 1;
+        // kja this will fail to deserialize from persistent storage, as there is no faction with such a name
+        // This happens when the game is over.
         Faction = new Faction(name: "-", score: 0, scoreTick: 0);
     }
 }
