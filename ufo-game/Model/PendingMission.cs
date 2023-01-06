@@ -21,7 +21,7 @@ public class PendingMission
     public string FactionName => Faction.Name;
 
     // ReSharper restore MemberCanBePrivate.Global
-    // ReSharper restoreUnusedMember.Global
+    // ReSharper restore UnusedMember.Global
     #endregion
 
     public void Hydrate(JsonNode node)
