@@ -106,6 +106,7 @@ public class MissionLauncher
         _archive.WriteLastMissionReport($"The last mission was {missionSuccessReport} {soldiersLostReport}");
         mission.GenerateNewOrClearMission();
         _missionPrep.NarrowSoldiersToSend();
+        // kja persist state here
         _stateRefresh.Trigger();
     }
 }
