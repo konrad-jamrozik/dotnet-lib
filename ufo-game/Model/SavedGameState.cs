@@ -27,7 +27,7 @@ public static class SavedGameState
             JsonObject factionJsonObject = factionJsonNode!.AsObject();
             if (factionJsonObject.ContainsKey("$ref"))
             {
-                var refId = factionJsonObject["$ref"].Deserialize<string>()!;
+                var refId = factionJsonObject["$ref"]!.GetValue<string>();
                 if (!factionRefMap.ContainsKey(refId))
                 {
                     // This is the first time we encountered a reference to an object,
@@ -44,7 +44,7 @@ public static class SavedGameState
             }
             else
             {
-                var id = factionJsonObject["$id"].Deserialize<string>()!;
+                var id = factionJsonObject["$id"]!.GetValue<string>();
                 Faction faction = factionJsonObject.Deserialize<Faction>()!;
                 if (!factionRefMap.ContainsKey(id))
                 {
@@ -64,12 +64,12 @@ public static class SavedGameState
         Faction? pendingMissionFaction = null;
         if (pendingMissionFactionJsonObj.ContainsKey("$ref"))
         {
-            var refId = pendingMissionFactionJsonObj["$ref"].Deserialize<string>()!;
+            var refId = pendingMissionFactionJsonObj["$ref"]!.GetValue<string>();
             pendingMissionFaction = factionRefMap[refId];
         }
         else
         {
-            var id = pendingMissionFactionJsonObj["$id"].Deserialize<string>()!;
+            var id = pendingMissionFactionJsonObj["$id"]!.GetValue<string>();
             pendingMissionFaction = pendingMissionFactionJsonObj.Deserialize<Faction>()!;
             factionRefMap[id] = pendingMissionFaction;
         }

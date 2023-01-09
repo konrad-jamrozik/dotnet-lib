@@ -29,6 +29,11 @@ public class PersistentStorage
         return _localStorage.GetItem<T>(key);
     }
 
+    public string GetItemAsString(string key)
+    {
+        return _localStorage.GetItemAsString(key);
+    }
+
     public void Reset()
     {
         _localStorage.Clear();
