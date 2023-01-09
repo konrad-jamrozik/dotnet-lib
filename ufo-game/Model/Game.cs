@@ -1,31 +1,20 @@
 ﻿using System.Diagnostics;
-using System.Text.Json.Serialization;
 
 namespace UfoGame.Model;
 
 public class Game
 {
-    [JsonInclude]
     public readonly Timeline Timeline;
-    [JsonInclude]
     public readonly Money Money;
-    [JsonInclude]
     public readonly Staff Staff;
-    [JsonInclude]
     public readonly OperationsArchive OperationsArchive;
-    [JsonInclude]
     public readonly MissionPrep MissionPrep;
-    [JsonInclude]
     public readonly PendingMission PendingMission;
-    [JsonInclude]
     public readonly Factions Factions;
-    [JsonInclude]
     public readonly PlayerScore PlayerScore;
-    [JsonInclude]
     public readonly Research Research;
-
     public readonly StateRefresh StateRefresh;
-    public readonly PersistentStorage Storage;
+    private readonly GameState _gameState;
 
     public Game(
         Timeline timeline,
@@ -37,8 +26,8 @@ public class Game
         StateRefresh stateRefresh,
         Factions factions,
         PlayerScore playerScore,
-        PersistentStorage storage,
-        Research research)
+        Research research,
+        GameState gameState)
     {
         Timeline = timeline;
         Money = money;
@@ -49,8 +38,8 @@ public class Game
         StateRefresh = stateRefresh;
         Factions = factions;
         PlayerScore = playerScore;
-        Storage = storage;
         Research = research;
+        _gameState = gameState;
     }
 
     public bool CanDoNothing() => !PlayerScore.GameOver;
@@ -65,10 +54,8 @@ public class Game
             Money.AddMoney(Money.MoneyPerTurnAmount);
         PendingMission.AdvanceMissionTime();
         Factions.AdvanceFactionsTime();
+        _gameState.PersistGameState();
         StateRefresh.Trigger();
-        // kja experimental
-        Storage.PersistGameState(this);
-
     }
 
     public bool CanRaiseMoney() => !PlayerScore.GameOver;
@@ -117,7 +104,8 @@ public class Game
 
     public void Reset()
     {
-        Storage.Reset();
+        _gameState.Reset();
+        // kja need to add resets for everything here
         Timeline.Reset();
         StateRefresh.Trigger();
     }

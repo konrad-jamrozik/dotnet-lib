@@ -14,35 +14,9 @@ public class PersistentStorage
 
     public bool HasSavedGame => _localStorage.ContainKey(nameof(Game));
 
-    public void PersistGameState(Game game)
-    {
-        Console.Out.WriteLine("Persisting game state");
-        var itemsToSave = new List<(string key, object value)>
-        {
-            ("Game", game),
-            // ("Timeline", Timeline),
-            // ("PendingMission", PendingMission)
-        };
-        // foreach (var faction in Factions.Data)
-        // {
-        //     itemsToSave.Add(($"Faction.Name:\"{faction.Name}\"", faction));
-        // }
-        foreach (var item in itemsToSave)
-        {
-            Console.Out.WriteLine("Persisting item: " + item.key + " : " + item.value);
-            SetItem(item.key, item.value);
-        }
-    }
-
-
     public void SetItem<T>(string key, T data)
     {
         _localStorage.SetItem(key, data);
-    }
-
-    public bool ContainKey(string key)
-    {
-        return _localStorage.ContainKey(key);
     }
 
     public T GetItem<T>(string key)

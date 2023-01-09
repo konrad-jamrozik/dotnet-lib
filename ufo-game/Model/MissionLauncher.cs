@@ -11,6 +11,7 @@ public class MissionLauncher
     private readonly Staff _staff;
     private readonly Money _money;
     private readonly StateRefresh _stateRefresh;
+    private readonly GameState _gameState;
 
     public MissionLauncher(
         MissionPrep missionPrep,
@@ -18,7 +19,8 @@ public class MissionLauncher
         PlayerScore playerScore,
         Staff staff,
         Money money,
-        StateRefresh stateRefresh)
+        StateRefresh stateRefresh,
+        GameState gameState)
     {
         _missionPrep = missionPrep;
         _archive = archive;
@@ -26,6 +28,7 @@ public class MissionLauncher
         _staff = staff;
         _money = money;
         _stateRefresh = stateRefresh;
+        _gameState = gameState;
     }
 
     public bool CanLaunchMission(PendingMission mission, int offset = 0)
@@ -106,7 +109,7 @@ public class MissionLauncher
         _archive.WriteLastMissionReport($"The last mission was {missionSuccessReport} {soldiersLostReport}");
         mission.GenerateNewOrClearMission();
         _missionPrep.NarrowSoldiersToSend();
-        // kja persist state here
+        _gameState.PersistGameState();
         _stateRefresh.Trigger();
     }
 }

@@ -18,6 +18,7 @@ builder.Services.AddSingleton<PersistentStorage>();
 RegisterClassesWithPersistentState(builder);
 builder.Services.AddSingleton<MissionLauncher>();
 builder.Services.AddSingleton<Game>();
+builder.Services.AddSingleton<GameState>();
 
 // ViewModel
 builder.Services.AddSingleton<StateRefresh>();
