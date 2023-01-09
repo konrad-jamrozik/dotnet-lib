@@ -20,17 +20,24 @@ public class Game
     public int SoldierSurvivabilityResearchCost = 100;
     public const int SoldierSurvivabilityResearchCostIncrement = 10;
 
+    [JsonInclude]
     public readonly Timeline Timeline;
+    [JsonInclude]
     public readonly Money Money;
+    [JsonInclude]
     public readonly Staff Staff;
+    [JsonInclude]
     public readonly OperationsArchive Archive;
+    [JsonInclude]
     public readonly MissionPrep MissionPrep;
     [JsonInclude]
     public readonly PendingMission PendingMission;
-    public readonly StateRefresh StateRefresh;
     [JsonInclude]
     public readonly Factions Factions;
+    [JsonInclude]
     public readonly PlayerScore PlayerScore;
+
+    public readonly StateRefresh StateRefresh;
     public readonly PersistentStorage Storage;
 
     public Game(

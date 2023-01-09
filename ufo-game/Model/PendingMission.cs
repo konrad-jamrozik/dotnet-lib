@@ -16,6 +16,7 @@ public class PendingMission
     
     public float EnemyPowerCoefficient { get; private set; } 
 
+    // kja to remove
     public string FactionName => Faction.Name;
     
     // kja refactor so there is no placeholder; will need to split class ctor into 

@@ -12,6 +12,8 @@ public class PersistentStorage
         _localStorage = localStorage;
     }
 
+    public bool HasSavedGame => _localStorage.ContainKey(nameof(Game));
+
     public void SetItem<T>(string key, T data)
     {
         _localStorage.SetItem(key, data);
