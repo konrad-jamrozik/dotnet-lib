@@ -1,7 +1,10 @@
-﻿namespace UfoGame.Model;
+﻿using System.Text.Json.Serialization;
+
+namespace UfoGame.Model;
 
 public class Timeline
 {
+    [JsonInclude]
     public int CurrentTime { get; set; } = 0;
 
     public void IncrementTime()

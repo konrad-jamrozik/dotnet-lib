@@ -6,17 +6,21 @@ namespace UfoGame.Model;
 
 public class Game
 {
+    [JsonInclude]
     public int MoneyRaisedAmount = 50;
     // Currently zero, as it offsets costs of actions, resulting in confusing
     // balance.
     public const int MoneyPerTurnAmount = 0;
-    
+
+    [JsonInclude]
     public int MoneyRaisingMethodsResearchCost = 100;
     public const int MoneyRaisingMethodsResearchCostIncrement = 10;
 
+    [JsonInclude]
     public int SoldierEffectivenessResearchCost = 100;
     public const int SoldierEffectivenessResearchCostIncrement = 10;
 
+    [JsonInclude]
     public int SoldierSurvivabilityResearchCost = 100;
     public const int SoldierSurvivabilityResearchCostIncrement = 10;
 

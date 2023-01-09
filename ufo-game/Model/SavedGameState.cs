@@ -6,18 +6,33 @@ namespace UfoGame.Model;
 
 public static class SavedGameState
 {
-    public static Factions ReadSaveGame(PersistentStorage storage)
+    public static Factions ReadSaveGameAndRegister(
+        PersistentStorage storage,
+        IServiceCollection services)
     {
+        Console.Out.WriteLine("ReadSaveGame");
         Debug.Assert(storage.HasSavedGame);
 
-        Console.Out.WriteLine("Deserializing Game in Program.cs");
+        
         JsonObject gameJson = storage.GetItem<JsonNode>(nameof(Game)).AsObject();
-        Console.Out.WriteLine("Deserialized Game in Program.cs");
         // kja plan of action: manually deserialize all the classes from JsonNode bottom-up, wiring the ctors,
         // then add as singletons.
-        // kja note this will fail if the serialization randomized [0] to be the ref entry for PendingMission.
-        // In such case I need to first deserialize the ref entry.
 
+        var (pendingMissionFaction, factions) = DeserializeFactions(gameJson);
+        //new PendingMission(missionPrep, archive, factions, playerScore, staff, money)
+        services.AddSingleton(factions);
+
+        Console.Out.WriteLine("Deserialized factions: " + string.Join(" ", factions.Data.Select(f => f.Name)));
+
+        // kja note that even though I build Game singleton from bottom up, just registering
+        // Game is not enough, I need to register all dependencies in the entire Game
+        // dependency tree. I confirmed this empirically.
+        return factions;
+    }
+
+    private static (Faction pendingMissionFaction, Factions factions) DeserializeFactions(
+        JsonObject gameJson)
+    {
         var factionRefMap = new Dictionary<string, Faction?>();
         JsonObject factionsJsonObj = gameJson[nameof(Factions)]!.AsObject();
         JsonObject factionsDataJsonObj = factionsJsonObj[nameof(Factions.Data)]!.AsObject();
@@ -57,6 +72,7 @@ public static class SavedGameState
                 }
             }
         }
+
         JsonObject pendingMissionJsonObj = gameJson[nameof(PendingMission)]!.AsObject();
         JsonObject pendingMissionFactionJsonObj =
             pendingMissionJsonObj[nameof(PendingMission.Faction)]!.AsObject();
@@ -75,11 +91,6 @@ public static class SavedGameState
         }
 
         var factions = new Factions(factionRefMap.Values.Select(f => f!).ToList());
-        Console.Out.WriteLine("Deserialized factions: " + string.Join(" ", factions.Data.Select(f => f.Name)));
-
-        // kja note that even though I build Game singleton from bottom up, just registering
-        // Game is not enough, I need to register all dependencies in the entire Game
-        // dependency tree. I confirmed this empirically.
-        return factions;
+        return (pendingMissionFaction!, factions);
     }
 }

@@ -4,19 +4,24 @@ namespace UfoGame.Model;
 
 public class Faction
 {
-    public string Name { get; }
+    private int _score;
 
+    [JsonInclude]
+    public string Name { get; private set; }
+
+    [JsonInclude]
     public int Score
     {
         get => _score;
         set => _score = Math.Max(value, 0);
     }
 
-    public int ScoreTick { get; }
-    private int _score;
+    [JsonInclude]
+    public int ScoreTick { get; private set; }
+
+    [JsonInclude]
     public bool Discovered { get; set; } = false;
 
-    [JsonIgnore]
     public bool Defeated => Score <= 0;
 
     public Faction(string name, int score, int scoreTick, bool discovered = false)

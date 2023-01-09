@@ -1,7 +1,10 @@
-﻿namespace UfoGame.Model;
+﻿using System.Text.Json.Serialization;
+
+namespace UfoGame.Model;
 
 public class MissionPrep
 {
+    [JsonInclude]
     public int SoldiersToSend { get; set; }
 
     public int MaxSoldiersToSend => _staff.CurrentSoldiers;

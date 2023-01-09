@@ -1,19 +1,28 @@
-﻿namespace UfoGame.Model;
+﻿using System.Text.Json.Serialization;
+
+namespace UfoGame.Model;
 
 public class OperationsArchive
 {
+    [JsonInclude]
     public int MissionsLaunched { get; private set; } = 0;
 
+    [JsonInclude]
     public int SuccessfulMissions { get; private set; } = 0;
 
+    [JsonInclude]
     public int FailedMissions { get; private set; } = 0;
 
+    [JsonInclude]
     public int IgnoredMissions { get; private set; } = 0;
 
+    [JsonInclude]
     public int TotalSoldiersHired { get; private set; } = 0;
 
+    [JsonInclude]
     public int SoldiersLost { get; private set; } = 0;
 
+    [JsonInclude]
     public string LastMissionReport { get; private set; } = "No missions yet!";
 
     public void ArchiveMission(bool missionSuccessful)

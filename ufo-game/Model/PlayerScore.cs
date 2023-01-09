@@ -1,4 +1,6 @@
-﻿namespace UfoGame.Model;
+﻿using System.Text.Json.Serialization;
+
+namespace UfoGame.Model;
 
 public class PlayerScore
 {
@@ -6,6 +8,8 @@ public class PlayerScore
     public const int WinScore = 500;
     public const int LoseScore = 100;
     public const int IgnoreMissionScoreLoss = 50;
+
+    [JsonInclude]
     public int Value { get; set; } = 1000;
 
     private readonly Factions _factions;

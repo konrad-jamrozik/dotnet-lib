@@ -12,14 +12,16 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 
 builder.Services.AddScoped(_ => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 builder.Services.AddBlazoredLocalStorageAsSingleton(config =>
-    config.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve
-);
+{
+    //config.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve; // kja
+    config.JsonSerializerOptions.IgnoreReadOnlyProperties = true;
+});
 builder.Services.AddSingleton<PersistentStorage>();
 var storage = builder.Build().Services.GetService<PersistentStorage>()!;
 
-if (storage.HasSavedGame)
+if (false)//storage.HasSavedGame) // kja
 {
-    Factions factions = SavedGameState.ReadSaveGame(storage);
+    Factions factions = SavedGameState.ReadSaveGameAndRegister(storage, builder.Services);
     // kja wip
     builder.Services.AddSingleton<Timeline>();
     builder.Services.AddSingleton<Money>();

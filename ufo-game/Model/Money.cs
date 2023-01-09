@@ -1,8 +1,11 @@
-﻿namespace UfoGame.Model;
+﻿using System.Text.Json.Serialization;
+
+namespace UfoGame.Model;
 
 public class Money
 {
-    public int CurrentMoney { get; private set; } = 0;
+    [JsonInclude]
+    public int CurrentMoney { get; private set; }
 
     public void AddMoney(int amount)
     {
