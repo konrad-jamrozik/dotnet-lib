@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
 
 namespace UfoGame.Model;
@@ -13,7 +12,7 @@ public class Game
     [JsonInclude]
     public readonly Staff Staff;
     [JsonInclude]
-    public readonly OperationsArchive Archive;
+    public readonly OperationsArchive OperationsArchive;
     [JsonInclude]
     public readonly MissionPrep MissionPrep;
     [JsonInclude]
@@ -32,7 +31,7 @@ public class Game
         Timeline timeline,
         Money money,
         Staff staff,
-        OperationsArchive archive,
+        OperationsArchive operationsArchive,
         MissionPrep missionPrep,
         PendingMission pendingMission,
         StateRefresh stateRefresh,
@@ -44,7 +43,7 @@ public class Game
         Timeline = timeline;
         Money = money;
         Staff = staff;
-        Archive = archive;
+        OperationsArchive = operationsArchive;
         MissionPrep = missionPrep;
         PendingMission = pendingMission;
         StateRefresh = stateRefresh;

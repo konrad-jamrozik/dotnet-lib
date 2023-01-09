@@ -5,10 +5,19 @@ namespace UfoGame.ViewModel;
 class HireSoldiersPlayerAction : IPlayerActionOnRangeInput
 {
     private readonly Staff _staff;
+    private readonly StateRefresh _stateRefresh;
 
-    public HireSoldiersPlayerAction(Staff staff) => _staff = staff;
+    public HireSoldiersPlayerAction(Staff staff, StateRefresh stateRefresh)
+    {
+        _staff = staff;
+        _stateRefresh = stateRefresh;
+    }
 
-    public void Act() => _staff.HireSoldiers();
+    public void Act()
+    {
+        _staff.HireSoldiers();
+        _stateRefresh.Trigger();
+    }
 
     public string ActLabel()
         => $"Hire {_staff.SoldiersToHire} soldiers for ${_staff.SoldiersToHireCost}";

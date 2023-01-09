@@ -8,7 +8,7 @@ public class Staff
     private const int SoldierPrice = 30;
 
     [JsonInclude]
-    public int CurrentSoldiers { get; private set; } = 0;
+    public int CurrentSoldiers { get; set; } = 0; // kja setter made public for deserialization. Fix.
 
     [JsonInclude]
     public int SoldierEffectiveness = 100;
@@ -28,18 +28,15 @@ public class Staff
     private readonly Money _money;
     private readonly OperationsArchive _archive;
     private readonly PlayerScore _playerScore;
-    private readonly StateRefresh _stateRefresh;
 
     public Staff(
         Money money,
         PlayerScore playerScore,
-        OperationsArchive archive,
-        StateRefresh stateRefresh)
+        OperationsArchive archive)
     {
         _money = money;
         _playerScore = playerScore;
         _archive = archive;
-        _stateRefresh = stateRefresh;
     }
 
     public bool CanHireSoldiers(int offset = 0)
@@ -65,7 +62,6 @@ public class Staff
         _archive.RecordHiredSoldiers(SoldiersToHire);
         CurrentSoldiers += SoldiersToHire;
         Console.Out.WriteLine($"Hired {SoldiersToHire} soldiers. Soldiers now at {CurrentSoldiers}.");
-        _stateRefresh.Trigger();
     }
 
     private void NarrowSoldiersToHire()

@@ -14,7 +14,48 @@ public static class SavedGameState
 
         //var item = storage.GetItem<Game>(nameof(Game));
         JsonObject gameJson = storage.GetItem<JsonNode>(nameof(Game)).AsObject();
-        Console.Out.WriteLine("Game read!");
+
+        Console.Out.WriteLine("Deserialized Game");
+        var pendingMissionData = gameJson[nameof(PendingMission)]?[nameof(PendingMission.Data)].Deserialize<PendingMissionData>()!;
+        Console.Out.WriteLine("Deserialized PendingMissionData");
+        var operationsArchive = gameJson[nameof(OperationsArchive)].Deserialize<OperationsArchive>()!;
+        var research = gameJson[nameof(Research)].Deserialize<Research>()!;
+        var timeline = gameJson[nameof(Timeline)].Deserialize<Timeline>()!;
+        var money = gameJson[nameof(Money)].Deserialize<Money>()!;
+        var factions = gameJson[nameof(Factions)].Deserialize<Factions>()!;
+        // kja all of these field initializations can be avoided, by doing the following:
+        // 1. if a class Foo has a mixture of [JsonInclude] fields, and DI-injected classes,
+        // move all [JsonInclude] fields into their own class, FooData.
+        // 2. Do here gameJson[nameof(FooData)].Deserialize<FooData>();
+        // 3. Register in DI container FooData from save; the logic should initialize new FooData
+        // when there was no save. See to-do on UfoGame.Model.PendingMission.Data
+        // 4. Register Foo as normal and unconditionally. It will get the injections the usual way.
+        //
+        // Basically, the idea is that all registrations are done as normal, except
+        // these registrations that have data that comes from save file: these classes
+        // cannot have any complex classes participating in DI injection, only serialized data.
+        var playerScore = new PlayerScore(factions)
+        {
+            Value = gameJson[nameof(PlayerScore)]![nameof(PlayerScore.Value)]!.GetValue<int>()
+        };
+        var staff = new Staff(money, playerScore, operationsArchive)
+        {
+            CurrentSoldiers = gameJson[nameof(Staff)]![nameof(Staff.CurrentSoldiers)]!.GetValue<int>(),
+            SoldierEffectiveness = gameJson[nameof(Staff)]![nameof(Staff.SoldierEffectiveness)]!.GetValue<int>(),
+            SoldierSurvivability = gameJson[nameof(Staff)]![nameof(Staff.SoldierSurvivability)]!.GetValue<int>(),
+            SoldiersToHire = gameJson[nameof(Staff)]![nameof(Staff.SoldiersToHire)]!.GetValue<int>()
+        };
+        var missionPrep = new MissionPrep(staff)
+        {
+            SoldiersToSend = gameJson[nameof(MissionPrep)]![nameof(MissionPrep.SoldiersToSend)]!.GetValue<int>()
+        };
+        var pendingMission =
+            new PendingMission(missionPrep, operationsArchive, factions, playerScore, staff)
+         {
+             Data = pendingMissionData
+         };
+
+        Console.Out.WriteLine("Deserialized!");
 
         // kja plan of action: manually deserialize all the classes from JsonNode bottom-up, wiring the ctors,
         // then add as singletons.

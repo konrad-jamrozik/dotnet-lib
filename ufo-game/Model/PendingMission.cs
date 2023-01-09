@@ -5,8 +5,9 @@ namespace UfoGame.Model;
 
 public class PendingMission
 {
+    // kja if this would be injected in ctor, I wouldn't have to ctor this class by hand.
     [JsonInclude]
-    public PendingMissionData Data { get; private set; }
+    public PendingMissionData Data { get; set; } // kja setter made public for serialization only. Fix.
     
     //public Faction Faction { get; private set; } = new Faction(name: "placeholder", 0, 0);
     public Faction Faction => _factions.Data.Single(f => f.Name == Data.FactionName);
