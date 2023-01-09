@@ -8,21 +8,21 @@
     <div class="row">
         <CardButton Enabled="Game.CanRaiseMoney()"
                     OnClick="Game.RaiseMoney">
-            Raise money: $@Game.MoneyRaisedAmount
+            Raise money: $@Game.Money.MoneyRaisedPerActionAmount
         </CardButton>
         <CardButton Enabled="Game.CanResearchMoneyRaisingMethods()"
                     OnClick="Game.ResearchMoneyRaisingMethods">
-            Research money raising methods for $@Game.MoneyRaisingMethodsResearchCost
+            Research money raising methods for $@Game.Research.MoneyRaisingMethodsResearchCost
         </CardButton>
     </div>
     <div class="row">
         <CardButton Enabled="Game.CanResearchSoldierEffectiveness()"
                     OnClick="Game.ResearchSoldierEffectiveness">
-            Research soldier effectiveness for $@Game.SoldierEffectivenessResearchCost
+            Research soldier effectiveness for $@Game.Research.SoldierEffectivenessResearchCost
         </CardButton>
         <CardButton Enabled="Game.CanResearchSoldierSurvivability()"
                     OnClick="Game.ResearchSoldierSurvivability">
-            Research soldier survivability for $@Game.SoldierSurvivabilityResearchCost
+            Research soldier survivability for $@Game.Research.SoldierSurvivabilityResearchCost
         </CardButton>
     </div>
     <div class="row">

@@ -6,11 +6,25 @@ namespace UfoGame.Model;
 
 public static class SavedGameState
 {
+    public static void ReadSaveGame(
+        PersistentStorage storage)
+    {
+        Console.Out.WriteLine("ReadSaveGame");
+        Debug.Assert(storage.HasSavedGame);
+
+        //var item = storage.GetItem<Game>(nameof(Game));
+        JsonObject gameJson = storage.GetItem<JsonNode>(nameof(Game)).AsObject();
+        Console.Out.WriteLine("Game read!");
+
+        // kja plan of action: manually deserialize all the classes from JsonNode bottom-up, wiring the ctors,
+        // then add as singletons.
+    }
+
     public static Factions ReadSaveGameAndRegister(
         PersistentStorage storage,
         IServiceCollection services)
     {
-        Console.Out.WriteLine("ReadSaveGame");
+        Console.Out.WriteLine("ReadSaveGameAndRegister");
         Debug.Assert(storage.HasSavedGame);
 
         

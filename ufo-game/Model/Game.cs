@@ -7,24 +7,6 @@ namespace UfoGame.Model;
 public class Game
 {
     [JsonInclude]
-    public int MoneyRaisedAmount = 50;
-    // Currently zero, as it offsets costs of actions, resulting in confusing
-    // balance.
-    public const int MoneyPerTurnAmount = 0;
-
-    [JsonInclude]
-    public int MoneyRaisingMethodsResearchCost = 100;
-    public const int MoneyRaisingMethodsResearchCostIncrement = 10;
-
-    [JsonInclude]
-    public int SoldierEffectivenessResearchCost = 100;
-    public const int SoldierEffectivenessResearchCostIncrement = 10;
-
-    [JsonInclude]
-    public int SoldierSurvivabilityResearchCost = 100;
-    public const int SoldierSurvivabilityResearchCostIncrement = 10;
-
-    [JsonInclude]
     public readonly Timeline Timeline;
     [JsonInclude]
     public readonly Money Money;
@@ -40,6 +22,8 @@ public class Game
     public readonly Factions Factions;
     [JsonInclude]
     public readonly PlayerScore PlayerScore;
+    [JsonInclude]
+    public readonly Research Research;
 
     public readonly StateRefresh StateRefresh;
     public readonly PersistentStorage Storage;
@@ -54,7 +38,8 @@ public class Game
         StateRefresh stateRefresh,
         Factions factions,
         PlayerScore playerScore,
-        PersistentStorage storage)
+        PersistentStorage storage,
+        Research research)
     {
         Timeline = timeline;
         Money = money;
@@ -66,7 +51,7 @@ public class Game
         Factions = factions;
         PlayerScore = playerScore;
         Storage = storage;
-        // LoadGameState();
+        Research = research;
     }
 
     public bool CanDoNothing() => !PlayerScore.GameOver;
@@ -78,103 +63,55 @@ public class Game
         Debug.Assert(!PlayerScore.GameOver);
         Timeline.IncrementTime();
         if (addMoney)
-            Money.AddMoney(MoneyPerTurnAmount);
+            Money.AddMoney(Money.MoneyPerTurnAmount);
         PendingMission.AdvanceMissionTime();
         Factions.AdvanceFactionsTime();
         StateRefresh.Trigger();
-
         // kja experimental
-        PersistGameState();
+        Storage.PersistGameState(this);
 
-    }
-
-    private void LoadGameState()
-    {
-        Console.Out.WriteLine("Loading game state");
-
-        if (Storage.ContainKey(nameof(Timeline)))
-        {
-            Console.Out.WriteLine("Loading Timeline");
-            var timeline = Storage.GetItem<Timeline>(nameof(Timeline));
-            Timeline.CurrentTime = timeline.CurrentTime;
-        }
-
-        if (Storage.ContainKey(nameof(PendingMission)))
-        {
-            Console.Out.WriteLine("Loading PendingMission");
-            PendingMission.Hydrate(Storage.GetItem<JsonNode>(nameof(PendingMission)));
-        }
-
-        if (Storage.ContainKey(nameof(Game)))
-        {
-            Console.Out.WriteLine("Deserializing Game");
-            var game = Storage.GetItem<JsonNode>(nameof(Game));
-            Console.Out.WriteLine("Deserialized Game");
-            Console.Out.WriteLine("game.PendingMission.Faction.Name: " + game?["PendingMission"]?["Faction"]?["Name"]);
-            Console.Out.WriteLine("game.Factions.Data: " + game?["Factions"]?["Data"]);
-        }
-    }
-
-    private void PersistGameState()
-    {
-        Console.Out.WriteLine("Persisting game state");
-        var itemsToSave = new List<(string key, object value)>
-        {
-            ("Game", this),
-            // ("Timeline", Timeline),
-            // ("PendingMission", PendingMission)
-        };
-        // foreach (var faction in Factions.Data)
-        // {
-        //     itemsToSave.Add(($"Faction.Name:\"{faction.Name}\"", faction));
-        // }
-        foreach (var item in itemsToSave)
-        {
-            Console.Out.WriteLine("Persisting item: " + item.key + " : " + item.value);
-            Storage.SetItem(item.key, item.value);
-        }
     }
 
     public bool CanRaiseMoney() => !PlayerScore.GameOver;
 
     public void RaiseMoney()
     {
-        Money.AddMoney(MoneyRaisedAmount);
+        Money.AddMoney(Money.MoneyRaisedPerActionAmount);
         AdvanceTime(addMoney: false);
     }
 
     public bool CanResearchMoneyRaisingMethods()
-        => !PlayerScore.GameOver && Money.CurrentMoney >= MoneyRaisingMethodsResearchCost;
+        => !PlayerScore.GameOver && Money.CurrentMoney >= Research.MoneyRaisingMethodsResearchCost;
 
     public void ResearchMoneyRaisingMethods()
     {
         Debug.Assert(CanResearchMoneyRaisingMethods());
-        Money.SubtractMoney(MoneyRaisingMethodsResearchCost);
-        MoneyRaisingMethodsResearchCost += MoneyRaisingMethodsResearchCostIncrement;
-        MoneyRaisedAmount += 5;
+        Money.SubtractMoney(Research.MoneyRaisingMethodsResearchCost);
+        Research.MoneyRaisingMethodsResearchCost += Research.MoneyRaisingMethodsResearchCostIncrement;
+        Money.MoneyRaisedPerActionAmount += 5;
         AdvanceTime();
     }
 
     public bool CanResearchSoldierEffectiveness()
-        => !PlayerScore.GameOver && Money.CurrentMoney >= SoldierEffectivenessResearchCost;
+        => !PlayerScore.GameOver && Money.CurrentMoney >= Research.SoldierEffectivenessResearchCost;
 
     public void ResearchSoldierEffectiveness()
     {
         Debug.Assert(CanResearchSoldierEffectiveness());
-        Money.SubtractMoney(SoldierEffectivenessResearchCost);
-        SoldierEffectivenessResearchCost += SoldierEffectivenessResearchCostIncrement;
+        Money.SubtractMoney(Research.SoldierEffectivenessResearchCost);
+        Research.SoldierEffectivenessResearchCost += Research.SoldierEffectivenessResearchCostIncrement;
         Staff.SoldierEffectiveness += 10;
         AdvanceTime();
     }
 
     public bool CanResearchSoldierSurvivability()
-        => !PlayerScore.GameOver && Money.CurrentMoney >= SoldierSurvivabilityResearchCost;
+        => !PlayerScore.GameOver && Money.CurrentMoney >= Research.SoldierSurvivabilityResearchCost;
 
     public void ResearchSoldierSurvivability()
     {
         Debug.Assert(CanResearchSoldierSurvivability());
-        Money.SubtractMoney(SoldierSurvivabilityResearchCost);
-        SoldierSurvivabilityResearchCost += SoldierSurvivabilityResearchCostIncrement;
+        Money.SubtractMoney(Research.SoldierSurvivabilityResearchCost);
+        Research.SoldierSurvivabilityResearchCost += Research.SoldierSurvivabilityResearchCostIncrement;
         Staff.SoldierSurvivability += 10;
         AdvanceTime();
     }

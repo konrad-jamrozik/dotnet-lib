@@ -19,26 +19,26 @@ builder.Services.AddBlazoredLocalStorageAsSingleton(config =>
 builder.Services.AddSingleton<PersistentStorage>();
 var storage = builder.Build().Services.GetService<PersistentStorage>()!;
 
-if (false)//storage.HasSavedGame) // kja
+if (storage.HasSavedGame) // kja
 {
-    Factions factions = SavedGameState.ReadSaveGameAndRegister(storage, builder.Services);
+    SavedGameState.ReadSaveGame(storage);
+    //Factions factions = SavedGameState.ReadSaveGameAndRegister(storage, builder.Services);
     // kja wip
-    builder.Services.AddSingleton<Timeline>();
-    builder.Services.AddSingleton<Money>();
-    builder.Services.AddSingleton<Staff>();
-    builder.Services.AddSingleton<OperationsArchive>();
-    builder.Services.AddSingleton<MissionPrep>();
-    builder.Services.AddSingleton(factions);
-    builder.Services.AddSingleton<PendingMission>();
-    builder.Services.AddSingleton<PlayerScore>();
-    builder.Services.AddSingleton<Game>();
+    // builder.Services.AddSingleton<Timeline>();
+    // builder.Services.AddSingleton<Money>();
+    // builder.Services.AddSingleton<Staff>();
+    // builder.Services.AddSingleton<OperationsArchive>();
+    // builder.Services.AddSingleton<MissionPrep>();
+    // builder.Services.AddSingleton(factions);
+    // builder.Services.AddSingleton<PendingMission>();
+    // builder.Services.AddSingleton<PlayerScore>();
+    // builder.Services.AddSingleton<Game>();
 }
-else
-{
     #region Model with persistable state
 
     builder.Services.AddSingleton<Timeline>();
     builder.Services.AddSingleton<Money>();
+    builder.Services.AddSingleton<Research>();
     builder.Services.AddSingleton<Staff>();
     builder.Services.AddSingleton<OperationsArchive>();
     builder.Services.AddSingleton<MissionPrep>();
@@ -48,7 +48,6 @@ else
     builder.Services.AddSingleton<Game>();
 
     #endregion
-}
 
 // ViewModel
 builder.Services.AddSingleton<StateRefresh>();

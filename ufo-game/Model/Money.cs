@@ -7,6 +7,12 @@ public class Money
     [JsonInclude]
     public int CurrentMoney { get; private set; }
 
+    [JsonInclude]
+    public int MoneyRaisedPerActionAmount = 50;
+    // Currently zero, as it offsets costs of actions, resulting in confusing
+    // balance.
+    public const int MoneyPerTurnAmount = 0;
+
     public void AddMoney(int amount)
     {
         CurrentMoney += amount;
