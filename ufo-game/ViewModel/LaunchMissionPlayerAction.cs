@@ -6,19 +6,23 @@ class LaunchMissionPlayerAction : IPlayerActionOnRangeInput
 {
     private readonly MissionPrep _missionPrep;
     private readonly PendingMission _pendingMission;
+    private readonly MissionLauncher _missionLauncher;
     private readonly StateRefresh _stateRefresh;
+
 
     public LaunchMissionPlayerAction(
         MissionPrep missionPrep,
         PendingMission pendingMission,
-        StateRefresh stateRefresh)
+        StateRefresh stateRefresh,
+        MissionLauncher missionLauncher)
     {
         _missionPrep = missionPrep;
         _pendingMission = pendingMission;
         _stateRefresh = stateRefresh;
+        _missionLauncher = missionLauncher;
     }
 
-    public void Act() => _pendingMission.LaunchMission();
+    public void Act() => _missionLauncher.LaunchMission(_pendingMission);
 
     public string ActLabel()
         => $"Launch with {_missionPrep.SoldiersToSend} soldiers";
@@ -45,9 +49,9 @@ class LaunchMissionPlayerAction : IPlayerActionOnRangeInput
         _stateRefresh.Trigger();
     }
 
-    public bool CanAct() => _pendingMission.CanLaunchMission();
+    public bool CanAct() => _missionLauncher.CanLaunchMission(_pendingMission);
 
-    public bool CanAct(int value) => _pendingMission.CanLaunchMission(value);
+    public bool CanAct(int value) => _missionLauncher.CanLaunchMission(_pendingMission, value);
 
     public int InputMax() => _missionPrep.MaxSoldiersToSend;
 

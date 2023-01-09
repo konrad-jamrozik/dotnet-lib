@@ -34,25 +34,19 @@ public class PendingMission
     private readonly Factions _factions;
     private readonly PlayerScore _playerScore;
     private readonly Staff _staff;
-    private readonly Money _money;
-    private readonly StateRefresh _stateRefresh;
 
     public PendingMission(
         MissionPrep missionPrep,
         OperationsArchive archive,
         Factions factions,
         PlayerScore playerScore,
-        Staff staff,
-        Money money,
-        StateRefresh stateRefresh)
+        Staff staff)
     {
         _missionPrep = missionPrep;
         _archive = archive;
         _factions = factions;
         _playerScore = playerScore;
         _staff = staff;
-        _money = money;
-        _stateRefresh = stateRefresh;
         Data = GenerateNewMission();
     }
 
@@ -93,87 +87,6 @@ public class PendingMission
             Data = GenerateNewMission();
         else
             Data = RemoveMission();
-    }
-
-    public bool CanLaunchMission(int offset = 0)
-    {
-        if (_playerScore.GameOver || !CurrentlyAvailable)
-            return false;
-
-        if (!WithinRange(_missionPrep.SoldiersToSend) 
-            && _missionPrep.SoldiersToSend > _missionPrep.MinSoldiersToSend)
-            _missionPrep.NarrowSoldiersToSend();
-
-        return WithinRange(_missionPrep.SoldiersToSend + offset);
-
-        bool WithinRange(int soldiersToSend)
-        {
-            return _missionPrep.MinSoldiersToSend <= soldiersToSend 
-                   && soldiersToSend <= _missionPrep.MaxSoldiersToSend;
-        }
-    }
-
-    public void LaunchMission()
-    {
-        Debug.Assert(CanLaunchMission());
-        // Roll between 1 and 100.
-        // The lower the better.
-        int roll = _random.Next(1, 100+1);
-        bool success = roll <= SuccessChance;
-        Console.Out.WriteLine(
-            $"Rolled {roll} against limit of {SuccessChance} resulting in {(success ? "success" : "failure")}");
-
-        int scoreDiff;
-        if (success)
-        {
-            scoreDiff = Math.Min(PlayerScore.WinScore, Faction.Score);
-            _playerScore.Value += scoreDiff;
-            Faction.Score -= scoreDiff;
-            _money.AddMoney(Data.MoneyReward);
-        }
-        else
-        {
-            scoreDiff = PlayerScore.LoseScore;
-            _playerScore.Value -= scoreDiff;
-            Faction.Score += scoreDiff;
-        }
-
-        int soldiersLost = 0;
-        for (int i = 0; i < _missionPrep.SoldiersToSend; i++)
-        {
-            // Roll between 1 and 100.
-            // The lower the better.
-            int soldierRoll = _random.Next(1, 100+1);
-            bool soldierSurvived = soldierRoll <= SoldierSurvivalChance;
-            Console.Out.WriteLine(
-                $"Soldier {i} {(soldierSurvived ? "survived" : "lost")}. " +
-                $"Rolled {soldierRoll} <= {SoldierSurvivalChance}");
-            if (!soldierSurvived)
-                soldiersLost++;
-        }
-
-        if (soldiersLost > 0)
-        {
-            _archive.RecordLostSoldiers(soldiersLost);
-            _staff.SubtractSoldiers(soldiersLost);
-        }
-        else
-        {
-            Console.Out.WriteLine("No soldiers lost! \\o/");
-        }
-
-        _archive.ArchiveMission(missionSuccessful: success);
-        string missionRollReport =
-            $" (Rolled {roll} against limit of {SuccessChance}.)";
-        string missionSuccessReport = success 
-            ? $"successful! {missionRollReport} We took {scoreDiff} score from {Faction.Name} and earned ${Data.MoneyReward}." 
-            : $"a failure. {missionRollReport} We lost {scoreDiff} score to {Faction.Name}.";
-        
-        string soldiersLostReport = soldiersLost > 0 ? $"Number of soldiers lost: {soldiersLost}." : "We didn't lose any soldiers.";
-        _archive.WriteLastMissionReport($"The last mission was {missionSuccessReport} {soldiersLostReport}");
-        GenerateNewOrClearMission();
-        _missionPrep.NarrowSoldiersToSend();
-        _stateRefresh.Trigger();
     }
 
     private PendingMissionData GenerateNewMission()

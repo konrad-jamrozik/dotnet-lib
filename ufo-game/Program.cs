@@ -44,6 +44,7 @@ if (storage.HasSavedGame) // kja
     builder.Services.AddSingleton<MissionPrep>();
     builder.Services.AddSingleton<Factions>();
     builder.Services.AddSingleton<PendingMission>();
+    builder.Services.AddSingleton<MissionLauncher>();
     builder.Services.AddSingleton<PlayerScore>();
     builder.Services.AddSingleton<Game>();
 
