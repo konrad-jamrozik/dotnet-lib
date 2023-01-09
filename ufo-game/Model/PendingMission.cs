@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
 
 namespace UfoGame.Model;
@@ -7,34 +6,12 @@ namespace UfoGame.Model;
 public class PendingMission
 {
     [JsonInclude]
-    public int AvailableIn { get; private set; }
-
-    [JsonInclude]
-    public int ExpiresIn { get; private set; }
-
-    [JsonInclude]
-    public int MoneyReward { get; private set; }
-    
-    [JsonInclude]
-    public float EnemyPowerCoefficient { get; private set; } 
-
-    [JsonInclude]
-    public string FactionName { get; private set; }
+    public PendingMissionData Data { get; private set; }
     
     //public Faction Faction { get; private set; } = new Faction(name: "placeholder", 0, 0);
-    public Faction Faction => _factions.Data.Single(f => f.Name == FactionName);
+    public Faction Faction => _factions.Data.Single(f => f.Name == Data.FactionName);
 
-    public void Hydrate(JsonNode node)
-    {
-        AvailableIn = (int)node[nameof(AvailableIn)]!;
-        ExpiresIn = (int)node[nameof(ExpiresIn)]!;
-        MoneyReward = (int)node[nameof(MoneyReward)]!;
-        EnemyPowerCoefficient = (float)node[nameof(EnemyPowerCoefficient)]!;
-        // Faction = _factions.Data.Single(faction
-        //     => faction.Name == (string)node[nameof(FactionName)]!);
-    }
-
-    public int EnemyPower => (int)(Faction.Score * EnemyPowerCoefficient);
+    public int EnemyPower => (int)(Faction.Score * Data.EnemyPowerCoefficient);
 
     public int OurPower => _missionPrep.SoldiersToSend * _staff.SoldierEffectiveness;
 
@@ -45,11 +22,11 @@ public class PendingMission
 
     private int SoldierSurvivabilityPower => _missionPrep.SoldiersToSend * _staff.SoldierSurvivability;
 
-    public int CountDown => CurrentlyAvailable ? -ExpiresIn : AvailableIn;
+    public int CountDown => CurrentlyAvailable ? -Data.ExpiresIn : Data.AvailableIn;
 
-    public bool CurrentlyAvailable => AvailableIn == 0 && ExpiresIn > 0;
+    public bool CurrentlyAvailable => Data.AvailableIn == 0 && Data.ExpiresIn > 0;
     
-    public bool MissionAboutToExpire => CurrentlyAvailable && ExpiresIn == 1;
+    public bool MissionAboutToExpire => CurrentlyAvailable && Data.ExpiresIn == 1;
 
     private readonly Random _random = new Random();
     private readonly MissionPrep _missionPrep;
@@ -76,7 +53,7 @@ public class PendingMission
         _staff = staff;
         _money = money;
         _stateRefresh = stateRefresh;
-        FactionName = GenerateNewMission();
+        Data = GenerateNewMission();
     }
 
     public void AdvanceMissionTime()
@@ -85,7 +62,7 @@ public class PendingMission
         Console.Out.WriteLine("PendingMission - AdvanceTime");
         if (CurrentlyAvailable)
         {
-            Debug.Assert(ExpiresIn >= 1);
+            Debug.Assert(Data.ExpiresIn >= 1);
             if (MissionAboutToExpire)
             {
                 _archive.RecordIgnoredMission();
@@ -93,12 +70,12 @@ public class PendingMission
                 GenerateNewOrClearMission();
             }
             else
-                ExpiresIn--;
+                Data.ExpiresIn--;
         }
         else
         {
-            Debug.Assert(AvailableIn >= 1);
-            AvailableIn--;
+            Debug.Assert(Data.AvailableIn >= 1);
+            Data.AvailableIn--;
             if (CurrentlyAvailable)
             {
                 if (!Faction.Discovered)
@@ -113,9 +90,9 @@ public class PendingMission
     public void GenerateNewOrClearMission()
     {
         if (!_playerScore.GameOver)
-            GenerateNewMission();
+            Data = GenerateNewMission();
         else
-            RemoveMission();
+            Data = RemoveMission();
     }
 
     public bool CanLaunchMission(int offset = 0)
@@ -152,7 +129,7 @@ public class PendingMission
             scoreDiff = Math.Min(PlayerScore.WinScore, Faction.Score);
             _playerScore.Value += scoreDiff;
             Faction.Score -= scoreDiff;
-            _money.AddMoney(MoneyReward);
+            _money.AddMoney(Data.MoneyReward);
         }
         else
         {
@@ -189,7 +166,7 @@ public class PendingMission
         string missionRollReport =
             $" (Rolled {roll} against limit of {SuccessChance}.)";
         string missionSuccessReport = success 
-            ? $"successful! {missionRollReport} We took {scoreDiff} score from {Faction.Name} and earned ${MoneyReward}." 
+            ? $"successful! {missionRollReport} We took {scoreDiff} score from {Faction.Name} and earned ${Data.MoneyReward}." 
             : $"a failure. {missionRollReport} We lost {scoreDiff} score to {Faction.Name}.";
         
         string soldiersLostReport = soldiersLost > 0 ? $"Number of soldiers lost: {soldiersLost}." : "We didn't lose any soldiers.";
@@ -199,27 +176,22 @@ public class PendingMission
         _stateRefresh.Trigger();
     }
 
-    private string GenerateNewMission()
+    private PendingMissionData GenerateNewMission()
     {
         // kja refactor so there is no placeholder Faction, like Factions.NoFaction; will need to split class ctor into 
         // initial app startup and instance creation. I.e. GenerateNew() should return new instance of 
         // PendingMission instead of assigning fields.
         Debug.Assert(!_playerScore.GameOver);
-        AvailableIn = _random.Next(1, 6+1);
-        ExpiresIn = _random.Next(1, 6+1);
-        MoneyReward = _random.Next(10, 200 + 1);
-        EnemyPowerCoefficient = _random.Next(5, 15 + 1) / (float)10;
-        FactionName = _factions.RandomUndefeatedFaction.Name;
-        return FactionName;
+        return new PendingMissionData(
+            availableIn: _random.Next(1, 6 + 1),
+            expiresIn: _random.Next(1, 6 + 1),
+            moneyReward: _random.Next(10, 200 + 1),
+            enemyPowerCoefficient: _random.Next(5, 15 + 1) / (float)10,
+            factionName: _factions.RandomUndefeatedFaction.Name);
     }
 
-    private void RemoveMission()
+    private PendingMissionData RemoveMission()
     {
-        AvailableIn = 0;
-        ExpiresIn = 0;
-        EnemyPowerCoefficient = 1;
-        // kja this will fail to deserialize from persistent storage, as there is no faction with such a name
-        // This happens when the game is over.
-        FactionName = Factions.NoFaction;
+        return new PendingMissionData(0, 0, 0, 1, Factions.NoFaction);
     }
 }

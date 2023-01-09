@@ -4,16 +4,16 @@
 
 <Card Title="Mission">
     <CardDataRow Text="Available in" 
-                 Value="@Game.PendingMission.AvailableIn" 
+                 Value="@Game.PendingMission.Data.AvailableIn" 
                  Enabled="@(!Game.PendingMission.CurrentlyAvailable)" />
     <CardDataRow Text="Expires in" 
-                 Value="@Game.PendingMission.ExpiresIn"
+                 Value="@Game.PendingMission.Data.ExpiresIn"
                  Enabled="@Game.PendingMission.CurrentlyAvailable"/>
     <CardDataRow Text="Enemy faction"
                  Value="@Game.PendingMission.Faction.Name"
                  Enabled="@Game.PendingMission.CurrentlyAvailable" />
     <CardDataRow Text="Money reward"
-                 Value="@("$"+Game.PendingMission.MoneyReward)"
+                 Value="@("$"+Game.PendingMission.Data.MoneyReward)"
                  Enabled="@Game.PendingMission.CurrentlyAvailable" />
     <CardDataRow Text="Enemy power"
                  Value="@Game.PendingMission.EnemyPower"
