@@ -1,18 +1,22 @@
 ﻿using System.Diagnostics;
+using System.Text.Json.Serialization;
 
 namespace UfoGame.Model;
 
 public class Staff
 {
-    // kja sort out story with setters/getters.
+    private const int SoldierPrice = 30;
+
+    [JsonInclude]
     public int CurrentSoldiers { get; private set; } = 0;
 
-    public int SoldierPrice { get; private set; } = 30;
-
+    [JsonInclude]
     public int SoldierEffectiveness = 100;
 
+    [JsonInclude]
     public int SoldierSurvivability = 100;
 
+    [JsonInclude]
     public int SoldiersToHire = 1;
 
     public int SoldiersToHireCost => SoldiersToHire * SoldierPrice;
