@@ -20,8 +20,9 @@ public static class SavedGameState
         var factions = gameJson[nameof(Factions)].Deserialize<Factions>()!;
         var research = gameJson[nameof(Research)].Deserialize<Research>()!;
         var operationsArchive = gameJson[nameof(OperationsArchive)].Deserialize<OperationsArchive>()!;
-        var pendingMissionData = gameJson[nameof(PendingMission)]?[nameof(PendingMission.Data)].Deserialize<PendingMissionData>()!;
         var missionPrepData = gameJson[nameof(MissionPrepData)].Deserialize<MissionPrepData>()!;
+        var pendingMissionData = gameJson[nameof(PendingMission)]?[nameof(PendingMission.Data)]
+            .Deserialize<PendingMissionData>()!;
         // kja all of these field initializations can be avoided, and also chained injections, by doing the following:
         // 1. if a class Foo has a mixture of [JsonInclude] fields, and DI-injected classes,
         // move all [JsonInclude] fields into their own class, FooData.
@@ -44,12 +45,6 @@ public static class SavedGameState
             SoldierSurvivability = gameJson[nameof(Staff)]![nameof(Staff.SoldierSurvivability)]!.GetValue<int>(),
             SoldiersToHire = gameJson[nameof(Staff)]![nameof(Staff.SoldiersToHire)]!.GetValue<int>()
         };
-        var missionPrep = new MissionPrep(missionPrepData, staff);
-        var pendingMission =
-            new PendingMission(missionPrep, operationsArchive, factions, playerScore, staff)
-         {
-             Data = pendingMissionData
-         };
 
         // This cannot be rolled into loop, because then I would have to have IEnumerable<object>,
         // and this "object" will prevent the DI framework from recognizing the types.
@@ -61,8 +56,7 @@ public static class SavedGameState
         services.AddSingleton(playerScore);
         services.AddSingleton(staff);
         services.AddSingleton(missionPrepData);
-        services.AddSingleton(missionPrep);
-        services.AddSingleton(pendingMission);
+        services.AddSingleton(pendingMissionData);
         Console.Out.WriteLine("Deserialized all game state and added to service collection.");
     }
 }
