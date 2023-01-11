@@ -5,21 +5,12 @@ namespace UfoGame.Model;
 
 public class Staff
 {
+    [JsonInclude]
+    public readonly StaffData Data;
+
     private const int SoldierPrice = 30;
 
-    [JsonInclude]
-    public int CurrentSoldiers { get; set; } = 0; // kja setter made public for deserialization. Fix.
-
-    [JsonInclude]
-    public int SoldierEffectiveness = 100;
-
-    [JsonInclude]
-    public int SoldierSurvivability = 100;
-
-    [JsonInclude]
-    public int SoldiersToHire = 1;
-
-    public int SoldiersToHireCost => SoldiersToHire * SoldierPrice;
+    public int SoldiersToHireCost => Data.SoldiersToHire * SoldierPrice;
 
     public int MinSoldiersToHire => 1;
 
@@ -30,10 +21,12 @@ public class Staff
     private readonly PlayerScore _playerScore;
 
     public Staff(
+        StaffData data,
         Money money,
         PlayerScore playerScore,
         OperationsArchive archive)
     {
+        Data = data;
         _money = money;
         _playerScore = playerScore;
         _archive = archive;
@@ -44,10 +37,10 @@ public class Staff
         if (_playerScore.GameOver)
             return false;
 
-        if (!WithinRange(SoldiersToHire) && SoldiersToHire > MinSoldiersToHire)
+        if (!WithinRange(Data.SoldiersToHire) && Data.SoldiersToHire > MinSoldiersToHire)
             NarrowSoldiersToHire();
 
-        return WithinRange(SoldiersToHire + offset);
+        return WithinRange(Data.SoldiersToHire + offset);
 
         bool WithinRange(int soldiersToHire)
         {
@@ -59,22 +52,20 @@ public class Staff
     {
         Debug.Assert(CanHireSoldiers());
         _money.SubtractMoney(SoldiersToHireCost);
-        _archive.RecordHiredSoldiers(SoldiersToHire);
-        CurrentSoldiers += SoldiersToHire;
-        Console.Out.WriteLine($"Hired {SoldiersToHire} soldiers. Soldiers now at {CurrentSoldiers}.");
+        _archive.RecordHiredSoldiers(Data.SoldiersToHire);
+        Data.CurrentSoldiers += Data.SoldiersToHire;
+        Console.Out.WriteLine($"Hired {Data.SoldiersToHire} soldiers. Soldiers now at {Data.CurrentSoldiers}.");
     }
 
     private void NarrowSoldiersToHire()
     {
-        Console.Out.WriteLine("Narrowing soldiers to hire! " + SoldiersToHire);
-        SoldiersToHire = Math.Max(MinSoldiersToHire, Math.Min(SoldiersToHire, MaxSoldiersToHire));
-        Console.Out.WriteLine("DONE Narrowing soldiers to hire! " + SoldiersToHire);
+        Data.SoldiersToHire = Math.Max(MinSoldiersToHire, Math.Min(Data.SoldiersToHire, MaxSoldiersToHire));
     }
 
     public void SubtractSoldiers(int amount)
     {
-        CurrentSoldiers -= amount;
-        Console.Out.WriteLine($"Subtracted {amount} soldiers. Soldiers now at {CurrentSoldiers}.");
+        Data.CurrentSoldiers -= amount;
+        Console.Out.WriteLine($"Subtracted {amount} soldiers. Soldiers now at {Data.CurrentSoldiers}.");
     }
 }
 

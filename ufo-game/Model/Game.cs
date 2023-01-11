@@ -86,7 +86,7 @@ public class Game
         Debug.Assert(CanResearchSoldierEffectiveness());
         Money.SubtractMoney(Research.SoldierEffectivenessResearchCost);
         Research.SoldierEffectivenessResearchCost += Research.SoldierEffectivenessResearchCostIncrement;
-        Staff.SoldierEffectiveness += 10;
+        Staff.Data.SoldierEffectiveness += 10;
         AdvanceTime();
     }
 
@@ -98,7 +98,7 @@ public class Game
         Debug.Assert(CanResearchSoldierSurvivability());
         Money.SubtractMoney(Research.SoldierSurvivabilityResearchCost);
         Research.SoldierSurvivabilityResearchCost += Research.SoldierSurvivabilityResearchCostIncrement;
-        Staff.SoldierSurvivability += 10;
+        Staff.Data.SoldierSurvivability += 10;
         AdvanceTime();
     }
 

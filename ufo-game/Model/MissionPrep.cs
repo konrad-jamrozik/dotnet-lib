@@ -13,7 +13,7 @@ public class MissionPrep
         set => _data.SoldiersToSend = value;
     }
 
-    public int MaxSoldiersToSend => _staff.CurrentSoldiers;
+    public int MaxSoldiersToSend => _staff.Data.CurrentSoldiers;
 
     public int MinSoldiersToSend => 1;
 

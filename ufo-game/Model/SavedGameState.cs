@@ -23,6 +23,7 @@ public static class SavedGameState
         var missionPrepData = gameJson[nameof(MissionPrepData)].Deserialize<MissionPrepData>()!;
         var pendingMissionData = gameJson[nameof(PendingMission)]?[nameof(PendingMission.Data)]
             .Deserialize<PendingMissionData>()!;
+        var staffData = gameJson[nameof(Staff)]?[nameof(Staff.Data)].Deserialize<StaffData>()!;
         // kja all of these field initializations can be avoided, and also chained injections, by doing the following:
         // 1. if a class Foo has a mixture of [JsonInclude] fields, and DI-injected classes,
         // move all [JsonInclude] fields into their own class, FooData.
@@ -38,13 +39,6 @@ public static class SavedGameState
         {
             Value = gameJson[nameof(PlayerScore)]![nameof(PlayerScore.Value)]!.GetValue<int>()
         };
-        var staff = new Staff(money, playerScore, operationsArchive)
-        {
-            CurrentSoldiers = gameJson[nameof(Staff)]![nameof(Staff.CurrentSoldiers)]!.GetValue<int>(),
-            SoldierEffectiveness = gameJson[nameof(Staff)]![nameof(Staff.SoldierEffectiveness)]!.GetValue<int>(),
-            SoldierSurvivability = gameJson[nameof(Staff)]![nameof(Staff.SoldierSurvivability)]!.GetValue<int>(),
-            SoldiersToHire = gameJson[nameof(Staff)]![nameof(Staff.SoldiersToHire)]!.GetValue<int>()
-        };
 
         // This cannot be rolled into loop, because then I would have to have IEnumerable<object>,
         // and this "object" will prevent the DI framework from recognizing the types.
@@ -54,7 +48,7 @@ public static class SavedGameState
         services.AddSingleton(research);
         services.AddSingleton(operationsArchive);
         services.AddSingleton(playerScore);
-        services.AddSingleton(staff);
+        services.AddSingleton(staffData);
         services.AddSingleton(missionPrepData);
         services.AddSingleton(pendingMissionData);
         Console.Out.WriteLine("Deserialized all game state and added to service collection.");

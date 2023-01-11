@@ -18,6 +18,7 @@ builder.Services.AddSingleton<PersistentStorage>();
 AddTypesWithPersistableState(builder);
 builder.Services.AddSingleton<MissionPrep>();
 builder.Services.AddSingleton<PendingMission>();
+builder.Services.AddSingleton<Staff>();
 builder.Services.AddSingleton<MissionLauncher>();
 builder.Services.AddSingleton<Game>();
 builder.Services.AddSingleton<GameState>();
@@ -44,7 +45,7 @@ void AddTypesWithPersistableState(WebAssemblyHostBuilder builder)
         builder.Services.AddSingleton<Research>();
         builder.Services.AddSingleton<OperationsArchive>();
         builder.Services.AddSingleton<PlayerScore>();
-        builder.Services.AddSingleton<Staff>();
+        builder.Services.AddSingleton(new StaffData());
         builder.Services.AddSingleton(new MissionPrepData());
         builder.Services.AddSingleton(new PendingMissionData());
     }
