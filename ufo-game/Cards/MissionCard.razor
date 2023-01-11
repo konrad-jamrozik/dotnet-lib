@@ -28,7 +28,7 @@
                  Value="@(Game.PendingMission.SoldierSurvivalChance + "%")"
                  Enabled="@Game.PendingMission.CurrentlyAvailable" />
     <CardDataRow Text="Soldiers to send" 
-                 Value="@Game.MissionPrep.SoldiersToSend"
+                 Value="@Game.MissionPrep.Data.SoldiersToSend"
                  Enabled="@Game.PendingMission.CurrentlyAvailable" />
     <CardButtonWithRangeInput PlayerAction="LaunchMission" />
     <div class="row">

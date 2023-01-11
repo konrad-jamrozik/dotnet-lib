@@ -25,27 +25,27 @@ class LaunchMissionPlayerAction : IPlayerActionOnRangeInput
     public void Act() => _missionLauncher.LaunchMission(_pendingMission);
 
     public string ActLabel()
-        => $"Launch with {_missionPrep.SoldiersToSend} soldiers";
+        => $"Launch with {_missionPrep.Data.SoldiersToSend} soldiers";
 
     public int Input
     {
-        get => _missionPrep.SoldiersToSend;
+        get => _missionPrep.Data.SoldiersToSend;
         set
         {
-            _missionPrep.SoldiersToSend = value; 
+            _missionPrep.Data.SoldiersToSend = value; 
             _stateRefresh.Trigger();
         }
     }
 
     public void IncrementInput()
     {
-        _missionPrep.SoldiersToSend += 1;
+        _missionPrep.Data.SoldiersToSend += 1;
         _stateRefresh.Trigger();
     }
 
     public void DecrementInput()
     {
-        _missionPrep.SoldiersToSend -= 1;
+        _missionPrep.Data.SoldiersToSend -= 1;
         _stateRefresh.Trigger();
     }
 

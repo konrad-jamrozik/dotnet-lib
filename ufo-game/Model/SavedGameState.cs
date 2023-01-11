@@ -21,7 +21,7 @@ public static class SavedGameState
         var research = gameJson[nameof(Research)].Deserialize<Research>()!;
         var operationsArchive = gameJson[nameof(OperationsArchive)].Deserialize<OperationsArchive>()!;
         var playerScoreData = gameJson[nameof(PlayerScore)]?[nameof(PlayerScore.Data)].Deserialize<PlayerScoreData>()!;
-        var missionPrepData = gameJson[nameof(MissionPrepData)].Deserialize<MissionPrepData>()!;
+        var missionPrepData = gameJson[nameof(MissionPrep)]?[nameof(MissionPrep.Data)].Deserialize<MissionPrepData>()!;
         var pendingMissionData = gameJson[nameof(PendingMission)]?[nameof(PendingMission.Data)]
             .Deserialize<PendingMissionData>()!;
         var staffData = gameJson[nameof(Staff)]?[nameof(Staff.Data)].Deserialize<StaffData>()!;

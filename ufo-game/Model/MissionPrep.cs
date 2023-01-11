@@ -4,28 +4,22 @@ namespace UfoGame.Model;
 
 public class MissionPrep
 {
-    private readonly MissionPrepData _data;
-
-    [JsonIgnore]
-    public int SoldiersToSend
-    {
-        get => _data.SoldiersToSend;
-        set => _data.SoldiersToSend = value;
-    }
+    [JsonInclude]
+    public readonly MissionPrepData Data;
 
     public int MaxSoldiersToSend => _staff.Data.CurrentSoldiers;
 
     public int MinSoldiersToSend => 1;
 
     public void NarrowSoldiersToSend()
-        => _data.SoldiersToSend = Math.Max(MinSoldiersToSend, Math.Min(_data.SoldiersToSend, MaxSoldiersToSend));
+        => Data.SoldiersToSend = Math.Max(MinSoldiersToSend, Math.Min(Data.SoldiersToSend, MaxSoldiersToSend));
     
     private readonly Staff _staff;
 
     public MissionPrep(MissionPrepData data, Staff staff)
     {
+        Data = data;
         _staff = staff;
-        _data = data;
         NarrowSoldiersToSend();
     }
 }

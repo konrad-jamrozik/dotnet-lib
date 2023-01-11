@@ -36,11 +36,11 @@ public class MissionLauncher
         if (_playerScore.GameOver || !mission.CurrentlyAvailable)
             return false;
 
-        if (!WithinRange(_missionPrep.SoldiersToSend) 
-            && _missionPrep.SoldiersToSend > _missionPrep.MinSoldiersToSend)
+        if (!WithinRange(_missionPrep.Data.SoldiersToSend) 
+            && _missionPrep.Data.SoldiersToSend > _missionPrep.MinSoldiersToSend)
             _missionPrep.NarrowSoldiersToSend();
 
-        return WithinRange(_missionPrep.SoldiersToSend + offset);
+        return WithinRange(_missionPrep.Data.SoldiersToSend + offset);
 
         bool WithinRange(int soldiersToSend)
         {
@@ -75,7 +75,7 @@ public class MissionLauncher
         }
 
         int soldiersLost = 0;
-        for (int i = 0; i < _missionPrep.SoldiersToSend; i++)
+        for (int i = 0; i < _missionPrep.Data.SoldiersToSend; i++)
         {
             // Roll between 1 and 100.
             // The lower the better.
