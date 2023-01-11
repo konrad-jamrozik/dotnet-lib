@@ -1,0 +1,47 @@
+﻿@inject Model.GameState GameState
+
+<div class="modal fade show d-block" tabindex="-1" role="dialog">
+    <div class="modal-backdrop fade show" @onclick="Cancel"></div>
+    <div class="modal-dialog" style="z-index: 1050">
+        <!-- Pop it above the backdrop -->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fs-5">Situation Report</h5>
+                <button type="button" class="btn-close" aria-label="Close" @onclick="Close">
+                </button>
+            </div>
+            <div class="modal-body" align="justify">
+                <p>The year is 2030. Humanity is waging a secret war against enemies numerous and unknown. You take the helm of a clandestine organization known as "The Solemn Participants", or "Solpar".</p>
+                <p>Your mission is to discover, infiltrate, prioritize and neutralize the gravest threats to the human race.</p>
+                <p>Your mission is to participate in the secret war.</p>
+            </div>
+            <div class="modal-footer justify-content-center">
+                <button type="button" class="btn btn-secondary" @onclick="Close">I accept the responsibility</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [CascadingParameter] BlazoredModalInstance BlazoredModal { get; set; } = default!;
+
+    [Parameter] public string? Message { get; set; }
+
+    private void ModalShown()
+    {
+        GameState.ModalsState.IntroModalShown = true;
+        GameState.PersistGameState();
+    }
+
+    private async Task Close()
+    {
+        ModalShown();
+        await BlazoredModal.CloseAsync(ModalResult.Ok(true));
+    }
+
+    private async Task Cancel()
+    {
+        ModalShown();
+        await BlazoredModal.CancelAsync();
+    }
+}

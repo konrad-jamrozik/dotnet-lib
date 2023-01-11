@@ -25,6 +25,7 @@ public static class SavedGameState
         var pendingMissionData = gameJson[nameof(PendingMission)]?[nameof(PendingMission.Data)]
             .Deserialize<PendingMissionData>()!;
         var staffData = gameJson[nameof(Staff)]?[nameof(Staff.Data)].Deserialize<StaffData>()!;
+        var modalsState = gameJson[nameof(ModalsState)].Deserialize<ModalsState>()!;
 
         // These cannot be rolled into loop, because then I would have to have IEnumerable<object>,
         // and the generic "object" type will prevent the DI framework from recognizing the types.
@@ -37,6 +38,7 @@ public static class SavedGameState
         services.AddSingleton(staffData);
         services.AddSingleton(missionPrepData);
         services.AddSingleton(pendingMissionData);
+        services.AddSingleton(modalsState);
         Console.Out.WriteLine("Deserialized all game state and added to service collection.");
     }
 }

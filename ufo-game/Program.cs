@@ -1,4 +1,5 @@
 using Blazored.LocalStorage;
+using Blazored.Modal;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using UfoGame;
@@ -8,6 +9,9 @@ using UfoGame.ViewModel;
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
+
+// Experimental
+builder.Services.AddBlazoredModal();
 
 builder.Services.AddScoped(_ => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 builder.Services.AddBlazoredLocalStorageAsSingleton(config =>
@@ -49,5 +53,6 @@ void AddTypesWithPersistableState(WebAssemblyHostBuilder builder)
         builder.Services.AddSingleton(new StaffData());
         builder.Services.AddSingleton(new MissionPrepData());
         builder.Services.AddSingleton(new PendingMissionData());
+        builder.Services.AddSingleton(new ModalsState());
     }
 }

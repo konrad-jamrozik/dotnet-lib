@@ -4,24 +4,16 @@ namespace UfoGame.Model;
 
 public class GameState
 {
-    [JsonInclude]
-    public readonly Timeline Timeline;
-    [JsonInclude]
-    public readonly Money Money;
-    [JsonInclude]
-    public readonly Staff Staff;
-    [JsonInclude]
-    public readonly OperationsArchive OperationsArchive;
-    [JsonInclude]
-    public readonly MissionPrep MissionPrep;
-    [JsonInclude]
-    public readonly PendingMission PendingMission;
-    [JsonInclude]
-    public readonly Factions Factions;
-    [JsonInclude]
-    public readonly PlayerScore PlayerScore;
-    [JsonInclude]
-    public readonly Research Research;
+    [JsonInclude] public readonly Timeline Timeline;
+    [JsonInclude] public readonly Money Money;
+    [JsonInclude] public readonly Staff Staff;
+    [JsonInclude] public readonly OperationsArchive OperationsArchive;
+    [JsonInclude] public readonly MissionPrep MissionPrep;
+    [JsonInclude] public readonly PendingMission PendingMission;
+    [JsonInclude] public readonly Factions Factions;
+    [JsonInclude] public readonly PlayerScore PlayerScore;
+    [JsonInclude] public readonly Research Research;
+    [JsonInclude] public readonly ModalsState ModalsState;
 
     private readonly StateRefresh _stateRefresh;
 
@@ -38,7 +30,8 @@ public class GameState
         PlayerScore playerScore,
         Research research,
         PersistentStorage storage,
-        StateRefresh stateRefresh)
+        StateRefresh stateRefresh,
+        ModalsState modalsState)
     {
         Timeline = timeline;
         Money = money;
@@ -51,6 +44,7 @@ public class GameState
         Research = research;
         _storage = storage;
         _stateRefresh = stateRefresh;
+        ModalsState = modalsState;
     }
 
     public void PersistGameState()
@@ -70,6 +64,7 @@ public class GameState
         Factions.Reset();
         PlayerScore.Data.Reset();
         Research.Reset();
+        ModalsState.Reset();
         _storage.Reset();
         _stateRefresh.Trigger();
     }
