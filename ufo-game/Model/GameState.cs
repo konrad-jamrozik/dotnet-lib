@@ -13,7 +13,7 @@ public class GameState
     [JsonInclude]
     public readonly OperationsArchive OperationsArchive;
     [JsonInclude]
-    public readonly MissionPrep MissionPrep;
+    public readonly MissionPrepData MissionPrepData;
     [JsonInclude]
     public readonly PendingMission PendingMission;
     [JsonInclude]
@@ -32,8 +32,8 @@ public class GameState
         Money money,
         Staff staff,
         OperationsArchive operationsArchive,
-        MissionPrep missionPrep,
         PendingMission pendingMission,
+        MissionPrepData missionPrepData,
         Factions factions,
         PlayerScore playerScore,
         Research research,
@@ -44,8 +44,8 @@ public class GameState
         Money = money;
         Staff = staff;
         OperationsArchive = operationsArchive;
-        MissionPrep = missionPrep;
         PendingMission = pendingMission;
+        MissionPrepData = missionPrepData;
         Factions = factions;
         PlayerScore = playerScore;
         Research = research;

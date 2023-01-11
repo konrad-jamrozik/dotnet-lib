@@ -21,6 +21,7 @@ public static class SavedGameState
         var research = gameJson[nameof(Research)].Deserialize<Research>()!;
         var operationsArchive = gameJson[nameof(OperationsArchive)].Deserialize<OperationsArchive>()!;
         var pendingMissionData = gameJson[nameof(PendingMission)]?[nameof(PendingMission.Data)].Deserialize<PendingMissionData>()!;
+        var missionPrepData = gameJson[nameof(MissionPrepData)].Deserialize<MissionPrepData>()!;
         // kja all of these field initializations can be avoided, and also chained injections, by doing the following:
         // 1. if a class Foo has a mixture of [JsonInclude] fields, and DI-injected classes,
         // move all [JsonInclude] fields into their own class, FooData.
@@ -43,10 +44,7 @@ public static class SavedGameState
             SoldierSurvivability = gameJson[nameof(Staff)]![nameof(Staff.SoldierSurvivability)]!.GetValue<int>(),
             SoldiersToHire = gameJson[nameof(Staff)]![nameof(Staff.SoldiersToHire)]!.GetValue<int>()
         };
-        var missionPrep = new MissionPrep(staff)
-        {
-            SoldiersToSend = gameJson[nameof(MissionPrep)]![nameof(MissionPrep.SoldiersToSend)]!.GetValue<int>()
-        };
+        var missionPrep = new MissionPrep(missionPrepData, staff);
         var pendingMission =
             new PendingMission(missionPrep, operationsArchive, factions, playerScore, staff)
          {
@@ -62,6 +60,7 @@ public static class SavedGameState
         services.AddSingleton(operationsArchive);
         services.AddSingleton(playerScore);
         services.AddSingleton(staff);
+        services.AddSingleton(missionPrepData);
         services.AddSingleton(missionPrep);
         services.AddSingleton(pendingMission);
         Console.Out.WriteLine("Deserialized all game state and added to service collection.");

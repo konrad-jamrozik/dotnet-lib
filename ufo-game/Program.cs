@@ -15,7 +15,7 @@ builder.Services.AddBlazoredLocalStorageAsSingleton(config =>
     config.JsonSerializerOptions.IgnoreReadOnlyProperties = true;
 });
 builder.Services.AddSingleton<PersistentStorage>();
-RegisterClassesWithPersistentState(builder);
+RegisterClassesThatArePersistable(builder);
 builder.Services.AddSingleton<MissionLauncher>();
 builder.Services.AddSingleton<Game>();
 builder.Services.AddSingleton<GameState>();
@@ -27,7 +27,7 @@ builder.Services.AddSingleton<LaunchMissionPlayerAction>();
 
 await builder.Build().RunAsync();
 
-void RegisterClassesWithPersistentState(WebAssemblyHostBuilder builder)
+void RegisterClassesThatArePersistable(WebAssemblyHostBuilder builder)
 {
     var storage = builder.Build().Services.GetService<PersistentStorage>()!;
     if (storage.HasSavedGame)
@@ -43,6 +43,7 @@ void RegisterClassesWithPersistentState(WebAssemblyHostBuilder builder)
         builder.Services.AddSingleton<OperationsArchive>();
         builder.Services.AddSingleton<PlayerScore>();
         builder.Services.AddSingleton<Staff>();
+        builder.Services.AddSingleton<MissionPrepData>();
         builder.Services.AddSingleton<MissionPrep>();
         builder.Services.AddSingleton<PendingMission>();
     }
