@@ -101,12 +101,4 @@ public class Game
         Staff.Data.SoldierSurvivability += 10;
         AdvanceTime();
     }
-
-    public void Reset()
-    {
-        _gameState.Reset();
-        // kja need to add resets for everything here
-        Timeline.Reset();
-        StateRefresh.Trigger();
-    }
 }

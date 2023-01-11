@@ -4,15 +4,22 @@ namespace UfoGame.Model;
 
 public class StaffData
 {
-    [JsonInclude]
-    public int SoldierEffectiveness = 100;
+    [JsonInclude] public int SoldierEffectiveness;
 
-    [JsonInclude]
-    public int SoldierSurvivability = 100;
+    [JsonInclude] public int SoldierSurvivability;
 
-    [JsonInclude]
-    public int SoldiersToHire = 1;
+    [JsonInclude] public int SoldiersToHire;
 
-    [JsonInclude]
-    public int CurrentSoldiers = 0;
+    [JsonInclude] public int CurrentSoldiers;
+
+    public StaffData()
+        => Reset();
+
+    public void Reset()
+    {
+        SoldierEffectiveness = 100;
+        SoldierSurvivability = 100;
+        SoldiersToHire = 1;
+        CurrentSoldiers = 0;
+    }
 }

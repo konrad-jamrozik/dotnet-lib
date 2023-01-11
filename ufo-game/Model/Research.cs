@@ -4,15 +4,25 @@ namespace UfoGame.Model;
 
 public class Research
 {
-    [JsonInclude]
-    public int MoneyRaisingMethodsResearchCost = 100;
+    [JsonInclude] public int MoneyRaisingMethodsResearchCost;
+
+    [JsonInclude] public int SoldierEffectivenessResearchCost;
+
+    [JsonInclude] public int SoldierSurvivabilityResearchCost;
+
     public const int MoneyRaisingMethodsResearchCostIncrement = 10;
 
-    [JsonInclude]
-    public int SoldierEffectivenessResearchCost = 100;
     public const int SoldierEffectivenessResearchCostIncrement = 10;
 
-    [JsonInclude]
-    public int SoldierSurvivabilityResearchCost = 100;
-    public const int SoldierSurvivabilityResearchCostIncrement = 10;   
+    public const int SoldierSurvivabilityResearchCostIncrement = 10;
+
+    public Research()
+        => Reset();
+
+    public void Reset()
+    {
+        MoneyRaisingMethodsResearchCost = 100;
+        SoldierEffectivenessResearchCost = 100;
+        SoldierSurvivabilityResearchCost = 100;
+    }
 }

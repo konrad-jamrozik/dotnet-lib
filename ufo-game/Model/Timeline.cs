@@ -4,17 +4,19 @@ namespace UfoGame.Model;
 
 public class Timeline
 {
-    [JsonInclude]
-    public int CurrentTime { get; set; } = 0;
+    [JsonInclude] public int CurrentTime { get; private set; }
+
+    public Timeline()
+        => Reset();
+
+    public void Reset()
+    {
+        CurrentTime = 0;
+    }
 
     public void IncrementTime()
     {
         CurrentTime += 1;
         Console.Out.WriteLine($"Advanced time to {CurrentTime}");
-    }
-
-    public void Reset()
-    {
-        CurrentTime = 0;
     }
 }

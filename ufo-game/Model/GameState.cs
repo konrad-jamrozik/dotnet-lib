@@ -61,9 +61,16 @@ public class GameState
 
     public void Reset()
     {
-        _storage.Reset();
-        // kja NEXT need to add resets for everything here
         Timeline.Reset();
+        Money.Reset();
+        Staff.Data.Reset();
+        OperationsArchive.Reset();
+        PendingMission.Data.Reset();
+        MissionPrep.Data.Reset();
+        Factions.Reset();
+        PlayerScore.Data.Reset();
+        Research.Reset();
+        _storage.Reset();
         _stateRefresh.Trigger();
     }
 }

@@ -4,6 +4,8 @@ namespace UfoGame.Model;
 
 public class Factions
 {
+    [JsonInclude] public List<Faction> Data = new List<Faction>();
+
     /// <summary>
     /// Placeholder faction for "no faction", or "null faction".
     /// By design, it has no influence on the game at all;
@@ -12,12 +14,12 @@ public class Factions
     /// 
     public const string NoFaction = "no_faction";
 
-    [JsonInclude]
-    public List<Faction> Data { get; }
+    public Factions()
+        => Reset();
 
-    public Factions(List<Faction>? data = null)
+    public void Reset()
     {
-        Data = data ?? new List<(string name, int score, int scoreTick)>
+        Data = new List<(string name, int score, int scoreTick)>
             {
                 ("Strange Life Forms", 5000, 1),
                 ("Zombies", 10000, 1),

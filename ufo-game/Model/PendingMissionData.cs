@@ -23,34 +23,41 @@ public class PendingMissionData
             factionName: factions.RandomUndefeatedFaction.Name);
     }
 
-    [JsonInclude]
-    public int AvailableIn { get; set; }
+    [JsonInclude] public int AvailableIn { get; set; }
 
-    [JsonInclude]
-    public int ExpiresIn { get; set; }
+    [JsonInclude] public int ExpiresIn { get; set; }
 
-    [JsonInclude]
-    public int MoneyReward { get; set; }
-    
-    [JsonInclude]
-    public float EnemyPowerCoefficient { get; set; } 
+    [JsonInclude] public int MoneyReward { get; set; }
 
-    [JsonInclude]
-    public string FactionName { get; set; }
+    [JsonInclude] public float EnemyPowerCoefficient { get; set; }
+
+    [JsonInclude] public string FactionName { get; set; } = Factions.NoFaction;
 
     public bool IsNoMission => FactionName == Factions.NoFaction;
 
     public PendingMissionData(
-        int availableIn = 0,
-        int expiresIn = 0,
-        int moneyReward = 0,
-        float enemyPowerCoefficient = 1,
-        string factionName = Factions.NoFaction)
+        int availableIn,
+        int expiresIn,
+        int moneyReward,
+        float enemyPowerCoefficient,
+        string factionName)
     {
         AvailableIn = availableIn;
         ExpiresIn = expiresIn;
         MoneyReward = moneyReward;
         EnemyPowerCoefficient = enemyPowerCoefficient;
         FactionName = factionName;
+    }
+
+    public PendingMissionData()
+        => Reset();
+
+    public void Reset()
+    {
+        AvailableIn = 0;
+        ExpiresIn = 0;
+        MoneyReward = 0;
+        EnemyPowerCoefficient = 0;
+        FactionName = Factions.NoFaction;
     }
 }
