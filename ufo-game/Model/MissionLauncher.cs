@@ -63,14 +63,14 @@ public class MissionLauncher
         if (success)
         {
             scoreDiff = Math.Min(PlayerScore.WinScore, mission.Faction.Score);
-            _playerScore.Value += scoreDiff;
+            _playerScore.Data.Value += scoreDiff;
             mission.Faction.Score -= scoreDiff;
             _money.AddMoney(mission.Data.MoneyReward);
         }
         else
         {
             scoreDiff = PlayerScore.LoseScore;
-            _playerScore.Value -= scoreDiff;
+            _playerScore.Data.Value -= scoreDiff;
             mission.Faction.Score += scoreDiff;
         }
 

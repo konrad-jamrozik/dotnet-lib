@@ -56,7 +56,7 @@ public class GameState
     public void PersistGameState()
     {
         Console.Out.WriteLine("Persisting game state");
-        _storage.SetItem("Game", this);
+        _storage.SetItem("GameState", this);
     }
 
     public void Reset()

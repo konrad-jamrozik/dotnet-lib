@@ -62,7 +62,7 @@ public class PendingMission
             if (MissionAboutToExpire)
             {
                 _archive.RecordIgnoredMission();
-                _playerScore.Value -= PlayerScore.IgnoreMissionScoreLoss;
+                _playerScore.Data.Value -= PlayerScore.IgnoreMissionScoreLoss;
                 GenerateNewOrClearMission();
             }
             else

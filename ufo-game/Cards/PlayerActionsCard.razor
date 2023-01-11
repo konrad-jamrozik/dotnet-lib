@@ -46,8 +46,8 @@
     {
         if (Game.PlayerScore.GameOver)
             return "GAME OVER! " 
-                   + (Game.PlayerScore.Value > 0 
-                       ? $"YOU WON! Score: {Game.PlayerScore.Value}. Turn: {Game.Timeline.CurrentTime}" 
+                   + (Game.PlayerScore.PlayerWon 
+                       ? $"YOU WON! Score: {Game.PlayerScore.Data.Value}. Turn: {Game.Timeline.CurrentTime}" 
                        : $"YOU LOST! Lasted until turn: {Game.Timeline.CurrentTime}.");
         else if (Game.PendingMission.MissionAboutToExpire)
             return $"If you don't launch mission now, you will lose {PlayerScore.IgnoreMissionScoreLoss} score for ignoring pending mission!";
