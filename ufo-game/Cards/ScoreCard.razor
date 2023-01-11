@@ -1,15 +1,19 @@
 ﻿@using UfoGame.Cards.Components
-@inject Model.Game Game;
+@using UfoGame.Model
+@inject Game Game
 
-<Card Title="Faction Score">
-    <CardDataRow Text="Player" Value="@Game.PlayerScore.Data.Value" />
+<Card Title="Faction score">
     @{
         var factions = Game.Factions.Data
             .Where(faction => faction.Discovered)
-            .OrderBy(faction => faction.Name);
+            .ToList();
+        factions.Add(new Faction("Player", Game.PlayerScore.Data.Value, 0, true));
+        factions = factions.OrderByDescending(f => f.Score).ToList();
         foreach (var faction in factions)
         {
-            <CardDataRow Text="@faction.Name" Value="faction.Score"/>
+            <CardDataRow Text="@faction.Name" 
+                         Value="faction.Score" 
+                         CssClass="@(faction.Name == "Player" ? "text-success" : "text-danger")"/>
         }
         if (Game.Factions.Data.Any(faction => !faction.Discovered))
         {
