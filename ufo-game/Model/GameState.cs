@@ -64,6 +64,7 @@ public class GameState
         Factions.Reset();
         PlayerScore.Data.Reset();
         Research.Reset();
+        PendingMission.Reset();
         ModalsState.Reset();
         _storage.Reset();
         _stateRefresh.Trigger();

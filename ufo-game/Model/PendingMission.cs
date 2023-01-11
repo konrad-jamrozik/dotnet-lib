@@ -87,4 +87,9 @@ public class PendingMission
     {
         Data = PendingMissionData.New(_playerScore, _random, _factions);
     }
+
+    public void Reset()
+    {
+        GenerateNewOrClearMission();
+    }
 }
