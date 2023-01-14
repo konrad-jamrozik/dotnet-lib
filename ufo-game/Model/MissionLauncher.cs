@@ -122,6 +122,8 @@ public class MissionLauncher
             Console.Out.WriteLine("No soldiers lost! \\o/");
         }
 
+        _staff.Data.AddRecoveringSoldiers(soldiersSent - soldiersLost);
+
         return soldiersLost;
     }
 

@@ -4,8 +4,11 @@
 
 <Card Title="Assets">
     <CardDataRow Text="Money" Value="Game.Money.CurrentMoney"/>
-    <CardDataRow Text="Soldiers" Value="Game.Staff.Data.CurrentSoldiers"/>
     <CardDataRow Text="Transport capacity" Value="Game.MissionPrep.Data.TransportCapacity" />
+    <CardDataRow Text="All soldiers" Value="Game.Staff.Data.CurrentSoldiers"/>
+    <CardDataRow Text="Ready soldiers" Value="Game.Staff.Data.ReadySoldiers" />
+    <CardDataRow Text="Recovering soldiers" Value="Game.Staff.Data.RecoveringSoldiers" />
+    <CardDataRow Text="Soldier recovery speed" Value="Game.Staff.Data.SoldierRecoverySpeed" />
     <CardDataRow Text="Soldier effectiveness" Value="Game.Staff.Data.SoldierEffectiveness" />
     <CardDataRow Text="Soldier survivability" Value="Game.Staff.Data.SoldierSurvivability" />
     <CardButtonWithRangeInput PlayerAction="HireSoldiers" />

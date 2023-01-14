@@ -30,6 +30,12 @@
                     OnClick="Game.ResearchTransportCapacity">
             Increase transport capacity by @MissionPrepData.TransportCapacityImprovement for $@Game.Research.TransportCapacityResearchCost
         </CardButton>
+        <CardButton Enabled="Game.CanResearchSoldierRecoverySpeed()"
+                    OnClick="Game.ResearchSoldierRecoverySpeed">
+            Increase soldier recovery speed by @StaffData.SoldierRecoverySpeedImprovement for $@Game.Research.SoldierRecoverySpeedResearchCost
+        </CardButton>
+    </div>
+    <div class="row">
         <CardButton Enabled="Game.CanDoNothing()"
                     OnClick="Game.DoNothing">
             Do nothing & advance time

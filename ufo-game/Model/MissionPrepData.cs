@@ -4,10 +4,11 @@ namespace UfoGame.Model;
 
 public class MissionPrepData
 {
+    public const int TransportCapacityImprovement = 2;
+
     [JsonInclude] public int SoldiersToSend { get; set; }
     [JsonInclude] public int TransportCapacity { get; private set; }
 
-    public const int TransportCapacityImprovement = 2;
 
     public void ImproveTransportCapacity()
         => TransportCapacity += TransportCapacityImprovement;

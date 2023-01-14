@@ -67,5 +67,10 @@ public class Staff
         Data.CurrentSoldiers -= amount;
         Console.Out.WriteLine($"Subtracted {amount} soldiers. Soldiers now at {Data.CurrentSoldiers}.");
     }
+
+    public void AdvanceTime()
+    {
+        Data.AdvanceTime();
+    }
 }
 

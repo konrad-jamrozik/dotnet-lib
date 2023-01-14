@@ -54,6 +54,7 @@ public class Game
             Money.AddMoney(Money.MoneyPerTurnAmount);
         PendingMission.AdvanceMissionTime();
         Factions.AdvanceFactionsTime();
+        Staff.AdvanceTime();
         _gameState.PersistGameState();
         StateRefresh.Trigger();
     }
@@ -111,6 +112,19 @@ public class Game
         Money.SubtractMoney(Research.SoldierSurvivabilityResearchCost);
         Research.SoldierSurvivabilityResearchCost += Research.SoldierSurvivabilityResearchCostIncrement;
         Staff.Data.SoldierSurvivability += 10;
+        AdvanceTime();
+    }
+
+
+    public bool CanResearchSoldierRecoverySpeed()
+        => !PlayerScore.GameOver && Money.CurrentMoney >= Research.SoldierRecoverySpeedResearchCost;
+
+    public void ResearchSoldierRecoverySpeed()
+    {
+        Debug.Assert(CanResearchSoldierRecoverySpeed());
+        Money.SubtractMoney(Research.SoldierRecoverySpeedResearchCost);
+        Research.SoldierRecoverySpeedResearchCost += Research.SoldierRecoverySpeedResearchCostIncrement;
+        Staff.Data.ImproveSoldierRecoverySpeed();
         AdvanceTime();
     }
 }
