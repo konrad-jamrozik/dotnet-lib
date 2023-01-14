@@ -1,18 +1,19 @@
 ﻿@page "/mission"
 @using UfoGame.Components
 @using UfoGame.Model
+@inject Game Game
 
 <PageTitle>Mission</PageTitle>
 
 <h1>Mission</h1>
 
 <div class="list-group">
-    <SoldierListItem CurrentTime="10" Index="0" Soldier="@_sol0"></SoldierListItem>
-    <SoldierListItem CurrentTime="10" Index="1" Soldier="@_sol1"></SoldierListItem>
+    @{
+        var sortedSoldiers = Game.Staff.Data.Soldiers
+            .OrderBy(s => s.ExperienceBonus(Game.Timeline.CurrentTime)).ToArray();
+        @for (int i = 0; i < sortedSoldiers.Length; i++)
+        {
+            <SoldierListItem Index="i" Soldier="sortedSoldiers[i]"></SoldierListItem>
+        }
+    }
 </div>
-
-@code
-{
-    private readonly Soldier _sol0 = new Soldier("Alfred", 5);
-    private readonly Soldier _sol1 = new Soldier("Przemek", 3);
-}

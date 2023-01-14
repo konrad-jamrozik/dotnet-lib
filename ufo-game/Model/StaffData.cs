@@ -15,6 +15,8 @@ public class StaffData
     [JsonInclude] public float RecoveringSoldiers { get; private set; }
     [JsonInclude] public float SoldierRecoverySpeed { get; private set; }
 
+    [JsonInclude] public List<Soldier> Soldiers = new List<Soldier>();
+
     public int ReadySoldiers => CurrentSoldiers - (int)Math.Ceiling(RecoveringSoldiers);
 
     public void AddRecoveringSoldiers(int count)
@@ -38,6 +40,9 @@ public class StaffData
         CurrentSoldiers = 0;
         RecoveringSoldiers = 0;
         SoldierRecoverySpeed = 0.5f;
+        // kja stub data
+        Soldiers = new List<Soldier>
+            { new Soldier(0, "Alfred", 0), new Soldier(1, "Władek", 0) };
     }
 
     public void AdvanceTime()

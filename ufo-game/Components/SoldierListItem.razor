@@ -1,5 +1,6 @@
 ﻿@using UfoGame.Cards.Components
 @using UfoGame.Model
+@inject Game Game
 
 <div class="list-group-item list-group-item-action" aria-current="true">
     <div class="container-fluid">
@@ -9,7 +10,7 @@
                     <h5 class="ps-0">@Soldier.Nickname</h5>
                 </div>
                 <div class="row row-cols-auto">
-                    <div class="col ps-0">Exp: @Soldier.ExperienceBonus(CurrentTime)</div>
+                    <div class="col ps-0">Exp: @Soldier.ExperienceBonus(Game.Timeline.CurrentTime)</div>
                     <div class="col">Recovery: @Soldier.Recovery</div>
                 </div>
             </div>
@@ -37,8 +38,9 @@
 <div class="collapse" id="soldierInfo_@Index">
     <Card Title="Soldier info">
         <CardDataRow Text="Salary" Value="@Soldier.Salary" />
-        <CardDataRow Text="Training time" Value="@Soldier.TrainingTime(CurrentTime)"/>
+        <CardDataRow Text="Training time" Value="@Soldier.TrainingTime(Game.Timeline.CurrentTime)"/>
         <CardDataRow Text="Time hired" Value="@Soldier.TimeHired" />
+        <CardDataRow Text="Time employed" Value="@Soldier.TimeEmployed(Game.Timeline.CurrentTime)" />
         <CardDataRow Text="Total missions" Value="@Soldier.TotalMissions"/>
         <CardDataRow Text="Successful missions" Value="@Soldier.SuccessfulMissions"/>
         <CardDataRow Text="Failed missions" Value="@Soldier.FailedMissions"/>
@@ -50,9 +52,6 @@
 {
     [Parameter, EditorRequired]
     public int Index { get; set; }
-
-    [Parameter, EditorRequired]
-    public int CurrentTime { get; set; }
 
 #nullable disable
     [Parameter, EditorRequired]

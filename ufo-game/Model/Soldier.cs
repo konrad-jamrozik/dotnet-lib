@@ -5,8 +5,10 @@ namespace UfoGame.Model;
 
 public class Soldier
 {
-    [JsonInclude] public string Nickname { get; }
-    [JsonInclude] public int TimeHired { get; }
+    // kja add ID to UI
+    [JsonInclude] public int Id { get; private set; }
+    [JsonInclude] public string Nickname { get; private set; }
+    [JsonInclude] public int TimeHired { get; private set; }
     [JsonInclude] public int SuccessfulMissions { get; private set; }
     [JsonInclude] public int FailedMissions { get; private set; }
     [JsonInclude] public int TimeSpentRecovering { get; private set; }
@@ -34,13 +36,31 @@ public class Soldier
         return trainingTime;
     }
 
+    public int TimeEmployed(int currentTime)
+    {
+        Debug.Assert(currentTime >= TimeHired);
+        int timeEmployed;
+        if (MissingInAction)
+        {
+            Debug.Assert(TimeLost <= currentTime);
+            timeEmployed = TimeLost - TimeHired;
+        }
+        else
+        {
+            timeEmployed =  currentTime - TimeHired;
+        }
+        Debug.Assert(timeEmployed >= 0);
+        return timeEmployed;
+    }
+
     public int TotalMissions => SuccessfulMissions + FailedMissions;
     public bool CanSendOnMission => !MissingInAction && !IsRecovering;
     public bool MissingInAction => TimeLost != 0;
     public bool IsRecovering => Recovery > 0;
 
-    public Soldier(string nickname, int timeHired)
+    public Soldier(int id, string nickname, int timeHired)
     {
+        Id = id;
         Nickname = nickname;
         TimeHired = timeHired;
         // kja need to archive the fact got hired
