@@ -46,7 +46,8 @@ public static class SavedGameState
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
+            Console.Out.WriteLine("Reading save game failed! Exception:");
+            Console.Error.WriteLine(e);
             return false;
         }
     }
