@@ -14,20 +14,30 @@ public class Soldier
     [JsonInclude] public int TimeLost { get; private set; }
 
     public int ExperienceBonus(int currentTime)
-        => TrainingTime(currentTime) / 2 + ExperienceFromMissions;
-    
+    {
+        Debug.Assert(currentTime >= TimeHired);
+        return TrainingTime(currentTime) / 2 + ExperienceFromMissions;
+    }
+
+    // kja hook it up to SoldierListItem UI instead of Recovery
+    public int TimeToRecover(float recoverySpeed) => (int)Math.Ceiling(Recovery / recoverySpeed);
+
     public int Salary 
         => 5 + TotalMissions;
+    // kja need to dedup salary with UfoGame.Model.Money.Expenses
     
     public int TrainingTime(int currentTime)
     {
+        Debug.Assert(currentTime >= TimeHired);
         var trainingTime = currentTime - TimeHired - TimeSpentRecovering;
         Debug.Assert(trainingTime >= 0);
         return trainingTime;
     }
 
     public int TotalMissions => SuccessfulMissions + FailedMissions;
-    public bool CanSendOnMission => true;
+    public bool CanSendOnMission => !MissingInAction && !IsRecovering;
+    public bool MissingInAction => TimeLost != 0;
+    public bool IsRecovering => Recovery > 0;
 
     public Soldier(string nickname, int timeHired)
     {
@@ -38,9 +48,10 @@ public class Soldier
 
     public void ReturnFromMission(bool success, float recovery)
     {
-        Debug.Assert(TimeLost == 0); // dead soldiers cannot be sent on a mission
-        Debug.Assert(Recovery == 0); // recovering soldiers cannot be sent on a mission
         Debug.Assert(recovery >= 0);
+        Debug.Assert(!MissingInAction); // dead soldiers cannot be sent on a mission
+        Debug.Assert(!IsRecovering); // recovering soldiers cannot be sent on a mission
+        
         if (success)
         {
             SuccessfulMissions += 1;
@@ -54,13 +65,17 @@ public class Soldier
 
     public void TickRecovery(float recovery)
     {
-        Debug.Assert(Recovery > 0); // cannot tick recovery on ready soldier
+        Debug.Assert(recovery >= 0);
+        Debug.Assert(!IsRecovering); // cannot tick recovery on ready soldier
         Recovery = Math.Max(Recovery - recovery, 0);
         TimeSpentRecovering += 1;
     }
 
-    public void MissingInAction(int currentTime)
+    public void RecordLost(int currentTime)
     {
+        Debug.Assert(currentTime >= TimeHired);
+        Debug.Assert(!MissingInAction);
+        Debug.Assert(!IsRecovering);
         TimeLost = currentTime;
         // kja need to archive the fact they are missing in action
     }
@@ -83,5 +98,4 @@ public class Soldier
         _missionExperienceBonus.Take(TotalMissions).Sum()
         + Math.Max(TotalMissions - (_missionExperienceBonus.Length - 1), 0) *
         _missionExperienceBonus[^1];
-
 }

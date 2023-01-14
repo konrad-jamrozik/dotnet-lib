@@ -1,86 +1,18 @@
 ﻿@page "/mission"
-@inject Model.Game Game
-@using UfoGame.Cards.Components
+@using UfoGame.Components
+@using UfoGame.Model
 
 <PageTitle>Mission</PageTitle>
 
 <h1>Mission</h1>
 
 <div class="list-group">
-    <div class="list-group-item list-group-item-action" aria-current="true">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col col-auto me-auto">
-                    <div class="row">
-                        <h5 class="ps-0">Nickname9012345</h5>
-                    </div>
-                    <div class="row row-cols-auto">
-                        <div class="col ps-0">Exp: +100%</div>
-                        <div class="col">Recovery: 9.9</div>
-                    </div>
-                </div>
-                <div class="col col-auto align-self-center d-flex justify-content-center">
-                    <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#soldier1info" aria-expanded="false" aria-controls="soldier1info">
-                        i
-                    </button>
-                </div>
-                <div class="col col-auto px-0">
-                    <div class="d-flex flex-column align-items-center">
-                        <div class="form-check form-switch ps-0">
-                            <input class="form-check-input ms-0" type="checkbox" role="switch" id="flexSwitchCheckChecked" checked>
-                        </div>
-                        <label class="form-check-label" for="flexSwitchCheckChecked">Send</label>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="collapse" id="soldier1info">
-        <Card Title="Soldier info">
-            <CardDataRow Text="Salary" Value="8" />
-            <CardDataRow Text="Training time" Value="13"/>
-            <CardDataRow Text="Total missions" Value="10"/>
-            <CardDataRow Text="Successful missions" Value="9"/>
-            <CardDataRow Text="Failed missions" Value="1"/>
-            <CardDataRow Text="Time spent recovering" Value="7"/>
-        </Card>
-    </div>
-    <div class="list-group-item list-group-item-action" aria-current="true">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col col-auto me-auto">
-                    <div class="row">
-                        <h5 class="ps-0">Nickname9012345</h5>
-                    </div>
-                    <div class="row row-cols-auto">
-                        <div class="col ps-0">Exp: +100%</div>
-                        <div class="col">Recovery: 9.9</div>
-                    </div>
-                </div>
-                <div class="col col-auto align-self-center d-flex justify-content-center">
-                    <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#soldier2info" aria-expanded="false" aria-controls="soldier1info">
-                        i
-                    </button>
-                </div>
-                <div class="col col-auto px-0">
-                    <div class="d-flex flex-column align-items-center">
-                        <div class="form-check form-switch ps-0">
-                            <input class="form-check-input ms-0" type="checkbox" role="switch" id="flexSwitchCheckChecked" checked>
-                        </div>
-                        <label class="form-check-label" for="flexSwitchCheckChecked">Send</label>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="collapse" id="soldier2info">
-        <Card Title="Soldier info">
-            <CardDataRow Text="Salary" Value="8" />
-            <CardDataRow Text="Training time" Value="13"/>
-            <CardDataRow Text="Total missions" Value="10"/>
-            <CardDataRow Text="Successful missions" Value="9"/>
-            <CardDataRow Text="Failed missions" Value="1"/>
-            <CardDataRow Text="Time spent recovering" Value="7"/>
-        </Card>
-    </div>
+    <SoldierListItem CurrentTime="10" Index="0" Soldier="@_sol0"></SoldierListItem>
+    <SoldierListItem CurrentTime="10" Index="1" Soldier="@_sol1"></SoldierListItem>
 </div>
+
+@code
+{
+    private readonly Soldier _sol0 = new Soldier("Alfred", 5);
+    private readonly Soldier _sol1 = new Soldier("Przemek", 3);
+}
