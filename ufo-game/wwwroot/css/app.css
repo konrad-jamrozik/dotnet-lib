@@ -101,10 +101,13 @@ a, .btn-link {
     }
 
 .card {
-/* This ensures that cards are always not much wider than Pixel 5 (393px) thus 
+    /* This ensures that cards are always not much wider than Pixel 5  thus 
     preventing horizontal large gap between label and value in CardDataRow.
     It also helps detecting any mobile layout issues when working 
     on a wide screen.
-*/
-    max-width: 390px;
+
+    Pixel width is 393px. Inspection of the card element shows effective
+    width of 385.6px.
+     */
+    max-width: 385.7px;
 }

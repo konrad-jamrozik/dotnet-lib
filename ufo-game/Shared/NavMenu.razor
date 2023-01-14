@@ -4,40 +4,54 @@
     <div class="container-fluid">
         @* col-auto here ensures the column of the "NavigationMenu" button is pushed away to the right. See https://getbootstrap.com/docs/5.3/layout/columns/ *@
         <div class="col col-auto">
-            <div class="row">
-                <div class="col hstack gap-0 px-1" style="width: 98px">
-                    <span class="oi oi-badge" aria-hidden="true"></span>
-                    @Game.PlayerScore.Data.Value
-                </div>
-                <div class="col hstack gap-0 px-1" style="width: 100px">
-                    <span class="oi oi-dollar" aria-hidden="true"></span>
-                    @Game.Money.CurrentMoney
-                </div>
-                <div class="col hstack gap-0 px-1" style="width: 60px">
-                    <span class="oi oi-people" aria-hidden="true"></span>
-                    @Game.Staff.Data.CurrentSoldiers
-                </div>
-            </div>
             @* row-cols-auto here ensures the column in the row are left-stacked to their width. See https://getbootstrap.com/docs/5.3/layout/grid/#row-columns*@
             <div class="row row-cols-auto">
-                <div class="col hstack gap-0 px-1" style="width: 83px">
-                    <span class="oi oi-calendar" aria-hidden="true"></span>
-                    @Game.Timeline.CurrentTime
+                <div class="col px-0">
+                    <div class="hstack gap-0 p-0" style="width: 85px">
+                        <span class="oi oi-badge" style="width: 19.5px; margin-left: 1px;" aria-hidden="true"></span>
+                        @* <span>999999</span> *@
+                        <span>@Game.PlayerScore.Data.Value</span>
+                    </div>
                 </div>
-                <div class="col hstack gap-0 px-1" style="width: 100px">
-                    <span class="oi oi-timer" aria-hidden="true"></span>
-                    @Game.PendingMission.CountDown
+                <div class="col px-0">
+                    <div class="hstack gap-0 p-0" style="width: 70px">
+                        <span class="oi oi-calendar" aria-hidden="true"></span>
+                        @* <span>9999</span> *@
+                        <span>@Game.Timeline.CurrentTime</span>
+                    </div>
+                </div>
+                <div class="col px-0">
+                    <div class="hstack gap-0 p-0" style="width: 50px">
+                        <span class="oi oi-timer" style="width: 23px" aria-hidden="true"></span>
+                        @* <span>-99</span> *@
+                        <span>@Game.PendingMission.CountDown</span>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col px-0 ps-1">
+                    <div class="hstack gap-0 p-0" style="width: 135px">
+                        <span class="oi oi-dollar" style="width: 17px" aria-hidden="true"></span>
+                        @* <span>999999/-99999</span> *@
+                        <span>@Game.Money.CurrentMoney/@Game.Money.MoneyPerTurnAmount</span>
+                    </div>
+                </div>
+                <div class="col px-0">
+                    <div class="hstack gap-0 p-0" style="width: 105px">
+                        <span class="oi oi-people" style="width: 24px" aria-hidden="true"></span>
+                        @* <span>9999/9999</span> *@
+                        <span>@Game.Staff.Data.ReadySoldiers/@Game.Staff.Data.CurrentSoldiers</span>
+                    </div>
                 </div>
             </div>
         </div>
-        @* See description of "col-auto" in comment above. *@
+        @* See description of "col-auto" on its occurrence above. *@
         <div class="col col-auto">
             <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
                 <span class="navbar-toggler-icon"></span>
             </button>
         </div>
     </div>
-
 </div>
 
 <div class="@NavMenuCssClass nav-scrollable" @onclick="ToggleNavMenu">
