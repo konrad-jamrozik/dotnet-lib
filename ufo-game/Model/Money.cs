@@ -13,11 +13,11 @@ public class Money
 
     public int PassiveIncome =>
         80
-        + _archive.SuccessfulMissions * 40
+        + _archive.SuccessfulMissions * 10
         + _archive.FailedMissions * -10
         + _archive.IgnoredMissions * -5;
 
-    public int Expenses => _staffData.CurrentSoldiers * 10;
+    public int Expenses => _staffData.CurrentSoldiers * 5;
 
     public int MoneyPerTurnAmount => PassiveIncome - Expenses;
 

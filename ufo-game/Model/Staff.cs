@@ -8,7 +8,7 @@ public class Staff
     [JsonInclude]
     public readonly StaffData Data;
 
-    private const int SoldierPrice = 30;
+    private const int SoldierPrice = 50;
 
     // kja this probably should be on Money; not this is used in UI
     public int SoldiersToHireCost => Data.SoldiersToHire * SoldierPrice;

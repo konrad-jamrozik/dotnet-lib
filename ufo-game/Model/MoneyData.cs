@@ -17,6 +17,6 @@ public class MoneyData
     public void Reset()
     {
         CurrentMoney = 0;
-        MoneyRaisedPerActionAmount = 50;
+        MoneyRaisedPerActionAmount = 100;
     }
 }

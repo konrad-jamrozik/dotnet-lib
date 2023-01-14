@@ -12,9 +12,9 @@ public class PlayerScore
 
     public bool PlayerWon => GameOver && Data.Value > 0 && !_money.PlayerIsBroke;
 
-    public const int WinScore = 500;
-    public const int LoseScore = 100;
-    public const int IgnoreMissionScoreLoss = 50;
+    public const int WinScore = 200;
+    public const int LoseScore = 20;
+    public const int IgnoreMissionScoreLoss = 10;
 
     private readonly Factions _factions;
     private readonly Money _money;

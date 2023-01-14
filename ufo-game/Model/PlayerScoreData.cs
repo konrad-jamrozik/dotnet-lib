@@ -11,6 +11,6 @@ public class PlayerScoreData
 
     public void Reset()
     {
-        Value = 1000;
+        Value = 100;
     }
 }

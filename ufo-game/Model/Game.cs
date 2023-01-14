@@ -59,7 +59,7 @@ public class Game
         Debug.Assert(CanResearchMoneyRaisingMethods());
         Money.PayForResearch(Research.MoneyRaisingMethodsResearchCost);
         Research.MoneyRaisingMethodsResearchCost += Research.MoneyRaisingMethodsResearchCostIncrement;
-        Money.Data.MoneyRaisedPerActionAmount += 5;
+        Money.Data.MoneyRaisedPerActionAmount += 25;
         AdvanceTime();
     }
 
@@ -83,7 +83,7 @@ public class Game
         Debug.Assert(CanResearchSoldierEffectiveness());
         Money.PayForResearch(Research.SoldierEffectivenessResearchCost);
         Research.SoldierEffectivenessResearchCost += Research.SoldierEffectivenessResearchCostIncrement;
-        Staff.Data.SoldierEffectiveness += 10;
+        Staff.Data.SoldierEffectiveness += 25;
         AdvanceTime();
     }
 
@@ -95,7 +95,7 @@ public class Game
         Debug.Assert(CanResearchSoldierSurvivability());
         Money.PayForResearch(Research.SoldierSurvivabilityResearchCost);
         Research.SoldierSurvivabilityResearchCost += Research.SoldierSurvivabilityResearchCostIncrement;
-        Staff.Data.SoldierSurvivability += 10;
+        Staff.Data.SoldierSurvivability += 25;
         AdvanceTime();
     }
 

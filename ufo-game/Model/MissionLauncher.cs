@@ -84,7 +84,7 @@ public class MissionLauncher
             scoreDiff = Math.Min(PlayerScore.WinScore, mission.Faction.Score);
             _playerScore.Data.Value += scoreDiff;
             mission.Faction.Score -= scoreDiff;
-            _money.AddMissionLoot(mission.Data.MoneyReward);
+            _money.AddMissionLoot(mission.MoneyReward);
         }
         else
         {
@@ -137,7 +137,8 @@ public class MissionLauncher
         string missionRollReport =
             $" (Rolled {roll} against limit of {mission.SuccessChance}.)";
         string missionSuccessReport = success
-            ? $"successful! {missionRollReport} We took {scoreDiff} score from {mission.Faction.Name} and earned ${mission.Data.MoneyReward}."
+            ? $"successful! {missionRollReport} We took {scoreDiff} score from {mission.Faction.Name} " +
+              $"and earned ${mission.MoneyReward}."
             : $"a failure. {missionRollReport} We lost {scoreDiff} score to {mission.Faction.Name}.";
 
         string soldiersLostReport = soldiersLost > 0

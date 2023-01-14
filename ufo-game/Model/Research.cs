@@ -11,10 +11,10 @@ public class Research
     [JsonInclude] public int SoldierRecoverySpeedResearchCost;
     
 
-    public const int MoneyRaisingMethodsResearchCostIncrement = 10;
+    public const int MoneyRaisingMethodsResearchCostIncrement = 100;
     public const int TransportCapacityResearchCostIncrement = 200;
-    public const int SoldierEffectivenessResearchCostIncrement = 10;
-    public const int SoldierSurvivabilityResearchCostIncrement = 10;
+    public const int SoldierEffectivenessResearchCostIncrement = 100;
+    public const int SoldierSurvivabilityResearchCostIncrement = 100;
     public const int SoldierRecoverySpeedResearchCostIncrement = 100;
 
     public Research()
@@ -22,10 +22,10 @@ public class Research
 
     public void Reset()
     {
-        MoneyRaisingMethodsResearchCost = 100;
+        MoneyRaisingMethodsResearchCost = 500;
         TransportCapacityResearchCost = 1000;
-        SoldierEffectivenessResearchCost = 100;
-        SoldierSurvivabilityResearchCost = 100;
+        SoldierEffectivenessResearchCost = 500;
+        SoldierSurvivabilityResearchCost = 500;
         SoldierRecoverySpeedResearchCost = 500;
     }
 }

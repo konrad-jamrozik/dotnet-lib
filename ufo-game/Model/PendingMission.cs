@@ -27,6 +27,9 @@ public class PendingMission
     
     public bool MissionAboutToExpire => CurrentlyAvailable && Data.ExpiresIn == 1;
 
+    // ReSharper disable once PossibleLossOfFraction
+    public int MoneyReward => (int)(Faction.Score/4 * Data.MoneyRewardCoefficient);
+
     private readonly Random _random = new Random();
     private readonly MissionPrep _missionPrep;
     private readonly Archive _archive;

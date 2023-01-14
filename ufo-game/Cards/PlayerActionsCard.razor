@@ -42,7 +42,7 @@
         </CardButton>
     </div>
     <div class="row mt-2 @(WarningMessagePresent ? "visible" : "invisible") ">
-        <div class="col text-danger">
+        <div class="col @(Game.PlayerScore.PlayerWon ? "text-success": "text-danger")">
             @WarningMessage()
         </div>
     </div>

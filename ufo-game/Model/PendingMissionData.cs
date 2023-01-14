@@ -12,39 +12,38 @@ public class PendingMissionData
 
     private static PendingMissionData NewEmpty => new PendingMissionData();
 
-    private static PendingMissionData NewValid(PlayerScore playerScore, Random random, Factions factions)
+    private static PendingMissionData NewValid(
+        PlayerScore playerScore,
+        Random random,
+        Factions factions)
     {
         Debug.Assert(!playerScore.GameOver);
         return new PendingMissionData(
             availableIn: random.Next(1, 6 + 1),
-            expiresIn: random.Next(1, 6 + 1),
-            moneyReward: random.Next(10, 200 + 1),
+            expiresIn: 3,
+            moneyRewardCoefficient: random.Next(5, 15 + 1) / (float)10,
             enemyPowerCoefficient: random.Next(5, 15 + 1) / (float)10,
             factionName: factions.RandomUndefeatedFaction.Name);
     }
 
-    [JsonInclude] public int AvailableIn { get; set; }
-
-    [JsonInclude] public int ExpiresIn { get; set; }
-
-    [JsonInclude] public int MoneyReward { get; set; }
-
-    [JsonInclude] public float EnemyPowerCoefficient { get; set; }
-
-    [JsonInclude] public string FactionName { get; set; } = Factions.NoFaction;
+    [JsonInclude] public int AvailableIn;
+    [JsonInclude] public int ExpiresIn;
+    [JsonInclude] public float MoneyRewardCoefficient;
+    [JsonInclude] public float EnemyPowerCoefficient;
+    [JsonInclude] public string FactionName = Factions.NoFaction;
 
     public bool IsNoMission => FactionName == Factions.NoFaction;
 
     public PendingMissionData(
         int availableIn,
         int expiresIn,
-        int moneyReward,
+        float moneyRewardCoefficient,
         float enemyPowerCoefficient,
         string factionName)
     {
         AvailableIn = availableIn;
         ExpiresIn = expiresIn;
-        MoneyReward = moneyReward;
+        MoneyRewardCoefficient = moneyRewardCoefficient;
         EnemyPowerCoefficient = enemyPowerCoefficient;
         FactionName = factionName;
     }
@@ -56,7 +55,7 @@ public class PendingMissionData
     {
         AvailableIn = 0;
         ExpiresIn = 0;
-        MoneyReward = 0;
+        MoneyRewardCoefficient = 0;
         EnemyPowerCoefficient = 0;
         FactionName = Factions.NoFaction;
     }
