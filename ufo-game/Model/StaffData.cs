@@ -10,6 +10,7 @@ public class StaffData
     [JsonInclude] public int SoldierEffectiveness;
     [JsonInclude] public int SoldierSurvivability;
     [JsonInclude] public int SoldiersToHire;
+    [JsonInclude] public int SoldiersToFire;
     [JsonInclude] public int CurrentSoldiers;
     [JsonInclude] public float RecoveringSoldiers { get; private set; }
     [JsonInclude] public float SoldierRecoverySpeed { get; private set; }
@@ -33,6 +34,7 @@ public class StaffData
         SoldierEffectiveness = 100;
         SoldierSurvivability = 100;
         SoldiersToHire = 1;
+        SoldiersToFire = 1;
         CurrentSoldiers = 0;
         RecoveringSoldiers = 0;
         SoldierRecoverySpeed = 0.5f;

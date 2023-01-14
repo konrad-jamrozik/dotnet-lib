@@ -17,6 +17,10 @@ public class Staff
 
     public int MaxSoldiersToHire => _money.CurrentMoney / SoldierPrice;
 
+    public int MinSoldiersToFire => 1;
+
+    public int MaxSoldiersToFire => Data.ReadySoldiers;
+
     private readonly Money _money;
     private readonly Archive _archive;
     private readonly PlayerScore _playerScore;
@@ -44,9 +48,10 @@ public class Staff
         return WithinRange(Data.SoldiersToHire + offset);
 
         bool WithinRange(int soldiersToHire)
-        {
-            return MinSoldiersToHire <= soldiersToHire && soldiersToHire <= MaxSoldiersToHire;
-        }
+            => MinSoldiersToHire <= soldiersToHire && soldiersToHire <= MaxSoldiersToHire;
+
+        void NarrowSoldiersToHire()
+            => Data.SoldiersToHire = Math.Max(MinSoldiersToHire, Math.Min(Data.SoldiersToHire, MaxSoldiersToHire));
     }
 
     public void HireSoldiers()
@@ -58,15 +63,36 @@ public class Staff
         Console.Out.WriteLine($"Hired {Data.SoldiersToHire} soldiers. Soldiers now at {Data.CurrentSoldiers}.");
     }
 
-    private void NarrowSoldiersToHire()
+    public bool CanFireSoldiers(int offset = 0)
     {
-        Data.SoldiersToHire = Math.Max(MinSoldiersToHire, Math.Min(Data.SoldiersToHire, MaxSoldiersToHire));
+        if (_playerScore.GameOver)
+            return false;
+
+        if (!WithinRange(Data.SoldiersToFire) && Data.SoldiersToFire > MinSoldiersToHire)
+            NarrowSoldiersToFire();
+
+        return WithinRange(Data.SoldiersToFire + offset);
+
+        bool WithinRange(int soldiersToFire)
+            => MinSoldiersToFire <= soldiersToFire && soldiersToFire <= MaxSoldiersToFire;
+
+        void NarrowSoldiersToFire()
+            => Data.SoldiersToFire = Math.Max(MinSoldiersToFire, Math.Min(Data.SoldiersToFire, MaxSoldiersToFire));
     }
 
-    public void SubtractSoldiers(int amount)
+    public void FireSoldiers()
+    {
+        Debug.Assert(CanFireSoldiers());
+        Debug.Assert(Data.ReadySoldiers >= Data.SoldiersToFire);
+        _archive.RecordFiredSoldiers(Data.SoldiersToFire);
+        Data.CurrentSoldiers -= Data.SoldiersToFire;
+        Console.Out.WriteLine($"Fired {Data.SoldiersToFire} soldiers. Soldiers now at {Data.CurrentSoldiers}.");
+    }
+
+    public void LoseSoldiers(int amount)
     {
         Data.CurrentSoldiers -= amount;
-        Console.Out.WriteLine($"Subtracted {amount} soldiers. Soldiers now at {Data.CurrentSoldiers}.");
+        Console.Out.WriteLine($"Lost {amount} soldiers. Soldiers now at {Data.CurrentSoldiers}.");
     }
 
     public void AdvanceTime()

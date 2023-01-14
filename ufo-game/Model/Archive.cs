@@ -11,6 +11,7 @@ public class Archive
     [JsonInclude] public int FailedMissions { get; private set; }
     [JsonInclude] public int IgnoredMissions { get; private set; }
     [JsonInclude] public int TotalSoldiersHired { get; private set; }
+    [JsonInclude] public int TotalSoldiersFired { get; private set; }
     [JsonInclude] public int SoldiersLost { get; private set; }
     [JsonInclude] public string LastMissionReport { get; private set; } = string.Empty;
 
@@ -54,6 +55,12 @@ public class Archive
     {
         TotalSoldiersHired += count;
         Console.Out.WriteLine($"Recorded hired {count} soldiers. Total: {TotalSoldiersHired}.");
+    }
+
+    public void RecordFiredSoldiers(int count)
+    {
+        TotalSoldiersFired += count;
+        Console.Out.WriteLine($"Recorded fired {count} soldiers. Total: {TotalSoldiersFired}.");
     }
 
     public void RecordLostSoldiers(int amount)

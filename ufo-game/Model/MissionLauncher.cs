@@ -115,7 +115,7 @@ public class MissionLauncher
         if (soldiersLost > 0)
         {
             _archive.RecordLostSoldiers(soldiersLost);
-            _staff.SubtractSoldiers(soldiersLost);
+            _staff.LoseSoldiers(soldiersLost);
         }
         else
         {

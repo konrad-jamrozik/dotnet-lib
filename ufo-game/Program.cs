@@ -32,6 +32,7 @@ builder.Services.AddSingleton<GameState>();
 // ViewModel
 builder.Services.AddSingleton<StateRefresh>();
 builder.Services.AddSingleton<HireSoldiersPlayerAction>();
+builder.Services.AddSingleton<FireSoldiersPlayerAction>();
 builder.Services.AddSingleton<LaunchMissionPlayerAction>();
 
 await builder.Build().RunAsync();
