@@ -8,7 +8,9 @@
                  Enabled="@(!Game.PendingMission.CurrentlyAvailable)" />
     <CardDataRow Text="Expires in" 
                  Value="@Game.PendingMission.Data.ExpiresIn"
-                 Enabled="@Game.PendingMission.CurrentlyAvailable"/>
+                 Enabled="@Game.PendingMission.CurrentlyAvailable"
+                 ValueCssClass="@(Game.PendingMission.MissionAboutToExpire ? "text-danger" : "")"
+                 />
     <CardDataRow Text="Enemy faction"
                  Value="@Game.PendingMission.Faction.Name"
                  Enabled="@Game.PendingMission.CurrentlyAvailable" />

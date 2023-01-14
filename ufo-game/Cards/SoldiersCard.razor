@@ -6,8 +6,12 @@
 <Card Title="Soldiers">
     <CardDataRow Text="Transport capacity" Value="Game.MissionPrep.Data.TransportCapacity"/>
     <CardDataRow Text="All soldiers" Value="Game.Staff.Data.CurrentSoldiers"/>
-    <CardDataRow Text="Ready soldiers" Value="Game.Staff.Data.ReadySoldiers"/>
-    <CardDataRow Text="Recovering soldiers" Value="Game.Staff.Data.RecoveringSoldiers"/>
+    <CardDataRow Text="Ready soldiers" 
+                 Value="Game.Staff.Data.ReadySoldiers"
+                 ValueCssClass="text-success"/>
+    <CardDataRow Text="Recovering soldiers" 
+                 Value="Game.Staff.Data.RecoveringSoldiers"
+                 ValueCssClass="text-danger" />
     <CardDataRow Text="Soldier recovery speed" Value="Game.Staff.Data.SoldierRecoverySpeed"/>
     <CardDataRow Text="Soldier effectiveness" Value="Game.Staff.Data.SoldierEffectiveness"/>
     <CardDataRow Text="Soldier survivability" Value="Game.Staff.Data.SoldierSurvivability"/>

@@ -24,7 +24,9 @@
                     <div class="hstack gap-0 p-0" style="width: 50px">
                         <span class="oi oi-timer" style="width: 23px" aria-hidden="true"></span>
                         @* <span>-99</span> *@
-                        <span>@Game.PendingMission.CountDown</span>
+                        <span class="@(Game.PendingMission.MissionAboutToExpire ? "text-danger" : "")">
+                            @Game.PendingMission.CountDown
+                        </span>
                     </div>
                 </div>
             </div>
@@ -33,14 +35,18 @@
                     <div class="hstack gap-0 p-0" style="width: 135px">
                         <span class="oi oi-dollar" style="width: 17px" aria-hidden="true"></span>
                         @* <span>999999/-99999</span> *@
-                        <span>@Game.Money.CurrentMoney/@Game.Money.MoneyPerTurnAmount</span>
+                        <span>@Game.Money.CurrentMoney/</span>
+                        <span class="@(Game.Money.MoneyPerTurnAmount >= 0 ? "text-success" : "text-danger")">
+                            @Game.Money.MoneyPerTurnAmount
+                        </span>
                     </div>
                 </div>
                 <div class="col px-0">
                     <div class="hstack gap-0 p-0" style="width: 105px">
                         <span class="oi oi-people" style="width: 24px" aria-hidden="true"></span>
                         @* <span>9999/9999</span> *@
-                        <span>@Game.Staff.Data.ReadySoldiers/@Game.Staff.Data.CurrentSoldiers</span>
+                        <span class="text-success">@Game.Staff.Data.ReadySoldiers</span>
+                        <span>/@Game.Staff.Data.CurrentSoldiers</span>
                     </div>
                 </div>
             </div>
