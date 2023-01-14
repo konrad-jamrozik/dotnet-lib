@@ -7,7 +7,7 @@ public class MissionPrep
     [JsonInclude]
     public readonly MissionPrepData Data;
 
-    public int MaxSoldiersToSend => _staff.Data.CurrentSoldiers;
+    public int MaxSoldiersToSend => Math.Min(_staff.Data.CurrentSoldiers, Data.TransportCapacity);
 
     public int MinSoldiersToSend => 1;
 

@@ -78,6 +78,18 @@ public class Game
         AdvanceTime();
     }
 
+    public bool CanResearchTransportCapacity()
+        => !PlayerScore.GameOver && Money.CurrentMoney >= Research.TransportCapacityResearchCost;
+
+    public void ResearchTransportCapacity()
+    {
+        Debug.Assert(CanResearchTransportCapacity());
+        Money.SubtractMoney(Research.TransportCapacityResearchCost);
+        Research.TransportCapacityResearchCost += Research.TransportCapacityResearchCostIncrement;
+        MissionPrep.Data.ImproveTransportCapacity();
+        AdvanceTime();
+    }
+
     public bool CanResearchSoldierEffectiveness()
         => !PlayerScore.GameOver && Money.CurrentMoney >= Research.SoldierEffectivenessResearchCost;
 
