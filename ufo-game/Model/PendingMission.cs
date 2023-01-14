@@ -29,7 +29,7 @@ public class PendingMission
 
     private readonly Random _random = new Random();
     private readonly MissionPrep _missionPrep;
-    private readonly OperationsArchive _archive;
+    private readonly Archive _archive;
     private readonly Factions _factions;
     private readonly PlayerScore _playerScore;
     private readonly Staff _staff;
@@ -37,7 +37,7 @@ public class PendingMission
     public PendingMission(
         PendingMissionData data,
         MissionPrep missionPrep,
-        OperationsArchive archive,
+        Archive archive,
         Factions factions,
         PlayerScore playerScore,
         Staff staff)

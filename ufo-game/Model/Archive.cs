@@ -2,23 +2,17 @@
 
 namespace UfoGame.Model;
 
-public class OperationsArchive
+public class Archive
 {
     [JsonInclude] public int MissionsLaunched { get; private set; }
-
     [JsonInclude] public int SuccessfulMissions { get; private set; }
-
     [JsonInclude] public int FailedMissions { get; private set; }
-
     [JsonInclude] public int IgnoredMissions { get; private set; }
-
     [JsonInclude] public int TotalSoldiersHired { get; private set; }
-
     [JsonInclude] public int SoldiersLost { get; private set; }
-
     [JsonInclude] public string LastMissionReport { get; private set; } = string.Empty;
 
-    public OperationsArchive()
+    public Archive()
         => Reset();
 
     public void Reset()

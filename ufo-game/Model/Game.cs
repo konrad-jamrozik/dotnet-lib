@@ -7,7 +7,7 @@ public class Game
     public readonly Timeline Timeline;
     public readonly Money Money;
     public readonly Staff Staff;
-    public readonly OperationsArchive OperationsArchive;
+    public readonly Archive Archive;
     public readonly MissionPrep MissionPrep;
     public readonly PendingMission PendingMission;
     public readonly Factions Factions;
@@ -20,7 +20,7 @@ public class Game
         Timeline timeline,
         Money money,
         Staff staff,
-        OperationsArchive operationsArchive,
+        Archive archive,
         MissionPrep missionPrep,
         PendingMission pendingMission,
         StateRefresh stateRefresh,
@@ -32,7 +32,7 @@ public class Game
         Timeline = timeline;
         Money = money;
         Staff = staff;
-        OperationsArchive = operationsArchive;
+        Archive = archive;
         MissionPrep = missionPrep;
         PendingMission = pendingMission;
         StateRefresh = stateRefresh;

@@ -18,14 +18,14 @@ public class Staff
     public int MaxSoldiersToHire => _money.CurrentMoney / SoldierPrice;
 
     private readonly Money _money;
-    private readonly OperationsArchive _archive;
+    private readonly Archive _archive;
     private readonly PlayerScore _playerScore;
 
     public Staff(
         StaffData data,
         Money money,
         PlayerScore playerScore,
-        OperationsArchive archive)
+        Archive archive)
     {
         Data = data;
         _money = money;

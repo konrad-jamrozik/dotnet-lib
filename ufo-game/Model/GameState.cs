@@ -7,7 +7,7 @@ public class GameState
     [JsonInclude] public readonly Timeline Timeline;
     [JsonInclude] public readonly Money Money;
     [JsonInclude] public readonly Staff Staff;
-    [JsonInclude] public readonly OperationsArchive OperationsArchive;
+    [JsonInclude] public readonly Archive Archive;
     [JsonInclude] public readonly MissionPrep MissionPrep;
     [JsonInclude] public readonly PendingMission PendingMission;
     [JsonInclude] public readonly Factions Factions;
@@ -23,7 +23,7 @@ public class GameState
         Timeline timeline,
         Money money,
         Staff staff,
-        OperationsArchive operationsArchive,
+        Archive archive,
         PendingMission pendingMission,
         MissionPrep missionPrep,
         Factions factions,
@@ -36,7 +36,7 @@ public class GameState
         Timeline = timeline;
         Money = money;
         Staff = staff;
-        OperationsArchive = operationsArchive;
+        Archive = archive;
         PendingMission = pendingMission;
         MissionPrep = missionPrep;
         Factions = factions;
@@ -58,7 +58,7 @@ public class GameState
         Timeline.Reset();
         Money.Data.Reset();
         Staff.Data.Reset();
-        OperationsArchive.Reset();
+        Archive.Reset();
         PendingMission.Data.Reset();
         MissionPrep.Data.Reset();
         Factions.Reset();

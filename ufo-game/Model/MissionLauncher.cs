@@ -6,7 +6,7 @@ public class MissionLauncher
 {
     private readonly Random _random = new Random();
     private readonly MissionPrep _missionPrep;
-    private readonly OperationsArchive _archive;
+    private readonly Archive _archive;
     private readonly PlayerScore _playerScore;
     private readonly Staff _staff;
     private readonly Money _money;
@@ -15,7 +15,7 @@ public class MissionLauncher
 
     public MissionLauncher(
         MissionPrep missionPrep,
-        OperationsArchive archive,
+        Archive archive,
         PlayerScore playerScore,
         Staff staff,
         Money money,

@@ -48,7 +48,7 @@ void AddTypesWithPersistableState(WebAssemblyHostBuilder builder)
         builder.Services.AddSingleton<Timeline>();
         builder.Services.AddSingleton<Factions>();
         builder.Services.AddSingleton<Research>();
-        builder.Services.AddSingleton<OperationsArchive>();
+        builder.Services.AddSingleton<Archive>();
         builder.Services.AddSingleton(new MoneyData());
         builder.Services.AddSingleton(new PlayerScoreData());
         builder.Services.AddSingleton(new StaffData());

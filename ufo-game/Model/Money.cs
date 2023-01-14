@@ -8,7 +8,7 @@ public class Money
     [JsonInclude]
     public readonly MoneyData Data;
 
-    private readonly OperationsArchive _archive;
+    private readonly Archive _archive;
     private readonly StaffData _staffData;
 
     public int PassiveIncome =>
@@ -21,7 +21,7 @@ public class Money
 
     public int MoneyPerTurnAmount => PassiveIncome - Expenses;
 
-    public Money(MoneyData data, OperationsArchive archive, StaffData staffData)
+    public Money(MoneyData data, Archive archive, StaffData staffData)
     {
         Data = data;
         _archive = archive;
