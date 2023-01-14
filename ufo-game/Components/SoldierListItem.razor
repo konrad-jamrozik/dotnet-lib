@@ -1,0 +1,61 @@
+﻿@using UfoGame.Cards.Components
+@using UfoGame.Model
+
+<div class="list-group-item list-group-item-action" aria-current="true">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col col-auto me-auto">
+                <div class="row">
+                    <h5 class="ps-0">@Soldier.Nickname</h5>
+                </div>
+                <div class="row row-cols-auto">
+                    <div class="col ps-0">Exp: @Soldier.ExperienceBonus(CurrentTime)</div>
+                    <div class="col">Recovery: @Soldier.Recovery</div>
+                </div>
+            </div>
+            <div class="col col-auto align-self-center d-flex justify-content-center">
+                <button class="btn btn-primary" type="button" 
+                        data-bs-toggle="collapse" data-bs-target="#soldierInfo_@Index" 
+                        aria-expanded="false" aria-controls="soldierInfo_@Index">
+                    i
+                </button>
+            </div>
+            <div class="col col-auto px-0">
+                <div class="d-flex flex-column align-items-center">
+                    <div class="form-check form-switch ps-0">
+                        <input class="form-check-input ms-0" type="checkbox" role="switch" 
+                               id="flexSwitchCheckChecked"
+                               disabled="@(!Soldier.CanSendOnMission)"
+                               >
+                    </div>
+                    <label class="form-check-label" for="flexSwitchCheckChecked">Send</label>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="collapse" id="soldierInfo_@Index">
+    <Card Title="Soldier info">
+        <CardDataRow Text="Salary" Value="@Soldier.Salary" />
+        <CardDataRow Text="Training time" Value="@Soldier.TrainingTime(CurrentTime)"/>
+        <CardDataRow Text="Time hired" Value="@Soldier.TimeHired" />
+        <CardDataRow Text="Total missions" Value="@Soldier.TotalMissions"/>
+        <CardDataRow Text="Successful missions" Value="@Soldier.SuccessfulMissions"/>
+        <CardDataRow Text="Failed missions" Value="@Soldier.FailedMissions"/>
+        <CardDataRow Text="Time spent recovering" Value="@Soldier.TimeSpentRecovering"/>
+    </Card>
+</div>
+
+@code 
+{
+    [Parameter, EditorRequired]
+    public int Index { get; set; }
+
+    [Parameter, EditorRequired]
+    public int CurrentTime { get; set; }
+
+#nullable disable
+    [Parameter, EditorRequired]
+    public Soldier Soldier { get; set; }
+#nullable enable
+}

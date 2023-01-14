@@ -18,7 +18,7 @@
 
 @code
 {
-    [Parameter]
+    [Parameter, EditorRequired]
     public IPlayerActionOnRangeInput PlayerAction { get; set; } 
-        = new NoOpPlayerActionOnRangeInput();
+        = new NoOpPlayerActionOnRangeInput(); // kja can I make PlayerAction nullable instead? Or use #nullable disable
 }
