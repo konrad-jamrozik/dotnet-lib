@@ -40,12 +40,14 @@ await builder.Build().RunAsync();
 void AddTypesWithPersistableState(WebAssemblyHostBuilder builder)
 {
     var storage = builder.Build().Services.GetService<PersistentStorage>()!;
+    var saveGameReadSuccessfully = false;
     if (storage.HasSavedGame)
     {
-        SavedGameState.ReadSaveGameAndAddToServices(storage, builder.Services);
+        saveGameReadSuccessfully = SavedGameState.TryReadSaveGameAndAddToServices(storage, builder.Services);
     }
-    else
+    if (!saveGameReadSuccessfully)
     {
+        storage.Reset();
         builder.Services.AddSingleton<Timeline>();
         builder.Services.AddSingleton<Factions>();
         builder.Services.AddSingleton<Research>();
