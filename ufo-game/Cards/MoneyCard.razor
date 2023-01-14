@@ -1,0 +1,13 @@
+﻿@using UfoGame.Cards.Components
+@inject Model.Game Game;
+@inject ViewModel.HireSoldiersPlayerAction HireSoldiers;
+
+
+<Card Title="Money">
+    @* // kja colorize stuff: green, red *@
+    @* // kja split assets into money and soldiers *@
+    <CardDataRow Text="Money" Value="Game.Money.CurrentMoney"/>
+    <CardDataRow Text="Money / turn" Value="Game.Money.MoneyPerTurnAmount"/>
+    <CardDataRow Text="Passive income" Value="Game.Money.PassiveIncome"/>
+    <CardDataRow Text="Expenses" Value="Game.Money.Expenses"/>
+</Card>

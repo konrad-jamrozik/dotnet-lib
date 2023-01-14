@@ -3,13 +3,7 @@
 @inject ViewModel.HireSoldiersPlayerAction HireSoldiers;
 
 
-<Card Title="Assets">
-    @* // kja colorize stuff: green, red *@
-    @* // kja split assets into money and soldiers *@
-    <CardDataRow Text="Money" Value="Game.Money.CurrentMoney"/>
-    <CardDataRow Text="Money / turn" Value="Game.Money.MoneyPerTurnAmount"/>
-    <CardDataRow Text="Passive income" Value="Game.Money.PassiveIncome"/>
-    <CardDataRow Text="Expenses" Value="Game.Money.Expenses"/>
+<Card Title="Soldiers">
     <CardDataRow Text="Transport capacity" Value="Game.MissionPrep.Data.TransportCapacity"/>
     <CardDataRow Text="All soldiers" Value="Game.Staff.Data.CurrentSoldiers"/>
     <CardDataRow Text="Ready soldiers" Value="Game.Staff.Data.ReadySoldiers"/>
