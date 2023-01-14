@@ -21,13 +21,13 @@ public class Factions
     {
         Data = new List<(string name, int score, int scoreTick)>
             {
-                ("Strange Life Forms", 5000, 1),
-                ("Zombies", 10000, 1),
-                ("Black Lotus cult", 1000, 10),
-                ("Red Dawn remnants", 2000, 5),
-                ("EXALT", 1000, 15),
-                ("Followers of Dagon", 2000, 5),
-                ("Osiron organization", 500, 20),
+                ("Strange Life Forms", 2000, 1),
+                ("Zombies", 4000, 1),
+                ("Black Lotus cult", 500, 10),
+                ("Red Dawn remnants", 1000, 5),
+                ("EXALT", 800, 15),
+                ("Followers of Dagon", 1500, 5),
+                ("Osiron organization", 600, 20),
                 (NoFaction, 0, 0),
                 // "Cult of Apocalypse", "The Syndicate",
                 // "Cyberweb", "UAC", "MiB", "Hybrids", "Deep Ones"
