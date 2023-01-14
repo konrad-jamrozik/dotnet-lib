@@ -46,26 +46,10 @@ public class Game
 
     public void DoNothing() => AdvanceTime();
 
-    public void AdvanceTime(bool addMoney = true)
-    {
-        Debug.Assert(!PlayerScore.GameOver);
-        Timeline.IncrementTime();
-        if (addMoney)
-            Money.AddMoney(Money.MoneyPerTurnAmount);
-        PendingMission.AdvanceMissionTime();
-        Factions.AdvanceFactionsTime();
-        Staff.AdvanceTime();
-        _gameState.PersistGameState();
-        StateRefresh.Trigger();
-    }
-
     public bool CanRaiseMoney() => !PlayerScore.GameOver;
 
     public void RaiseMoney()
-    {
-        Money.AddMoney(Money.MoneyRaisedPerActionAmount);
-        AdvanceTime(addMoney: false);
-    }
+        => AdvanceTime(raisedMoney: true);
 
     public bool CanResearchMoneyRaisingMethods()
         => !PlayerScore.GameOver && Money.CurrentMoney >= Research.MoneyRaisingMethodsResearchCost;
@@ -73,9 +57,9 @@ public class Game
     public void ResearchMoneyRaisingMethods()
     {
         Debug.Assert(CanResearchMoneyRaisingMethods());
-        Money.SubtractMoney(Research.MoneyRaisingMethodsResearchCost);
+        Money.PayForResearch(Research.MoneyRaisingMethodsResearchCost);
         Research.MoneyRaisingMethodsResearchCost += Research.MoneyRaisingMethodsResearchCostIncrement;
-        Money.MoneyRaisedPerActionAmount += 5;
+        Money.Data.MoneyRaisedPerActionAmount += 5;
         AdvanceTime();
     }
 
@@ -85,7 +69,7 @@ public class Game
     public void ResearchTransportCapacity()
     {
         Debug.Assert(CanResearchTransportCapacity());
-        Money.SubtractMoney(Research.TransportCapacityResearchCost);
+        Money.PayForResearch(Research.TransportCapacityResearchCost);
         Research.TransportCapacityResearchCost += Research.TransportCapacityResearchCostIncrement;
         MissionPrep.Data.ImproveTransportCapacity();
         AdvanceTime();
@@ -97,7 +81,7 @@ public class Game
     public void ResearchSoldierEffectiveness()
     {
         Debug.Assert(CanResearchSoldierEffectiveness());
-        Money.SubtractMoney(Research.SoldierEffectivenessResearchCost);
+        Money.PayForResearch(Research.SoldierEffectivenessResearchCost);
         Research.SoldierEffectivenessResearchCost += Research.SoldierEffectivenessResearchCostIncrement;
         Staff.Data.SoldierEffectiveness += 10;
         AdvanceTime();
@@ -109,7 +93,7 @@ public class Game
     public void ResearchSoldierSurvivability()
     {
         Debug.Assert(CanResearchSoldierSurvivability());
-        Money.SubtractMoney(Research.SoldierSurvivabilityResearchCost);
+        Money.PayForResearch(Research.SoldierSurvivabilityResearchCost);
         Research.SoldierSurvivabilityResearchCost += Research.SoldierSurvivabilityResearchCostIncrement;
         Staff.Data.SoldierSurvivability += 10;
         AdvanceTime();
@@ -121,9 +105,21 @@ public class Game
     public void ResearchSoldierRecoverySpeed()
     {
         Debug.Assert(CanResearchSoldierRecoverySpeed());
-        Money.SubtractMoney(Research.SoldierRecoverySpeedResearchCost);
+        Money.PayForResearch(Research.SoldierRecoverySpeedResearchCost);
         Research.SoldierRecoverySpeedResearchCost += Research.SoldierRecoverySpeedResearchCostIncrement;
         Staff.Data.ImproveSoldierRecoverySpeed();
         AdvanceTime();
+    }
+
+    private void AdvanceTime(bool raisedMoney = false)
+    {
+        Debug.Assert(!PlayerScore.GameOver);
+        Timeline.IncrementTime();
+        PendingMission.AdvanceMissionTime();
+        Factions.AdvanceFactionsTime();
+        Staff.AdvanceTime();
+        Money.AdvanceTime(raisedMoney);
+        _gameState.PersistGameState();
+        StateRefresh.Trigger();
     }
 }

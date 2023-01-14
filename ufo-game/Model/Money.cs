@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.Data;
+using System.Text.Json.Serialization;
 
 namespace UfoGame.Model;
 
@@ -7,41 +8,42 @@ public class Money
     [JsonInclude]
     public readonly MoneyData Data;
 
-    // kja passive income
-    // Formula: base + missions_won*c1 - missions_lost*c2 
-    // base: 60 + missions_won * 20 - missions_lost * 5
-    // more advanced formula: based on mission log
-    // public int PassiveIncome;
-    
-    // kja expenses
-    // Formula: soldiers * 10
-    // public int Expenses => 
+    private readonly OperationsArchive _archive;
+    private readonly StaffData _staffData;
 
-    // kja to be computed based on PassiveIncome and expenses.
-    // Currently zero, as it offsets costs of actions, resulting in confusing
-    // balance.
-    public const int MoneyPerTurnAmount = 0;
+    public int PassiveIncome =>
+        80
+        + _archive.SuccessfulMissions * 40
+        + _archive.FailedMissions * -10
+        + _archive.IgnoredMissions * -5;
 
-    public Money(MoneyData data)
+    public int Expenses => _staffData.CurrentSoldiers * 10;
+
+    public int MoneyPerTurnAmount => PassiveIncome - Expenses;
+
+    public Money(MoneyData data, OperationsArchive archive, StaffData staffData)
     {
         Data = data;
+        _archive = archive;
+        _staffData = staffData;
     }
 
     public int CurrentMoney => Data.CurrentMoney;
 
-    public int MoneyRaisedPerActionAmount
-    {
-        get => Data.MoneyRaisedPerActionAmount;
-        set => Data.MoneyRaisedPerActionAmount = value;
-    }
+    public bool PlayerIsBroke => CurrentMoney < 0;
 
-    public void AddMoney(int amount)
-    {
-        Data.AddMoney(amount);
-    }
+    public void AddMissionLoot(int amount)
+        => Data.CurrentMoney += amount;
 
-    public void SubtractMoney(int amount)
+    public void PayForHiringSoldiers(int cost)
+        => Data.CurrentMoney -= cost;
+
+    public void PayForResearch(int cost)
+        => Data.CurrentMoney -= cost;
+
+    public void AdvanceTime(bool raisedMoney = false)
     {
-        Data.SubtractMoney(amount);
+        Data.CurrentMoney +=
+            MoneyPerTurnAmount + (raisedMoney ? Data.MoneyRaisedPerActionAmount : 0);
     }
 }

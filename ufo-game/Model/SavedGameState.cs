@@ -16,7 +16,7 @@ public static class SavedGameState
         JsonObject gameJson = storage.GetItem<JsonNode>(nameof(GameState)).AsObject();
 
         var timeline = gameJson[nameof(Timeline)].Deserialize<Timeline>()!;
-        var moneyData = gameJson[nameof(MoneyData)].Deserialize<MoneyData>()!;
+        var moneyData = gameJson[nameof(Money)]?[nameof(Money.Data)].Deserialize<MoneyData>()!;
         var factions = gameJson[nameof(Factions)].Deserialize<Factions>()!;
         var research = gameJson[nameof(Research)].Deserialize<Research>()!;
         var operationsArchive = gameJson[nameof(OperationsArchive)].Deserialize<OperationsArchive>()!;

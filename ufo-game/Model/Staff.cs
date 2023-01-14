@@ -10,6 +10,7 @@ public class Staff
 
     private const int SoldierPrice = 30;
 
+    // kja this probably should be on Money; not this is used in UI
     public int SoldiersToHireCost => Data.SoldiersToHire * SoldierPrice;
 
     public int MinSoldiersToHire => 1;
@@ -51,7 +52,7 @@ public class Staff
     public void HireSoldiers()
     {
         Debug.Assert(CanHireSoldiers());
-        _money.SubtractMoney(SoldiersToHireCost);
+        _money.PayForHiringSoldiers(SoldiersToHireCost);
         _archive.RecordHiredSoldiers(Data.SoldiersToHire);
         Data.CurrentSoldiers += Data.SoldiersToHire;
         Console.Out.WriteLine($"Hired {Data.SoldiersToHire} soldiers. Soldiers now at {Data.CurrentSoldiers}.");
