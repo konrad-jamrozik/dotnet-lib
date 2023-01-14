@@ -4,32 +4,44 @@ namespace UfoGame.Model;
 
 public class Money
 {
-    [JsonInclude] public int CurrentMoney { get; private set; }
+    [JsonInclude]
+    public readonly MoneyData Data;
 
-    [JsonInclude] public int MoneyRaisedPerActionAmount;
+    // kja passive income
+    // Formula: base + missions_won*c1 - missions_lost*c2 
+    // base: 60 + missions_won * 20 - missions_lost * 5
+    // more advanced formula: based on mission log
+    // public int PassiveIncome;
     
+    // kja expenses
+    // Formula: soldiers * 10
+    // public int Expenses => 
+
+    // kja to be computed based on PassiveIncome and expenses.
     // Currently zero, as it offsets costs of actions, resulting in confusing
     // balance.
     public const int MoneyPerTurnAmount = 0;
 
-    public Money()
-        => Reset();
-
-    public void Reset()
+    public Money(MoneyData data)
     {
-        CurrentMoney = 0;
-        MoneyRaisedPerActionAmount = 50;
+        Data = data;
+    }
+
+    public int CurrentMoney => Data.CurrentMoney;
+
+    public int MoneyRaisedPerActionAmount
+    {
+        get => Data.MoneyRaisedPerActionAmount;
+        set => Data.MoneyRaisedPerActionAmount = value;
     }
 
     public void AddMoney(int amount)
     {
-        CurrentMoney += amount;
-        Console.Out.WriteLine($"Added {amount} money. Money now at {CurrentMoney}");
+        Data.AddMoney(amount);
     }
 
     public void SubtractMoney(int amount)
     {
-        CurrentMoney -= amount;
-        Console.Out.WriteLine($"Subtracted {amount} money. Money now at {CurrentMoney}");
+        Data.SubtractMoney(amount);
     }
 }

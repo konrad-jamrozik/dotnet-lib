@@ -115,7 +115,6 @@ public class Game
         AdvanceTime();
     }
 
-
     public bool CanResearchSoldierRecoverySpeed()
         => !PlayerScore.GameOver && Money.CurrentMoney >= Research.SoldierRecoverySpeedResearchCost;
 

@@ -56,7 +56,7 @@ public class GameState
     public void Reset()
     {
         Timeline.Reset();
-        Money.Reset();
+        Money.Data.Reset();
         Staff.Data.Reset();
         OperationsArchive.Reset();
         PendingMission.Data.Reset();
