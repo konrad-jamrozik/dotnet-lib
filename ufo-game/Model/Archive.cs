@@ -4,6 +4,8 @@ namespace UfoGame.Model;
 
 public class Archive
 {
+    public const string NoMissionsReport = "No missions yet!";
+
     [JsonInclude] public int MissionsLaunched { get; private set; }
     [JsonInclude] public int SuccessfulMissions { get; private set; }
     [JsonInclude] public int FailedMissions { get; private set; }
@@ -23,7 +25,7 @@ public class Archive
         IgnoredMissions = 0;
         TotalSoldiersHired = 0;
         SoldiersLost = 0;
-        LastMissionReport = "No missions yet!";
+        LastMissionReport = NoMissionsReport;
     }
 
     public void ArchiveMission(bool missionSuccessful)
@@ -35,7 +37,6 @@ public class Archive
             FailedMissions += 1;
         
         Console.Out.WriteLine($"Recorded {(missionSuccessful ? "successful" : "failed")} mission.");
-
     }
 
     public void WriteLastMissionReport(string missionReport)

@@ -1,5 +1,6 @@
 ﻿@using UfoGame.Cards.Components
-@inject Model.Game Game;
+@using UfoGame.Model
+@inject Game Game;
 @inject ViewModel.LaunchMissionPlayerAction LaunchMission;
 
 <Card Title="Mission">
@@ -10,7 +11,7 @@
                  Value="@Game.PendingMission.Data.ExpiresIn"
                  Enabled="@Game.PendingMission.CurrentlyAvailable"
                  ValueCssClass="@(Game.PendingMission.MissionAboutToExpire ? "text-danger" : "")"
-                 />
+    />
     <CardDataRow Text="Enemy faction"
                  Value="@Game.PendingMission.Faction.Name"
                  Enabled="@Game.PendingMission.CurrentlyAvailable" />
@@ -37,6 +38,21 @@
         <div class="col">Last mission debriefing:</div>
     </div>
     <div class="row">
-        <div class="col">@Game.Archive.LastMissionReport</div>
+        <div class="col @GetLastMissionReportCssClass()">
+            @Game.Archive.LastMissionReport
+        </div>
     </div>
 </Card>
+
+@code
+{
+    private string GetLastMissionReportCssClass()
+    {
+        var report = Game.Archive.LastMissionReport;
+
+        if (report == Archive.NoMissionsReport)
+            return "";
+
+        return report.Contains("successful") ? "text-success" : "text-danger";
+    }
+}
