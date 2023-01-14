@@ -25,6 +25,7 @@ public class Archive
         FailedMissions = 0;
         IgnoredMissions = 0;
         TotalSoldiersHired = 0;
+        TotalSoldiersFired = 0;
         SoldiersLost = 0;
         LastMissionReport = NoMissionsReport;
     }
