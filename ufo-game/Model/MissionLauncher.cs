@@ -204,6 +204,8 @@ public class MissionLauncher
                 = mission.SoldierSurvivalChance2(soldier.ExperienceBonus(_timeline.CurrentTime));
             bool soldierSurvived = soldierRoll <= soldierSurvivalChance;
             string messageSuffix = "";
+
+            // kja these updates need to happen after the foreach, as they influence the rolls for later soldiers
             if (soldierSurvived)
             {
                 // Higher roll means it was a closer call, so soldier needs more time to recover from fatigue 
