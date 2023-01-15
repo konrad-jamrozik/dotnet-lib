@@ -151,6 +151,27 @@ public class MissionLauncher
             $"The last mission was {missionSuccessReport} {soldiersLostReport}");
     }
 
+    private void WriteLastMissionReport2(
+        PendingMission mission,
+        int roll,
+        bool success,
+        int scoreDiff,
+        int soldiersLost)
+    {
+        string missionRollReport =
+            $" (Rolled {roll} against limit of {mission.SuccessChance2}.)";
+        string missionSuccessReport = success
+            ? $"successful! {missionRollReport} We took {scoreDiff} score from {mission.Faction.Name} " +
+              $"and earned ${mission.MoneyReward}."
+            : $"a failure. {missionRollReport} We lost {scoreDiff} score to {mission.Faction.Name}.";
+
+        string soldiersLostReport = soldiersLost > 0
+            ? $"Number of soldiers lost: {soldiersLost}."
+            : "We didn't lose any soldiers.";
+        _archive.WriteLastMissionReport(
+            $"The last mission was {missionSuccessReport} {soldiersLostReport}");
+    }
+
     public bool CanLaunchMission2(PendingMission mission, int offset = 0)
     {
         if (_playerScore.GameOver || !mission.CurrentlyAvailable)
@@ -173,7 +194,7 @@ public class MissionLauncher
         var soldiersLost = ProcessSoldierUpdates2(mission, success, _staff.Data.SoldiersAssignedToMission);
 
         _archive.ArchiveMission(missionSuccessful: success);
-        WriteLastMissionReport(mission, roll, success, scoreDiff, soldiersLost);
+        WriteLastMissionReport2(mission, roll, success, scoreDiff, soldiersLost);
         mission.GenerateNewOrClearMission();
         // kja obsolete
         //_missionPrep.NarrowSoldiersToSend();

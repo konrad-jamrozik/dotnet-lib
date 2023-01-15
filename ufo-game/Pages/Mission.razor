@@ -20,7 +20,10 @@
         var sortedSoldiers = Game.Staff.Data.AvailableSoldiers
             // First list soldiers that can be sent on mission.
             .OrderByDescending(s => s.CanSendOnMission)
-            // From these, first list the least experiences.
+            // From soldiers who cannot be sent, sort by increasing recovery need.
+            .ThenBy(s => s.Recovery)
+            // Then sort soldiers by exp ascending
+            // (rookies to be sent first, hence visible first).
             .ThenBy(s => s.ExperienceBonus(Game.Timeline.CurrentTime))
             // And from soldiers of the same experience bonus, first list
             // the ones hired more recently.
