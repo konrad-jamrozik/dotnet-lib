@@ -153,13 +153,14 @@ public class MissionLauncher
 
     private void WriteLastMissionReport2(
         PendingMission mission,
+        int successChance,
         int roll,
         bool success,
         int scoreDiff,
         int soldiersLost)
     {
         string missionRollReport =
-            $" (Rolled {roll} against limit of {mission.SuccessChance2}.)";
+            $" (Rolled {roll} against limit of {successChance}.)";
         string missionSuccessReport = success
             ? $"successful! {missionRollReport} We took {scoreDiff} score from {mission.Faction.Name} " +
               $"and earned ${mission.MoneyReward}."
@@ -187,6 +188,7 @@ public class MissionLauncher
     public void LaunchMission2(PendingMission mission)
     {
         Debug.Assert(CanLaunchMission2(mission));
+        var successChance = mission.SuccessChance2;
         var soldiersSent = _staff.Data.SoldiersAssignedToMission.Count;
         Console.Out.WriteLine($"Sent {soldiersSent} soldiers.");
         var (roll, success) = RollMissionOutcome2(mission);
@@ -194,7 +196,7 @@ public class MissionLauncher
         var soldiersLost = ProcessSoldierUpdates2(mission, success, _staff.Data.SoldiersAssignedToMission);
 
         _archive.ArchiveMission(missionSuccessful: success);
-        WriteLastMissionReport2(mission, roll, success, scoreDiff, soldiersLost);
+        WriteLastMissionReport2(mission, successChance, roll, success, scoreDiff, soldiersLost);
         mission.GenerateNewOrClearMission();
         // kja obsolete
         //_missionPrep.NarrowSoldiersToSend();
