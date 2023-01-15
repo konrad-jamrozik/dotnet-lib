@@ -2,6 +2,7 @@
 @using UfoGame.Model
 @inject Game Game;
 @inject ViewModel.LaunchMissionPlayerAction LaunchMission;
+@inject ViewModel.LaunchMissionPlayerAction2 LaunchMission2;
 
 <Card Title="Mission">
     <CardDataRow Text="Available in" 
@@ -33,7 +34,7 @@
     <CardDataRow Text="Soldiers to send" 
                  Value="@Game.MissionPrep.Data.SoldiersToSend"
                  Enabled="@Game.PendingMission.CurrentlyAvailable" />
-    <CardButtonWithRangeInput PlayerAction="LaunchMission" />
+    <CardButtonWithRangeInput PlayerAction="LaunchMission2" />
     <div class="row">
         <div class="col">Last mission debriefing:</div>
     </div>

@@ -5,7 +5,6 @@ namespace UfoGame.Model;
 
 public class Soldier
 {
-    // kja add ID to UI
     [JsonInclude] public int Id { get; private set; }
     [JsonInclude] public string Nickname { get; private set; }
     [JsonInclude] public int TimeHired { get; private set; }
@@ -14,6 +13,7 @@ public class Soldier
     [JsonInclude] public int TimeSpentRecovering { get; private set; }
     [JsonInclude] public float Recovery { get; private set; }
     [JsonInclude] public int TimeLost { get; private set; }
+    [JsonInclude] public bool AssignedToMission { get; private set; }
 
     public int ExperienceBonus(int currentTime)
     {
@@ -64,6 +64,22 @@ public class Soldier
         Nickname = nickname;
         TimeHired = timeHired;
         // kja need to archive the fact got hired
+    }
+
+    public void AssignToMission()
+    {
+        Debug.Assert(AssignedToMission == false);
+        Debug.Assert(!MissingInAction);
+        Debug.Assert(!IsRecovering);
+        AssignedToMission = true;
+    }
+
+    public void UnassignFromMission()
+    {
+        Debug.Assert(AssignedToMission);
+        Debug.Assert(!MissingInAction);
+        Debug.Assert(!IsRecovering);
+        AssignedToMission = false;
     }
 
     public void ReturnFromMission(bool success, float recovery)

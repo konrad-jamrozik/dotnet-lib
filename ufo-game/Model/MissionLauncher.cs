@@ -65,6 +65,36 @@ public class MissionLauncher
         _stateRefresh.Trigger();
     }
 
+    public bool CanLaunchMission2(PendingMission mission, int offset = 0)
+    {
+        if (_playerScore.GameOver || !mission.CurrentlyAvailable)
+            return false;
+
+        return WithinRange(_staff.Data.SoldiersAssignedToMissionCount);
+
+        bool WithinRange(int soldiersAssignedToMission)
+            => soldiersAssignedToMission >= 1
+               && soldiersAssignedToMission <= _missionPrep.Data.TransportCapacity;
+    }
+
+    public void LaunchMission2(PendingMission mission)
+    {
+        Debug.Assert(CanLaunchMission2(mission));
+        Debug.Assert(false, "LaunchMission2 not yet implemented"); // kja curr work
+        var soldiersSent = _missionPrep.Data.SoldiersToSend;
+        var (roll, success) = RollMissionOutcome(mission);
+        var scoreDiff = ApplyMissionOutcome(mission, success);
+        var soldiersLost = ProcessSoldierLosses(mission, soldiersSent);
+
+        _archive.ArchiveMission(missionSuccessful: success);
+        WriteLastMissionReport(mission, roll, success, scoreDiff, soldiersLost);
+        mission.GenerateNewOrClearMission();
+        _missionPrep.NarrowSoldiersToSend();
+        _gameState.PersistGameState();
+        _stateRefresh.Trigger();
+    }
+
+
     private (int roll, bool success) RollMissionOutcome(PendingMission mission)
     {
         // Roll between 1 and 100.

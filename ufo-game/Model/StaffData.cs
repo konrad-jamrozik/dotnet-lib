@@ -18,8 +18,14 @@ public class StaffData
 
     [JsonInclude] public List<Soldier> Soldiers = new List<Soldier>();
 
+    public List<Soldier> AvailableSoldiers => Soldiers.Where(s => !s.MissingInAction).ToList();
+
+    public int SoldiersAssignedToMissionCount => Soldiers.Count(s => s.AssignedToMission);
+
+    // kja obsolete
     public int ReadySoldiers => CurrentSoldiers - (int)Math.Ceiling(RecoveringSoldiers);
 
+    // kja obsolete
     public void AddRecoveringSoldiers(int count)
     {
         Debug.Assert(RecoveringSoldiers + count <= CurrentSoldiers);

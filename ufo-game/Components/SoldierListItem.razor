@@ -27,7 +27,7 @@
                         <input class="form-check-input ms-0" type="checkbox" role="switch" 
                                id="flip_switch_@Index"
                                disabled="@(!Soldier.CanSendOnMission)"
-                               >
+                        @onchange="@(eventArgs => OnChangeSoldierMissionAssignment(eventArgs.Value!))" />
                     </div>
                     <label class="form-check-label" for="flip_switch_@Index">Send</label>
                 </div>
@@ -58,4 +58,14 @@
     [Parameter, EditorRequired]
     public Soldier Soldier { get; set; }
 #nullable enable
+
+    private void OnChangeSoldierMissionAssignment(object eventArgsValue)
+    {
+        bool isChecked = (bool)eventArgsValue;
+        if (isChecked)
+            Soldier.AssignToMission();
+        else
+            Soldier.UnassignFromMission();
+        Game.StateRefresh.Trigger();
+    }
 }
