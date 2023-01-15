@@ -95,9 +95,8 @@ public class MissionLauncher
         var soldiersSent = _staff.Data.SoldiersAssignedToMission.Count;
         Console.Out.WriteLine($"Sent {soldiersSent} soldiers.");
         var (roll, success) = RollMissionOutcome2(mission);
-        var scoreDiff = ApplyMissionOutcome(mission, success);
         var soldiersLost = ProcessSoldierUpdates2(mission, success, _staff.Data.SoldiersAssignedToMission);
-
+        var scoreDiff = ApplyMissionOutcome(mission, success);
         _archive.ArchiveMission(missionSuccessful: success);
         WriteLastMissionReport2(mission, successChance, roll, success, scoreDiff, soldiersLost);
         mission.GenerateNewOrClearMission();
