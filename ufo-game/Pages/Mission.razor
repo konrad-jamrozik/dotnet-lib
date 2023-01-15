@@ -17,7 +17,12 @@
 <div class="list-group">
     @{
         var sortedSoldiers = Game.Staff.Data.AvailableSoldiers
-            .OrderBy(s => s.ExperienceBonus(Game.Timeline.CurrentTime))
+            // First list soldiers that can be sent on mission.
+            .OrderByDescending(s => s.CanSendOnMission)
+            // From these, first list the least experiences.
+            .ThenBy(s => s.ExperienceBonus(Game.Timeline.CurrentTime))
+            // And from soldiers of the same experience bonus, first list
+            // the ones hired more recently.
             .ThenByDescending(s => s.Id)
             .ToArray();
         @for (int i = 0; i < sortedSoldiers.Length; i++)
