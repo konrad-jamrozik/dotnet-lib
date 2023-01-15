@@ -5,6 +5,24 @@ namespace UfoGame.Model;
 
 public class PendingMission
 {
+    public int SuccessChance2 => Math.Min(100, (int)(OurPower2 / (float)(EnemyPower + OurPower2) * 100));
+
+    public int OurPower2
+        => _staff.Data.SoldiersAssignedToMission
+               .Sum(soldier => 100 + soldier.ExperienceBonus(_timeline.CurrentTime))
+           * _staff.Data.SoldierEffectiveness
+           / 100;
+
+    public int SoldierSurvivalChance2(int experienceBonus)
+    {
+        var adjustedSurvivabilityPower =
+            (SoldierSurvivabilityPower2 * (100 + experienceBonus)) / 100;
+        return (int)(adjustedSurvivabilityPower / (float)(EnemyPower + adjustedSurvivabilityPower) 
+                     * 100);
+    }
+
+    private int SoldierSurvivabilityPower2 => _staff.Data.SoldiersAssignedToMissionCount * _staff.Data.SoldierSurvivability;
+
     [JsonInclude]
     public PendingMissionData Data;
 
@@ -36,6 +54,7 @@ public class PendingMission
     private readonly Factions _factions;
     private readonly PlayerScore _playerScore;
     private readonly Staff _staff;
+    private readonly Timeline _timeline;
 
     public PendingMission(
         PendingMissionData data,
@@ -43,7 +62,8 @@ public class PendingMission
         Archive archive,
         Factions factions,
         PlayerScore playerScore,
-        Staff staff)
+        Staff staff,
+        Timeline timeline)
     {
         Data = data;
         _missionPrep = missionPrep;
@@ -51,6 +71,7 @@ public class PendingMission
         _factions = factions;
         _playerScore = playerScore;
         _staff = staff;
+        _timeline = timeline;
         if (data.IsNoMission)
             Data = PendingMissionData.New(_playerScore, _random, _factions);
     }

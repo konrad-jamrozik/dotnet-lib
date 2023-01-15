@@ -18,9 +18,18 @@ public class StaffData
 
     [JsonInclude] public List<Soldier> Soldiers = new List<Soldier>();
 
+    [JsonIgnore]
     public List<Soldier> AvailableSoldiers => Soldiers.Where(s => !s.MissingInAction).ToList();
 
     public int SoldiersAssignedToMissionCount => Soldiers.Count(s => s.AssignedToMission);
+
+    [JsonIgnore]
+    public List<Soldier> SoldiersAssignedToMission
+        => Soldiers.Where(s => s.AssignedToMission).ToList();
+
+    [JsonIgnore]
+    public List<Soldier> SoldiersInRecovery
+        => Soldiers.Where(s => s.IsRecovering).ToList();
 
     // kja obsolete
     public int ReadySoldiers => CurrentSoldiers - (int)Math.Ceiling(RecoveringSoldiers);
@@ -53,6 +62,8 @@ public class StaffData
 
     public void AdvanceTime()
     {
+        SoldiersInRecovery.ForEach(s => s.TickRecovery(SoldierRecoverySpeed));
+        // kja obsolete
         RecoveringSoldiers = Math.Max(0, RecoveringSoldiers - SoldierRecoverySpeed);
     }
 

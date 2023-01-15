@@ -27,7 +27,8 @@
                         <input class="form-check-input ms-0" type="checkbox" role="switch" 
                                id="flip_switch_@Index"
                                disabled="@(!Soldier.CanSendOnMission)"
-                        @onchange="@(eventArgs => OnChangeSoldierMissionAssignment(eventArgs.Value!))" />
+                               @onchange="@(eventArgs => OnChangeSoldierMissionAssignment(eventArgs.Value!))" 
+                               checked="@Soldier.AssignedToMission"/>
                     </div>
                     <label class="form-check-label" for="flip_switch_@Index">Send</label>
                 </div>

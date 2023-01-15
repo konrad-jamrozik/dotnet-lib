@@ -82,7 +82,7 @@ public class Soldier
         AssignedToMission = false;
     }
 
-    public void ReturnFromMission(bool success, float recovery)
+    public void RecordMissionOutcome(bool success, float recovery)
     {
         Debug.Assert(recovery >= 0);
         Debug.Assert(!MissingInAction); // dead soldiers cannot be sent on a mission
@@ -96,13 +96,17 @@ public class Soldier
         {
             FailedMissions += 1;
         }
+
+        if (recovery > 0)
+            UnassignFromMission();
+
         Recovery += recovery;
     }
 
     public void TickRecovery(float recovery)
     {
         Debug.Assert(recovery >= 0);
-        Debug.Assert(!IsRecovering); // cannot tick recovery on ready soldier
+        Debug.Assert(IsRecovering); // cannot tick recovery on ready soldier
         Recovery = Math.Max(Recovery - recovery, 0);
         TimeSpentRecovering += 1;
     }
@@ -112,13 +116,15 @@ public class Soldier
         Debug.Assert(currentTime >= TimeHired);
         Debug.Assert(!MissingInAction);
         Debug.Assert(!IsRecovering);
+        Debug.Assert(AssignedToMission);
+        UnassignFromMission();
         TimeLost = currentTime;
         // kja need to archive the fact they are missing in action
     }
 
     private readonly int[] _missionExperienceBonus = 
     {
-        0, 30, 25, 20, 15, 10, 5
+        30, 25, 20, 15, 10, 5
     };
 
     /// <summary>
@@ -132,6 +138,6 @@ public class Soldier
     /// </summary>
     private int ExperienceFromMissions =>
         _missionExperienceBonus.Take(TotalMissions).Sum()
-        + Math.Max(TotalMissions - (_missionExperienceBonus.Length - 1), 0) *
-        _missionExperienceBonus[^1];
+        + (Math.Max(TotalMissions - _missionExperienceBonus.Length, 0) *
+        _missionExperienceBonus[^1]);
 }

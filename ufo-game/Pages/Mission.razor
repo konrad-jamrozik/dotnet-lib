@@ -31,3 +31,12 @@
         }
     }
 </div>
+
+@code
+{
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        Game.StateRefresh.Event += StateHasChanged;
+    }
+}

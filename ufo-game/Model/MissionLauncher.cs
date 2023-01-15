@@ -11,6 +11,7 @@ public class MissionLauncher
     private readonly Staff _staff;
     private readonly Money _money;
     private readonly StateRefresh _stateRefresh;
+    private readonly Timeline _timeline;
     private readonly GameState _gameState;
 
     public MissionLauncher(
@@ -20,7 +21,8 @@ public class MissionLauncher
         Staff staff,
         Money money,
         StateRefresh stateRefresh,
-        GameState gameState)
+        GameState gameState,
+        Timeline timeline)
     {
         _missionPrep = missionPrep;
         _archive = archive;
@@ -29,6 +31,7 @@ public class MissionLauncher
         _money = money;
         _stateRefresh = stateRefresh;
         _gameState = gameState;
+        _timeline = timeline;
     }
 
     public bool CanLaunchMission(PendingMission mission, int offset = 0)
@@ -64,36 +67,6 @@ public class MissionLauncher
         _gameState.PersistGameState();
         _stateRefresh.Trigger();
     }
-
-    public bool CanLaunchMission2(PendingMission mission, int offset = 0)
-    {
-        if (_playerScore.GameOver || !mission.CurrentlyAvailable)
-            return false;
-
-        return WithinRange(_staff.Data.SoldiersAssignedToMissionCount);
-
-        bool WithinRange(int soldiersAssignedToMission)
-            => soldiersAssignedToMission >= 1
-               && soldiersAssignedToMission <= _missionPrep.Data.TransportCapacity;
-    }
-
-    public void LaunchMission2(PendingMission mission)
-    {
-        Debug.Assert(CanLaunchMission2(mission));
-        Debug.Assert(false, "LaunchMission2 not yet implemented"); // kja curr work
-        var soldiersSent = _missionPrep.Data.SoldiersToSend;
-        var (roll, success) = RollMissionOutcome(mission);
-        var scoreDiff = ApplyMissionOutcome(mission, success);
-        var soldiersLost = ProcessSoldierLosses(mission, soldiersSent);
-
-        _archive.ArchiveMission(missionSuccessful: success);
-        WriteLastMissionReport(mission, roll, success, scoreDiff, soldiersLost);
-        mission.GenerateNewOrClearMission();
-        _missionPrep.NarrowSoldiersToSend();
-        _gameState.PersistGameState();
-        _stateRefresh.Trigger();
-    }
-
 
     private (int roll, bool success) RollMissionOutcome(PendingMission mission)
     {
@@ -176,5 +149,97 @@ public class MissionLauncher
             : "We didn't lose any soldiers.";
         _archive.WriteLastMissionReport(
             $"The last mission was {missionSuccessReport} {soldiersLostReport}");
+    }
+
+    public bool CanLaunchMission2(PendingMission mission, int offset = 0)
+    {
+        if (_playerScore.GameOver || !mission.CurrentlyAvailable)
+            return false;
+
+        return WithinRange(_staff.Data.SoldiersAssignedToMissionCount);
+
+        bool WithinRange(int soldiersAssignedToMission)
+            => soldiersAssignedToMission >= 1
+               && soldiersAssignedToMission <= _missionPrep.Data.TransportCapacity;
+    }
+
+    public void LaunchMission2(PendingMission mission)
+    {
+        Debug.Assert(CanLaunchMission2(mission));
+        var soldiersSent = _staff.Data.SoldiersAssignedToMission.Count;
+        Console.Out.WriteLine($"Sent {soldiersSent} soldiers.");
+        var (roll, success) = RollMissionOutcome2(mission);
+        var scoreDiff = ApplyMissionOutcome(mission, success);
+        var soldiersLost = ProcessSoldierUpdates2(mission, success, _staff.Data.SoldiersAssignedToMission);
+
+        _archive.ArchiveMission(missionSuccessful: success);
+        WriteLastMissionReport(mission, roll, success, scoreDiff, soldiersLost);
+        mission.GenerateNewOrClearMission();
+        _missionPrep.NarrowSoldiersToSend();
+        _gameState.PersistGameState();
+        _stateRefresh.Trigger();
+    }
+
+    private (int roll, bool success) RollMissionOutcome2(PendingMission mission)
+    {
+        // Roll between 1 and 100.
+        // The lower the better.
+        int roll = _random.Next(1, 100 + 1);
+        bool success = roll <= mission.SuccessChance2;
+        Console.Out.WriteLine(
+            $"Rolled {roll} against limit of {mission.SuccessChance2} resulting in {(success ? "success" : "failure")}");
+        return (roll, success);
+    }
+
+    private int ProcessSoldierUpdates2(PendingMission mission, bool missionSuccess, List<Soldier> sentSoldiers)
+    {
+        int soldiersLost = 0;
+        List<Soldier> lostSoldiers = new List<Soldier>();
+        foreach (Soldier soldier in sentSoldiers)
+        {
+            // Roll between 1 and 100.
+            // The lower the better.
+            int soldierRoll = _random.Next(1, 100 + 1);
+            var soldierSurvivalChance 
+                = mission.SoldierSurvivalChance2(soldier.ExperienceBonus(_timeline.CurrentTime));
+            bool soldierSurvived = soldierRoll <= soldierSurvivalChance;
+            string messageSuffix = "";
+            if (soldierSurvived)
+            {
+                // Higher roll means it was a closer call, so soldier needs more time to recover from fatigue 
+                // and wounds. This means that if a soldier is very good at surviving, they may barely survive,
+                // but need tons of time to recover.
+                var recovery = (float)Math.Round(soldierRoll * (missionSuccess ? 0.5f : 1), 2);
+                soldier.RecordMissionOutcome(missionSuccess, recovery); // kja mission count should be recorded even in case of death.
+                messageSuffix = soldierSurvived ? $" Need {recovery} units of recovery." : "";
+            }
+            else
+            {
+                lostSoldiers.Add(soldier);
+                soldier.RecordLost(_timeline.CurrentTime);
+            }
+
+            var inequalitySign = soldierRoll <= mission.SoldierSurvivalChance2(_timeline.CurrentTime) ? "<=" : ">";
+            Console.Out.WriteLine(
+                $"Soldier #{soldier.Id} '{soldier.Nickname}' exp: {soldier.ExperienceBonus(_timeline.CurrentTime)} " +
+                $"{(soldierSurvived ? "survived" : "lost")}. " +
+                $"Rolled {soldierRoll} {inequalitySign} {mission.SoldierSurvivalChance2(_timeline.CurrentTime)}." +
+                messageSuffix);
+        }
+
+        if (lostSoldiers.Count > 0)
+        {
+            _archive.RecordLostSoldiers(lostSoldiers.Count);
+            _staff.LoseSoldiers(lostSoldiers.Count);
+        }
+        else
+        {
+            Console.Out.WriteLine("No soldiers lost! \\o/");
+        }
+
+        // kja obsolete
+        //_staff.Data.AddRecoveringSoldiers(soldiersSent - soldiersLost);
+
+        return soldiersLost;
     }
 }
