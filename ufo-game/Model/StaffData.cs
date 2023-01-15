@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 
 namespace UfoGame.Model;
 
@@ -13,7 +12,6 @@ public class StaffData
     [JsonInclude] public int SoldiersToHire;
     [JsonInclude] public int SoldiersToFire;
     [JsonInclude] public int CurrentSoldiers;
-    [JsonInclude] public float RecoveringSoldiers { get; private set; }
     [JsonInclude] public float SoldierRecoverySpeed { get; private set; }
 
     [JsonInclude] public List<Soldier> Soldiers = new List<Soldier>();
@@ -31,18 +29,14 @@ public class StaffData
     public List<Soldier> SoldiersInRecovery
         => Soldiers.Where(s => s.IsRecovering).ToList();
 
+    [JsonIgnore]
+    public int SoldiersInRecoveryCount
+        => Soldiers.Count(s => s.IsRecovering);
+
+
     public int SoldiersSendableOnMissionCount
         => Soldiers.Count(s => s.CanSendOnMission);
 
-    // kja obsolete
-    public int ReadySoldiers => CurrentSoldiers - (int)Math.Ceiling(RecoveringSoldiers);
-
-    // kja obsolete
-    public void AddRecoveringSoldiers(int count)
-    {
-        Debug.Assert(RecoveringSoldiers + count <= CurrentSoldiers);
-        RecoveringSoldiers += count;
-    }
 
     public void ImproveSoldierRecoverySpeed()
         => SoldierRecoverySpeed += SoldierRecoverySpeedImprovement;
@@ -58,7 +52,6 @@ public class StaffData
         SoldiersToHire = 1;
         SoldiersToFire = 1;
         CurrentSoldiers = 0;
-        RecoveringSoldiers = 0;
         SoldierRecoverySpeed = 0.5f;
         Soldiers = new List<Soldier>();
     }
@@ -66,8 +59,6 @@ public class StaffData
     public void AdvanceTime()
     {
         SoldiersInRecovery.ForEach(s => s.TickRecovery(SoldierRecoverySpeed));
-        // kja obsolete
-        RecoveringSoldiers = Math.Max(0, RecoveringSoldiers - SoldierRecoverySpeed);
     }
 
     public void HireSoldiers(int currentTime)

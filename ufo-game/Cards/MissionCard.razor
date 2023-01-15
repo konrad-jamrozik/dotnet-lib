@@ -1,7 +1,6 @@
 ﻿@using UfoGame.Cards.Components
 @using UfoGame.Model
 @inject Game Game;
-@inject ViewModel.LaunchMissionPlayerAction LaunchMission;
 @inject ViewModel.LaunchMissionPlayerAction2 LaunchMission2;
 
 <Card Title="Mission">
@@ -32,7 +31,7 @@
                  Value="@(Game.PendingMission.BaselineSoldierSurvivalChance2 + "%")"
                  Enabled="@Game.PendingMission.CurrentlyAvailable" />
     <CardDataRow Text="Soldiers to send" 
-                 Value="@Game.MissionPrep.Data.SoldiersToSend"
+                 Value="@Game.Staff.Data.SoldiersAssignedToMissionCount"
                  Enabled="@Game.PendingMission.CurrentlyAvailable" />
     <CardButtonWithRangeInput PlayerAction="LaunchMission2" />
     <div class="row">

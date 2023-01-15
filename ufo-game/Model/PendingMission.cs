@@ -55,15 +55,6 @@ public class PendingMission
 
     public int EnemyPower => (int)(Faction.Score * Data.EnemyPowerCoefficient);
 
-    public int OurPower => _missionPrep.Data.SoldiersToSend * _staff.Data.SoldierEffectiveness;
-
-    public int SuccessChance => Math.Min(100, (int)(OurPower / (float)(EnemyPower + OurPower) * 100));
-
-    public int SoldierSurvivalChance => 
-        (int)(SoldierSurvivabilityPower / (float)(EnemyPower + SoldierSurvivabilityPower) * 100);
-
-    private int SoldierSurvivabilityPower => _missionPrep.Data.SoldiersToSend * _staff.Data.SoldierSurvivability;
-
     public int CountDown => CurrentlyAvailable ? -Data.ExpiresIn : Data.AvailableIn;
 
     public bool CurrentlyAvailable => Data.AvailableIn == 0 && Data.ExpiresIn > 0;
