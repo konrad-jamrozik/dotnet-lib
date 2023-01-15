@@ -39,10 +39,10 @@ public class MissionLauncher
         int scoreDiff;
         if (success)
         {
+            _money.AddMissionLoot(mission.MoneyReward);
             scoreDiff = Math.Min(PlayerScore.WinScore, mission.Faction.Score);
             _playerScore.Data.Value += scoreDiff;
             mission.Faction.Score -= scoreDiff;
-            _money.AddMissionLoot(mission.MoneyReward);
         }
         else
         {
@@ -60,13 +60,14 @@ public class MissionLauncher
         int roll,
         bool success,
         int scoreDiff,
-        int soldiersLost)
+        int soldiersLost,
+        int moneyReward)
     {
         string missionRollReport =
             $" (Rolled {roll} against limit of {successChance}.)";
         string missionSuccessReport = success
             ? $"successful! {missionRollReport} We took {scoreDiff} score from {mission.Faction.Name} " +
-              $"and earned ${mission.MoneyReward}."
+              $"and earned ${moneyReward}."
             : $"a failure. {missionRollReport} We lost {scoreDiff} score to {mission.Faction.Name}.";
 
         string soldiersLostReport = soldiersLost > 0
@@ -93,12 +94,13 @@ public class MissionLauncher
         Debug.Assert(CanLaunchMission2(mission));
         var successChance = mission.SuccessChance2;
         var soldiersSent = _staff.Data.SoldiersAssignedToMission.Count;
+        var moneyReward = mission.MoneyReward;
         Console.Out.WriteLine($"Sent {soldiersSent} soldiers.");
         var (roll, success) = RollMissionOutcome2(mission);
         var soldiersLost = ProcessSoldierUpdates2(mission, success, _staff.Data.SoldiersAssignedToMission);
         var scoreDiff = ApplyMissionOutcome(mission, success);
         _archive.ArchiveMission(missionSuccessful: success);
-        WriteLastMissionReport2(mission, successChance, roll, success, scoreDiff, soldiersLost);
+        WriteLastMissionReport2(mission, successChance, roll, success, scoreDiff, soldiersLost, moneyReward);
         mission.GenerateNewOrClearMission();
         // kja obsolete
         //_missionPrep.NarrowSoldiersToSend();
