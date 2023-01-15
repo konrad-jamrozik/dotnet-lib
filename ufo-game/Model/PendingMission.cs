@@ -13,10 +13,11 @@ public class PendingMission
     {
         get
         {
-            var result = _staff.Data.SoldiersAssignedToMission
-                                               .Sum(soldier => 100 + soldier.ExperienceBonus(_timeline.CurrentTime))
-                                           * _staff.Data.SoldierEffectiveness
-                                           / 100;
+            var result
+                = _staff.Data.SoldiersAssignedToMission
+                      .Sum(soldier => 100 + soldier.ExperienceBonus(_timeline.CurrentTime))
+                  * _staff.Data.SoldierEffectiveness
+                  / 100;
             Debug.Assert(result >= 0);
             return result;
         }
@@ -24,11 +25,22 @@ public class PendingMission
 
     public int SoldierSurvivalChance2(int experienceBonus)
     {
-        int result = Math.Min(BaselineSoldierSurvivalChance2 * (100 + experienceBonus) / 100, MaxSurvivalChance);
-        Debug.Assert(result >= 0);
-        // ReSharper disable once ConditionIsAlwaysTrueOrFalse
-        Debug.Assert(result <= 100);
-        return result;
+        // Soldier experience bonus divides the remaining gap in survivability, to 99%.
+        // For example, if baseline survivability is 30%, the gap to 99% is 99%-30%=69%.
+
+        // If a soldier has 200% experience bonus, the gap is shrunk
+        // from 69% to 69%/(1+200%) = 69%*(1/3) = 23%. So survivability goes up from 99%-69%=30% to 99%-23%=76%.
+        //
+        // If a soldier has 50% experience bonus, the gap is shrunk
+        // from 69% to 69%/(1+50%) = 69%*(2/3) = 46%. So survivability goes up from 99%-69%=30% to 99%-46%=53%.
+        // 
+        var survivabilityGap = MaxSurvivalChance - BaselineSoldierSurvivalChance2;
+        Debug.Assert(survivabilityGap is >= 0 and <= MaxSurvivalChance);
+        var reducedGap = (100*survivabilityGap / (100 + experienceBonus));
+        var newSurvivalChance = MaxSurvivalChance - reducedGap;
+        Debug.Assert(newSurvivalChance >= BaselineSoldierSurvivalChance2);
+        Debug.Assert(newSurvivalChance <= MaxSurvivalChance);
+        return newSurvivalChance;
     }
 
     public int BaselineSoldierSurvivalChance2 => 
