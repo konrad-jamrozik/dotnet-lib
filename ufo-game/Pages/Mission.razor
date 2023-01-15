@@ -1,16 +1,25 @@
 ﻿@page "/mission"
 @using UfoGame.Components
 @using UfoGame.Model
+@using UfoGame.Cards
 @inject Game Game
 
 <PageTitle>Mission</PageTitle>
 
 <h1>Mission</h1>
 
+<div class="container-fluid text-center px-2">
+    <div class="row">
+        <MissionCard />
+    </div>
+</div>
+
 <div class="list-group">
     @{
         var sortedSoldiers = Game.Staff.Data.Soldiers
-            .OrderBy(s => s.ExperienceBonus(Game.Timeline.CurrentTime)).ToArray();
+            .OrderBy(s => s.ExperienceBonus(Game.Timeline.CurrentTime))
+            .ThenByDescending(s => s.Id)
+            .ToArray();
         @for (int i = 0; i < sortedSoldiers.Length; i++)
         {
             <SoldierListItem Index="i" Soldier="sortedSoldiers[i]"></SoldierListItem>

@@ -24,17 +24,20 @@ public class Staff
     private readonly Money _money;
     private readonly Archive _archive;
     private readonly PlayerScore _playerScore;
+    private readonly Timeline _timeline;
 
     public Staff(
         StaffData data,
         Money money,
         PlayerScore playerScore,
-        Archive archive)
+        Archive archive,
+        Timeline timeline)
     {
         Data = data;
         _money = money;
         _playerScore = playerScore;
         _archive = archive;
+        _timeline = timeline;
     }
 
     public bool CanHireSoldiers(int offset = 0)
@@ -56,10 +59,14 @@ public class Staff
 
     public void HireSoldiers()
     {
+        // kja this may FIRST narrow soldiers to hire and THEN pass. This is unexpected from user POV.
+        // Same with SoldiersToSend and SoldiersToFire.
+        // Need to pass something like: allowNarrowing: false.
         Debug.Assert(CanHireSoldiers());
         _money.PayForHiringSoldiers(SoldiersToHireCost);
         _archive.RecordHiredSoldiers(Data.SoldiersToHire);
         Data.CurrentSoldiers += Data.SoldiersToHire;
+        Data.HireSoldiers(_timeline.CurrentTime);
         Console.Out.WriteLine($"Hired {Data.SoldiersToHire} soldiers. Soldiers now at {Data.CurrentSoldiers}.");
     }
 

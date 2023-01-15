@@ -7,6 +7,7 @@ public class StaffData
 {
     public const float SoldierRecoverySpeedImprovement = 0.25f;
 
+    [JsonInclude] public int NextSoldierId;
     [JsonInclude] public int SoldierEffectiveness;
     [JsonInclude] public int SoldierSurvivability;
     [JsonInclude] public int SoldiersToHire;
@@ -33,6 +34,7 @@ public class StaffData
 
     public void Reset()
     {
+        NextSoldierId = 0;
         SoldierEffectiveness = 100;
         SoldierSurvivability = 100;
         SoldiersToHire = 1;
@@ -40,13 +42,24 @@ public class StaffData
         CurrentSoldiers = 0;
         RecoveringSoldiers = 0;
         SoldierRecoverySpeed = 0.5f;
-        // kja stub data
-        Soldiers = new List<Soldier>
-            { new Soldier(0, "Alfred", 0), new Soldier(1, "Władek", 0) };
+        Soldiers = new List<Soldier>();
     }
 
     public void AdvanceTime()
     {
         RecoveringSoldiers = Math.Max(0, RecoveringSoldiers - SoldierRecoverySpeed);
+    }
+
+    public void HireSoldiers(int currentTime)
+    {
+        Enumerable.Range(NextSoldierId, SoldiersToHire)
+            .ToList()
+            .ForEach(
+                id => Soldiers.Add(
+                    new Soldier(
+                        id,
+                        SoldierNames.RandomName(),
+                        currentTime)));
+        NextSoldierId += SoldiersToHire;
     }
 }

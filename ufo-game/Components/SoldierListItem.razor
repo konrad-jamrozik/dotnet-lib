@@ -25,11 +25,11 @@
                 <div class="d-flex flex-column align-items-center">
                     <div class="form-check form-switch ps-0">
                         <input class="form-check-input ms-0" type="checkbox" role="switch" 
-                               id="flexSwitchCheckChecked"
+                               id="flip_switch_@Index"
                                disabled="@(!Soldier.CanSendOnMission)"
                                >
                     </div>
-                    <label class="form-check-label" for="flexSwitchCheckChecked">Send</label>
+                    <label class="form-check-label" for="flip_switch_@Index">Send</label>
                 </div>
             </div>
         </div>
@@ -37,10 +37,11 @@
 </div>
 <div class="collapse" id="soldierInfo_@Index">
     <Card Title="Soldier info">
-        <CardDataRow Text="Salary" Value="@Soldier.Salary" />
+        <CardDataRow Text="Id" Value="@Soldier.Id" />
+        <CardDataRow Text="Salary" Value="@Soldier.Salary"/>
         <CardDataRow Text="Training time" Value="@Soldier.TrainingTime(Game.Timeline.CurrentTime)"/>
-        <CardDataRow Text="Time hired" Value="@Soldier.TimeHired" />
-        <CardDataRow Text="Time employed" Value="@Soldier.TimeEmployed(Game.Timeline.CurrentTime)" />
+        <CardDataRow Text="Time hired" Value="@Soldier.TimeHired"/>
+        <CardDataRow Text="Time employed" Value="@Soldier.TimeEmployed(Game.Timeline.CurrentTime)"/>
         <CardDataRow Text="Total missions" Value="@Soldier.TotalMissions"/>
         <CardDataRow Text="Successful missions" Value="@Soldier.SuccessfulMissions"/>
         <CardDataRow Text="Failed missions" Value="@Soldier.FailedMissions"/>
