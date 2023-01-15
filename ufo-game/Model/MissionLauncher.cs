@@ -121,22 +121,23 @@ public class MissionLauncher
     private int ProcessSoldierUpdates2(PendingMission mission, bool missionSuccess, List<Soldier> sentSoldiers)
     {
         List<Soldier> lostSoldiers = new List<Soldier>();
-        List<(Soldier Soldier, int roll, int survivalChance)> soldierData =
-            new List<(Soldier Soldier, int roll, int survivalChance)>();
+        List<(Soldier Soldier, int roll, int survivalChance, int expBonus)> soldierData =
+            new List<(Soldier Soldier, int roll, int survivalChance, int expBonus)>();
 
         foreach (Soldier soldier in sentSoldiers)
         {
             // Roll between 1 and 100.
             // The lower the better.
             int soldierRoll = _random.Next(1, 100 + 1);
+            var expBonus = soldier.ExperienceBonus(_timeline.CurrentTime);
             var soldierSurvivalChance
-                = mission.SoldierSurvivalChance2(soldier.ExperienceBonus(_timeline.CurrentTime));
-            soldierData.Add((soldier, soldierRoll, soldierSurvivalChance));
+                = mission.SoldierSurvivalChance2(expBonus);
+            soldierData.Add((soldier, soldierRoll, soldierSurvivalChance, expBonus));
         }
         
         foreach (var data in soldierData)
         {
-            var (soldier, soldierRoll, soldierSurvivalChance) = data;
+            var (soldier, soldierRoll, soldierSurvivalChance, expBonus) = data;
             bool soldierSurvived = soldierRoll <= soldierSurvivalChance;
             string messageSuffix = "";
 
@@ -158,7 +159,7 @@ public class MissionLauncher
 
             var inequalitySign = soldierRoll <= soldierSurvivalChance ? "<=" : ">";
             Console.Out.WriteLine(
-                $"Soldier #{soldier.Id} '{soldier.Nickname}' exp: {soldier.ExperienceBonus(_timeline.CurrentTime)} : " +
+                $"Soldier #{soldier.Id} '{soldier.Nickname}' exp: {expBonus} : " +
                 $"{(soldierSurvived ? "survived" : "lost")}. " +
                 $"Rolled {soldierRoll} {inequalitySign} {soldierSurvivalChance}." +
                 messageSuffix);
