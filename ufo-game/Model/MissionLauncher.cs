@@ -219,11 +219,11 @@ public class MissionLauncher
                 soldier.RecordLost(_timeline.CurrentTime);
             }
 
-            var inequalitySign = soldierRoll <= mission.SoldierSurvivalChance2(_timeline.CurrentTime) ? "<=" : ">";
+            var inequalitySign = soldierRoll <= soldierSurvivalChance ? "<=" : ">";
             Console.Out.WriteLine(
-                $"Soldier #{soldier.Id} '{soldier.Nickname}' exp: {soldier.ExperienceBonus(_timeline.CurrentTime)} " +
+                $"Soldier #{soldier.Id} '{soldier.Nickname}' exp: {soldier.ExperienceBonus(_timeline.CurrentTime)} : " +
                 $"{(soldierSurvived ? "survived" : "lost")}. " +
-                $"Rolled {soldierRoll} {inequalitySign} {mission.SoldierSurvivalChance2(_timeline.CurrentTime)}." +
+                $"Rolled {soldierRoll} {inequalitySign} {soldierSurvivalChance}." +
                 messageSuffix);
         }
 

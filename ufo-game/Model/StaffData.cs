@@ -31,6 +31,9 @@ public class StaffData
     public List<Soldier> SoldiersInRecovery
         => Soldiers.Where(s => s.IsRecovering).ToList();
 
+    public int SoldiersSendableOnMissionCount
+        => Soldiers.Count(s => s.CanSendOnMission);
+
     // kja obsolete
     public int ReadySoldiers => CurrentSoldiers - (int)Math.Ceiling(RecoveringSoldiers);
 

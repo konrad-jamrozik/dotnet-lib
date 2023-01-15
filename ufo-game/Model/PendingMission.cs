@@ -8,17 +8,28 @@ public class PendingMission
     public int SuccessChance2 => Math.Min(100, (int)(OurPower2 / (float)(EnemyPower + OurPower2) * 100));
 
     public int OurPower2
-        => _staff.Data.SoldiersAssignedToMission
-               .Sum(soldier => 100 + soldier.ExperienceBonus(_timeline.CurrentTime))
-           * _staff.Data.SoldierEffectiveness
-           / 100;
+    {
+        get
+        {
+            var result = _staff.Data.SoldiersAssignedToMission
+                                               .Sum(soldier => 100 + soldier.ExperienceBonus(_timeline.CurrentTime))
+                                           * _staff.Data.SoldierEffectiveness
+                                           / 100;
+            Debug.Assert(result >= 1);
+            return result;
+        }
+    }
 
+    // kja got here Soldier #7 'Aleksy Sikorski' exp: 31 survived. Rolled 31 > -2147483648. Need 15.5 units of recovery.
     public int SoldierSurvivalChance2(int experienceBonus)
     {
         var adjustedSurvivabilityPower =
             (SoldierSurvivabilityPower2 * (100 + experienceBonus)) / 100;
-        return (int)(adjustedSurvivabilityPower / (float)(EnemyPower + adjustedSurvivabilityPower) 
-                     * 100);
+        int result = (int)(adjustedSurvivabilityPower / (float)(EnemyPower + adjustedSurvivabilityPower) 
+                           * 100);
+        Debug.Assert(result >= 1);
+        return result;
+
     }
 
     private int SoldierSurvivabilityPower2 => _staff.Data.SoldiersAssignedToMissionCount * _staff.Data.SoldierSurvivability;
