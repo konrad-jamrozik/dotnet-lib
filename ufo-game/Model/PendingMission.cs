@@ -5,6 +5,8 @@ namespace UfoGame.Model;
 
 public class PendingMission
 {
+    private const int MaxSurvivalChance = 99;
+
     public int SuccessChance2 => Math.Min(100, (int)(OurPower2 / (float)(EnemyPower + OurPower2) * 100));
 
     public int OurPower2
@@ -22,8 +24,10 @@ public class PendingMission
 
     public int SoldierSurvivalChance2(int experienceBonus)
     {
-        int result = (BaselineSoldierSurvivalChance2 * (100 + experienceBonus)) / 100;
+        int result = Math.Min(BaselineSoldierSurvivalChance2 * (100 + experienceBonus) / 100, MaxSurvivalChance);
         Debug.Assert(result >= 0);
+        // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+        Debug.Assert(result <= 100);
         return result;
     }
 

@@ -175,7 +175,8 @@ public class MissionLauncher
         _archive.ArchiveMission(missionSuccessful: success);
         WriteLastMissionReport(mission, roll, success, scoreDiff, soldiersLost);
         mission.GenerateNewOrClearMission();
-        _missionPrep.NarrowSoldiersToSend();
+        // kja obsolete
+        //_missionPrep.NarrowSoldiersToSend();
         _gameState.PersistGameState();
         _stateRefresh.Trigger();
     }
@@ -193,15 +194,23 @@ public class MissionLauncher
 
     private int ProcessSoldierUpdates2(PendingMission mission, bool missionSuccess, List<Soldier> sentSoldiers)
     {
-        int soldiersLost = 0;
         List<Soldier> lostSoldiers = new List<Soldier>();
+        List<(Soldier Soldier, int roll, int survivalChance)> soldierData =
+            new List<(Soldier Soldier, int roll, int survivalChance)>();
+
         foreach (Soldier soldier in sentSoldiers)
         {
             // Roll between 1 and 100.
             // The lower the better.
             int soldierRoll = _random.Next(1, 100 + 1);
-            var soldierSurvivalChance 
+            var soldierSurvivalChance
                 = mission.SoldierSurvivalChance2(soldier.ExperienceBonus(_timeline.CurrentTime));
+            soldierData.Add((soldier, soldierRoll, soldierSurvivalChance));
+        }
+        
+        foreach (var data in soldierData)
+        {
+            var (soldier, soldierRoll, soldierSurvivalChance) = data;
             bool soldierSurvived = soldierRoll <= soldierSurvivalChance;
             string messageSuffix = "";
 
@@ -242,6 +251,6 @@ public class MissionLauncher
         // kja obsolete
         //_staff.Data.AddRecoveringSoldiers(soldiersSent - soldiersLost);
 
-        return soldiersLost;
+        return lostSoldiers.Count;
     }
 }
