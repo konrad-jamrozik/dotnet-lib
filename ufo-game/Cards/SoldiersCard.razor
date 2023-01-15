@@ -1,7 +1,8 @@
 ﻿@using UfoGame.Cards.Components
 @inject Model.Game Game;
-@inject ViewModel.HireSoldiersPlayerAction HireSoldiers;
-@inject ViewModel.FireSoldiersPlayerAction FireSoldiers;
+@inject ViewModel.HireSoldiersPlayerAction HireSoldiers
+@inject ViewModel.FireSoldiersPlayerAction FireSoldiers
+@inject NavigationManager Navigation
 
 <Card Title="Soldiers">
     <CardDataRow Text="Transport capacity" Value="Game.MissionPrep.Data.TransportCapacity"/>
@@ -17,4 +18,13 @@
     <CardDataRow Text="Soldier survivability" Value="Game.Staff.Data.SoldierSurvivability"/>
     <CardButtonWithRangeInput PlayerAction="HireSoldiers"/>
     <CardButtonWithRangeInput PlayerAction="FireSoldiers" />
+    <div class="row align-items-center">
+        <div class="col">
+            <button class="btn btn-primary"
+                    style="width: 300px"
+                    @onclick="@(() => Navigation.NavigateTo("mission"))">
+                Go to mission
+            </button>
+        </div>
+    </div>
 </Card>

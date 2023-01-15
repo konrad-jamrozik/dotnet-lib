@@ -3,6 +3,7 @@
 @using UfoGame.Model
 @using UfoGame.Cards
 @inject Game Game
+@inject NavigationManager Navigation
 
 <PageTitle>Mission</PageTitle>
 
@@ -30,6 +31,14 @@
             <SoldierListItem Index="i" Soldier="sortedSoldiers[i]" />
         }
     }
+</div>
+<div class="container text-center pt-2" style="width: 300px">
+    <div class="row">
+        <button class="btn btn-primary" 
+                @onclick="@(() => Navigation.NavigateTo("hq"))">
+            Go to HQ
+        </button>
+    </div>
 </div>
 
 @code
