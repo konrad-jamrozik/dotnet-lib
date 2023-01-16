@@ -124,7 +124,7 @@ public class Soldier
 
     private readonly int[] _missionExperienceBonus = 
     {
-        30, 25, 20, 15, 10, 5
+        30, 25, 20, 15, 10
     };
 
     /// <summary>
