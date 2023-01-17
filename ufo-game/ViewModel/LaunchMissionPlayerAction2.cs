@@ -35,13 +35,17 @@ class LaunchMissionPlayerAction2 : IPlayerActionOnRangeInput
     public string ActLabel()
         => $"Launch with {_staff.Data.SoldiersAssignedToMissionCount} soldiers";
 
+    // Range input is permanently disabled for assigning soldiers to mission.
+    public bool CanSetRangeInput => false;
+
+    public bool CanDecrementInput => _staff.Data.SoldiersAssignedToMissionCount > 0;
+
     public int Input
     {
         get => _staff.Data.SoldiersAssignedToMissionCount;
-        set
-        {
-            return;
-        }
+        // ReSharper disable once ValueParameterNotUsed
+        set => Debug.Assert(false, 
+            "Range input is permanently disabled for assigning soldiers to mission.");
     }
 
     public void IncrementInput()
@@ -69,6 +73,5 @@ class LaunchMissionPlayerAction2 : IPlayerActionOnRangeInput
     public int InputMax() => _missionPrep.MaxSoldiersSendableOnMission;
 
     public int InputMin() => _missionPrep.MinSoldiersSendableOnMission;
-
-    public bool CanDecrementInput => _staff.Data.SoldiersAssignedToMissionCount > 0;
+    
 }
