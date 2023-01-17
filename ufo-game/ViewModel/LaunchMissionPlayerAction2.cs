@@ -70,5 +70,5 @@ class LaunchMissionPlayerAction2 : IPlayerActionOnRangeInput
 
     public int InputMin() => _missionPrep.MinSoldiersSendableOnMission;
 
-
+    public bool CanDecrementInput => _staff.Data.SoldiersAssignedToMissionCount > 0;
 }

@@ -12,6 +12,9 @@ public interface IPlayerActionOnRangeInput
     int InputMax();
     int InputMin();
 
+    bool CanIncrementInput => CanActOnIncrementedInput;
+    bool CanDecrementInput => CanActOnDecrementedInput;
+
     bool CanActOnIncrementedInput => CanAct(offset: 1);
     bool CanActOnDecrementedInput => CanAct(offset: -1);
 }

@@ -7,14 +7,14 @@
     </CardButton>
     <CardUpDownArrows OnClickUp="PlayerAction.IncrementInput"
                       OnClickDown="PlayerAction.DecrementInput"
-                      EnabledUp="PlayerAction.CanActOnIncrementedInput"
-                      EnabledDown="PlayerAction.CanActOnDecrementedInput" />
+                      EnabledUp="PlayerAction.CanIncrementInput"
+                      EnabledDown="PlayerAction.CanDecrementInput" />
 </div>
 <CardInput @bind-Input="PlayerAction.Input"
            Value="PlayerAction.Input"
            MaxValue="PlayerAction.InputMax()"
            MinValue="PlayerAction.InputMin()"
-           Enabled="PlayerAction.CanActOnIncrementedInput || PlayerAction.CanActOnDecrementedInput" />
+           Enabled="PlayerAction.CanIncrementInput || PlayerAction.CanDecrementInput" />
 
 @code
 {
