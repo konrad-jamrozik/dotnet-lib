@@ -17,19 +17,8 @@
 
 <div class="list-group">
     @{
-        var sortedSoldiers = Game.Staff.Data.AvailableSoldiers
-            // First list soldiers that can be sent on mission.
-            .OrderByDescending(s => s.CanSendOnMission)
-            // From soldiers who cannot be sent, sort by increasing recovery need.
-            .ThenBy(s => s.Recovery)
-            // Then sort soldiers by exp ascending
-            // (rookies to be sent first, hence visible first).
-            .ThenBy(s => s.ExperienceBonus(Game.Timeline.CurrentTime))
-            // And from soldiers of the same experience bonus, first list
-            // the ones hired more recently.
-            .ThenByDescending(s => s.Id)
-            .ToArray();
-        @for (int i = 0; i < sortedSoldiers.Length; i++)
+        var sortedSoldiers = Game.Staff.Data.AvailableSoldiersSortedByLaunchPriority(Game.Timeline.CurrentTime);
+        @for (int i = 0; i < sortedSoldiers.Count; i++)
         {
             <SoldierListItem Index="i" Soldier="sortedSoldiers[i]" />
         }

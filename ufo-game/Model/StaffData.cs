@@ -19,6 +19,21 @@ public class StaffData
     [JsonIgnore]
     public List<Soldier> AvailableSoldiers => Soldiers.Where(s => !s.MissingInAction).ToList();
 
+    public List<Soldier> AvailableSoldiersSortedByLaunchPriority(int currentTime)
+        => AvailableSoldiers
+            // First list soldiers that can be sent on a mission.
+            .OrderByDescending(s => s.CanSendOnMission)
+            // Then sort by recovery - all soldiers that can be sent have recovery 0,
+            // but those who cannot will be sorted in increasing remaining recovery need.
+            .ThenBy(s => s.Recovery)
+            // Then sort soldiers by exp ascending
+            // (rookies to be sent first, hence listed  first).
+            .ThenBy(s => s.ExperienceBonus(currentTime))
+            // Then from soldiers of the same experience bonus, first list
+            // the ones hired more recently.
+            .ThenByDescending(s => s.Id)
+            .ToList();
+
     public int SoldiersAssignedToMissionCount => Soldiers.Count(s => s.AssignedToMission);
 
     [JsonIgnore]
