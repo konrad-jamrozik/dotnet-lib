@@ -10,8 +10,7 @@
     <CardDataRow Text="Expires in" 
                  Value="@Game.PendingMission.Data.ExpiresIn"
                  Enabled="@Game.PendingMission.CurrentlyAvailable"
-                 ValueCssClass="@(Game.PendingMission.MissionAboutToExpire ? "text-danger" : "")"
-    />
+                 ValueCssClass="@(Game.PendingMission.MissionAboutToExpire ? "text-danger" : "")"/>
     <CardDataRow Text="Enemy faction"
                  Value="@Game.PendingMission.Faction.Name"
                  Enabled="@Game.PendingMission.CurrentlyAvailable" />
@@ -33,6 +32,9 @@
     <CardDataRow Text="Transport capacity"
                  Value="@Game.MissionPrep.Data.TransportCapacity"
                  Enabled="@Game.PendingMission.CurrentlyAvailable" />
+    <CardDataRow Text="Ready soldiers"
+                 Value="Game.Staff.Data.SoldiersSendableOnMissionCount"
+                 ValueCssClass="text-success" />
     <CardDataRow Text="Soldiers to send" 
                  Value="@Game.Staff.Data.SoldiersAssignedToMissionCount"
                  Enabled="@Game.PendingMission.CurrentlyAvailable" />
