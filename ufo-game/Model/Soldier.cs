@@ -54,9 +54,14 @@ public class Soldier
     }
 
     public int TotalMissions => SuccessfulMissions + FailedMissions;
-    public bool CanSendOnMission => !MissingInAction && !IsRecovering;
     public bool MissingInAction => TimeLost != 0;
-    public bool IsRecovering => Recovery > 0;
+    public bool Available => !MissingInAction;
+    public bool IsRecovering => !MissingInAction && Recovery > 0;
+    public bool IsAtFullHealth => !MissingInAction && !IsRecovering;
+    public bool CanSendOnMission => IsAtFullHealth;
+    public bool IsAssignableToMission => CanSendOnMission && !AssignedToMission;
+    public bool IsUnassignableFromMission => IsAtFullHealth && AssignedToMission;
+    public bool CouldHaveBeenSentOnMission => IsAtFullHealth;
 
     public Soldier(int id, string nickname, int timeHired)
     {
@@ -68,25 +73,20 @@ public class Soldier
 
     public void AssignToMission()
     {
-        Debug.Assert(AssignedToMission == false);
-        Debug.Assert(!MissingInAction);
-        Debug.Assert(!IsRecovering);
+        Debug.Assert(IsAssignableToMission);
         AssignedToMission = true;
     }
 
     public void UnassignFromMission()
     {
-        Debug.Assert(AssignedToMission);
-        Debug.Assert(!MissingInAction);
-        Debug.Assert(!IsRecovering);
+        Debug.Assert(IsUnassignableFromMission);
         AssignedToMission = false;
     }
 
     public void RecordMissionOutcome(bool success, float recovery)
     {
         Debug.Assert(recovery >= 0);
-        Debug.Assert(!MissingInAction); // dead soldiers cannot be sent on a mission
-        Debug.Assert(!IsRecovering); // recovering soldiers cannot be sent on a mission
+        Debug.Assert(CouldHaveBeenSentOnMission);
         
         if (success)
         {
@@ -106,20 +106,19 @@ public class Soldier
     public void TickRecovery(float recovery)
     {
         Debug.Assert(recovery >= 0);
-        Debug.Assert(IsRecovering); // cannot tick recovery on ready soldier
+        Debug.Assert(IsRecovering); // cannot tick recovery on a non-recovering soldier.
         Recovery = Math.Max(Recovery - recovery, 0);
         TimeSpentRecovering += 1;
     }
 
-    public void RecordLost(int currentTime)
+    public void SetAsLost(int currentTime)
     {
         Debug.Assert(currentTime >= TimeHired);
-        Debug.Assert(!MissingInAction);
-        Debug.Assert(!IsRecovering);
+        Debug.Assert(IsAtFullHealth);
         Debug.Assert(AssignedToMission);
         UnassignFromMission();
         TimeLost = currentTime;
-        // kja need to archive the fact they are missing in action
+        // kja need to archive here the fact they are missing in action
     }
 
     private readonly int[] _missionExperienceBonus = 

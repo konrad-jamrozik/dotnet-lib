@@ -17,7 +17,7 @@ public class StaffData
     [JsonInclude] public List<Soldier> Soldiers = new List<Soldier>();
 
     [JsonIgnore]
-    public List<Soldier> AvailableSoldiers => Soldiers.Where(s => !s.MissingInAction).ToList();
+    public List<Soldier> AvailableSoldiers => Soldiers.Where(s => s.Available).ToList();
 
     public List<Soldier> AvailableSoldiersSortedByLaunchPriority(int currentTime)
         => AvailableSoldiers
@@ -32,6 +32,17 @@ public class StaffData
             // Then from soldiers of the same experience bonus, first list
             // the ones hired more recently.
             .ThenByDescending(s => s.Id)
+            .ToList();
+
+    public List<Soldier> AssignableSoldiersSortedByLaunchPriority(int currentTime)
+        => AvailableSoldiersSortedByLaunchPriority(currentTime)
+            .Where(s => !s.AssignedToMission)
+            .ToList();
+
+    public List<Soldier> AssignedSoldiersSortedByDescendingLaunchPriority(int currentTime)
+        => AvailableSoldiersSortedByLaunchPriority(currentTime)
+            .Where(s => s.AssignedToMission)
+            .Reverse()
             .ToList();
 
     public int SoldiersAssignedToMissionCount => Soldiers.Count(s => s.AssignedToMission);
@@ -51,7 +62,6 @@ public class StaffData
 
     public int SoldiersSendableOnMissionCount
         => Soldiers.Count(s => s.CanSendOnMission);
-
 
     public void ImproveSoldierRecoverySpeed()
         => SoldierRecoverySpeed += SoldierRecoverySpeedImprovement;

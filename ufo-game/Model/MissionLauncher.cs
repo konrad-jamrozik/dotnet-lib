@@ -82,11 +82,11 @@ public class MissionLauncher
         if (_playerScore.GameOver || !mission.CurrentlyAvailable)
             return false;
 
-        return WithinRange(_staff.Data.SoldiersAssignedToMissionCount);
+        return WithinRange(_staff.Data.SoldiersAssignedToMissionCount + offset);
 
         bool WithinRange(int soldiersAssignedToMission)
-            => soldiersAssignedToMission >= 1
-               && soldiersAssignedToMission <= _missionPrep.Data.TransportCapacity;
+            => soldiersAssignedToMission >= _missionPrep.MinSoldiersSendableOnMission
+               && soldiersAssignedToMission <= _missionPrep.MaxSoldiersSendableOnMission;
     }
 
     public void LaunchMission2(PendingMission mission)
@@ -155,7 +155,7 @@ public class MissionLauncher
             else
             {
                 lostSoldiers.Add(soldier);
-                soldier.RecordLost(_timeline.CurrentTime);
+                soldier.SetAsLost(_timeline.CurrentTime);
             }
 
             var inequalitySign = soldierRoll <= soldierSurvivalChance ? "<=" : ">";

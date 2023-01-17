@@ -1,4 +1,5 @@
-﻿using UfoGame.Model;
+﻿using System.Diagnostics;
+using UfoGame.Model;
 
 namespace UfoGame.ViewModel;
 
@@ -9,6 +10,7 @@ class LaunchMissionPlayerAction2 : IPlayerActionOnRangeInput
     private readonly MissionPrep _missionPrep;
     private readonly PendingMission _pendingMission;
     private readonly MissionLauncher _missionLauncher;
+    private readonly Timeline _timeline;
     private readonly StateRefresh _stateRefresh;
 
 
@@ -17,13 +19,15 @@ class LaunchMissionPlayerAction2 : IPlayerActionOnRangeInput
         PendingMission pendingMission,
         StateRefresh stateRefresh,
         MissionLauncher missionLauncher,
-        Staff staff)
+        Staff staff,
+        Timeline timeline)
     {
         _missionPrep = missionPrep;
         _pendingMission = pendingMission;
         _stateRefresh = stateRefresh;
         _missionLauncher = missionLauncher;
         _staff = staff;
+        _timeline = timeline;
     }
 
     public void Act() => _missionLauncher.LaunchMission2(_pendingMission);
@@ -42,19 +46,29 @@ class LaunchMissionPlayerAction2 : IPlayerActionOnRangeInput
 
     public void IncrementInput()
     {
-        return;
+        var assignableSoldiers = _staff.Data
+            .AssignableSoldiersSortedByLaunchPriority(_timeline.CurrentTime);
+        Debug.Assert(assignableSoldiers.Any());
+        assignableSoldiers.First().AssignToMission();
+        _stateRefresh.Trigger();
     }
 
     public void DecrementInput()
     {
-        return;
+        var assignedSoldiers = _staff.Data
+            .AssignedSoldiersSortedByDescendingLaunchPriority(_timeline.CurrentTime);
+        Debug.Assert(assignedSoldiers.Any());
+        assignedSoldiers.First().UnassignFromMission();
+        _stateRefresh.Trigger();
     }
 
     public bool CanAct() => _missionLauncher.CanLaunchMission2(_pendingMission);
 
     public bool CanAct(int value) => _missionLauncher.CanLaunchMission2(_pendingMission, value);
 
-    public int InputMax() => _missionPrep.Data.TransportCapacity;
+    public int InputMax() => _missionPrep.MaxSoldiersSendableOnMission;
 
-    public int InputMin() => 1;
+    public int InputMin() => _missionPrep.MinSoldiersSendableOnMission;
+
+
 }
