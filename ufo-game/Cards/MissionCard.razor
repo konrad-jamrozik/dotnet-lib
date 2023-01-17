@@ -30,6 +30,9 @@
     <CardDataRow Text="Baseline sol. surv. %"
                  Value="@(Game.PendingMission.BaselineSoldierSurvivalChance2 + "%")"
                  Enabled="@Game.PendingMission.CurrentlyAvailable" />
+    <CardDataRow Text="Transport capacity"
+                 Value="@Game.MissionPrep.Data.TransportCapacity"
+                 Enabled="@Game.PendingMission.CurrentlyAvailable" />
     <CardDataRow Text="Soldiers to send" 
                  Value="@Game.Staff.Data.SoldiersAssignedToMissionCount"
                  Enabled="@Game.PendingMission.CurrentlyAvailable" />
