@@ -1,6 +1,6 @@
 ﻿namespace UfoGame.Model;
 
-public static class SoldierNames
+public static class AgentNames
 {
     // To obtain names, used regex:
     // Find what:

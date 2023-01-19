@@ -60,7 +60,7 @@ public class MissionLauncher
         int roll,
         bool success,
         int scoreDiff,
-        int soldiersLost,
+        int agentsLost,
         int moneyReward)
     {
         string missionRollReport =
@@ -70,11 +70,11 @@ public class MissionLauncher
               $"and earned ${moneyReward}."
             : $"a failure. {missionRollReport} We lost {scoreDiff} score to {mission.Faction.Name}.";
 
-        string soldiersLostReport = soldiersLost > 0
-            ? $"Number of soldiers lost: {soldiersLost}."
-            : "We didn't lose any soldiers.";
+        string agentsLostReport = agentsLost > 0
+            ? $"Number of agents lost: {agentsLost}."
+            : "We didn't lose any agents.";
         _archive.WriteLastMissionReport(
-            $"The last mission was {missionSuccessReport} {soldiersLostReport}");
+            $"The last mission was {missionSuccessReport} {agentsLostReport}");
     }
 
     public bool CanLaunchMission(PendingMission mission, int offset = 0)
@@ -82,25 +82,25 @@ public class MissionLauncher
         if (_playerScore.GameOver || !mission.CurrentlyAvailable)
             return false;
 
-        return WithinRange(_staff.Data.SoldiersAssignedToMissionCount + offset);
+        return WithinRange(_staff.Data.AgentsAssignedToMissionCount + offset);
 
-        bool WithinRange(int soldiersAssignedToMission)
-            => soldiersAssignedToMission >= _missionPrep.MinSoldiersSendableOnMission
-               && soldiersAssignedToMission <= _missionPrep.MaxSoldiersSendableOnMission;
+        bool WithinRange(int agentsAssignedToMission)
+            => agentsAssignedToMission >= _missionPrep.MinAgentsSendableOnMission
+               && agentsAssignedToMission <= _missionPrep.MaxAgentsSendableOnMission;
     }
 
     public void LaunchMission(PendingMission mission)
     {
         Debug.Assert(CanLaunchMission(mission));
         var successChance = mission.SuccessChance;
-        var soldiersSent = _staff.Data.SoldiersAssignedToMission.Count;
+        var agentsSent = _staff.Data.AgentsAssignedToMission.Count;
         var moneyReward = mission.MoneyReward;
-        Console.Out.WriteLine($"Sent {soldiersSent} soldiers.");
+        Console.Out.WriteLine($"Sent {agentsSent} agents.");
         var (roll, success) = RollMissionOutcome(mission);
-        var soldiersLost = ProcessSoldierUpdates(mission, success, _staff.Data.SoldiersAssignedToMission);
+        var agentsLost = ProcessAgentUpdates(mission, success, _staff.Data.AgentsAssignedToMission);
         var scoreDiff = ApplyMissionOutcome(mission, success);
         _archive.ArchiveMission(missionSuccessful: success);
-        WriteLastMissionReport(mission, successChance, roll, success, scoreDiff, soldiersLost, moneyReward);
+        WriteLastMissionReport(mission, successChance, roll, success, scoreDiff, agentsLost, moneyReward);
         mission.GenerateNewOrClearMission();
         // kja obsolete
         //_missionPrep.NarrowSoldiersToSend();
@@ -119,56 +119,56 @@ public class MissionLauncher
         return (roll, success);
     }
 
-    private int ProcessSoldierUpdates(PendingMission mission, bool missionSuccess, List<Soldier> sentSoldiers)
+    private int ProcessAgentUpdates(PendingMission mission, bool missionSuccess, List<Agent> sentAgents)
     {
-        List<(Soldier Soldier, int roll, int survivalChance, int expBonus)> soldierData =
-            new List<(Soldier Soldier, int roll, int survivalChance, int expBonus)>();
+        List<(Agent agent, int roll, int survivalChance, int expBonus)> agentData =
+            new List<(Agent agent, int roll, int survivalChance, int expBonus)>();
 
-        foreach (Soldier soldier in sentSoldiers)
+        foreach (Agent agent in sentAgents)
         {
             // Roll between 1 and 100.
             // The lower the better.
-            int soldierRoll = _random.Next(1, 100 + 1);
-            var expBonus = soldier.ExperienceBonus(_timeline.CurrentTime);
-            var soldierSurvivalChance
-                = mission.SoldierSurvivalChance(expBonus);
-            soldierData.Add((soldier, soldierRoll, soldierSurvivalChance, expBonus));
+            int agentRoll = _random.Next(1, 100 + 1);
+            var expBonus = agent.ExperienceBonus(_timeline.CurrentTime);
+            var agentSurvivalChance
+                = mission.AgentSurvivalChance(expBonus);
+            agentData.Add((agent, agentRoll, agentSurvivalChance, expBonus));
         }
 
-        List<(Soldier soldier, int lostTime, bool missionSuccess)> lostSoldiers = new List<(Soldier, int, bool)>();
-        foreach (var data in soldierData)
+        List<(Agent agent, int lostTime, bool missionSuccess)> lostAgents = new List<(Agent, int, bool)>();
+        foreach (var data in agentData)
         {
-            var (soldier, soldierRoll, soldierSurvivalChance, expBonus) = data;
-            bool soldierSurvived = soldierRoll <= soldierSurvivalChance;
+            var (agent, agentRoll, agentSurvivalChance, expBonus) = data;
+            bool agentSurvived = agentRoll <= agentSurvivalChance;
             string messageSuffix = "";
 
-            if (soldierSurvived)
+            if (agentSurvived)
             {
-                // Higher roll means it was a closer call, so soldier needs more time to recover from fatigue 
-                // and wounds. This means that if a soldier is very good at surviving, they may barely survive,
+                // Higher roll means it was a closer call, so agent needs more time to recover from fatigue 
+                // and wounds. This means that if a agent is very good at surviving, they may barely survive,
                 // but need tons of time to recover.
-                var recovery = (float)Math.Round(soldierRoll * (missionSuccess ? 0.5f : 1), 2);
-                soldier.RecordMissionOutcome(missionSuccess, recovery);
-                messageSuffix = soldierSurvived ? $" Need {recovery} units of recovery." : "";
+                var recovery = (float)Math.Round(agentRoll * (missionSuccess ? 0.5f : 1), 2);
+                agent.RecordMissionOutcome(missionSuccess, recovery);
+                messageSuffix = agentSurvived ? $" Need {recovery} units of recovery." : "";
             }
             else
             {
-                lostSoldiers.Add((soldier, _timeline.CurrentTime, missionSuccess));
+                lostAgents.Add((agent, _timeline.CurrentTime, missionSuccess));
             }
 
-            var inequalitySign = soldierRoll <= soldierSurvivalChance ? "<=" : ">";
+            var inequalitySign = agentRoll <= agentSurvivalChance ? "<=" : ">";
             Console.Out.WriteLine(
-                $"Soldier #{soldier.Id} '{soldier.Nickname}' exp: {expBonus} : " +
-                $"{(soldierSurvived ? "survived" : "lost")}. " +
-                $"Rolled {soldierRoll} {inequalitySign} {soldierSurvivalChance}." +
+                $"Agent #{agent.Id} '{agent.Nickname}' exp: {expBonus} : " +
+                $"{(agentSurvived ? "survived" : "lost")}. " +
+                $"Rolled {agentRoll} {inequalitySign} {agentSurvivalChance}." +
                 messageSuffix);
         }
 
-        if (lostSoldiers.Count > 0)
-            _staff.LoseSoldiers(lostSoldiers);
+        if (lostAgents.Count > 0)
+            _staff.LoseAgents(lostAgents);
         else
-            Console.Out.WriteLine("No soldiers lost! \\o/");
+            Console.Out.WriteLine("No agents lost! \\o/");
 
-        return lostSoldiers.Count;
+        return lostAgents.Count;
     }
 }

@@ -75,39 +75,39 @@ public class Game
         AdvanceTime();
     }
 
-    public bool CanResearchSoldierEffectiveness()
-        => !PlayerScore.GameOver && Money.CurrentMoney >= Research.SoldierEffectivenessResearchCost;
+    public bool CanResearchAgentEffectiveness()
+        => !PlayerScore.GameOver && Money.CurrentMoney >= Research.AgentEffectivenessResearchCost;
 
-    public void ResearchSoldierEffectiveness()
+    public void ResearchAgentEffectiveness()
     {
-        Debug.Assert(CanResearchSoldierEffectiveness());
-        Money.PayForResearch(Research.SoldierEffectivenessResearchCost);
-        Research.SoldierEffectivenessResearchCost += Research.SoldierEffectivenessResearchCostIncrement;
-        Staff.Data.SoldierEffectiveness += 25;
+        Debug.Assert(CanResearchAgentEffectiveness());
+        Money.PayForResearch(Research.AgentEffectivenessResearchCost);
+        Research.AgentEffectivenessResearchCost += Research.AgentEffectivenessResearchCostIncrement;
+        Staff.Data.AgentEffectiveness += 25;
         AdvanceTime();
     }
 
-    public bool CanResearchSoldierSurvivability()
-        => !PlayerScore.GameOver && Money.CurrentMoney >= Research.SoldierSurvivabilityResearchCost;
+    public bool CanResearchAgentSurvivability()
+        => !PlayerScore.GameOver && Money.CurrentMoney >= Research.AgentSurvivabilityResearchCost;
 
-    public void ResearchSoldierSurvivability()
+    public void ResearchAgentSurvivability()
     {
-        Debug.Assert(CanResearchSoldierSurvivability());
-        Money.PayForResearch(Research.SoldierSurvivabilityResearchCost);
-        Research.SoldierSurvivabilityResearchCost += Research.SoldierSurvivabilityResearchCostIncrement;
-        Staff.Data.SoldierSurvivability += 25;
+        Debug.Assert(CanResearchAgentSurvivability());
+        Money.PayForResearch(Research.AgentSurvivabilityResearchCost);
+        Research.AgentSurvivabilityResearchCost += Research.AgentSurvivabilityResearchCostIncrement;
+        Staff.Data.AgentSurvivability += 25;
         AdvanceTime();
     }
 
-    public bool CanResearchSoldierRecoverySpeed()
-        => !PlayerScore.GameOver && Money.CurrentMoney >= Research.SoldierRecoverySpeedResearchCost;
+    public bool CanResearchAgentRecoverySpeed()
+        => !PlayerScore.GameOver && Money.CurrentMoney >= Research.AgentRecoverySpeedResearchCost;
 
-    public void ResearchSoldierRecoverySpeed()
+    public void ResearchAgentRecoverySpeed()
     {
-        Debug.Assert(CanResearchSoldierRecoverySpeed());
-        Money.PayForResearch(Research.SoldierRecoverySpeedResearchCost);
-        Research.SoldierRecoverySpeedResearchCost += Research.SoldierRecoverySpeedResearchCostIncrement;
-        Staff.Data.ImproveSoldierRecoverySpeed();
+        Debug.Assert(CanResearchAgentRecoverySpeed());
+        Money.PayForResearch(Research.AgentRecoverySpeedResearchCost);
+        Research.AgentRecoverySpeedResearchCost += Research.AgentRecoverySpeedResearchCostIncrement;
+        Staff.Data.ImproveAgentRecoverySpeed();
         AdvanceTime();
     }
 

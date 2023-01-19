@@ -7,11 +7,11 @@
         <div class="row">
             <div class="col col-auto me-auto">
                 <div class="row">
-                    <h5 class="ps-0 @NameTextColor">@Soldier.Nickname</h5>
+                    <h5 class="ps-0 @NameTextColor">@Agent.Nickname</h5>
                 </div>
                 <div class="row row-cols-auto">
-                    <div class="col ps-0">Exp: @Soldier.ExperienceBonus(Game.Timeline.CurrentTime)</div>
-                    <div class="col">Recovery: @Soldier.Recovery</div>
+                    <div class="col ps-0">Exp: @Agent.ExperienceBonus(Game.Timeline.CurrentTime)</div>
+                    <div class="col">Recovery: @Agent.Recovery</div>
                 </div>
             </div>
             <div class="col col-auto align-self-center d-flex justify-content-center">
@@ -26,9 +26,9 @@
                     <div class="form-check form-switch ps-0">
                         <input class="form-check-input ms-0" type="checkbox" role="switch" 
                                id="flip_switch_@Index"
-                               disabled="@(!Soldier.CanSendOnMission)"
-                               @onchange="@(eventArgs => OnChangeSoldierMissionAssignment(eventArgs.Value!))" 
-                               checked="@Soldier.AssignedToMission"/>
+                               disabled="@(!Agent.CanSendOnMission)"
+                               @onchange="@(eventArgs => OnChangeAgentMissionAssignment(eventArgs.Value!))" 
+                               checked="@Agent.AssignedToMission"/>
                     </div>
                     <label class="form-check-label" for="flip_switch_@Index">Send</label>
                 </div>
@@ -37,16 +37,16 @@
     </div>
 </div>
 <div class="collapse" id="soldierInfo_@Index">
-    <Card Title="Soldier info">
-        <CardDataRow Text="Id" Value="@Soldier.Id" />
-        <CardDataRow Text="Salary" Value="@Soldier.Salary"/>
-        <CardDataRow Text="Training time" Value="@Soldier.TrainingTime(Game.Timeline.CurrentTime)"/>
-        <CardDataRow Text="Time hired" Value="@Soldier.TimeHired"/>
-        <CardDataRow Text="Time employed" Value="@Soldier.TimeEmployed(Game.Timeline.CurrentTime)"/>
-        <CardDataRow Text="Total missions" Value="@Soldier.TotalMissions"/>
-        <CardDataRow Text="Successful missions" Value="@Soldier.SuccessfulMissions"/>
-        <CardDataRow Text="Failed missions" Value="@Soldier.FailedMissions"/>
-        <CardDataRow Text="Time spent recovering" Value="@Soldier.TimeSpentRecovering"/>
+    <Card Title="Agent info">
+        <CardDataRow Text="Id" Value="@Agent.Id" />
+        <CardDataRow Text="Salary" Value="@Agent.Salary"/>
+        <CardDataRow Text="Training time" Value="@Agent.TrainingTime(Game.Timeline.CurrentTime)"/>
+        <CardDataRow Text="Time hired" Value="@Agent.TimeHired"/>
+        <CardDataRow Text="Time employed" Value="@Agent.TimeEmployed(Game.Timeline.CurrentTime)"/>
+        <CardDataRow Text="Total missions" Value="@Agent.TotalMissions"/>
+        <CardDataRow Text="Successful missions" Value="@Agent.SuccessfulMissions"/>
+        <CardDataRow Text="Failed missions" Value="@Agent.FailedMissions"/>
+        <CardDataRow Text="Time spent recovering" Value="@Agent.TimeSpentRecovering"/>
     @* kja add time spent in recovery *@
     </Card>
     @* kja button to fire soldier, with modal *@
@@ -59,19 +59,19 @@
 
 #nullable disable
     [Parameter, EditorRequired]
-    public Soldier Soldier { get; set; }
+    public Agent Agent { get; set; }
 #nullable enable
 
-    private void OnChangeSoldierMissionAssignment(object eventArgsValue)
+    private void OnChangeAgentMissionAssignment(object eventArgsValue)
     {
         bool isChecked = (bool)eventArgsValue;
         if (isChecked)
-            Soldier.AssignToMission();
+            Agent.AssignToMission();
         else
-            Soldier.UnassignFromMission();
+            Agent.UnassignFromMission();
         Game.StateRefresh.Trigger();
     }
 
     private string NameTextColor
-        => Soldier.IsRecovering ? "text-danger" : "";
+        => Agent.IsRecovering ? "text-danger" : "";
 }

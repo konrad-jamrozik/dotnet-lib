@@ -16,13 +16,13 @@
         </CardButton>
     </div>
     <div class="row">
-        <CardButton Enabled="Game.CanResearchSoldierEffectiveness()"
-                    OnClick="Game.ResearchSoldierEffectiveness">
-            Research soldier effectiveness for $@Game.Research.SoldierEffectivenessResearchCost
+        <CardButton Enabled="Game.CanResearchAgentEffectiveness()"
+                    OnClick="Game.ResearchAgentEffectiveness">
+            Research agent effectiveness for $@Game.Research.AgentEffectivenessResearchCost
         </CardButton>
-        <CardButton Enabled="Game.CanResearchSoldierSurvivability()"
-                    OnClick="Game.ResearchSoldierSurvivability">
-            Research soldier survivability for $@Game.Research.SoldierSurvivabilityResearchCost
+        <CardButton Enabled="Game.CanResearchAgentSurvivability()"
+                    OnClick="Game.ResearchAgentSurvivability">
+            Research agent survivability for $@Game.Research.AgentSurvivabilityResearchCost
         </CardButton>
     </div>
     <div class="row">
@@ -30,9 +30,9 @@
                     OnClick="Game.ResearchTransportCapacity">
             Increase transport capacity by @MissionPrepData.TransportCapacityImprovement for $@Game.Research.TransportCapacityResearchCost
         </CardButton>
-        <CardButton Enabled="Game.CanResearchSoldierRecoverySpeed()"
-                    OnClick="Game.ResearchSoldierRecoverySpeed">
-            Increase soldier recovery speed by @StaffData.SoldierRecoverySpeedImprovement for $@Game.Research.SoldierRecoverySpeedResearchCost
+        <CardButton Enabled="Game.CanResearchAgentRecoverySpeed()"
+                    OnClick="Game.ResearchAgentRecoverySpeed">
+            Increase agent recovery speed by @StaffData.AgentRecoverySpeedImprovement for $@Game.Research.AgentRecoverySpeedResearchCost
         </CardButton>
     </div>
     <div class="row">

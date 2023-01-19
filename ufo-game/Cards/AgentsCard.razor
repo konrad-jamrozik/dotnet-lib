@@ -1,0 +1,28 @@
+﻿@using UfoGame.Cards.Components
+@inject Model.Game Game;
+@inject ViewModel.HireAgentsPlayerAction HireAgents
+@inject NavigationManager Navigation
+
+<Card Title="Agents">
+    <CardDataRow Text="Transport capacity" Value="Game.MissionPrep.Data.TransportCapacity"/>
+    <CardDataRow Text="All agents" Value="Game.Staff.Data.CurrentAgents"/>
+    <CardDataRow Text="Ready agents" 
+                 Value="Game.Staff.Data.AgentsSendableOnMissionCount"
+                 ValueCssClass="text-success"/>
+    <CardDataRow Text="Recovering agents" 
+                 Value="Game.Staff.Data.AgentsInRecoveryCount"
+                 ValueCssClass="text-danger" />
+    <CardDataRow Text="Agent recovery speed" Value="Game.Staff.Data.AgentRecoverySpeed"/>
+    <CardDataRow Text="Agent effectiveness" Value="Game.Staff.Data.AgentEffectiveness"/>
+    <CardDataRow Text="Agent survivability" Value="Game.Staff.Data.AgentSurvivability"/>
+    <CardButtonWithRangeInput PlayerAction="HireAgents"/>
+    <div class="row align-items-center">
+        <div class="col">
+            <button class="btn btn-primary"
+                    style="width: 300px"
+                    @onclick="@(() => Navigation.NavigateTo("mission"))">
+                Go to mission
+            </button>
+        </div>
+    </div>
+</Card>

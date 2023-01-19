@@ -17,10 +17,10 @@
 
 <div class="list-group">
     @{
-        var sortedSoldiers = Game.Staff.Data.AvailableSoldiersSortedByLaunchPriority(Game.Timeline.CurrentTime);
-        @for (int i = 0; i < sortedSoldiers.Count; i++)
+        var sortedAgents = Game.Staff.Data.AvailableAgentsSortedByLaunchPriority(Game.Timeline.CurrentTime);
+        @for (int i = 0; i < sortedAgents.Count; i++)
         {
-            <SoldierListItem Index="i" Soldier="sortedSoldiers[i]" />
+            <AgentListItem Index="i" Agent="sortedAgents[i]" />
         }
     }
 </div>

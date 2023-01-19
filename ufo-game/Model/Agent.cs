@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace UfoGame.Model;
 
-public class Soldier
+public class Agent
 {
     [JsonInclude] public int Id { get; private set; }
     [JsonInclude] public string Nickname { get; private set; }
@@ -21,7 +21,7 @@ public class Soldier
         return TrainingTime(currentTime) + ExperienceFromMissions;
     }
 
-    // kja hook it up to SoldierListItem UI instead of Recovery
+    // kja hook it up to AgentListItem UI instead of Recovery
     public int TimeToRecover(float recoverySpeed) => (int)Math.Ceiling(Recovery / recoverySpeed);
 
     public int Salary 
@@ -63,7 +63,7 @@ public class Soldier
     public bool IsUnassignableFromMission => IsAtFullHealth && AssignedToMission;
     public bool CouldHaveBeenSentOnMission => IsAtFullHealth;
 
-    public Soldier(int id, string nickname, int timeHired)
+    public Agent(int id, string nickname, int timeHired)
     {
         Id = id;
         Nickname = nickname;
@@ -106,7 +106,7 @@ public class Soldier
     public void TickRecovery(float recovery)
     {
         Debug.Assert(recovery >= 0);
-        Debug.Assert(IsRecovering); // cannot tick recovery on a non-recovering soldier.
+        Debug.Assert(IsRecovering); // cannot tick recovery on a non-recovering agent.
         Recovery = Math.Max(Recovery - recovery, 0);
         TimeSpentRecovering += 1;
     }
@@ -127,11 +127,11 @@ public class Soldier
     };
 
     /// <summary>
-    /// Soldier that was on N missions gets sum of experience from
+    /// Agent that was on N missions gets sum of experience from
     /// _missionExperienceBonus array, from 0th element to Nth element.
-    /// For each mission above N, the soldiers gets additional amount
+    /// For each mission above N, the agents gets additional amount
     /// of experience equal to the last value in _missionExperienceBonus.
-    /// For example, if soldier was on N+K missions, where the array
+    /// For example, if agent was on N+K missions, where the array
     /// is of length N, they will have experience bonus equal to the
     /// sum of all values of the array, plus the last value of the array times K.
     /// </summary>

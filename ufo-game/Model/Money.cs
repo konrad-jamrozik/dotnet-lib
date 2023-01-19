@@ -17,7 +17,7 @@ public class Money
         + _archive.FailedMissions * -10
         + _archive.IgnoredMissions * -5;
 
-    public int Expenses => _staffData.CurrentSoldiers * 5;
+    public int Expenses => _staffData.CurrentAgents * 5;
 
     public int MoneyPerTurnAmount => PassiveIncome - Expenses;
 
@@ -35,7 +35,7 @@ public class Money
     public void AddMissionLoot(int amount)
         => Data.CurrentMoney += amount;
 
-    public void PayForHiringSoldiers(int cost)
+    public void PayForHiringAgents(int cost)
         => Data.CurrentMoney -= cost;
 
     public void PayForResearch(int cost)

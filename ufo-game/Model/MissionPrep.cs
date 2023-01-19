@@ -7,11 +7,11 @@ public class MissionPrep
     [JsonInclude]
     public readonly MissionPrepData Data;
 
-    public int MinSoldiersSendableOnMission => 1;
+    public int MinAgentsSendableOnMission => 1;
 
-    public int MaxSoldiersSendableOnMission => Math.Min(
+    public int MaxAgentsSendableOnMission => Math.Min(
         Data.TransportCapacity,
-        _staff.Data.SoldiersSendableOnMissionCount);
+        _staff.Data.AgentsSendableOnMissionCount);
 
     private readonly Staff _staff;
 

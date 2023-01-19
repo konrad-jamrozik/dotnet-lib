@@ -14,49 +14,49 @@ public class PendingMission
         get
         {
             var result
-                = _staff.Data.SoldiersAssignedToMission
-                      .Sum(soldier => 100 + soldier.ExperienceBonus(_timeline.CurrentTime))
-                  * _staff.Data.SoldierEffectiveness
+                = _staff.Data.AgentsAssignedToMission
+                      .Sum(agent => 100 + agent.ExperienceBonus(_timeline.CurrentTime))
+                  * _staff.Data.AgentEffectiveness
                   / 100;
             Debug.Assert(result >= 0);
             return result;
         }
     }
 
-    public int SoldierSurvivalChance(int experienceBonus)
+    public int AgentSurvivalChance(int experienceBonus)
     {
-        // Soldier experience bonus divides the remaining gap in survivability, to 99%.
+        // Agent experience bonus divides the remaining gap in survivability, to 99%.
         // For example, if baseline survivability is 30%, the gap to 99% is 99%-30%=69%.
 
-        // If a soldier has 200% experience bonus, the gap is shrunk
+        // If a agent has 200% experience bonus, the gap is shrunk
         // from 69% to 69%/(1+200%) = 69%*(1/3) = 23%. So survivability goes up from 99%-69%=30% to 99%-23%=76%.
         //
-        // If a soldier has 50% experience bonus, the gap is shrunk
+        // If a agent has 50% experience bonus, the gap is shrunk
         // from 69% to 69%/(1+50%) = 69%*(2/3) = 46%. So survivability goes up from 99%-69%=30% to 99%-46%=53%.
         // 
-        var survivabilityGap = MaxSurvivalChance - BaselineSoldierSurvivalChance;
+        var survivabilityGap = MaxSurvivalChance - BaselineAgentSurvivalChance;
         Debug.Assert(survivabilityGap is >= 0 and <= MaxSurvivalChance, 
             $"survivabilityGap {survivabilityGap} is >= 0 " +
             $"and <= MaxSurvivalChance {MaxSurvivalChance}. " +
-            $"BaselineSoldierSurvivalChance: {BaselineSoldierSurvivalChance}");
+            $"BaselineAgentSurvivalChance: {BaselineAgentSurvivalChance}");
         var reducedGap = (100*survivabilityGap / (100 + experienceBonus));
         var newSurvivalChance = MaxSurvivalChance - reducedGap;
-        Debug.Assert(newSurvivalChance >= BaselineSoldierSurvivalChance, "newSurvivalChance >= BaselineSoldierSurvivalChance");
+        Debug.Assert(newSurvivalChance >= BaselineAgentSurvivalChance, "newSurvivalChance >= BaselineAgentSurvivalChance");
         Debug.Assert(newSurvivalChance <= MaxSurvivalChance, "newSurvivalChance <= MaxSurvivalChance");
         return newSurvivalChance;
     }
 
-    public int BaselineSoldierSurvivalChance
+    public int BaselineAgentSurvivalChance
     {
         get
         {
-            var baselineSoldierSurvivalChance =
-                (int)(SoldierSurvivabilityPower / (float)(EnemyPower + SoldierSurvivabilityPower) * 100);
-            return Math.Min(baselineSoldierSurvivalChance, MaxSurvivalChance);
+            var baselineAgentSurvivalChance =
+                (int)(AgentSurvivabilityPower / (float)(EnemyPower + AgentSurvivabilityPower) * 100);
+            return Math.Min(baselineAgentSurvivalChance, MaxSurvivalChance);
         }
     }
 
-    public int SoldierSurvivabilityPower => _staff.Data.SoldiersAssignedToMissionCount * _staff.Data.SoldierSurvivability;
+    public int AgentSurvivabilityPower => _staff.Data.AgentsAssignedToMissionCount * _staff.Data.AgentSurvivability;
 
     [JsonInclude]
     public PendingMissionData Data;

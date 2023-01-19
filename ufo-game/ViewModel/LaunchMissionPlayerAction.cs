@@ -32,36 +32,36 @@ class LaunchMissionPlayerAction : IPlayerActionOnRangeInput
     public void Act() => _missionLauncher.LaunchMission(_pendingMission);
 
     public string ActLabel()
-        => $"Launch with {_staff.Data.SoldiersAssignedToMissionCount} soldiers";
+        => $"Launch with {_staff.Data.AgentsAssignedToMissionCount} agents";
 
-    // Range input is permanently disabled for assigning soldiers to mission.
+    // Range input is permanently disabled for assigning agents to mission.
     public bool CanSetRangeInput => false;
 
-    public bool CanDecrementInput => _staff.Data.SoldiersAssignedToMissionCount > 0;
+    public bool CanDecrementInput => _staff.Data.AgentsAssignedToMissionCount > 0;
 
     public int Input
     {
-        get => _staff.Data.SoldiersAssignedToMissionCount;
+        get => _staff.Data.AgentsAssignedToMissionCount;
         // ReSharper disable once ValueParameterNotUsed
         set => Debug.Assert(false, 
-            "Range input is permanently disabled for assigning soldiers to mission.");
+            "Range input is permanently disabled for assigning agents to mission.");
     }
 
     public void IncrementInput()
     {
-        var assignableSoldiers = _staff.Data
-            .AssignableSoldiersSortedByLaunchPriority(_timeline.CurrentTime);
-        Debug.Assert(assignableSoldiers.Any());
-        assignableSoldiers.First().AssignToMission();
+        var assignableAgents = _staff.Data
+            .AssignableAgentsSortedByLaunchPriority(_timeline.CurrentTime);
+        Debug.Assert(assignableAgents.Any());
+        assignableAgents.First().AssignToMission();
         _stateRefresh.Trigger();
     }
 
     public void DecrementInput()
     {
-        var assignedSoldiers = _staff.Data
-            .AssignedSoldiersSortedByDescendingLaunchPriority(_timeline.CurrentTime);
-        Debug.Assert(assignedSoldiers.Any());
-        assignedSoldiers.First().UnassignFromMission();
+        var assignedAgents = _staff.Data
+            .AssignedAgentsSortedByDescendingLaunchPriority(_timeline.CurrentTime);
+        Debug.Assert(assignedAgents.Any());
+        assignedAgents.First().UnassignFromMission();
         _stateRefresh.Trigger();
     }
 
@@ -69,8 +69,8 @@ class LaunchMissionPlayerAction : IPlayerActionOnRangeInput
 
     public bool CanAct(int value) => _missionLauncher.CanLaunchMission(_pendingMission, value);
 
-    public int InputMax() => _missionPrep.MaxSoldiersSendableOnMission;
+    public int InputMax() => _missionPrep.MaxAgentsSendableOnMission;
 
-    public int InputMin() => _missionPrep.MinSoldiersSendableOnMission;
+    public int InputMin() => _missionPrep.MinAgentsSendableOnMission;
     
 }

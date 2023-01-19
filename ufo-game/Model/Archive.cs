@@ -10,9 +10,9 @@ public class Archive
     [JsonInclude] public int SuccessfulMissions { get; private set; }
     [JsonInclude] public int FailedMissions { get; private set; }
     [JsonInclude] public int IgnoredMissions { get; private set; }
-    [JsonInclude] public int TotalSoldiersHired { get; private set; }
-    [JsonInclude] public int TotalSoldiersFired { get; private set; }
-    [JsonInclude] public int SoldiersLost { get; private set; }
+    [JsonInclude] public int TotalAgentsHired { get; private set; }
+    [JsonInclude] public int TotalAgentsFired { get; private set; }
+    [JsonInclude] public int AgentsLost { get; private set; }
     [JsonInclude] public string LastMissionReport { get; private set; } = string.Empty;
 
     public Archive()
@@ -24,9 +24,9 @@ public class Archive
         SuccessfulMissions = 0;
         FailedMissions = 0;
         IgnoredMissions = 0;
-        TotalSoldiersHired = 0;
-        TotalSoldiersFired = 0;
-        SoldiersLost = 0;
+        TotalAgentsHired = 0;
+        TotalAgentsFired = 0;
+        AgentsLost = 0;
         LastMissionReport = NoMissionsReport;
     }
 
@@ -52,21 +52,21 @@ public class Archive
         Console.Out.WriteLine($"Recorded ignored mission. Total: {IgnoredMissions}.");
     }
 
-    public void RecordHiredSoldiers(int count)
+    public void RecordHiredAgents(int count)
     {
-        TotalSoldiersHired += count;
-        Console.Out.WriteLine($"Recorded hired {count} soldiers. Total: {TotalSoldiersHired}.");
+        TotalAgentsHired += count;
+        Console.Out.WriteLine($"Recorded hired {count} agents. Total: {TotalAgentsHired}.");
     }
 
-    public void RecordFiredSoldiers(int count)
+    public void RecordFiredAgents(int count)
     {
-        TotalSoldiersFired += count;
-        Console.Out.WriteLine($"Recorded fired {count} soldiers. Total: {TotalSoldiersFired}.");
+        TotalAgentsFired += count;
+        Console.Out.WriteLine($"Recorded fired {count} agents. Total: {TotalAgentsFired}.");
     }
 
-    public void RecordLostSoldiers(int amount)
+    public void RecordLostAgents(int amount)
     {
-        SoldiersLost += amount;
-        Console.Out.WriteLine($"Recorded {amount} lost soldiers. Lost soldiers now at {SoldiersLost}.");
+        AgentsLost += amount;
+        Console.Out.WriteLine($"Recorded {amount} lost agents. Lost agents now at {AgentsLost}.");
     }
 }

@@ -8,14 +8,14 @@ public class Staff
     [JsonInclude]
     public readonly StaffData Data;
 
-    private const int SoldierPrice = 50;
+    private const int AgentPrice = 50;
 
     // kja this probably should be on Money; not this is used in UI
-    public int SoldiersToHireCost => Data.SoldiersToHire * SoldierPrice;
+    public int AgentsToHireCost => Data.AgentsToHire * AgentPrice;
 
-    public int MinSoldiersToHire => 1;
+    public int MinAgentsToHire => 1;
 
-    public int MaxSoldiersToHire => _money.CurrentMoney / SoldierPrice;
+    public int MaxAgentsToHire => _money.CurrentMoney / AgentPrice;
 
     private readonly Money _money;
     private readonly Archive _archive;
@@ -36,34 +36,34 @@ public class Staff
         _timeline = timeline;
     }
 
-    public bool CanHireSoldiers(int offset = 0)
+    public bool CanHireAgents(int offset = 0)
     {
         if (_playerScore.GameOver)
             return false;
 
-        if (!WithinRange(Data.SoldiersToHire) && Data.SoldiersToHire > MinSoldiersToHire)
-            NarrowSoldiersToHire();
+        if (!WithinRange(Data.AgentsToHire) && Data.AgentsToHire > MinAgentsToHire)
+            NarrowAgentsToHire();
 
-        return WithinRange(Data.SoldiersToHire + offset);
+        return WithinRange(Data.AgentsToHire + offset);
 
-        bool WithinRange(int soldiersToHire)
-            => MinSoldiersToHire <= soldiersToHire && soldiersToHire <= MaxSoldiersToHire;
+        bool WithinRange(int agentsToHire)
+            => MinAgentsToHire <= agentsToHire && agentsToHire <= MaxAgentsToHire;
 
-        void NarrowSoldiersToHire()
-            => Data.SoldiersToHire = Math.Max(MinSoldiersToHire, Math.Min(Data.SoldiersToHire, MaxSoldiersToHire));
+        void NarrowAgentsToHire()
+            => Data.AgentsToHire = Math.Max(MinAgentsToHire, Math.Min(Data.AgentsToHire, MaxAgentsToHire));
     }
 
-    public void HireSoldiers()
+    public void HireAgents()
     {
-        // kja this may FIRST narrow soldiers to hire and THEN pass. This is unexpected from user POV.
-        // Same with SoldiersToSend and SoldiersToFire.
+        // kja this may FIRST narrow agents to hire and THEN pass. This is unexpected from user POV.
+        // Same with AgentsToSend and AgentsToFire.
         // Need to pass something like: allowNarrowing: false.
-        Debug.Assert(CanHireSoldiers());
-        _money.PayForHiringSoldiers(SoldiersToHireCost);
-        _archive.RecordHiredSoldiers(Data.SoldiersToHire);
-        Data.CurrentSoldiers += Data.SoldiersToHire;
-        Data.HireSoldiers(_timeline.CurrentTime);
-        Console.Out.WriteLine($"Hired {Data.SoldiersToHire} soldiers. Soldiers now at {Data.CurrentSoldiers}.");
+        Debug.Assert(CanHireAgents());
+        _money.PayForHiringAgents(AgentsToHireCost);
+        _archive.RecordHiredAgents(Data.AgentsToHire);
+        Data.CurrentAgents += Data.AgentsToHire;
+        Data.HireAgents(_timeline.CurrentTime);
+        Console.Out.WriteLine($"Hired {Data.AgentsToHire} agents. Agents now at {Data.CurrentAgents}.");
     }
 
     public void AdvanceTime()
@@ -71,10 +71,10 @@ public class Staff
         Data.AdvanceTime();
     }
 
-    public void LoseSoldiers(List<(Soldier soldier, int lostTime, bool missionSuccess)> soldiers)
+    public void LoseAgents(List<(Agent agent, int lostTime, bool missionSuccess)> agents)
     {
-        soldiers.ForEach(data => data.soldier.SetAsLost(data.lostTime, data.missionSuccess));
-        _archive.RecordLostSoldiers(soldiers.Count);
+        agents.ForEach(data => data.agent.SetAsLost(data.lostTime, data.missionSuccess));
+        _archive.RecordLostAgents(agents.Count);
     }
 }
 

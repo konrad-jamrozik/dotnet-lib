@@ -4,98 +4,98 @@ namespace UfoGame.Model;
 
 public class StaffData
 {
-    public const float SoldierRecoverySpeedImprovement = 0.25f;
+    public const float AgentRecoverySpeedImprovement = 0.25f;
 
-    [JsonInclude] public int NextSoldierId;
-    [JsonInclude] public int SoldierEffectiveness;
-    [JsonInclude] public int SoldierSurvivability;
-    [JsonInclude] public int SoldiersToHire;
-    [JsonInclude] public int SoldiersToFire;
-    [JsonInclude] public int CurrentSoldiers;
-    [JsonInclude] public float SoldierRecoverySpeed { get; private set; }
+    [JsonInclude] public int NextAgentId;
+    [JsonInclude] public int AgentEffectiveness;
+    [JsonInclude] public int AgentSurvivability;
+    [JsonInclude] public int AgentsToHire;
+    [JsonInclude] public int AgentsToFire;
+    [JsonInclude] public int CurrentAgents;
+    [JsonInclude] public float AgentRecoverySpeed { get; private set; }
 
-    [JsonInclude] public List<Soldier> Soldiers = new List<Soldier>();
+    [JsonInclude] public List<Agent> Agents = new List<Agent>();
 
     [JsonIgnore]
-    public List<Soldier> AvailableSoldiers => Soldiers.Where(s => s.Available).ToList();
+    public List<Agent> AvailableAgents => Agents.Where(s => s.Available).ToList();
 
-    public List<Soldier> AvailableSoldiersSortedByLaunchPriority(int currentTime)
-        => AvailableSoldiers
-            // First list soldiers that can be sent on a mission.
+    public List<Agent> AvailableAgentsSortedByLaunchPriority(int currentTime)
+        => AvailableAgents
+            // First list agents that can be sent on a mission.
             .OrderByDescending(s => s.CanSendOnMission)
-            // Then sort by recovery - all soldiers that can be sent have recovery 0,
+            // Then sort by recovery - all agents that can be sent have recovery 0,
             // but those who cannot will be sorted in increasing remaining recovery need.
             .ThenBy(s => s.Recovery)
-            // Then sort soldiers by exp ascending
+            // Then sort agents by exp ascending
             // (rookies to be sent first, hence listed  first).
             .ThenBy(s => s.ExperienceBonus(currentTime))
-            // Then from soldiers of the same experience bonus, first list
+            // Then from agents of the same experience bonus, first list
             // the ones hired more recently.
             .ThenByDescending(s => s.Id)
             .ToList();
 
-    public List<Soldier> AssignableSoldiersSortedByLaunchPriority(int currentTime)
-        => AvailableSoldiersSortedByLaunchPriority(currentTime)
+    public List<Agent> AssignableAgentsSortedByLaunchPriority(int currentTime)
+        => AvailableAgentsSortedByLaunchPriority(currentTime)
             .Where(s => !s.AssignedToMission)
             .ToList();
 
-    public List<Soldier> AssignedSoldiersSortedByDescendingLaunchPriority(int currentTime)
-        => AvailableSoldiersSortedByLaunchPriority(currentTime)
+    public List<Agent> AssignedAgentsSortedByDescendingLaunchPriority(int currentTime)
+        => AvailableAgentsSortedByLaunchPriority(currentTime)
             .Where(s => s.AssignedToMission)
             .Reverse()
             .ToList();
 
-    public int SoldiersAssignedToMissionCount => Soldiers.Count(s => s.AssignedToMission);
+    public int AgentsAssignedToMissionCount => Agents.Count(s => s.AssignedToMission);
 
     [JsonIgnore]
-    public List<Soldier> SoldiersAssignedToMission
-        => Soldiers.Where(s => s.AssignedToMission).ToList();
+    public List<Agent> AgentsAssignedToMission
+        => Agents.Where(s => s.AssignedToMission).ToList();
 
     [JsonIgnore]
-    public List<Soldier> SoldiersInRecovery
-        => Soldiers.Where(s => s.IsRecovering).ToList();
+    public List<Agent> AgentsInRecovery
+        => Agents.Where(s => s.IsRecovering).ToList();
 
     [JsonIgnore]
-    public int SoldiersInRecoveryCount
-        => Soldiers.Count(s => s.IsRecovering);
+    public int AgentsInRecoveryCount
+        => Agents.Count(s => s.IsRecovering);
 
 
-    public int SoldiersSendableOnMissionCount
-        => Soldiers.Count(s => s.CanSendOnMission);
+    public int AgentsSendableOnMissionCount
+        => Agents.Count(s => s.CanSendOnMission);
 
-    public void ImproveSoldierRecoverySpeed()
-        => SoldierRecoverySpeed += SoldierRecoverySpeedImprovement;
+    public void ImproveAgentRecoverySpeed()
+        => AgentRecoverySpeed += AgentRecoverySpeedImprovement;
 
     public StaffData()
         => Reset();
 
     public void Reset()
     {
-        NextSoldierId = 0;
-        SoldierEffectiveness = 100;
-        SoldierSurvivability = 100;
-        SoldiersToHire = 1;
-        SoldiersToFire = 1;
-        CurrentSoldiers = 0;
-        SoldierRecoverySpeed = 0.5f;
-        Soldiers = new List<Soldier>();
+        NextAgentId = 0;
+        AgentEffectiveness = 100;
+        AgentSurvivability = 100;
+        AgentsToHire = 1;
+        AgentsToFire = 1;
+        CurrentAgents = 0;
+        AgentRecoverySpeed = 0.5f;
+        Agents = new List<Agent>();
     }
 
     public void AdvanceTime()
     {
-        SoldiersInRecovery.ForEach(s => s.TickRecovery(SoldierRecoverySpeed));
+        AgentsInRecovery.ForEach(s => s.TickRecovery(AgentRecoverySpeed));
     }
 
-    public void HireSoldiers(int currentTime)
+    public void HireAgents(int currentTime)
     {
-        Enumerable.Range(NextSoldierId, SoldiersToHire)
+        Enumerable.Range(NextAgentId, AgentsToHire)
             .ToList()
             .ForEach(
-                id => Soldiers.Add(
-                    new Soldier(
+                id => Agents.Add(
+                    new Agent(
                         id,
-                        SoldierNames.RandomName(),
+                        AgentNames.RandomName(),
                         currentTime)));
-        NextSoldierId += SoldiersToHire;
+        NextAgentId += AgentsToHire;
     }
 }
