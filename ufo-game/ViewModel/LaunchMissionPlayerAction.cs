@@ -3,8 +3,7 @@ using UfoGame.Model;
 
 namespace UfoGame.ViewModel;
 
-// kja wip
-class LaunchMissionPlayerAction2 : IPlayerActionOnRangeInput
+class LaunchMissionPlayerAction : IPlayerActionOnRangeInput
 {
     private readonly Staff _staff;
     private readonly MissionPrep _missionPrep;
@@ -14,7 +13,7 @@ class LaunchMissionPlayerAction2 : IPlayerActionOnRangeInput
     private readonly StateRefresh _stateRefresh;
 
 
-    public LaunchMissionPlayerAction2(
+    public LaunchMissionPlayerAction(
         MissionPrep missionPrep,
         PendingMission pendingMission,
         StateRefresh stateRefresh,
