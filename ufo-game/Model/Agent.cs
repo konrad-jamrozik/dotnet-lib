@@ -127,12 +127,19 @@ public class Agent
 
     /// <summary>
     /// Agent that was on N missions gets sum of experience from
-    /// _missionExperienceBonus array, from 0th element to Nth element.
-    /// For each mission above N, the agents gets additional amount
+    /// _missionExperienceBonus array, from 0th element to (N-1)th element.
+    /// For each mission above N-1, the agents gets additional amount
     /// of experience equal to the last value in _missionExperienceBonus.
-    /// For example, if agent was on N+K missions, where the array
-    /// is of length N, they will have experience bonus equal to the
-    /// sum of all values of the array, plus the last value of the array times K.
+    ///
+    /// Example 1: if agent was on N+K missions, where the array
+    /// is of length N, they will have experience bonus from missions
+    /// equal to the sum of all values of the array except the last value,
+    /// plus the last value of the array times K.
+    ///
+    /// Example 2: If the array values are {5,3,1} and the agent was
+    /// on 6 missions, their experience from mission will be a sum of:
+    /// 5,3,1,1,1,1, which is 12.
+    /// 
     /// </summary>
     private int ExperienceFromMissions =>
         _missionExperienceBonus.Take(TotalMissions).Sum()
