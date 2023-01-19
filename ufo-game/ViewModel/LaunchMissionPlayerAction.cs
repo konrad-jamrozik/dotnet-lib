@@ -29,7 +29,7 @@ class LaunchMissionPlayerAction : IPlayerActionOnRangeInput
         _timeline = timeline;
     }
 
-    public void Act() => _missionLauncher.LaunchMission2(_pendingMission);
+    public void Act() => _missionLauncher.LaunchMission(_pendingMission);
 
     public string ActLabel()
         => $"Launch with {_staff.Data.SoldiersAssignedToMissionCount} soldiers";
@@ -65,9 +65,9 @@ class LaunchMissionPlayerAction : IPlayerActionOnRangeInput
         _stateRefresh.Trigger();
     }
 
-    public bool CanAct() => _missionLauncher.CanLaunchMission2(_pendingMission);
+    public bool CanAct() => _missionLauncher.CanLaunchMission(_pendingMission);
 
-    public bool CanAct(int value) => _missionLauncher.CanLaunchMission2(_pendingMission, value);
+    public bool CanAct(int value) => _missionLauncher.CanLaunchMission(_pendingMission, value);
 
     public int InputMax() => _missionPrep.MaxSoldiersSendableOnMission;
 

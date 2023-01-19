@@ -21,13 +21,13 @@
                  Value="@Game.PendingMission.EnemyPower"
                  Enabled="@Game.PendingMission.CurrentlyAvailable" />
     <CardDataRow Text="Our power"
-                 Value="@Game.PendingMission.OurPower2"
+                 Value="@Game.PendingMission.OurPower"
                  Enabled="@Game.PendingMission.CurrentlyAvailable" />
     <CardDataRow Text="Mission success %"
-                 Value="@(Game.PendingMission.SuccessChance2 + "%")"
+                 Value="@(Game.PendingMission.SuccessChance + "%")"
                  Enabled="@Game.PendingMission.CurrentlyAvailable" />
     <CardDataRow Text="Baseline sol. surv. %"
-                 Value="@(Game.PendingMission.BaselineSoldierSurvivalChance2 + "%")"
+                 Value="@(Game.PendingMission.BaselineSoldierSurvivalChance + "%")"
                  Enabled="@Game.PendingMission.CurrentlyAvailable" />
     <CardDataRow Text="Transport capacity"
                  Value="@Game.MissionPrep.Data.TransportCapacity"

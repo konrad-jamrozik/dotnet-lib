@@ -54,7 +54,7 @@ public class MissionLauncher
         return scoreDiff;
     }
 
-    private void WriteLastMissionReport2(
+    private void WriteLastMissionReport(
         PendingMission mission,
         int successChance,
         int roll,
@@ -77,7 +77,7 @@ public class MissionLauncher
             $"The last mission was {missionSuccessReport} {soldiersLostReport}");
     }
 
-    public bool CanLaunchMission2(PendingMission mission, int offset = 0)
+    public bool CanLaunchMission(PendingMission mission, int offset = 0)
     {
         if (_playerScore.GameOver || !mission.CurrentlyAvailable)
             return false;
@@ -89,18 +89,18 @@ public class MissionLauncher
                && soldiersAssignedToMission <= _missionPrep.MaxSoldiersSendableOnMission;
     }
 
-    public void LaunchMission2(PendingMission mission)
+    public void LaunchMission(PendingMission mission)
     {
-        Debug.Assert(CanLaunchMission2(mission));
-        var successChance = mission.SuccessChance2;
+        Debug.Assert(CanLaunchMission(mission));
+        var successChance = mission.SuccessChance;
         var soldiersSent = _staff.Data.SoldiersAssignedToMission.Count;
         var moneyReward = mission.MoneyReward;
         Console.Out.WriteLine($"Sent {soldiersSent} soldiers.");
-        var (roll, success) = RollMissionOutcome2(mission);
-        var soldiersLost = ProcessSoldierUpdates2(mission, success, _staff.Data.SoldiersAssignedToMission);
+        var (roll, success) = RollMissionOutcome(mission);
+        var soldiersLost = ProcessSoldierUpdates(mission, success, _staff.Data.SoldiersAssignedToMission);
         var scoreDiff = ApplyMissionOutcome(mission, success);
         _archive.ArchiveMission(missionSuccessful: success);
-        WriteLastMissionReport2(mission, successChance, roll, success, scoreDiff, soldiersLost, moneyReward);
+        WriteLastMissionReport(mission, successChance, roll, success, scoreDiff, soldiersLost, moneyReward);
         mission.GenerateNewOrClearMission();
         // kja obsolete
         //_missionPrep.NarrowSoldiersToSend();
@@ -108,18 +108,18 @@ public class MissionLauncher
         _stateRefresh.Trigger();
     }
 
-    private (int roll, bool success) RollMissionOutcome2(PendingMission mission)
+    private (int roll, bool success) RollMissionOutcome(PendingMission mission)
     {
         // Roll between 1 and 100.
         // The lower the better.
         int roll = _random.Next(1, 100 + 1);
-        bool success = roll <= mission.SuccessChance2;
+        bool success = roll <= mission.SuccessChance;
         Console.Out.WriteLine(
-            $"Rolled {roll} against limit of {mission.SuccessChance2} resulting in {(success ? "success" : "failure")}");
+            $"Rolled {roll} against limit of {mission.SuccessChance} resulting in {(success ? "success" : "failure")}");
         return (roll, success);
     }
 
-    private int ProcessSoldierUpdates2(PendingMission mission, bool missionSuccess, List<Soldier> sentSoldiers)
+    private int ProcessSoldierUpdates(PendingMission mission, bool missionSuccess, List<Soldier> sentSoldiers)
     {
         List<Soldier> lostSoldiers = new List<Soldier>();
         List<(Soldier Soldier, int roll, int survivalChance, int expBonus)> soldierData =
@@ -132,7 +132,7 @@ public class MissionLauncher
             int soldierRoll = _random.Next(1, 100 + 1);
             var expBonus = soldier.ExperienceBonus(_timeline.CurrentTime);
             var soldierSurvivalChance
-                = mission.SoldierSurvivalChance2(expBonus);
+                = mission.SoldierSurvivalChance(expBonus);
             soldierData.Add((soldier, soldierRoll, soldierSurvivalChance, expBonus));
         }
         
@@ -142,7 +142,6 @@ public class MissionLauncher
             bool soldierSurvived = soldierRoll <= soldierSurvivalChance;
             string messageSuffix = "";
 
-            // kja these updates need to happen after the foreach, as they influence the rolls for later soldiers
             if (soldierSurvived)
             {
                 // Higher roll means it was a closer call, so soldier needs more time to recover from fatigue 
@@ -175,9 +174,6 @@ public class MissionLauncher
         {
             Console.Out.WriteLine("No soldiers lost! \\o/");
         }
-
-        // kja obsolete
-        //_staff.Data.AddRecoveringSoldiers(soldiersSent - soldiersLost);
 
         return lostSoldiers.Count;
     }
