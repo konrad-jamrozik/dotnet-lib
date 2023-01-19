@@ -18,7 +18,7 @@ public class Soldier
     public int ExperienceBonus(int currentTime)
     {
         Debug.Assert(currentTime >= TimeHired);
-        return TrainingTime(currentTime) / 2 + ExperienceFromMissions;
+        return TrainingTime(currentTime) + ExperienceFromMissions;
     }
 
     // kja hook it up to SoldierListItem UI instead of Recovery
@@ -123,7 +123,7 @@ public class Soldier
 
     private readonly int[] _missionExperienceBonus = 
     {
-        30, 25, 20, 15, 10
+        60, 50, 40, 30, 20 // Sum: 200
     };
 
     /// <summary>

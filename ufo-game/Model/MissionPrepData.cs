@@ -16,6 +16,6 @@ public class MissionPrepData
 
     public void Reset()
     {
-        TransportCapacity = 4;
+        TransportCapacity = 8;
     }
 }
