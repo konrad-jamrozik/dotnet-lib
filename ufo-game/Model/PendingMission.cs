@@ -5,7 +5,7 @@ namespace UfoGame.Model;
 
 public class PendingMission
 {
-    private const int MaxSurvivalChance = 99;
+    private const int MaxAgentSurvivalChance = 99;
 
     public int SuccessChance => Math.Min(100, (int)(OurPower / (float)(EnemyPower + OurPower) * 100));
 
@@ -34,15 +34,15 @@ public class PendingMission
         // If a agent has 50% experience bonus, the gap is shrunk
         // from 69% to 69%/(1+50%) = 69%*(2/3) = 46%. So survivability goes up from 99%-69%=30% to 99%-46%=53%.
         // 
-        var survivabilityGap = MaxSurvivalChance - BaselineAgentSurvivalChance;
-        Debug.Assert(survivabilityGap is >= 0 and <= MaxSurvivalChance, 
+        var survivabilityGap = MaxAgentSurvivalChance - BaselineAgentSurvivalChance;
+        Debug.Assert(survivabilityGap is >= 0 and <= MaxAgentSurvivalChance, 
             $"survivabilityGap {survivabilityGap} is >= 0 " +
-            $"and <= MaxSurvivalChance {MaxSurvivalChance}. " +
+            $"and <= MaxAgentSurvivalChance {MaxAgentSurvivalChance}. " +
             $"BaselineAgentSurvivalChance: {BaselineAgentSurvivalChance}");
         var reducedGap = (100*survivabilityGap / (100 + experienceBonus));
-        var newSurvivalChance = MaxSurvivalChance - reducedGap;
+        var newSurvivalChance = MaxAgentSurvivalChance - reducedGap;
         Debug.Assert(newSurvivalChance >= BaselineAgentSurvivalChance, "newSurvivalChance >= BaselineAgentSurvivalChance");
-        Debug.Assert(newSurvivalChance <= MaxSurvivalChance, "newSurvivalChance <= MaxSurvivalChance");
+        Debug.Assert(newSurvivalChance <= MaxAgentSurvivalChance, "newSurvivalChance <= MaxAgentSurvivalChance");
         return newSurvivalChance;
     }
 
@@ -52,7 +52,7 @@ public class PendingMission
         {
             var baselineAgentSurvivalChance =
                 (int)(AgentSurvivabilityPower / (float)(EnemyPower + AgentSurvivabilityPower) * 100);
-            return Math.Min(baselineAgentSurvivalChance, MaxSurvivalChance);
+            return Math.Min(baselineAgentSurvivalChance, MaxAgentSurvivalChance);
         }
     }
 

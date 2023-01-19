@@ -120,9 +120,17 @@ public class Agent
         TimeLost = currentTime;
     }
 
+    // As of 1/19/2023 worst case possible on successful mission is that agent will need
+    // PendingMission.MaxAgentSurvivalChance / 2 recovery units at recovery speed of 1.
+    // This is 99 / 2 = 49.
+    // Because agents train 1 experience per turn, this means that going on 
+    // a successful mission always makes the agent improve faster,
+    // because in the worst case an agent will miss 49 days of training
+    // but gain 50 experience, so ahead by 1.
+    // Note that this is true only if recovery speed is 1 or more, and currently it starts at 0.5.
     private readonly int[] _missionExperienceBonus = 
     {
-        60, 50, 40, 30, 20 // Sum: 200
+        150, 125, 100, 75, 50 // Sum: 500
     };
 
     /// <summary>
