@@ -66,15 +66,15 @@ public class Staff
         Console.Out.WriteLine($"Hired {Data.SoldiersToHire} soldiers. Soldiers now at {Data.CurrentSoldiers}.");
     }
 
-    public void LoseSoldiers(int amount)
-    {
-        Data.CurrentSoldiers -= amount;
-        Console.Out.WriteLine($"Lost {amount} soldiers. Soldiers now at {Data.CurrentSoldiers}.");
-    }
-
     public void AdvanceTime()
     {
         Data.AdvanceTime();
+    }
+
+    public void LoseSoldiers(List<(Soldier soldier, int lostTime, bool missionSuccess)> soldiers)
+    {
+        soldiers.ForEach(data => data.soldier.SetAsLost(data.lostTime, data.missionSuccess));
+        _archive.RecordLostSoldiers(soldiers.Count);
     }
 }
 

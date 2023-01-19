@@ -121,7 +121,6 @@ public class MissionLauncher
 
     private int ProcessSoldierUpdates(PendingMission mission, bool missionSuccess, List<Soldier> sentSoldiers)
     {
-        List<Soldier> lostSoldiers = new List<Soldier>();
         List<(Soldier Soldier, int roll, int survivalChance, int expBonus)> soldierData =
             new List<(Soldier Soldier, int roll, int survivalChance, int expBonus)>();
 
@@ -135,7 +134,8 @@ public class MissionLauncher
                 = mission.SoldierSurvivalChance(expBonus);
             soldierData.Add((soldier, soldierRoll, soldierSurvivalChance, expBonus));
         }
-        
+
+        List<(Soldier soldier, int lostTime, bool missionSuccess)> lostSoldiers = new List<(Soldier, int, bool)>();
         foreach (var data in soldierData)
         {
             var (soldier, soldierRoll, soldierSurvivalChance, expBonus) = data;
@@ -148,13 +148,12 @@ public class MissionLauncher
                 // and wounds. This means that if a soldier is very good at surviving, they may barely survive,
                 // but need tons of time to recover.
                 var recovery = (float)Math.Round(soldierRoll * (missionSuccess ? 0.5f : 1), 2);
-                soldier.RecordMissionOutcome(missionSuccess, recovery); // kja mission count should be recorded even in case of death.
+                soldier.RecordMissionOutcome(missionSuccess, recovery);
                 messageSuffix = soldierSurvived ? $" Need {recovery} units of recovery." : "";
             }
             else
             {
-                lostSoldiers.Add(soldier);
-                soldier.SetAsLost(_timeline.CurrentTime);
+                lostSoldiers.Add((soldier, _timeline.CurrentTime, missionSuccess));
             }
 
             var inequalitySign = soldierRoll <= soldierSurvivalChance ? "<=" : ">";
@@ -166,14 +165,9 @@ public class MissionLauncher
         }
 
         if (lostSoldiers.Count > 0)
-        {
-            _archive.RecordLostSoldiers(lostSoldiers.Count);
-            _staff.LoseSoldiers(lostSoldiers.Count);
-        }
+            _staff.LoseSoldiers(lostSoldiers);
         else
-        {
             Console.Out.WriteLine("No soldiers lost! \\o/");
-        }
 
         return lostSoldiers.Count;
     }

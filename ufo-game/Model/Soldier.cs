@@ -111,14 +111,14 @@ public class Soldier
         TimeSpentRecovering += 1;
     }
 
-    public void SetAsLost(int currentTime)
+    public void SetAsLost(int currentTime, bool missionSuccess)
     {
         Debug.Assert(currentTime >= TimeHired);
         Debug.Assert(IsAtFullHealth);
         Debug.Assert(AssignedToMission);
+        RecordMissionOutcome(missionSuccess, recovery: 0);
         UnassignFromMission();
         TimeLost = currentTime;
-        // kja need to archive here the fact they are missing in action
     }
 
     private readonly int[] _missionExperienceBonus = 
