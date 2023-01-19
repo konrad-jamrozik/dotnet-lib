@@ -68,7 +68,6 @@ public class Agent
         Id = id;
         Nickname = nickname;
         TimeHired = timeHired;
-        // kja need to archive the fact got hired
     }
 
     public void AssignToMission()

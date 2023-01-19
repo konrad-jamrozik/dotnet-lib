@@ -102,8 +102,6 @@ public class MissionLauncher
         _archive.ArchiveMission(missionSuccessful: success);
         WriteLastMissionReport(mission, successChance, roll, success, scoreDiff, agentsLost, moneyReward);
         mission.GenerateNewOrClearMission();
-        // kja obsolete
-        //_missionPrep.NarrowSoldiersToSend();
         _gameState.PersistGameState();
         _stateRefresh.Trigger();
     }

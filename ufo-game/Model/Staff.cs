@@ -10,7 +10,7 @@ public class Staff
 
     private const int AgentPrice = 50;
 
-    // kja this probably should be on Money; not this is used in UI
+    // kja this probably should be on Money; note this is used in UI
     public int AgentsToHireCost => Data.AgentsToHire * AgentPrice;
 
     public int MinAgentsToHire => 1;
