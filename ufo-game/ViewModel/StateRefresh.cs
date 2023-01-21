@@ -9,7 +9,7 @@ namespace UfoGame.ViewModel;
 /// See also:
 /// https://learn.microsoft.com/en-us/aspnet/core/blazor/components/rendering?view=aspnetcore-7.0#to-render-a-component-outside-the-subtree-thats-rerendered-by-a-particular-event
 /// </summary>
-public class StateRefresh // kja move this to ViewModel namespace
+public class StateRefresh
 {
     public void Trigger([CallerMemberName] string callerMemberName = "") 
     {
