@@ -1,12 +1,10 @@
-﻿using System.Text.Json.Serialization;
-using UfoGame.Model.Data;
+﻿using UfoGame.Model.Data;
 
 namespace UfoGame.Model;
 
 // kja rename to MissionDeployment
 public class MissionPrep
 {
-    [JsonInclude]
     public readonly MissionPrepData Data;
 
     public int MinAgentsSendableOnMission => 1;

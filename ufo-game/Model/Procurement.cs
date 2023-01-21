@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using System.Text.Json.Serialization;
 using UfoGame.Model.Data;
 using Archive = UfoGame.Model.Data.Archive;
 
@@ -7,7 +6,7 @@ namespace UfoGame.Model;
 
 public class Procurement
 {
-    [JsonInclude] public readonly ProcurementData Data;
+    public readonly ProcurementData Data;
     
     private const int AgentPrice = 50;
 

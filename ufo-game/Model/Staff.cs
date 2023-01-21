@@ -1,11 +1,10 @@
-﻿using System.Text.Json.Serialization;
-using UfoGame.Model.Data;
+﻿using UfoGame.Model.Data;
 
 namespace UfoGame.Model;
 
 public class Staff
 {
-    [JsonInclude] public readonly StaffData Data;
+    public readonly StaffData Data;
 
     private readonly Archive _archive;
 

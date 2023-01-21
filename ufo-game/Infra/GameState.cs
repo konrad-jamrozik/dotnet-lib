@@ -8,15 +8,15 @@ namespace UfoGame.Infra;
 public class GameState
 {
     [JsonInclude] public readonly Timeline Timeline;
-    [JsonInclude] public readonly Money Money;
-    [JsonInclude] public readonly Staff Staff;
+    [JsonInclude] public readonly MoneyData MoneyData;
+    [JsonInclude] public readonly StaffData StaffData;
     [JsonInclude] public readonly Archive Archive;
-    [JsonInclude] public readonly MissionPrep MissionPrep;
+    [JsonInclude] public readonly MissionPrepData MissionPrepData;
     [JsonInclude] public readonly PendingMission PendingMission;
     [JsonInclude] public readonly Factions Factions;
-    [JsonInclude] public readonly PlayerScore PlayerScore;
+    [JsonInclude] public readonly PlayerScoreData PlayerScoreData;
     [JsonInclude] public readonly Research Research;
-    [JsonInclude] public readonly Procurement Procurement;
+    [JsonInclude] public readonly ProcurementData ProcurementData;
     [JsonInclude] public readonly ModalsState ModalsState;
 
     private readonly StateRefresh _stateRefresh;
@@ -25,29 +25,29 @@ public class GameState
 
     public GameState(
         Timeline timeline,
-        Money money,
-        Staff staff,
+        MoneyData moneyData,
+        StaffData staffData,
         Archive archive,
         PendingMission pendingMission,
-        MissionPrep missionPrep,
+        MissionPrepData missionPrepData,
         Factions factions,
-        PlayerScore playerScore,
+        PlayerScoreData playerScoreData,
         Research research,
-        Procurement procurement,
+        ProcurementData procurementData,
         PersistentStorage storage,
         StateRefresh stateRefresh,
         ModalsState modalsState)
     {
         Timeline = timeline;
-        Money = money;
-        Staff = staff;
+        MoneyData = moneyData;
+        StaffData = staffData;
         Archive = archive;
         PendingMission = pendingMission;
-        MissionPrep = missionPrep;
+        MissionPrepData = missionPrepData;
         Factions = factions;
-        PlayerScore = playerScore;
+        PlayerScoreData = playerScoreData;
         Research = research;
-        Procurement = procurement;
+        ProcurementData = procurementData;
         _storage = storage;
         _stateRefresh = stateRefresh;
         ModalsState = modalsState;
@@ -64,16 +64,16 @@ public class GameState
         // kja classes for whom the .Data. is being reset probably don't need
         // to be included in the GameState. Only classes in Model/Data dir need to be.
         Timeline.Reset();
-        Money.Data.Reset();
-        Staff.Data.Reset();
+        MoneyData.Reset();
+        StaffData.Reset();
         Archive.Reset();
         PendingMission.Data.Reset();
-        MissionPrep.Data.Reset();
+        MissionPrepData.Reset();
         Factions.Reset();
-        PlayerScore.Data.Reset();
+        PlayerScoreData.Reset();
         Research.Reset();
         PendingMission.Reset();
-        Procurement.Data.Reset();
+        ProcurementData.Reset();
         ModalsState.Reset();
         _storage.Reset();
         _stateRefresh.Trigger();

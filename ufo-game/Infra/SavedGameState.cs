@@ -21,16 +21,16 @@ public static class SavedGameState
             JsonObject gameJson = storage.GetItem<JsonNode>(nameof(GameState)).AsObject();
 
             var timeline = gameJson[nameof(Timeline)].Deserialize<Timeline>()!;
-            var moneyData = gameJson[nameof(Money)]?[nameof(Money.Data)].Deserialize<MoneyData>()!;
+            var moneyData = gameJson[nameof(MoneyData)].Deserialize<MoneyData>()!;
             var factions = gameJson[nameof(Factions)].Deserialize<Factions>()!;
             var research = gameJson[nameof(Research)].Deserialize<Research>()!;
             var archive = gameJson[nameof(Archive)].Deserialize<Archive>()!;
-            var playerScoreData = gameJson[nameof(PlayerScore)]?[nameof(PlayerScore.Data)].Deserialize<PlayerScoreData>()!;
-            var missionPrepData = gameJson[nameof(MissionPrep)]?[nameof(MissionPrep.Data)].Deserialize<MissionPrepData>()!;
+            var playerScoreData = gameJson[nameof(PlayerScoreData)].Deserialize<PlayerScoreData>()!;
+            var missionPrepData = gameJson[nameof(MissionPrepData)].Deserialize<MissionPrepData>()!;
             var pendingMissionData = gameJson[nameof(PendingMission)]?[nameof(PendingMission.Data)]
                 .Deserialize<PendingMissionData>()!;
-            var staffData = gameJson[nameof(Staff)]?[nameof(Staff.Data)].Deserialize<StaffData>()!;
-            var procurementData = gameJson[nameof(Procurement)]?[nameof(Procurement.Data)].Deserialize<ProcurementData>()!;
+            var staffData = gameJson[nameof(StaffData)].Deserialize<StaffData>()!;
+            var procurementData = gameJson[nameof(ProcurementData)].Deserialize<ProcurementData>()!;
             var modalsState = gameJson[nameof(ModalsState)].Deserialize<ModalsState>()!;
 
             // These cannot be rolled into loop, because then I would have to have IEnumerable<object>,

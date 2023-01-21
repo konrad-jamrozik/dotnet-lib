@@ -1,11 +1,9 @@
-﻿using System.Text.Json.Serialization;
-using UfoGame.Model.Data;
+﻿using UfoGame.Model.Data;
 
 namespace UfoGame.Model;
 
 public class PlayerScore
 {
-    [JsonInclude]
     public readonly PlayerScoreData Data;
 
     public bool GameOver

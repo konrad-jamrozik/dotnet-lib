@@ -1,11 +1,9 @@
-﻿using System.Text.Json.Serialization;
-using UfoGame.Model.Data;
+﻿using UfoGame.Model.Data;
 
 namespace UfoGame.Model;
 
 public class Money
 {
-    [JsonInclude]
     public readonly MoneyData Data;
 
     private readonly Archive _archive;
