@@ -2,7 +2,7 @@
 
 namespace UfoGame.Model;
 
-// kja rename to MissionDeployment
+// kja rename MissionPrep to MissionDeployment
 public class MissionPrep
 {
     public readonly MissionPrepData Data;

@@ -15,7 +15,9 @@ public class Agent
     [JsonInclude] public int TimeLost { get; private set; }
     [JsonInclude] public bool AssignedToMission { get; private set; }
 
-    public int ExperienceBonus(int currentTime) // kja inject Timeline, extract AgentData
+    // kja Agent: inject Timeline; this will require extracting AgentData
+
+    public int ExperienceBonus(int currentTime) 
     {
         Debug.Assert(currentTime >= TimeHired);
         return TrainingTime(currentTime) + ExperienceFromMissions;

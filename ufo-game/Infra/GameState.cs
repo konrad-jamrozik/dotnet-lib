@@ -1,5 +1,4 @@
 ﻿using System.Text.Json.Serialization;
-using UfoGame.Model;
 using UfoGame.Model.Data;
 using UfoGame.ViewModel;
 
