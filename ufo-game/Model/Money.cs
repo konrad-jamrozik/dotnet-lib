@@ -17,7 +17,7 @@ public class Money
         + _archive.FailedMissions * -10
         + _archive.IgnoredMissions * -5;
 
-    public int Expenses => _staffData.CurrentAgents * 5;
+    public int Expenses => _staffData.AvailableAgents.Sum(agent => agent.Salary);
 
     public int MoneyPerTurnAmount => PassiveIncome - Expenses;
 

@@ -23,9 +23,7 @@ public class Agent
 
     public int TimeToRecover(float recoverySpeed) => (int)Math.Ceiling(Recovery / recoverySpeed);
 
-    public int Salary 
-        => 5 + TotalMissions;
-    // kja need to dedup salary with UfoGame.Model.Money.Expenses
+    public int Salary => 5 + TotalMissions;
     
     public int TrainingTime(int currentTime)
     {
