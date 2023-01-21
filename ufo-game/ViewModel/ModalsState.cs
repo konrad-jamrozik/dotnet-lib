@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace UfoGame.Model;
+namespace UfoGame.ViewModel;
 
 public class ModalsState
 {

@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using UfoGame.ViewModel;
 
 namespace UfoGame.Model;
 

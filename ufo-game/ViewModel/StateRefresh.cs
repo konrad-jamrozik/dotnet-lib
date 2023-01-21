@@ -1,6 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 
-namespace UfoGame.Model;
+namespace UfoGame.ViewModel;
 
 /// <summary>
 /// Implements "In-memory container service" pattern:
