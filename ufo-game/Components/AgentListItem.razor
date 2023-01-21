@@ -16,8 +16,8 @@
             </div>
             <div class="col col-auto align-self-center d-flex justify-content-center">
                 <button class="btn btn-primary" type="button" 
-                        data-bs-toggle="collapse" data-bs-target="#soldierInfo_@Index" 
-                        aria-expanded="false" aria-controls="soldierInfo_@Index">
+                        data-bs-toggle="collapse" data-bs-target="#agentInfo_@Index" 
+                        aria-expanded="false" aria-controls="agentInfo_@Index">
                     i
                 </button>
             </div>
@@ -36,7 +36,7 @@
         </div>
     </div>
 </div>
-<div class="collapse" id="soldierInfo_@Index">
+<div class="collapse" id="agentInfo_@Index">
     <Card Title="Agent info">
         <CardDataRow Label="Id" Value="@Agent.Id" />
         <CardDataRow Label="Salary" Value="@Agent.Salary"/>
@@ -50,7 +50,7 @@
         <CardDataRow Label="Failed missions" Value="@Agent.FailedMissions"/>
         <CardDataRow Label="Time spent recovering" Value="@Agent.TimeSpentRecovering"/>
     </Card>
-    @* kja button to fire soldier, with modal *@
+    @* kja button to fire agent, with modal *@
 </div>
 
 @code 
