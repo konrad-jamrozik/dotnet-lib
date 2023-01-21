@@ -58,6 +58,8 @@ public class GameState
 
     public void Reset()
     {
+        // kja classes for whom the .Data. is being reset probably don't need
+        // to be included in the GameState. Only classes in Model/Data dir need to be.
         Timeline.Reset();
         Money.Data.Reset();
         Staff.Data.Reset();
