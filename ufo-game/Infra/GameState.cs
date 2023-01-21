@@ -67,7 +67,6 @@ public class GameState
         MoneyData.Reset();
         StaffData.Reset();
         Archive.Reset();
-        PendingMission.Data.Reset();
         MissionPrepData.Reset();
         Factions.Reset();
         PlayerScoreData.Reset();

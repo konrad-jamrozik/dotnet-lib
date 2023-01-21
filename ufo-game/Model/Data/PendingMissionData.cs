@@ -51,7 +51,7 @@ public class PendingMissionData
     public PendingMissionData()
         => Reset();
 
-    public void Reset()
+    private void Reset()
     {
         AvailableIn = 0;
         ExpiresIn = 0;

@@ -137,13 +137,9 @@ public class PendingMission
         }
     }
 
-    public void GenerateNewOrClearMission()
-    {
-        Data = PendingMissionData.New(_playerScore, _random, _factions);
-    }
-
     public void Reset()
-    {
-        GenerateNewOrClearMission();
-    }
+        => GenerateNewOrClearMission();
+
+    public void GenerateNewOrClearMission()
+        => Data = PendingMissionData.New(_playerScore, _random, _factions);
 }
