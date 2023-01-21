@@ -6,7 +6,7 @@ namespace UfoGame.Model;
 
 // kja rename to MissionSite
 // Need to rethink where to put mission stats, like "OurPower" or "SuccessChance".
-// Probably in "Mission" (currently "MissionLauncher")
+// Probably in "Mission" (currently "MissionLauncher") 
 public class PendingMission
 {
     private const int MaxAgentSurvivalChance = 99;
@@ -79,7 +79,6 @@ public class PendingMission
     public int MoneyReward => (int)(Faction.Score/2 * Data.MoneyRewardCoefficient);
 
     private readonly Random _random = new Random();
-    private readonly MissionPrep _missionPrep;
     private readonly Archive _archive;
     private readonly Factions _factions;
     private readonly PlayerScore _playerScore;
@@ -88,7 +87,6 @@ public class PendingMission
 
     public PendingMission(
         PendingMissionData data,
-        MissionPrep missionPrep,
         Archive archive,
         Factions factions,
         PlayerScore playerScore,
@@ -96,7 +94,6 @@ public class PendingMission
         Timeline timeline)
     {
         Data = data;
-        _missionPrep = missionPrep;
         _archive = archive;
         _factions = factions;
         _playerScore = playerScore;
