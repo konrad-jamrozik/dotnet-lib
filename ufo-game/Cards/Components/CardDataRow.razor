@@ -1,14 +1,14 @@
 ﻿@using UfoGame.Model;
 
 <div class="row align-items-center @CssClass">
-    <div class="col-6 text-start">@Text</div>
+    <div class="col-6 text-start">@Label</div>
     <div class="col @ValueCssClass">@DisplayedValue()</div>
 </div>
 
 @code
 {
-    [Parameter] // kja rename to label
-    public string Text { get; set; } = "";
+    [Parameter]
+    public string Label { get; set; } = "";
 
     [Parameter]
     public object Value { get; set; } = "";

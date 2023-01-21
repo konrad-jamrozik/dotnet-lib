@@ -11,7 +11,7 @@
         factions = factions.OrderByDescending(f => f.Score).ToList();
         foreach (var faction in factions)
         {
-            <CardDataRow Text="@faction.Name" 
+            <CardDataRow Label="@faction.Name" 
                          Value="faction.Score" 
                          CssClass="@(faction.Name == "Player" ? "text-success" : "text-danger")"/>
         }

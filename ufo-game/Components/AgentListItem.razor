@@ -38,15 +38,15 @@
 </div>
 <div class="collapse" id="soldierInfo_@Index">
     <Card Title="Agent info">
-        <CardDataRow Text="Id" Value="@Agent.Id" />
-        <CardDataRow Text="Salary" Value="@Agent.Salary"/>
-        <CardDataRow Text="Training time" Value="@Agent.TrainingTime(Game.Timeline.CurrentTime)"/>
-        <CardDataRow Text="Time hired" Value="@Agent.TimeHired"/>
-        <CardDataRow Text="Time employed" Value="@Agent.TimeEmployed(Game.Timeline.CurrentTime)"/>
-        <CardDataRow Text="Total missions" Value="@Agent.TotalMissions"/>
-        <CardDataRow Text="Successful missions" Value="@Agent.SuccessfulMissions"/>
-        <CardDataRow Text="Failed missions" Value="@Agent.FailedMissions"/>
-        <CardDataRow Text="Time spent recovering" Value="@Agent.TimeSpentRecovering"/>
+        <CardDataRow Label="Id" Value="@Agent.Id" />
+        <CardDataRow Label="Salary" Value="@Agent.Salary"/>
+        <CardDataRow Label="Training time" Value="@Agent.TrainingTime(Game.Timeline.CurrentTime)"/>
+        <CardDataRow Label="Time hired" Value="@Agent.TimeHired"/>
+        <CardDataRow Label="Time employed" Value="@Agent.TimeEmployed(Game.Timeline.CurrentTime)"/>
+        <CardDataRow Label="Total missions" Value="@Agent.TotalMissions"/>
+        <CardDataRow Label="Successful missions" Value="@Agent.SuccessfulMissions"/>
+        <CardDataRow Label="Failed missions" Value="@Agent.FailedMissions"/>
+        <CardDataRow Label="Time spent recovering" Value="@Agent.TimeSpentRecovering"/>
     @* kja add time spent in recovery *@
     </Card>
     @* kja button to fire soldier, with modal *@
