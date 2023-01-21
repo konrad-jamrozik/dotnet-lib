@@ -10,7 +10,6 @@ public class Staff
 
     private const int AgentPrice = 50;
 
-    // kja this probably should be on Money; note this is used in UI
     public int AgentsToHireCost => Data.AgentsToHire * AgentPrice;
 
     public int MinAgentsToHire => 1;
@@ -36,13 +35,18 @@ public class Staff
         _timeline = timeline;
     }
 
-    public bool CanHireAgents(int offset = 0)
+    public bool CanHireAgents(int offset = 0, bool tryNarrow = true)
     {
         if (_playerScore.GameOver)
             return false;
 
-        if (!WithinRange(Data.AgentsToHire) && Data.AgentsToHire > MinAgentsToHire)
-            NarrowAgentsToHire();
+        if (WithinRange(Data.AgentsToHire + offset))
+            return true;
+
+        if (!tryNarrow || Data.AgentsToHire <= MinAgentsToHire)
+            return false;
+
+        NarrowAgentsToHire();
 
         return WithinRange(Data.AgentsToHire + offset);
 
@@ -55,10 +59,7 @@ public class Staff
 
     public void HireAgents()
     {
-        // kja this may FIRST narrow agents to hire and THEN pass. This is unexpected from user POV.
-        // Same with AgentsToSend and AgentsToFire.
-        // Need to pass something like: allowNarrowing: false.
-        Debug.Assert(CanHireAgents());
+        Debug.Assert(CanHireAgents(tryNarrow: false));
         _money.PayForHiringAgents(AgentsToHireCost);
         _archive.RecordHiredAgents(Data.AgentsToHire);
         Data.CurrentAgents += Data.AgentsToHire;
