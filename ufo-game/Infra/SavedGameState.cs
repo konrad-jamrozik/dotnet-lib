@@ -24,7 +24,7 @@ public static class SavedGameState
             var moneyData = gameJson[nameof(Money)]?[nameof(Money.Data)].Deserialize<MoneyData>()!;
             var factions = gameJson[nameof(Factions)].Deserialize<Factions>()!;
             var research = gameJson[nameof(Research)].Deserialize<Research>()!;
-            var operationsArchive = gameJson[nameof(Archive)].Deserialize<Archive>()!; // kja rename to archive
+            var archive = gameJson[nameof(Archive)].Deserialize<Archive>()!;
             var playerScoreData = gameJson[nameof(PlayerScore)]?[nameof(PlayerScore.Data)].Deserialize<PlayerScoreData>()!;
             var missionPrepData = gameJson[nameof(MissionPrep)]?[nameof(MissionPrep.Data)].Deserialize<MissionPrepData>()!;
             var pendingMissionData = gameJson[nameof(PendingMission)]?[nameof(PendingMission.Data)]
@@ -39,7 +39,7 @@ public static class SavedGameState
             services.AddSingleton(moneyData);
             services.AddSingleton(factions);
             services.AddSingleton(research);
-            services.AddSingleton(operationsArchive);
+            services.AddSingleton(archive);
             services.AddSingleton(playerScoreData);
             services.AddSingleton(staffData);
             services.AddSingleton(missionPrepData);
