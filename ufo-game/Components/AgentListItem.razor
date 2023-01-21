@@ -57,10 +57,10 @@
     [Parameter, EditorRequired]
     public int Index { get; set; }
 
-#nullable disable
+    #nullable disable
     [Parameter, EditorRequired]
     public Agent Agent { get; set; }
-#nullable enable
+    #nullable enable
 
     private void OnChangeAgentMissionAssignment(object eventArgsValue)
     {
