@@ -59,7 +59,7 @@ void AddTypesWithPersistableState(WebAssemblyHostBuilder builder)
         builder.Services.AddSingleton(new PlayerScoreData());
         builder.Services.AddSingleton(new StaffData());
         builder.Services.AddSingleton(new MissionPrepData());
-        builder.Services.AddSingleton(new PendingMissionData());
+        builder.Services.AddSingleton(new PendingMissions());
         builder.Services.AddSingleton(new ProcurementData());
         builder.Services.AddSingleton(new ModalsState());
     }

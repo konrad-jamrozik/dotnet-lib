@@ -1,7 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Text.Json;
 using System.Text.Json.Nodes;
-using UfoGame.Model;
 using UfoGame.Model.Data;
 using UfoGame.ViewModel;
 
@@ -27,8 +26,7 @@ public static class SavedGameState
             var archive = gameJson[nameof(Archive)].Deserialize<Archive>()!;
             var playerScoreData = gameJson[nameof(PlayerScoreData)].Deserialize<PlayerScoreData>()!;
             var missionPrepData = gameJson[nameof(MissionPrepData)].Deserialize<MissionPrepData>()!;
-            var pendingMissionData = gameJson[nameof(PendingMission)]?[nameof(PendingMission.Data)]
-                .Deserialize<PendingMissionData>()!;
+            var pendingMissions = gameJson[nameof(PendingMissions)].Deserialize<PendingMissions>()!;
             var staffData = gameJson[nameof(StaffData)].Deserialize<StaffData>()!;
             var procurementData = gameJson[nameof(ProcurementData)].Deserialize<ProcurementData>()!;
             var modalsState = gameJson[nameof(ModalsState)].Deserialize<ModalsState>()!;
@@ -43,7 +41,7 @@ public static class SavedGameState
             services.AddSingleton(playerScoreData);
             services.AddSingleton(staffData);
             services.AddSingleton(missionPrepData);
-            services.AddSingleton(pendingMissionData);
+            services.AddSingleton(pendingMissions);
             services.AddSingleton(procurementData);
             services.AddSingleton(modalsState);
             Console.Out.WriteLine("Deserialized all game state and added to service collection.");

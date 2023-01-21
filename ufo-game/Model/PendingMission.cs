@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using System.Text.Json.Serialization;
 using UfoGame.Model.Data;
 
 namespace UfoGame.Model;
@@ -62,8 +61,9 @@ public class PendingMission
 
     public int AgentSurvivabilityPower => _staff.Data.AgentsAssignedToMissionCount * _staff.Data.AgentSurvivability;
 
-    [JsonInclude]
-    public PendingMissionData Data;
+    public readonly PendingMissions Missions;
+
+    public PendingMissionData Data => Missions.Data[0];
 
     public Faction Faction => _factions.Data.Single(f => f.Name == Data.FactionName);
 
@@ -86,21 +86,21 @@ public class PendingMission
     private readonly Timeline _timeline;
 
     public PendingMission(
-        PendingMissionData data,
+        PendingMissions missions,
         Archive archive,
         Factions factions,
         PlayerScore playerScore,
         Staff staff,
         Timeline timeline)
     {
-        Data = data;
+        Missions = missions;
         _archive = archive;
         _factions = factions;
         _playerScore = playerScore;
         _staff = staff;
         _timeline = timeline;
-        if (data.IsNoMission)
-            Data = PendingMissionData.New(_playerScore, _random, _factions);
+        if (Data.IsNoMission)
+            Missions.New(_playerScore, _random, _factions);
     }
 
     public void AdvanceMissionTime()
@@ -134,9 +134,6 @@ public class PendingMission
         }
     }
 
-    public void Reset()
-        => GenerateNewOrClearMission();
-
     public void GenerateNewOrClearMission()
-        => Data = PendingMissionData.New(_playerScore, _random, _factions);
+        => Missions.New(_playerScore, _random, _factions);
 }

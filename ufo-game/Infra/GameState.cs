@@ -12,7 +12,7 @@ public class GameState
     [JsonInclude] public readonly StaffData StaffData;
     [JsonInclude] public readonly Archive Archive;
     [JsonInclude] public readonly MissionPrepData MissionPrepData;
-    [JsonInclude] public readonly PendingMission PendingMission;
+    [JsonInclude] public readonly PendingMissions PendingMissions;
     [JsonInclude] public readonly Factions Factions;
     [JsonInclude] public readonly PlayerScoreData PlayerScoreData;
     [JsonInclude] public readonly Research Research;
@@ -28,7 +28,7 @@ public class GameState
         MoneyData moneyData,
         StaffData staffData,
         Archive archive,
-        PendingMission pendingMission,
+        PendingMissions pendingMissions,
         MissionPrepData missionPrepData,
         Factions factions,
         PlayerScoreData playerScoreData,
@@ -42,7 +42,7 @@ public class GameState
         MoneyData = moneyData;
         StaffData = staffData;
         Archive = archive;
-        PendingMission = pendingMission;
+        PendingMissions = pendingMissions;
         MissionPrepData = missionPrepData;
         Factions = factions;
         PlayerScoreData = playerScoreData;
@@ -61,8 +61,6 @@ public class GameState
 
     public void Reset()
     {
-        // kja classes for whom the .Data. is being reset probably don't need
-        // to be included in the GameState. Only classes in Model/Data dir need to be.
         Timeline.Reset();
         MoneyData.Reset();
         StaffData.Reset();
@@ -71,7 +69,7 @@ public class GameState
         Factions.Reset();
         PlayerScoreData.Reset();
         Research.Reset();
-        PendingMission.Reset();
+        PendingMissions.Reset();
         ProcurementData.Reset();
         ModalsState.Reset();
         _storage.Reset();

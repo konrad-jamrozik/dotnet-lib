@@ -10,7 +10,7 @@ public class PendingMissionData
             ? NewValid(playerScore, random, factions)
             : NewEmpty;
 
-    private static PendingMissionData NewEmpty => new PendingMissionData();
+    public static PendingMissionData NewEmpty => new PendingMissionData();
 
     private static PendingMissionData NewValid(
         PlayerScore playerScore,
