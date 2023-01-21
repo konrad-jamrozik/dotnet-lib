@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Text.Json.Serialization;
 
-namespace UfoGame.Model;
+namespace UfoGame.Model.Data;
 
 public class PendingMissionData
 {

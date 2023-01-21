@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace UfoGame.Model;
+namespace UfoGame.Model.Data;
 
 public class Archive
 {
