@@ -92,6 +92,7 @@ public class MissionLauncher
                && agentsAssignedToMission <= _missionPrep.MaxAgentsSendableOnMission;
     }
 
+    // kja make it functional / immutable, to avoid unexpected mutations
     public void LaunchMission(PendingMission mission)
     {
         Debug.Assert(CanLaunchMission(mission));

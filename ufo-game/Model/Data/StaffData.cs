@@ -9,11 +9,7 @@ public class StaffData
     [JsonInclude] public int NextAgentId;
     [JsonInclude] public int AgentEffectiveness;
     [JsonInclude] public int AgentSurvivability;
-    [JsonInclude] public int AgentsToHire;
-    [JsonInclude] public int AgentsToFire;
-    [JsonInclude] public int CurrentAgents;
     [JsonInclude] public float AgentRecoverySpeed { get; private set; }
-
     [JsonInclude] public List<Agent> Agents = new List<Agent>();
 
     [JsonIgnore]
@@ -74,9 +70,6 @@ public class StaffData
         NextAgentId = 0;
         AgentEffectiveness = 100;
         AgentSurvivability = 100;
-        AgentsToHire = 1;
-        AgentsToFire = 1;
-        CurrentAgents = 0;
         AgentRecoverySpeed = 0.5f;
         Agents = new List<Agent>();
     }
@@ -86,9 +79,9 @@ public class StaffData
         AgentsInRecovery.ForEach(s => s.TickRecovery(AgentRecoverySpeed));
     }
 
-    public void HireAgents(int currentTime)
+    public void AddNewRandomAgents(int agentsToAdd, int currentTime)
     {
-        Enumerable.Range(NextAgentId, AgentsToHire)
+        Enumerable.Range(NextAgentId, agentsToAdd)
             .ToList()
             .ForEach(
                 id => Agents.Add(
@@ -96,6 +89,7 @@ public class StaffData
                         id,
                         AgentNames.RandomName(),
                         currentTime)));
-        NextAgentId += AgentsToHire;
+        NextAgentId += agentsToAdd;
+        Console.Out.WriteLine($"Added {agentsToAdd} new, random agents. Available agents now at {AvailableAgents}.");
     }
 }

@@ -16,6 +16,7 @@ public class GameState
     [JsonInclude] public readonly Factions Factions;
     [JsonInclude] public readonly PlayerScore PlayerScore;
     [JsonInclude] public readonly Research Research;
+    [JsonInclude] public readonly Procurement Procurement;
     [JsonInclude] public readonly ModalsState ModalsState;
 
     private readonly StateRefresh _stateRefresh;
@@ -32,6 +33,7 @@ public class GameState
         Factions factions,
         PlayerScore playerScore,
         Research research,
+        Procurement procurement,
         PersistentStorage storage,
         StateRefresh stateRefresh,
         ModalsState modalsState)
@@ -45,6 +47,7 @@ public class GameState
         Factions = factions;
         PlayerScore = playerScore;
         Research = research;
+        Procurement = procurement;
         _storage = storage;
         _stateRefresh = stateRefresh;
         ModalsState = modalsState;
@@ -70,6 +73,7 @@ public class GameState
         PlayerScore.Data.Reset();
         Research.Reset();
         PendingMission.Reset();
+        Procurement.Data.Reset();
         ModalsState.Reset();
         _storage.Reset();
         _stateRefresh.Trigger();

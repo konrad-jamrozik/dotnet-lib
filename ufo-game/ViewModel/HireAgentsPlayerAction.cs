@@ -4,39 +4,39 @@ namespace UfoGame.ViewModel;
 
 class HireAgentsPlayerAction : IPlayerActionOnRangeInput
 {
-    private readonly Staff _staff;
+    private readonly Procurement _procurement;
     private readonly StateRefresh _stateRefresh;
 
-    public HireAgentsPlayerAction(Staff staff, StateRefresh stateRefresh)
+    public HireAgentsPlayerAction(Procurement procurement, StateRefresh stateRefresh)
     {
-        _staff = staff;
+        _procurement = procurement;
         _stateRefresh = stateRefresh;
     }
 
     public void Act()
     {
-        _staff.HireAgents();
+        _procurement.HireAgents();
         _stateRefresh.Trigger();
     }
 
     public string ActLabel()
-        => $"Hire {_staff.Data.AgentsToHire} agents for ${_staff.AgentsToHireCost}";
+        => $"Hire {_procurement.Data.AgentsToHire} agents for ${_procurement.AgentsToHireCost}";
 
     public int Input
     {
-        get => _staff.Data.AgentsToHire;
-        set => _staff.Data.AgentsToHire = value;
+        get => _procurement.Data.AgentsToHire;
+        set => _procurement.Data.AgentsToHire = value;
     }
 
-    public void IncrementInput() => _staff.Data.AgentsToHire += 1;
+    public void IncrementInput() => _procurement.Data.AgentsToHire += 1;
 
-    public void DecrementInput() => _staff.Data.AgentsToHire -= 1;
+    public void DecrementInput() => _procurement.Data.AgentsToHire -= 1;
 
-    public bool CanAct() => _staff.CanHireAgents();
+    public bool CanAct() => _procurement.CanHireAgents();
 
-    public bool CanAct(int value) => _staff.CanHireAgents(value);
+    public bool CanAct(int value) => _procurement.CanHireAgents(value);
 
-    public int InputMax() => _staff.MaxAgentsToHire;
+    public int InputMax() => _procurement.MaxAgentsToHire;
 
-    public int InputMin() => _staff.MinAgentsToHire;
+    public int InputMin() => _procurement.MinAgentsToHire;
 }

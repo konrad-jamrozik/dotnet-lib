@@ -24,12 +24,13 @@ public static class SavedGameState
             var moneyData = gameJson[nameof(Money)]?[nameof(Money.Data)].Deserialize<MoneyData>()!;
             var factions = gameJson[nameof(Factions)].Deserialize<Factions>()!;
             var research = gameJson[nameof(Research)].Deserialize<Research>()!;
-            var operationsArchive = gameJson[nameof(Archive)].Deserialize<Archive>()!;
+            var operationsArchive = gameJson[nameof(Archive)].Deserialize<Archive>()!; // kja rename to archive
             var playerScoreData = gameJson[nameof(PlayerScore)]?[nameof(PlayerScore.Data)].Deserialize<PlayerScoreData>()!;
             var missionPrepData = gameJson[nameof(MissionPrep)]?[nameof(MissionPrep.Data)].Deserialize<MissionPrepData>()!;
             var pendingMissionData = gameJson[nameof(PendingMission)]?[nameof(PendingMission.Data)]
                 .Deserialize<PendingMissionData>()!;
             var staffData = gameJson[nameof(Staff)]?[nameof(Staff.Data)].Deserialize<StaffData>()!;
+            var procurementData = gameJson[nameof(Procurement)]?[nameof(Procurement.Data)].Deserialize<ProcurementData>()!;
             var modalsState = gameJson[nameof(ModalsState)].Deserialize<ModalsState>()!;
 
             // These cannot be rolled into loop, because then I would have to have IEnumerable<object>,
@@ -43,6 +44,7 @@ public static class SavedGameState
             services.AddSingleton(staffData);
             services.AddSingleton(missionPrepData);
             services.AddSingleton(pendingMissionData);
+            services.AddSingleton(procurementData);
             services.AddSingleton(modalsState);
             Console.Out.WriteLine("Deserialized all game state and added to service collection.");
             return true;

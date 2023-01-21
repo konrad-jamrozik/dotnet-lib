@@ -27,9 +27,11 @@ builder.Services.AddSingleton<PlayerScore>();
 builder.Services.AddSingleton<MissionPrep>();
 builder.Services.AddSingleton<PendingMission>();
 builder.Services.AddSingleton<Staff>();
+builder.Services.AddSingleton<Procurement>();
 builder.Services.AddSingleton<MissionLauncher>();
 builder.Services.AddSingleton<Game>();
 builder.Services.AddSingleton<GameState>();
+
 
 // ViewModel
 builder.Services.AddSingleton<StateRefresh>();
@@ -58,6 +60,7 @@ void AddTypesWithPersistableState(WebAssemblyHostBuilder builder)
         builder.Services.AddSingleton(new StaffData());
         builder.Services.AddSingleton(new MissionPrepData());
         builder.Services.AddSingleton(new PendingMissionData());
+        builder.Services.AddSingleton(new ProcurementData());
         builder.Services.AddSingleton(new ModalsState());
     }
 }

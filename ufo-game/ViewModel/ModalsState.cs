@@ -2,7 +2,7 @@
 
 namespace UfoGame.ViewModel;
 
-public class ModalsState
+public class ModalsState // kja rename to ModalState
 {
     [JsonInclude] public bool IntroModalShown;
 

@@ -3,6 +3,7 @@ using UfoGame.Model.Data;
 
 namespace UfoGame.Model;
 
+// kja rename to MissionDeployment
 public class MissionPrep
 {
     [JsonInclude]

@@ -1,0 +1,18 @@
+﻿using System.Text.Json.Serialization;
+
+namespace UfoGame.Model.Data;
+
+public class ProcurementData
+{
+    [JsonInclude] public int AgentsToHire;
+    [JsonInclude] public int AgentsToFire;
+
+    public ProcurementData()
+        => Reset();
+
+    public void Reset()
+    {
+        AgentsToHire = 1;
+        AgentsToFire = 1;
+    }
+}
