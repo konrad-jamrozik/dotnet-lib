@@ -3,6 +3,7 @@ using Blazored.Modal;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using UfoGame;
+using UfoGame.Infra;
 using UfoGame.Model;
 using UfoGame.ViewModel;
 

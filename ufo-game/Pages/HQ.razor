@@ -1,7 +1,8 @@
 ﻿@page "/"
 @page "/hq"
 @using UfoGame.Cards
-@inject Model.GameState GameState
+@using UfoGame.Infra
+@inject GameState GameState
 
 <PageTitle>HQ</PageTitle>
 
@@ -10,8 +11,8 @@
 <div class="container-fluid text-center px-2">
     <div class="row">
         <PlayerActionsCard/>
-        <MissionCard />
-        <AgentsCard />
+        <MissionCard/>
+        <AgentsCard/>
         <MoneyCard/>
         <ScoreCard/>
         <StatsCard/>

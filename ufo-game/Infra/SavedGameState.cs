@@ -1,9 +1,10 @@
 ﻿using System.Diagnostics;
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using UfoGame.Model;
 using UfoGame.ViewModel;
 
-namespace UfoGame.Model;
+namespace UfoGame.Infra;
 
 public static class SavedGameState
 {

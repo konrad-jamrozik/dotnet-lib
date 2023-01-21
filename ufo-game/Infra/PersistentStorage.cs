@@ -1,6 +1,6 @@
 ﻿using Blazored.LocalStorage;
 
-namespace UfoGame.Model;
+namespace UfoGame.Infra;
 
 // kja move this and other supporting infra classes to different namespace than "model"
 public class PersistentStorage

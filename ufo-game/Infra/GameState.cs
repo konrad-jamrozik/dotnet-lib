@@ -1,7 +1,8 @@
 ﻿using System.Text.Json.Serialization;
+using UfoGame.Model;
 using UfoGame.ViewModel;
 
-namespace UfoGame.Model;
+namespace UfoGame.Infra;
 
 public class GameState
 {
