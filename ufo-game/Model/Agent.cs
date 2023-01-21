@@ -21,7 +21,6 @@ public class Agent
         return TrainingTime(currentTime) + ExperienceFromMissions;
     }
 
-    // kja hook it up to AgentListItem UI instead of Recovery
     public int TimeToRecover(float recoverySpeed) => (int)Math.Ceiling(Recovery / recoverySpeed);
 
     public int Salary 
