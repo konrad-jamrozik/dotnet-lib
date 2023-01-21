@@ -17,6 +17,9 @@ public class Staff
 
     public int MaxAgentsToHire => _money.CurrentMoney / AgentPrice;
 
+    // kja break dependency on Money by moving hiring logic out of staff into a new class, "Procurement".
+    // Once fixed, make money stop depending on StaffData. Make it possibly depend on Staff, if still needed.
+    // Probably more stuff should go through procurement later on, lik buying equipment, other staff.
     private readonly Money _money;
     private readonly Archive _archive;
     private readonly PlayerScore _playerScore;
