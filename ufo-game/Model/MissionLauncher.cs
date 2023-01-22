@@ -13,7 +13,7 @@ public class MissionLauncher
     private readonly Archive _archive;
     private readonly PlayerScore _playerScore;
     private readonly Staff _staff;
-    private readonly Money _money;
+    private readonly Accounting _accounting;
     private readonly StateRefresh _stateRefresh;
     private readonly Timeline _timeline;
     private readonly GameState _gameState;
@@ -23,7 +23,7 @@ public class MissionLauncher
         Archive archive,
         PlayerScore playerScore,
         Staff staff,
-        Money money,
+        Accounting accounting,
         StateRefresh stateRefresh,
         GameState gameState,
         Timeline timeline)
@@ -32,7 +32,7 @@ public class MissionLauncher
         _archive = archive;
         _playerScore = playerScore;
         _staff = staff;
-        _money = money;
+        _accounting = accounting;
         _stateRefresh = stateRefresh;
         _gameState = gameState;
         _timeline = timeline;
@@ -43,7 +43,7 @@ public class MissionLauncher
         int scoreDiff;
         if (success)
         {
-            _money.AddMissionLoot(mission.MoneyReward);
+            _accounting.AddMissionLoot(mission.MoneyReward);
             scoreDiff = Math.Min(PlayerScore.WinScore, mission.Faction.Score);
             _playerScore.Data.Value += scoreDiff;
             mission.Faction.Score -= scoreDiff;

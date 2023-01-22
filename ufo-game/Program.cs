@@ -22,7 +22,7 @@ builder.Services.AddBlazoredLocalStorageAsSingleton(config =>
 });
 builder.Services.AddSingleton<PersistentStorage>();
 AddTypesWithPersistableState(builder);
-builder.Services.AddSingleton<Money>();
+builder.Services.AddSingleton<Accounting>();
 builder.Services.AddSingleton<PlayerScore>();
 builder.Services.AddSingleton<MissionPrep>();
 builder.Services.AddSingleton<PendingMission>();
@@ -55,7 +55,7 @@ void AddTypesWithPersistableState(WebAssemblyHostBuilder builder)
         builder.Services.AddSingleton<Factions>();
         builder.Services.AddSingleton<Research>();
         builder.Services.AddSingleton<Archive>();
-        builder.Services.AddSingleton(new MoneyData());
+        builder.Services.AddSingleton(new AccountingData());
         builder.Services.AddSingleton(new PlayerScoreData());
         builder.Services.AddSingleton(new StaffData());
         builder.Services.AddSingleton(new MissionPrepData());

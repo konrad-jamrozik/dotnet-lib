@@ -14,9 +14,9 @@ public class Procurement
 
     public int MinAgentsToHire => 1;
 
-    public int MaxAgentsToHire => _money.CurrentMoney / AgentPrice;
+    public int MaxAgentsToHire => _accounting.CurrentMoney / AgentPrice;
 
-    private readonly Money _money;
+    private readonly Accounting _accounting;
     private readonly Staff _staff;
     private readonly PlayerScore _playerScore;
     private readonly Archive _archive;
@@ -24,14 +24,14 @@ public class Procurement
 
     public Procurement(
         ProcurementData data,
-        Money money,
+        Accounting accounting,
         Staff staff,
         PlayerScore playerScore,
         Archive archive,
         Timeline timeline)
     {
         Data = data;
-        _money = money;
+        _accounting = accounting;
         _staff = staff;
         _playerScore = playerScore;
         _archive = archive;
@@ -63,7 +63,7 @@ public class Procurement
     public void HireAgents()
     {
         Debug.Assert(CanHireAgents(tryNarrow: false));
-        _money.PayForHiringAgents(AgentsToHireCost);
+        _accounting.PayForHiringAgents(AgentsToHireCost);
         _archive.RecordHiredAgents(Data.AgentsToHire);
         _staff.Data.AddNewRandomAgents(Data.AgentsToHire, _timeline.CurrentTime);
         

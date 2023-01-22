@@ -9,7 +9,7 @@
     <div class="row">
         <CardButton Enabled="Game.CanRaiseMoney()"
                     OnClick="Game.RaiseMoney">
-            Raise money: $@Game.Money.Data.MoneyRaisedPerActionAmount
+            Raise money: $@Game.Accounting.Data.MoneyRaisedPerActionAmount
         </CardButton>
         <CardButton Enabled="Game.CanResearchMoneyRaisingMethods()"
                     OnClick="Game.ResearchMoneyRaisingMethods">

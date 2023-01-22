@@ -4,10 +4,10 @@
 
 
 <Card Title="Money">
-    <CardDataRow Label="Balance" Value="Game.Money.CurrentMoney" />
+    <CardDataRow Label="Balance" Value="Game.Accounting.CurrentMoney" />
     <CardDataRow Label="Income per turn" 
-                 Value="Game.Money.MoneyPerTurnAmount" 
-                 ValueCssClass="@(Game.Money.MoneyPerTurnAmount >= 0 ? "text-success" : "text-danger")" />
-    <CardDataRow Label="Passive income" Value="Game.Money.PassiveIncome" ValueCssClass="text-success" />
-    <CardDataRow Label="Expenses" Value="Game.Money.Expenses" ValueCssClass="text-danger" />
+                 Value="Game.Accounting.MoneyPerTurnAmount" 
+                 ValueCssClass="@(Game.Accounting.MoneyPerTurnAmount >= 0 ? "text-success" : "text-danger")" />
+    <CardDataRow Label="Passive income" Value="Game.Accounting.PassiveIncome" ValueCssClass="text-success" />
+    <CardDataRow Label="Expenses" Value="Game.Accounting.Expenses" ValueCssClass="text-danger" />
 </Card>

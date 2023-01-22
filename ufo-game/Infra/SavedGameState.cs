@@ -20,7 +20,7 @@ public static class SavedGameState
             JsonObject gameJson = storage.GetItem<JsonNode>(nameof(GameState)).AsObject();
 
             var timeline = gameJson[nameof(Timeline)].Deserialize<Timeline>()!;
-            var moneyData = gameJson[nameof(MoneyData)].Deserialize<MoneyData>()!;
+            var accountingData = gameJson[nameof(AccountingData)].Deserialize<AccountingData>()!;
             var factions = gameJson[nameof(Factions)].Deserialize<Factions>()!;
             var research = gameJson[nameof(Research)].Deserialize<Research>()!;
             var archive = gameJson[nameof(Archive)].Deserialize<Archive>()!;
@@ -34,7 +34,7 @@ public static class SavedGameState
             // These cannot be rolled into loop, because then I would have to have IEnumerable<object>,
             // and the generic "object" type will prevent the DI framework from recognizing the types.
             services.AddSingleton(timeline);
-            services.AddSingleton(moneyData);
+            services.AddSingleton(accountingData);
             services.AddSingleton(factions);
             services.AddSingleton(research);
             services.AddSingleton(archive);

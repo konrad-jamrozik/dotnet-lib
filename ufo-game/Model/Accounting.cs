@@ -2,9 +2,9 @@
 
 namespace UfoGame.Model;
 
-public class Money
+public class Accounting
 {
-    public readonly MoneyData Data;
+    public readonly AccountingData Data;
 
     private readonly Archive _archive;
     private readonly Staff _staff;
@@ -19,7 +19,7 @@ public class Money
 
     public int MoneyPerTurnAmount => PassiveIncome - Expenses;
 
-    public Money(MoneyData data, Archive archive, Staff staff)
+    public Accounting(AccountingData data, Archive archive, Staff staff)
     {
         Data = data;
         _archive = archive;

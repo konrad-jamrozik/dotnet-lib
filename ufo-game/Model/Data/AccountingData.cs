@@ -2,12 +2,12 @@
 
 namespace UfoGame.Model.Data;
 
-public class MoneyData
+public class AccountingData
 {
     [JsonInclude] public int CurrentMoney { get; set; }
     [JsonInclude] public int MoneyRaisedPerActionAmount;
 
-    public MoneyData()
+    public AccountingData()
         => Reset();
 
     public void Reset()
