@@ -22,7 +22,7 @@ public static class SavedGameState
             var timeline = gameJson[nameof(Timeline)].Deserialize<Timeline>()!;
             var accountingData = gameJson[nameof(AccountingData)].Deserialize<AccountingData>()!;
             var factions = gameJson[nameof(Factions)].Deserialize<Factions>()!;
-            var research = gameJson[nameof(Research)].Deserialize<Research>()!;
+            var researchData = gameJson[nameof(ResearchData)].Deserialize<ResearchData>()!;
             var archive = gameJson[nameof(Archive)].Deserialize<Archive>()!;
             var playerScoreData = gameJson[nameof(PlayerScoreData)].Deserialize<PlayerScoreData>()!;
             var missionPrepData = gameJson[nameof(MissionPrepData)].Deserialize<MissionPrepData>()!;
@@ -36,7 +36,7 @@ public static class SavedGameState
             services.AddSingleton(timeline);
             services.AddSingleton(accountingData);
             services.AddSingleton(factions);
-            services.AddSingleton(research);
+            services.AddSingleton(researchData);
             services.AddSingleton(archive);
             services.AddSingleton(playerScoreData);
             services.AddSingleton(staffData);

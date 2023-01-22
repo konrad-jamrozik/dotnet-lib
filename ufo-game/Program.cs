@@ -27,6 +27,7 @@ builder.Services.AddSingleton<PlayerScore>();
 builder.Services.AddSingleton<MissionPrep>();
 builder.Services.AddSingleton<PendingMission>();
 builder.Services.AddSingleton<Staff>();
+builder.Services.AddSingleton<Research>();
 builder.Services.AddSingleton<Procurement>();
 builder.Services.AddSingleton<MissionLauncher>();
 builder.Services.AddSingleton<Game>();
@@ -50,11 +51,12 @@ void AddTypesWithPersistableState(WebAssemblyHostBuilder builder)
     }
     if (!saveGameReadSuccessfully)
     {
+        // kja move this body to catch block in TryReadSaveGameAndAddToServices
         storage.Reset();
         builder.Services.AddSingleton<Timeline>();
         builder.Services.AddSingleton<Factions>();
-        builder.Services.AddSingleton<Research>();
         builder.Services.AddSingleton<Archive>();
+        builder.Services.AddSingleton(new ResearchData());
         builder.Services.AddSingleton(new AccountingData());
         builder.Services.AddSingleton(new PlayerScoreData());
         builder.Services.AddSingleton(new StaffData());

@@ -57,61 +57,61 @@ public class Game
         => AdvanceTime(raisedMoney: true);
 
     public bool CanResearchMoneyRaisingMethods()
-        => !PlayerScore.GameOver && Accounting.CurrentMoney >= Research.MoneyRaisingMethodsResearchCost;
+        => !PlayerScore.GameOver && Accounting.CurrentMoney >= Research.Data.MoneyRaisingMethodsResearchCost;
 
     public void ResearchMoneyRaisingMethods()
     {
         Debug.Assert(CanResearchMoneyRaisingMethods());
-        Accounting.PayForResearch(Research.MoneyRaisingMethodsResearchCost);
-        Research.MoneyRaisingMethodsResearchCost += Research.MoneyRaisingMethodsResearchCostIncrement;
+        Accounting.PayForResearch(Research.Data.MoneyRaisingMethodsResearchCost);
+        Research.Data.MoneyRaisingMethodsResearchCost += ResearchData.MoneyRaisingMethodsResearchCostIncrement;
         Accounting.Data.MoneyRaisedPerActionAmount += 25;
         AdvanceTime();
     }
 
     public bool CanResearchTransportCapacity()
-        => !PlayerScore.GameOver && Accounting.CurrentMoney >= Research.TransportCapacityResearchCost;
+        => !PlayerScore.GameOver && Accounting.CurrentMoney >= Research.Data.TransportCapacityResearchCost;
 
     public void ResearchTransportCapacity()
     {
         Debug.Assert(CanResearchTransportCapacity());
-        Accounting.PayForResearch(Research.TransportCapacityResearchCost);
-        Research.TransportCapacityResearchCost += Research.TransportCapacityResearchCostIncrement;
+        Accounting.PayForResearch(Research.Data.TransportCapacityResearchCost);
+        Research.Data.TransportCapacityResearchCost += ResearchData.TransportCapacityResearchCostIncrement;
         MissionPrep.Data.ImproveTransportCapacity();
         AdvanceTime();
     }
 
     public bool CanResearchAgentEffectiveness()
-        => !PlayerScore.GameOver && Accounting.CurrentMoney >= Research.AgentEffectivenessResearchCost;
+        => !PlayerScore.GameOver && Accounting.CurrentMoney >= Research.Data.AgentEffectivenessResearchCost;
 
     public void ResearchAgentEffectiveness()
     {
         Debug.Assert(CanResearchAgentEffectiveness());
-        Accounting.PayForResearch(Research.AgentEffectivenessResearchCost);
-        Research.AgentEffectivenessResearchCost += Research.AgentEffectivenessResearchCostIncrement;
+        Accounting.PayForResearch(Research.Data.AgentEffectivenessResearchCost);
+        Research.Data.AgentEffectivenessResearchCost += ResearchData.AgentEffectivenessResearchCostIncrement;
         Staff.Data.AgentEffectiveness += 25;
         AdvanceTime();
     }
 
     public bool CanResearchAgentSurvivability()
-        => !PlayerScore.GameOver && Accounting.CurrentMoney >= Research.AgentSurvivabilityResearchCost;
+        => !PlayerScore.GameOver && Accounting.CurrentMoney >= Research.Data.AgentSurvivabilityResearchCost;
 
     public void ResearchAgentSurvivability()
     {
         Debug.Assert(CanResearchAgentSurvivability());
-        Accounting.PayForResearch(Research.AgentSurvivabilityResearchCost);
-        Research.AgentSurvivabilityResearchCost += Research.AgentSurvivabilityResearchCostIncrement;
+        Accounting.PayForResearch(Research.Data.AgentSurvivabilityResearchCost);
+        Research.Data.AgentSurvivabilityResearchCost += ResearchData.AgentSurvivabilityResearchCostIncrement;
         Staff.Data.AgentSurvivability += 25;
         AdvanceTime();
     }
 
     public bool CanResearchAgentRecoverySpeed()
-        => !PlayerScore.GameOver && Accounting.CurrentMoney >= Research.AgentRecoverySpeedResearchCost;
+        => !PlayerScore.GameOver && Accounting.CurrentMoney >= Research.Data.AgentRecoverySpeedResearchCost;
 
     public void ResearchAgentRecoverySpeed()
     {
         Debug.Assert(CanResearchAgentRecoverySpeed());
-        Accounting.PayForResearch(Research.AgentRecoverySpeedResearchCost);
-        Research.AgentRecoverySpeedResearchCost += Research.AgentRecoverySpeedResearchCostIncrement;
+        Accounting.PayForResearch(Research.Data.AgentRecoverySpeedResearchCost);
+        Research.Data.AgentRecoverySpeedResearchCost += ResearchData.AgentRecoverySpeedResearchCostIncrement;
         Staff.Data.ImproveAgentRecoverySpeed();
         AdvanceTime();
     }

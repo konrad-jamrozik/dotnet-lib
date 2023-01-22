@@ -13,27 +13,29 @@
         </CardButton>
         <CardButton Enabled="Game.CanResearchMoneyRaisingMethods()"
                     OnClick="Game.ResearchMoneyRaisingMethods">
-            Research money raising methods for $@Game.Research.MoneyRaisingMethodsResearchCost
+            Research money raising methods for $@Game.Research.Data.MoneyRaisingMethodsResearchCost
         </CardButton>
     </div>
     <div class="row">
         <CardButton Enabled="Game.CanResearchAgentEffectiveness()"
                     OnClick="Game.ResearchAgentEffectiveness">
-            Research agent effectiveness for $@Game.Research.AgentEffectivenessResearchCost
+            Research agent effectiveness for $@Game.Research.Data.AgentEffectivenessResearchCost
         </CardButton>
         <CardButton Enabled="Game.CanResearchAgentSurvivability()"
                     OnClick="Game.ResearchAgentSurvivability">
-            Research agent survivability for $@Game.Research.AgentSurvivabilityResearchCost
+            Research agent survivability for $@Game.Research.Data.AgentSurvivabilityResearchCost
         </CardButton>
     </div>
     <div class="row">
         <CardButton Enabled="Game.CanResearchTransportCapacity()"
                     OnClick="Game.ResearchTransportCapacity">
-            Increase transport capacity by @MissionPrepData.TransportCapacityImprovement for $@Game.Research.TransportCapacityResearchCost
+            Increase transport capacity by @MissionPrepData.TransportCapacityImprovement for 
+            $@Game.Research.Data.TransportCapacityResearchCost
         </CardButton>
         <CardButton Enabled="Game.CanResearchAgentRecoverySpeed()"
                     OnClick="Game.ResearchAgentRecoverySpeed">
-            Increase agent recovery speed by @StaffData.AgentRecoverySpeedImprovement for $@Game.Research.AgentRecoverySpeedResearchCost
+            Increase agent recovery speed by @StaffData.AgentRecoverySpeedImprovement for 
+            $@Game.Research.Data.AgentRecoverySpeedResearchCost
         </CardButton>
     </div>
     <div class="row">
