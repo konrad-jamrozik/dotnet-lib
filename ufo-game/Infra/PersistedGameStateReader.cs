@@ -8,7 +8,7 @@ namespace UfoGame.Infra;
 
 public static class PersistedGameStateReader
 {
-    public static void ReadOrResetPersistedGameState(
+    public static void ReadOrReset(
         GameStateStorage storage,
         IServiceCollection services)
     {
@@ -51,11 +51,12 @@ public static class PersistedGameStateReader
             Console.Out.WriteLine("Reading persisted game failed! Exception written out to STDERR. " +
                                   "Clearing persisted and resetting game state.");
             Console.Error.WriteLine(e);
-            Reset(storage, services);
+            storage.Clear();
+            Reset(services);
         }
     }
 
-    private static void Reset(GameStateStorage storage, IServiceCollection services)
+    public static void Reset(IServiceCollection services)
     {
         storage.Clear();
         services.AddSingleton<Timeline>();

@@ -45,7 +45,9 @@ void AddGameStateServices(WebAssemblyHostBuilder builder)
 
     var storage = builder.Build().Services.GetService<GameStateStorage>()!;
     if (storage.HasGameState)
-        PersistedGameStateReader.ReadOrResetPersistedGameState(storage, builder.Services);
+        PersistedGameStateReader.ReadOrReset(storage, builder.Services);
+    else
+        PersistedGameStateReader.Reset(builder.Services);
 
     builder.Services.AddSingleton<GameState>();
 }
