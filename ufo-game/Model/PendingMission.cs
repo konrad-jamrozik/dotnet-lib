@@ -18,7 +18,7 @@ public class PendingMission
         {
             var result
                 = _staff.Data.AgentsAssignedToMission
-                      .Sum(agent => 100 + agent.ExperienceBonus(_timeline.CurrentTime))
+                      .Sum(agent => 100 + agent.ExperienceBonus(_timeline.Data.CurrentTime))
                   * _staff.Data.AgentEffectiveness
                   / 100;
             Debug.Assert(result >= 0);

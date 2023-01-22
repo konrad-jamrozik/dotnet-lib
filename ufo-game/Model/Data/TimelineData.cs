@@ -2,17 +2,15 @@
 
 namespace UfoGame.Model.Data;
 
-public class Timeline
+public class TimelineData
 {
     [JsonInclude] public int CurrentTime { get; private set; }
 
-    public Timeline()
+    public TimelineData()
         => Reset();
 
     public void Reset()
-    {
-        CurrentTime = 0;
-    }
+        => CurrentTime = 0;
 
     public void AdvanceTime()
     {

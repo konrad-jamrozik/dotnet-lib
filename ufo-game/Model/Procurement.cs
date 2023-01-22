@@ -65,7 +65,7 @@ public class Procurement
         Debug.Assert(CanHireAgents(tryNarrow: false));
         _accounting.PayForHiringAgents(AgentsToHireCost);
         _archive.RecordHiredAgents(Data.AgentsToHire);
-        _staff.Data.AddNewRandomAgents(Data.AgentsToHire, _timeline.CurrentTime);
+        _staff.Data.AddNewRandomAgents(Data.AgentsToHire, _timeline.Data.CurrentTime);
         
     }
 }

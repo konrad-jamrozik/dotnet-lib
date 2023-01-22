@@ -19,7 +19,7 @@ public static class PersistedGameStateReader
 
             JsonObject gameJson = storage.Read();
 
-            var timeline = gameJson[nameof(Timeline)].Deserialize<Timeline>()!;
+            var timelineData = gameJson[nameof(TimelineData)].Deserialize<TimelineData>()!;
             var accountingData = gameJson[nameof(AccountingData)].Deserialize<AccountingData>()!;
             var factions = gameJson[nameof(Factions)].Deserialize<Factions>()!;
             var researchData = gameJson[nameof(ResearchData)].Deserialize<ResearchData>()!;
@@ -33,7 +33,7 @@ public static class PersistedGameStateReader
 
             // These cannot be rolled into loop, because then I would have to have IEnumerable<object>,
             // and the generic "object" type will prevent the DI framework from recognizing the types.
-            services.AddSingleton(timeline);
+            services.AddSingleton(timelineData);
             services.AddSingleton(accountingData);
             services.AddSingleton(factions);
             services.AddSingleton(researchData);
@@ -58,10 +58,9 @@ public static class PersistedGameStateReader
 
     public static void Reset(IServiceCollection services)
     {
-        storage.Clear();
-        services.AddSingleton<Timeline>();
         services.AddSingleton<Factions>();
         services.AddSingleton<Archive>();
+        services.AddSingleton(new TimelineData());
         services.AddSingleton(new ResearchData());
         services.AddSingleton(new AccountingData());
         services.AddSingleton(new PlayerScoreData());

@@ -5,7 +5,7 @@
 @inject Game Game;
 
 <Card Title="Actions">
-    <CardDataRow Label="Current time" Value="Game.Timeline.CurrentTime" />
+    <CardDataRow Label="Current time" Value="Game.Timeline.Data.CurrentTime" />
     <div class="row">
         <CardButton Enabled="Game.CanRaiseMoney()"
                     OnClick="Game.RaiseMoney">
@@ -60,8 +60,8 @@
         if (Game.PlayerScore.GameOver)
             return "GAME OVER! " 
                    + (Game.PlayerScore.PlayerWon 
-                       ? $"YOU WON! Score: {Game.PlayerScore.Data.Value}. Turn: {Game.Timeline.CurrentTime}" 
-                       : $"YOU LOST! Lasted until turn: {Game.Timeline.CurrentTime}.");
+                       ? $"YOU WON! Score: {Game.PlayerScore.Data.Value}. Turn: {Game.Timeline.Data.CurrentTime}" 
+                       : $"YOU LOST! Lasted until turn: {Game.Timeline.Data.CurrentTime}.");
         else if (Game.PendingMission.MissionAboutToExpire)
             return $"If you don't launch mission now, you will lose {PlayerScore.IgnoreMissionScoreLoss} score for ignoring pending mission!";
         else

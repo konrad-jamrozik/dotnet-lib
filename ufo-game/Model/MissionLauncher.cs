@@ -132,7 +132,7 @@ public class MissionLauncher
             // Roll between 1 and 100.
             // The lower the better.
             int agentRoll = _random.Next(1, 100 + 1);
-            var expBonus = agent.ExperienceBonus(_timeline.CurrentTime);
+            var expBonus = agent.ExperienceBonus(_timeline.Data.CurrentTime);
             var agentSurvivalChance
                 = mission.AgentSurvivalChance(expBonus);
             agentData.Add((agent, agentRoll, agentSurvivalChance, expBonus));
@@ -156,7 +156,7 @@ public class MissionLauncher
             }
             else
             {
-                lostAgents.Add((agent, _timeline.CurrentTime, missionSuccess));
+                lostAgents.Add((agent, _timeline.Data.CurrentTime, missionSuccess));
             }
 
             var inequalitySign = agentRoll <= agentSurvivalChance ? "<=" : ">";

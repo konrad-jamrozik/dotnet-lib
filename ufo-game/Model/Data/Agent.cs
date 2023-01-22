@@ -15,7 +15,7 @@ public class Agent
     [JsonInclude] public int TimeLost { get; private set; }
     [JsonInclude] public bool AssignedToMission { get; private set; }
 
-    // kja Agent: inject Timeline; this will require extracting AgentData
+    // kja Agent: inject TimelineData instead of taking currentTime as param; this will likely require extracting AgentData
 
     public int ExperienceBonus(int currentTime) 
     {

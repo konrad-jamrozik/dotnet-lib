@@ -16,6 +16,7 @@ builder.Services.AddScoped(_ => new HttpClient { BaseAddress = new Uri(builder.H
 
 AddGameStateServices(builder);
 
+builder.Services.AddSingleton<Timeline>();
 builder.Services.AddSingleton<Accounting>();
 builder.Services.AddSingleton<PlayerScore>();
 builder.Services.AddSingleton<MissionPrep>();

@@ -119,7 +119,7 @@ public class Game
     private void AdvanceTime(bool raisedMoney = false)
     {
         Debug.Assert(!PlayerScore.GameOver);
-        Timeline.AdvanceTime();
+        Timeline.Data.AdvanceTime();
         PendingMission.AdvanceTime();
         Factions.AdvanceTime();
         Staff.AdvanceTime();

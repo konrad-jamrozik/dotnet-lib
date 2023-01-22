@@ -51,7 +51,7 @@ class LaunchMissionPlayerAction : IPlayerActionOnRangeInput
     public void IncrementInput()
     {
         var assignableAgents = _staff.Data
-            .AssignableAgentsSortedByLaunchPriority(_timeline.CurrentTime);
+            .AssignableAgentsSortedByLaunchPriority(_timeline.Data.CurrentTime);
         Debug.Assert(assignableAgents.Any());
         assignableAgents.First().AssignToMission();
         _stateRefresh.Trigger();
@@ -60,7 +60,7 @@ class LaunchMissionPlayerAction : IPlayerActionOnRangeInput
     public void DecrementInput()
     {
         var assignedAgents = _staff.Data
-            .AssignedAgentsSortedByDescendingLaunchPriority(_timeline.CurrentTime);
+            .AssignedAgentsSortedByDescendingLaunchPriority(_timeline.Data.CurrentTime);
         Debug.Assert(assignedAgents.Any());
         assignedAgents.First().UnassignFromMission();
         _stateRefresh.Trigger();

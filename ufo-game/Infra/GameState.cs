@@ -6,7 +6,7 @@ namespace UfoGame.Infra;
 
 public class GameState
 {
-    [JsonInclude] public readonly Timeline Timeline;
+    [JsonInclude] public readonly TimelineData TimelineData;
     [JsonInclude] public readonly AccountingData AccountingData;
     [JsonInclude] public readonly StaffData StaffData;
     [JsonInclude] public readonly Archive Archive;
@@ -23,7 +23,7 @@ public class GameState
     private readonly GameStateStorage _storage;
 
     public GameState(
-        Timeline timeline,
+        TimelineData timelineData,
         AccountingData accountingData,
         StaffData staffData,
         Archive archive,
@@ -37,7 +37,7 @@ public class GameState
         StateRefresh stateRefresh,
         ModalsState modalsState)
     {
-        Timeline = timeline;
+        TimelineData = timelineData;
         AccountingData = accountingData;
         StaffData = staffData;
         Archive = archive;
@@ -57,7 +57,7 @@ public class GameState
 
     public void Reset()
     {
-        Timeline.Reset();
+        TimelineData.Reset();
         AccountingData.Reset();
         StaffData.Reset();
         Archive.Reset();
