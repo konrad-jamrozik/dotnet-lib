@@ -18,7 +18,7 @@ public class PendingMission
         {
             var result
                 = _staff.Data.AgentsAssignedToMission
-                      .Sum(agent => 100 + agent.ExperienceBonus(_timeline.Data.CurrentTime))
+                      .Sum(agent => 100 + agent.ExperienceBonus(_timelineData.CurrentTime))
                   * _staff.Data.AgentEffectiveness
                   / 100;
             Debug.Assert(result >= 0);
@@ -83,7 +83,7 @@ public class PendingMission
     private readonly Factions _factions;
     private readonly PlayerScore _playerScore;
     private readonly Staff _staff;
-    private readonly Timeline _timeline;
+    private readonly TimelineData _timelineData;
 
     public PendingMission(
         PendingMissions missions,
@@ -91,14 +91,14 @@ public class PendingMission
         Factions factions,
         PlayerScore playerScore,
         Staff staff,
-        Timeline timeline)
+        TimelineData timelineData)
     {
         Missions = missions;
         _archive = archive;
         _factions = factions;
         _playerScore = playerScore;
         _staff = staff;
-        _timeline = timeline;
+        _timelineData = timelineData;
         if (Data.IsNoMission)
             Missions.New(_playerScore, _random, _factions);
     }

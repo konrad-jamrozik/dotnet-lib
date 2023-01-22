@@ -19,7 +19,6 @@ public class Game
     public readonly PlayerScore PlayerScore;
     public readonly Research Research;
     public readonly StateRefresh StateRefresh;
-    private readonly GameState _gameState;
 
     public Game(
         Timeline timeline,
@@ -44,7 +43,6 @@ public class Game
         Factions = factions;
         PlayerScore = playerScore;
         Research = research;
-        _gameState = gameState;
     }
 
     public bool CanDoNothing() => !PlayerScore.GameOver;
@@ -117,14 +115,5 @@ public class Game
     }
 
     private void AdvanceTime(bool raisedMoney = false)
-    {
-        Debug.Assert(!PlayerScore.GameOver);
-        Timeline.Data.AdvanceTime();
-        PendingMission.AdvanceTime();
-        Factions.AdvanceTime();
-        Staff.AdvanceTime();
-        Accounting.AdvanceTime(raisedMoney);
-        _gameState.PersistGameState();
-        StateRefresh.Trigger();
-    }
+        => Timeline.AdvanceTime(raisedMoney);
 }
