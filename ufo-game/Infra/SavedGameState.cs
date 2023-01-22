@@ -8,7 +8,7 @@ namespace UfoGame.Infra;
 
 public static class SavedGameState
 {
-    public static bool TryReadSaveGameAndAddToServices(
+    public static void ReadOrResetSaveGame(
         PersistentStorage storage,
         IServiceCollection services)
     {
@@ -45,13 +45,28 @@ public static class SavedGameState
             services.AddSingleton(procurementData);
             services.AddSingleton(modalsState);
             Console.Out.WriteLine("Deserialized all game state and added to service collection.");
-            return true;
         }
         catch (Exception e)
         {
-            Console.Out.WriteLine("Reading save game failed! Exception:");
+            Console.Out.WriteLine("Reading save game failed! Exception written out to STDERR. Resetting game state.");
             Console.Error.WriteLine(e);
-            return false;
+            Reset(storage, services);
         }
+    }
+
+    private static void Reset(PersistentStorage storage, IServiceCollection services)
+    {
+        storage.Reset();
+        services.AddSingleton<Timeline>();
+        services.AddSingleton<Factions>();
+        services.AddSingleton<Archive>();
+        services.AddSingleton(new ResearchData());
+        services.AddSingleton(new AccountingData());
+        services.AddSingleton(new PlayerScoreData());
+        services.AddSingleton(new StaffData());
+        services.AddSingleton(new MissionPrepData());
+        services.AddSingleton(new PendingMissions());
+        services.AddSingleton(new ProcurementData());
+        services.AddSingleton(new ModalsState());
     }
 }

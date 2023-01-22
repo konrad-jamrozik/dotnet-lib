@@ -12,7 +12,6 @@ var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
-// Experimental
 builder.Services.AddBlazoredModal();
 
 builder.Services.AddScoped(_ => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
@@ -44,25 +43,8 @@ await builder.Build().RunAsync();
 void AddTypesWithPersistableState(WebAssemblyHostBuilder builder)
 {
     var storage = builder.Build().Services.GetService<PersistentStorage>()!;
-    var saveGameReadSuccessfully = false;
     if (storage.HasSavedGame)
     {
-        saveGameReadSuccessfully = SavedGameState.TryReadSaveGameAndAddToServices(storage, builder.Services);
-    }
-    if (!saveGameReadSuccessfully)
-    {
-        // kja move this body to catch block in TryReadSaveGameAndAddToServices
-        storage.Reset();
-        builder.Services.AddSingleton<Timeline>();
-        builder.Services.AddSingleton<Factions>();
-        builder.Services.AddSingleton<Archive>();
-        builder.Services.AddSingleton(new ResearchData());
-        builder.Services.AddSingleton(new AccountingData());
-        builder.Services.AddSingleton(new PlayerScoreData());
-        builder.Services.AddSingleton(new StaffData());
-        builder.Services.AddSingleton(new MissionPrepData());
-        builder.Services.AddSingleton(new PendingMissions());
-        builder.Services.AddSingleton(new ProcurementData());
-        builder.Services.AddSingleton(new ModalsState());
+        SavedGameState.ReadOrResetSaveGame(storage, builder.Services);
     }
 }
