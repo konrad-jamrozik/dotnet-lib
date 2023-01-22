@@ -54,7 +54,7 @@ public class Factions
     private List<Faction> UndefeatedFactions =>
         Data.Where(faction => !faction.Defeated && faction.Name != NoFaction).ToList();
 
-    public void AdvanceFactionsTime()
+    public void AdvanceTime()
     {
         foreach (var faction in Data.Where(faction => !faction.Defeated))
         {

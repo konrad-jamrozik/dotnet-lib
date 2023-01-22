@@ -103,7 +103,7 @@ public class PendingMission
             Missions.New(_playerScore, _random, _factions);
     }
 
-    public void AdvanceMissionTime()
+    public void AdvanceTime()
     {
         Debug.Assert(!_playerScore.GameOver);
         Console.Out.WriteLine("PendingMission - AdvanceTime");

@@ -14,7 +14,7 @@ public class Timeline
         CurrentTime = 0;
     }
 
-    public void IncrementTime()
+    public void AdvanceTime()
     {
         CurrentTime += 1;
         Console.Out.WriteLine($"Advanced time to {CurrentTime}");

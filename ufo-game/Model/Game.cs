@@ -119,9 +119,9 @@ public class Game
     private void AdvanceTime(bool raisedMoney = false)
     {
         Debug.Assert(!PlayerScore.GameOver);
-        Timeline.IncrementTime();
-        PendingMission.AdvanceMissionTime();
-        Factions.AdvanceFactionsTime();
+        Timeline.AdvanceTime();
+        PendingMission.AdvanceTime();
+        Factions.AdvanceTime();
         Staff.AdvanceTime();
         Money.AdvanceTime(raisedMoney);
         _gameState.PersistGameState();
