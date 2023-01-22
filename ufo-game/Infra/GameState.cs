@@ -20,7 +20,7 @@ public class GameState
 
     private readonly StateRefresh _stateRefresh;
 
-    private readonly PersistentStorage _storage;
+    private readonly GameStateStorage _storage;
 
     public GameState(
         Timeline timeline,
@@ -33,7 +33,7 @@ public class GameState
         PlayerScoreData playerScoreData,
         ResearchData researchData,
         ProcurementData procurementData,
-        PersistentStorage storage,
+        GameStateStorage storage,
         StateRefresh stateRefresh,
         ModalsState modalsState)
     {
@@ -53,10 +53,7 @@ public class GameState
     }
 
     public void PersistGameState()
-    {
-        Console.Out.WriteLine("Persisting game state");
-        _storage.SetItem("GameState", this);
-    }
+        => _storage.Persist(this);
 
     public void Reset()
     {
@@ -71,7 +68,7 @@ public class GameState
         PendingMissions.Reset();
         ProcurementData.Reset();
         ModalsState.Reset();
-        _storage.Reset();
+        _storage.Clear();
         _stateRefresh.Trigger();
     }
 }

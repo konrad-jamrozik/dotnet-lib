@@ -6,18 +6,18 @@ using UfoGame.ViewModel;
 
 namespace UfoGame.Infra;
 
-public static class SavedGameState
+public static class PersistedGameStateReader
 {
-    public static void ReadOrResetSaveGame(
-        PersistentStorage storage,
+    public static void ReadOrResetPersistedGameState(
+        GameStateStorage storage,
         IServiceCollection services)
     {
         try
         {
-            Console.Out.WriteLine("Reading save game");
-            Debug.Assert(storage.HasSavedGame);
+            Console.Out.WriteLine("Reading persisted game state.");
+            Debug.Assert(storage.HasGameState);
 
-            JsonObject gameJson = storage.GetItem<JsonNode>(nameof(GameState)).AsObject();
+            JsonObject gameJson = storage.Read();
 
             var timeline = gameJson[nameof(Timeline)].Deserialize<Timeline>()!;
             var accountingData = gameJson[nameof(AccountingData)].Deserialize<AccountingData>()!;
@@ -48,15 +48,16 @@ public static class SavedGameState
         }
         catch (Exception e)
         {
-            Console.Out.WriteLine("Reading save game failed! Exception written out to STDERR. Resetting game state.");
+            Console.Out.WriteLine("Reading persisted game failed! Exception written out to STDERR. " +
+                                  "Clearing persisted and resetting game state.");
             Console.Error.WriteLine(e);
             Reset(storage, services);
         }
     }
 
-    private static void Reset(PersistentStorage storage, IServiceCollection services)
+    private static void Reset(GameStateStorage storage, IServiceCollection services)
     {
-        storage.Reset();
+        storage.Clear();
         services.AddSingleton<Timeline>();
         services.AddSingleton<Factions>();
         services.AddSingleton<Archive>();
