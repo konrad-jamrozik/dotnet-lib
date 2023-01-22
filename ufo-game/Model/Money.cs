@@ -7,7 +7,7 @@ public class Money
     public readonly MoneyData Data;
 
     private readonly Archive _archive;
-    private readonly StaffData _staffData;
+    private readonly Staff _staff;
 
     public int PassiveIncome =>
         80
@@ -15,15 +15,15 @@ public class Money
         + _archive.FailedMissions * -10
         + _archive.IgnoredMissions * -5;
 
-    public int Expenses => _staffData.AvailableAgents.Sum(agent => agent.Salary);
+    public int Expenses => _staff.Data.AvailableAgents.Sum(agent => agent.Salary);
 
     public int MoneyPerTurnAmount => PassiveIncome - Expenses;
 
-    public Money(MoneyData data, Archive archive, StaffData staffData)
+    public Money(MoneyData data, Archive archive, Staff staff)
     {
         Data = data;
         _archive = archive;
-        _staffData = staffData;
+        _staff = staff;
     }
 
     public int CurrentMoney => Data.CurrentMoney;
@@ -40,8 +40,6 @@ public class Money
         => Data.CurrentMoney -= cost;
 
     public void AdvanceTime(bool raisedMoney = false)
-    {
-        Data.CurrentMoney +=
+        => Data.CurrentMoney +=
             MoneyPerTurnAmount + (raisedMoney ? Data.MoneyRaisedPerActionAmount : 0);
-    }
 }
