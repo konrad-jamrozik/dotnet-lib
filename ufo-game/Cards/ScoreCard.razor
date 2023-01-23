@@ -2,10 +2,11 @@
 @using UfoGame.Model
 @using UfoGame.Model.Data
 @inject Game Game
+@inject Factions Factions
 
 <Card Title="Faction score">
     @{
-        var factions = Game.Factions.Data
+        var factions = Factions.Data
             .Where(faction => faction.Discovered)
             .ToList();
         factions.Add(new Faction("Player", Game.PlayerScore.Data.Value, 0, true));
@@ -16,7 +17,7 @@
                          Value="faction.Score" 
                          CssClass="@(faction.Name == "Player" ? "text-success" : "text-danger")"/>
         }
-        if (Game.Factions.Data.Any(faction => !faction.Discovered))
+        if (Factions.Data.Any(faction => !faction.Discovered))
         {
             <div class="row">
                 <div class="col">More factions may appear here as you discover them!</div>

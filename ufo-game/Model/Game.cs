@@ -1,5 +1,4 @@
-﻿using UfoGame.Model.Data;
-using UfoGame.ViewModel;
+﻿using UfoGame.ViewModel;
 
 namespace UfoGame.Model;
 
@@ -9,7 +8,6 @@ public class Game
 {
     public readonly Timeline Timeline;
     public readonly PendingMission PendingMission;
-    public readonly Factions Factions;
     public readonly PlayerScore PlayerScore;
     public readonly StateRefresh StateRefresh;
 
@@ -17,13 +15,11 @@ public class Game
         Timeline timeline,
         PendingMission pendingMission,
         StateRefresh stateRefresh,
-        Factions factions,
         PlayerScore playerScore)
     {
         Timeline = timeline;
         PendingMission = pendingMission;
         StateRefresh = stateRefresh;
-        Factions = factions;
         PlayerScore = playerScore;
     }
 
