@@ -23,7 +23,7 @@ public class GameState
 
     private readonly PendingMission _pendingMission;
     private readonly Agents _agents;
-    private readonly StateRefresh _stateRefresh;
+    private readonly ViewStateRefresh _viewStateRefresh;
     private readonly GameStateStorage _storage;
 
     public GameState(
@@ -42,7 +42,7 @@ public class GameState
         ResearchData researchData,
         ProcurementData procurementData,
         GameStateStorage storage,
-        StateRefresh stateRefresh,
+        ViewStateRefresh viewStateRefresh,
         ModalsState modalsState)
     {
         TimelineData = timelineData;
@@ -60,7 +60,7 @@ public class GameState
         ResearchData = researchData;
         ProcurementData = procurementData;
         _storage = storage;
-        _stateRefresh = stateRefresh;
+        _viewStateRefresh = viewStateRefresh;
         ModalsState = modalsState;
     }
 
@@ -83,6 +83,6 @@ public class GameState
         _agents.Reset();
         _pendingMission.Reset();
         _storage.Clear();
-        _stateRefresh.Trigger();
+        _viewStateRefresh.Trigger();
     }
 }

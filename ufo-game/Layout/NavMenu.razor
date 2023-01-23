@@ -6,7 +6,7 @@
 @inject Staff Staff
 @inject Agents Agents
 @inject PendingMission PendingMission
-@inject StateRefresh StateRefresh
+@inject ViewStateRefresh ViewStateRefresh
 @inject PlayerScore PlayerScore
 
 <div class="top-row ps-2 navbar fixed-top bg-body-tertiary" data-bs-theme="dark">
@@ -125,6 +125,6 @@
     protected override void OnInitialized()
     {
         base.OnInitialized();
-        StateRefresh.Event += StateHasChanged;
+        ViewStateRefresh.Event += StateHasChanged;
     }
 }

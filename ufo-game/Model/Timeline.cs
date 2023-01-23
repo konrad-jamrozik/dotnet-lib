@@ -12,7 +12,7 @@ public class Timeline
     private readonly PendingMission _pendingMission;
     private readonly Accounting _accounting;
     private readonly GameState _gameState;
-    private readonly StateRefresh _stateRefresh;
+    private readonly ViewStateRefresh _viewStateRefresh;
     private readonly PlayerScore _playerScore;
     private readonly SickBay _sickBay;
 
@@ -22,7 +22,7 @@ public class Timeline
         PendingMission pendingMission,
         Accounting accounting,
         GameState gameState,
-        StateRefresh stateRefresh,
+        ViewStateRefresh viewStateRefresh,
         PlayerScore playerScore,
         SickBay sickBay)
     {
@@ -31,7 +31,7 @@ public class Timeline
         _pendingMission = pendingMission;
         _accounting = accounting;
         _gameState = gameState;
-        _stateRefresh = stateRefresh;
+        _viewStateRefresh = viewStateRefresh;
         _playerScore = playerScore;
         _sickBay = sickBay;
     }
@@ -45,6 +45,6 @@ public class Timeline
         _accounting.AdvanceTime(raisedMoney);
         _sickBay.AdvanceTime();
         _gameState.PersistGameState();
-        _stateRefresh.Trigger();
+        _viewStateRefresh.Trigger();
     }
 }

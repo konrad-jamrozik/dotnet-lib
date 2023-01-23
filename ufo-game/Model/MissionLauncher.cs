@@ -14,7 +14,7 @@ public class MissionLauncher
     private readonly PlayerScore _playerScore;
     private readonly Agents _agents;
     private readonly Accounting _accounting;
-    private readonly StateRefresh _stateRefresh;
+    private readonly ViewStateRefresh _viewStateRefresh;
     private readonly GameState _gameState;
 
     public MissionLauncher(
@@ -22,7 +22,7 @@ public class MissionLauncher
         Archive archive,
         PlayerScore playerScore,
         Accounting accounting,
-        StateRefresh stateRefresh,
+        ViewStateRefresh viewStateRefresh,
         GameState gameState,
         Agents agents)
     {
@@ -30,7 +30,7 @@ public class MissionLauncher
         _archive = archive;
         _playerScore = playerScore;
         _accounting = accounting;
-        _stateRefresh = stateRefresh;
+        _viewStateRefresh = viewStateRefresh;
         _gameState = gameState;
         _agents = agents;
     }
@@ -105,7 +105,7 @@ public class MissionLauncher
         WriteLastMissionReport(mission, successChance, roll, success, scoreDiff, agentsLost, moneyReward);
         mission.GenerateNewOrClearMission();
         _gameState.PersistGameState();
-        _stateRefresh.Trigger();
+        _viewStateRefresh.Trigger();
     }
 
     private (int roll, bool success) RollMissionOutcome(PendingMission mission)

@@ -4,7 +4,7 @@
 @using UfoGame.Model.Data
 @using UfoGame.ViewModel
 @inject NavigationManager Navigation
-@inject StateRefresh StateRefresh
+@inject ViewStateRefresh ViewStateRefresh
 @inject Agents Agents
 
 @* kja rename Mission page to Deployment *@
@@ -41,6 +41,6 @@
     protected override void OnInitialized()
     {
         base.OnInitialized();
-        StateRefresh.Event += StateHasChanged;
+        ViewStateRefresh.Event += StateHasChanged;
     }
 }

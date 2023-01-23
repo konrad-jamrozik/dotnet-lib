@@ -11,20 +11,20 @@ class LaunchMissionPlayerAction : IPlayerActionOnRangeInput
     private readonly PendingMission _pendingMission;
     private readonly MissionLauncher _missionLauncher;
     private readonly Timeline _timeline;
-    private readonly StateRefresh _stateRefresh;
+    private readonly ViewStateRefresh _viewStateRefresh;
 
 
     public LaunchMissionPlayerAction(
         MissionPrep missionPrep,
         PendingMission pendingMission,
-        StateRefresh stateRefresh,
+        ViewStateRefresh viewStateRefresh,
         MissionLauncher missionLauncher,
         Timeline timeline,
         Agents agents)
     {
         _missionPrep = missionPrep;
         _pendingMission = pendingMission;
-        _stateRefresh = stateRefresh;
+        _viewStateRefresh = viewStateRefresh;
         _missionLauncher = missionLauncher;
         _timeline = timeline;
         _agents = agents;
@@ -54,7 +54,7 @@ class LaunchMissionPlayerAction : IPlayerActionOnRangeInput
             .AssignableAgentsSortedByLaunchPriority(_timeline.Data.CurrentTime);
         Debug.Assert(assignableAgents.Any());
         assignableAgents.First().AssignToMission();
-        _stateRefresh.Trigger();
+        _viewStateRefresh.Trigger();
     }
 
     public void DecrementInput()
@@ -63,7 +63,7 @@ class LaunchMissionPlayerAction : IPlayerActionOnRangeInput
             .AssignedAgentsSortedByDescendingLaunchPriority(_timeline.Data.CurrentTime);
         Debug.Assert(assignedAgents.Any());
         assignedAgents.First().UnassignFromMission();
-        _stateRefresh.Trigger();
+        _viewStateRefresh.Trigger();
     }
 
     public bool CanAct() => _missionLauncher.CanLaunchMission(_pendingMission);

@@ -2,7 +2,7 @@
 @using UfoGame.Model
 @using UfoGame.Model.Data
 @using UfoGame.ViewModel
-@inject StateRefresh StateRefresh
+@inject ViewStateRefresh ViewStateRefresh
 @inject SickBay SickBay
 
 <div class="list-group-item list-group-item-action" aria-current="true">
@@ -73,7 +73,7 @@
             Agent.AssignToMission();
         else
             Agent.UnassignFromMission();
-        StateRefresh.Trigger();
+        ViewStateRefresh.Trigger();
     }
 
     private string NameTextColor

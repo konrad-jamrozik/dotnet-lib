@@ -5,18 +5,18 @@ namespace UfoGame.ViewModel;
 class HireAgentsPlayerAction : IPlayerActionOnRangeInput
 {
     private readonly Procurement _procurement;
-    private readonly StateRefresh _stateRefresh;
+    private readonly ViewStateRefresh _viewStateRefresh;
 
-    public HireAgentsPlayerAction(Procurement procurement, StateRefresh stateRefresh)
+    public HireAgentsPlayerAction(Procurement procurement, ViewStateRefresh viewStateRefresh)
     {
         _procurement = procurement;
-        _stateRefresh = stateRefresh;
+        _viewStateRefresh = viewStateRefresh;
     }
 
     public void Act()
     {
         _procurement.HireAgents();
-        _stateRefresh.Trigger();
+        _viewStateRefresh.Trigger();
     }
 
     public string ActLabel()

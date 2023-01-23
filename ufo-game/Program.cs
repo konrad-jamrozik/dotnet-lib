@@ -30,7 +30,7 @@ builder.Services.AddSingleton<Procurement>();
 builder.Services.AddSingleton<MissionLauncher>();
 
 // ViewModel
-builder.Services.AddSingleton<StateRefresh>();
+builder.Services.AddSingleton<ViewStateRefresh>();
 builder.Services.AddSingleton<RaiseMoneyPlayerAction>();
 builder.Services.AddSingleton<HireAgentsPlayerAction>();
 builder.Services.AddSingleton<LaunchMissionPlayerAction>();
