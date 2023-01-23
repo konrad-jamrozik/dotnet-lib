@@ -5,17 +5,18 @@
 @inject Timeline Timeline
 @inject Staff Staff
 @inject StateRefresh StateRefresh
+@inject SickBay SickBay
 
 <div class="list-group-item list-group-item-action" aria-current="true">
     <div class="container-fluid">
         <div class="row">
             <div class="col col-auto me-auto">
                 <div class="row">
-                    <h5 class="ps-0 @NameTextColor">@Agent.FullName</h5>
+                    <h5 class="ps-0 @NameTextColor">@Agent.Data.FullName</h5>
                 </div>
                 <div class="row row-cols-auto">
                     <div class="col ps-0">Exp: @Agent.ExperienceBonus(Timeline.Data.CurrentTime)</div>
-                    <div class="col">Time to recover: @Agent.TimeToRecover(Staff.Data.AgentRecoverySpeed)</div>
+                    <div class="col">Time to recover: @Agent.TimeToRecover(SickBay.AgentRecoverySpeed)</div>
                 </div>
             </div>
             <div class="col col-auto align-self-center d-flex justify-content-center">
@@ -32,7 +33,7 @@
                                id="flip_switch_@Index"
                                disabled="@(!Agent.CanSendOnMission)"
                                @onchange="@(eventArgs => OnChangeAgentMissionAssignment(eventArgs.Value!))" 
-                               checked="@Agent.AssignedToMission"/>
+                               checked="@Agent.Data.AssignedToMission"/>
                     </div>
                     <label class="form-check-label" for="flip_switch_@Index">Send</label>
                 </div>
@@ -42,17 +43,17 @@
 </div>
 <div class="collapse" id="agentInfo_@Index">
     <Card Title="Agent info">
-        <CardDataRow Label="Id" Value="@Agent.Id" />
+        <CardDataRow Label="Id" Value="@Agent.Data.Id" />
         <CardDataRow Label="Salary" Value="@Agent.Salary"/>
-        <CardDataRow Label="Remaining recovery" Value="@Agent.Recovery" />
+        <CardDataRow Label="Remaining recovery" Value="@Agent.Data.Recovery" />
         <CardDataRow Label="Training time" Value="@Agent.TrainingTime(Timeline.Data.CurrentTime)"/>
-        <CardDataRow Label="Time spent recovering" Value="@Agent.TimeSpentRecovering" />
-        <CardDataRow Label="Time hired" Value="@Agent.TimeHired"/>
+        <CardDataRow Label="Time spent recovering" Value="@Agent.Data.TimeSpentRecovering" />
+        <CardDataRow Label="Time hired" Value="@Agent.Data.TimeHired"/>
         <CardDataRow Label="Time employed" Value="@Agent.TimeEmployed(Timeline.Data.CurrentTime)"/>
         <CardDataRow Label="Total missions" Value="@Agent.TotalMissions"/>
-        <CardDataRow Label="Successful missions" Value="@Agent.SuccessfulMissions"/>
-        <CardDataRow Label="Failed missions" Value="@Agent.FailedMissions"/>
-        <CardDataRow Label="Time spent recovering" Value="@Agent.TimeSpentRecovering"/>
+        <CardDataRow Label="Successful missions" Value="@Agent.Data.SuccessfulMissions"/>
+        <CardDataRow Label="Failed missions" Value="@Agent.Data.FailedMissions"/>
+        <CardDataRow Label="Time spent recovering" Value="@Agent.Data.TimeSpentRecovering"/>
     </Card>
     @* kja AgentListItem.razor: add button to sack agent, with modal; rename "fire" to "sack" *@
 </div>

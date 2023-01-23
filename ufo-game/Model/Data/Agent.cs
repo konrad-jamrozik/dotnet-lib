@@ -1,84 +1,75 @@
 ﻿using System.Diagnostics;
-using System.Text.Json.Serialization;
 
 namespace UfoGame.Model.Data;
 
 public class Agent
 {
-    [JsonInclude] public int Id { get; private set; }
-    [JsonInclude] public string FullName { get; private set; }
-    [JsonInclude] public int TimeHired { get; private set; }
-    [JsonInclude] public int SuccessfulMissions { get; private set; }
-    [JsonInclude] public int FailedMissions { get; private set; }
-    [JsonInclude] public int TimeSpentRecovering { get; private set; }
-    [JsonInclude] public float Recovery { get; private set; }
-    [JsonInclude] public int TimeLost { get; private set; }
-    [JsonInclude] public bool AssignedToMission { get; private set; }
+    public readonly AgentData Data;
+    private readonly TimelineData _timelineData;
 
     // kja Agent: inject TimelineData instead of taking currentTime as param; this will likely require extracting AgentData
 
     public int ExperienceBonus(int currentTime) 
     {
-        Debug.Assert(currentTime >= TimeHired);
+        Debug.Assert(currentTime >= Data.TimeHired);
         return TrainingTime(currentTime) + ExperienceFromMissions;
     }
 
-    public int TimeToRecover(float recoverySpeed) => (int)Math.Ceiling(Recovery / recoverySpeed);
+    public int TimeToRecover(float recoverySpeed) => (int)Math.Ceiling(Data.Recovery / recoverySpeed);
 
     public int Salary => 5 + TotalMissions;
     
     public int TrainingTime(int currentTime)
     {
-        Debug.Assert(currentTime >= TimeHired);
-        var trainingTime = currentTime - TimeHired - TimeSpentRecovering;
+        Debug.Assert(currentTime >= Data.TimeHired);
+        var trainingTime = currentTime - Data.TimeHired - Data.TimeSpentRecovering;
         Debug.Assert(trainingTime >= 0);
         return trainingTime;
     }
 
     public int TimeEmployed(int currentTime)
     {
-        Debug.Assert(currentTime >= TimeHired);
+        Debug.Assert(currentTime >= Data.TimeHired);
         int timeEmployed;
         if (MissingInAction)
         {
-            Debug.Assert(TimeLost <= currentTime);
-            timeEmployed = TimeLost - TimeHired;
+            Debug.Assert(Data.TimeLost <= currentTime);
+            timeEmployed = Data.TimeLost - Data.TimeHired;
         }
         else
         {
-            timeEmployed =  currentTime - TimeHired;
+            timeEmployed = currentTime - Data.TimeHired;
         }
         Debug.Assert(timeEmployed >= 0);
         return timeEmployed;
     }
 
-    public int TotalMissions => SuccessfulMissions + FailedMissions;
-    public bool MissingInAction => TimeLost != 0;
+    public int TotalMissions => Data.SuccessfulMissions + Data.FailedMissions;
+    public bool MissingInAction => Data.TimeLost != 0;
     public bool Available => !MissingInAction;
-    public bool IsRecovering => !MissingInAction && Recovery > 0;
+    public bool IsRecovering => !MissingInAction && Data.Recovery > 0;
     public bool IsAtFullHealth => !MissingInAction && !IsRecovering;
     public bool CanSendOnMission => IsAtFullHealth;
-    public bool IsAssignableToMission => CanSendOnMission && !AssignedToMission;
-    public bool IsUnassignableFromMission => IsAtFullHealth && AssignedToMission;
+    public bool IsAssignableToMission => CanSendOnMission && !Data.AssignedToMission;
+    public bool IsUnassignableFromMission => IsAtFullHealth && Data.AssignedToMission;
     public bool CouldHaveBeenSentOnMission => IsAtFullHealth;
 
-    public Agent(int id, string fullName, int timeHired)
+    public Agent(AgentData data, TimelineData timelineData)
     {
-        Id = id;
-        FullName = fullName;
-        TimeHired = timeHired;
+        Data = data;
+        _timelineData = timelineData;
     }
 
     public void AssignToMission()
     {
         Debug.Assert(IsAssignableToMission);
-        AssignedToMission = true;
+        Data.AssignedToMission = true;
     }
 
     public void UnassignFromMission()
     {
         Debug.Assert(IsUnassignableFromMission);
-        AssignedToMission = false;
+        Data.AssignedToMission = false;
     }
 
     public void RecordMissionOutcome(bool success, float recovery)
@@ -88,35 +79,35 @@ public class Agent
         
         if (success)
         {
-            SuccessfulMissions += 1;
+            Data.SuccessfulMissions += 1;
         }
         else
         {
-            FailedMissions += 1;
+            Data.FailedMissions += 1;
         }
 
         if (recovery > 0)
             UnassignFromMission();
 
-        Recovery += recovery;
+        Data.Recovery += recovery;
     }
 
     public void TickRecovery(float recovery)
     {
         Debug.Assert(recovery >= 0);
         Debug.Assert(IsRecovering); // cannot tick recovery on a non-recovering agent.
-        Recovery = Math.Max(Recovery - recovery, 0);
-        TimeSpentRecovering += 1;
+        Data.Recovery = Math.Max(Data.Recovery - recovery, 0);
+        Data.TimeSpentRecovering += 1;
     }
 
     public void SetAsLost(int currentTime, bool missionSuccess)
     {
-        Debug.Assert(currentTime >= TimeHired);
+        Debug.Assert(currentTime >= Data.TimeHired);
         Debug.Assert(IsAtFullHealth);
-        Debug.Assert(AssignedToMission);
+        Debug.Assert(Data.AssignedToMission);
         RecordMissionOutcome(missionSuccess, recovery: 0);
         UnassignFromMission();
-        TimeLost = currentTime;
+        Data.TimeLost = currentTime;
     }
 
     // As of 1/19/2023 worst case possible on successful mission is that agent will need
@@ -141,11 +132,11 @@ public class Agent
     /// Example 1: if agent was on N+K missions, where the array
     /// is of length N, they will have experience bonus from missions
     /// equal to the sum of all values of the array except the last value,
-    /// plus the last value of the array times K.
+    /// plus the last value of the array times K+1.
     ///
-    /// Example 2: If the array values are {5,3,1} and the agent was
-    /// on 6 missions, their experience from mission will be a sum of:
-    /// 5,3,1,1,1,1, which is 12.
+    /// Example 2: If the array values are {5,3,1} (N=3) and the agent was
+    /// on 7 missions (N=3, K=4), their experience from mission
+    /// will be a sum of: 5,3,1,1,1,1,1, which is 13.
     /// 
     /// </summary>
     private int ExperienceFromMissions =>

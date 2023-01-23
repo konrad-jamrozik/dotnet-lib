@@ -21,6 +21,7 @@ public class Procurement
     private readonly PlayerScore _playerScore;
     private readonly Archive _archive;
     private readonly Timeline _timeline;
+    private readonly Agents _agents;
 
     public Procurement(
         ProcurementData data,
@@ -28,7 +29,8 @@ public class Procurement
         Staff staff,
         PlayerScore playerScore,
         Archive archive,
-        Timeline timeline)
+        Timeline timeline,
+        Agents agents)
     {
         Data = data;
         _accounting = accounting;
@@ -36,6 +38,7 @@ public class Procurement
         _playerScore = playerScore;
         _archive = archive;
         _timeline = timeline;
+        _agents = agents;
     }
 
     public bool CanHireAgents(int offset = 0, bool tryNarrow = true)
@@ -65,7 +68,7 @@ public class Procurement
         Debug.Assert(CanHireAgents(tryNarrow: false));
         _accounting.PayForHiringAgents(AgentsToHireCost);
         _archive.RecordHiredAgents(Data.AgentsToHire);
-        _staff.Data.AddNewRandomAgents(Data.AgentsToHire, _timeline.Data.CurrentTime);
+        _agents.AddNewRandomAgents(Data.AgentsToHire);
         
     }
 }

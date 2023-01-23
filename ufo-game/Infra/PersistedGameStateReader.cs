@@ -28,6 +28,8 @@ public static class PersistedGameStateReader
             var missionPrepData = gameJson[nameof(MissionPrepData)].Deserialize<MissionPrepData>()!;
             var pendingMissions = gameJson[nameof(PendingMissions)].Deserialize<PendingMissions>()!;
             var staffData = gameJson[nameof(StaffData)].Deserialize<StaffData>()!;
+            var agentsData = gameJson[nameof(AgentsData)].Deserialize<AgentsData>()!;
+            var sickBay = gameJson[nameof(SickBay)].Deserialize<SickBay>()!;
             var procurementData = gameJson[nameof(ProcurementData)].Deserialize<ProcurementData>()!;
             var modalsState = gameJson[nameof(ModalsState)].Deserialize<ModalsState>()!;
 
@@ -40,6 +42,8 @@ public static class PersistedGameStateReader
             services.AddSingleton(archive);
             services.AddSingleton(playerScoreData);
             services.AddSingleton(staffData);
+            services.AddSingleton(agentsData);
+            services.AddSingleton(sickBay);
             services.AddSingleton(missionPrepData);
             services.AddSingleton(pendingMissions);
             services.AddSingleton(procurementData);
@@ -65,6 +69,8 @@ public static class PersistedGameStateReader
         services.AddSingleton(new AccountingData());
         services.AddSingleton(new PlayerScoreData());
         services.AddSingleton(new StaffData());
+        services.AddSingleton(new AgentsData());
+        services.AddSingleton(new SickBay());
         services.AddSingleton(new MissionPrepData());
         services.AddSingleton(new PendingMissions());
         services.AddSingleton(new ProcurementData());

@@ -14,15 +14,16 @@ public class GameState
     [JsonInclude] public readonly MissionPrepData MissionPrepData;
     [JsonInclude] public readonly PendingMissions PendingMissions;
     [JsonInclude] public readonly Factions Factions;
+    [JsonInclude] public readonly AgentsData AgentsData;
+    [JsonInclude] public readonly SickBay SickBay;
     [JsonInclude] public readonly PlayerScoreData PlayerScoreData;
     [JsonInclude] public readonly ResearchData ResearchData;
     [JsonInclude] public readonly ProcurementData ProcurementData;
     [JsonInclude] public readonly ModalsState ModalsState;
 
-    [JsonIgnore] public readonly PendingMission PendingMission;
-
+    private readonly PendingMission _pendingMission;
+    private readonly Agents _agents;
     private readonly StateRefresh _stateRefresh;
-
     private readonly GameStateStorage _storage;
 
     public GameState(
@@ -34,6 +35,9 @@ public class GameState
         PendingMission pendingMission,
         MissionPrepData missionPrepData,
         Factions factions,
+        AgentsData agentsData,
+        Agents agents,
+        SickBay sickBay,
         PlayerScoreData playerScoreData,
         ResearchData researchData,
         ProcurementData procurementData,
@@ -46,9 +50,12 @@ public class GameState
         StaffData = staffData;
         Archive = archive;
         PendingMissions = pendingMissions;
-        PendingMission = pendingMission;
+        _pendingMission = pendingMission;
         MissionPrepData = missionPrepData;
         Factions = factions;
+        AgentsData = agentsData;
+        _agents = agents;
+        SickBay = sickBay;
         PlayerScoreData = playerScoreData;
         ResearchData = researchData;
         ProcurementData = procurementData;
@@ -68,11 +75,13 @@ public class GameState
         Archive.Reset();
         MissionPrepData.Reset();
         Factions.Reset();
+        SickBay.Reset();
         PlayerScoreData.Reset();
         ResearchData.Reset();
-        PendingMission.Reset();
         ProcurementData.Reset();
         ModalsState.Reset();
+        _agents.Reset();
+        _pendingMission.Reset();
         _storage.Clear();
         _stateRefresh.Trigger();
     }

@@ -7,7 +7,7 @@ public class Accounting
     public readonly AccountingData Data;
 
     private readonly Archive _archive;
-    private readonly Staff _staff;
+    private readonly Agents _agents;
 
     public int PassiveIncome =>
         80
@@ -15,15 +15,15 @@ public class Accounting
         + _archive.FailedMissions * -10
         + _archive.IgnoredMissions * -5;
 
-    public int Expenses => _staff.Data.AvailableAgents.Sum(agent => agent.Salary);
+    public int Expenses => _agents.AvailableAgents.Sum(agent => agent.Salary);
 
     public int MoneyPerTurnAmount => PassiveIncome - Expenses;
 
-    public Accounting(AccountingData data, Archive archive, Staff staff)
+    public Accounting(AccountingData data, Archive archive, Agents agents)
     {
         Data = data;
         _archive = archive;
-        _staff = staff;
+        _agents = agents;
     }
 
     public int CurrentMoney => Data.CurrentMoney;

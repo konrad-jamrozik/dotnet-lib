@@ -14,11 +14,6 @@ public class Staff
         _archive = archive;
     }
 
-    public void AdvanceTime()
-    {
-        Data.AdvanceTime();
-    }
-
     public void LoseAgents(List<(Agent agent, int lostTime, bool missionSuccess)> agents)
     {
         agents.ForEach(data => data.agent.SetAsLost(data.lostTime, data.missionSuccess));

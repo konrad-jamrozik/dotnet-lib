@@ -6,7 +6,7 @@ namespace UfoGame.ViewModel;
 
 class LaunchMissionPlayerAction : IPlayerActionOnRangeInput
 {
-    private readonly Staff _staff;
+    private readonly Agents _agents;
     private readonly MissionPrep _missionPrep;
     private readonly PendingMission _pendingMission;
     private readonly MissionLauncher _missionLauncher;
@@ -19,30 +19,30 @@ class LaunchMissionPlayerAction : IPlayerActionOnRangeInput
         PendingMission pendingMission,
         StateRefresh stateRefresh,
         MissionLauncher missionLauncher,
-        Staff staff,
-        Timeline timeline)
+        Timeline timeline,
+        Agents agents)
     {
         _missionPrep = missionPrep;
         _pendingMission = pendingMission;
         _stateRefresh = stateRefresh;
         _missionLauncher = missionLauncher;
-        _staff = staff;
         _timeline = timeline;
+        _agents = agents;
     }
 
     public void Act() => _missionLauncher.LaunchMission(_pendingMission);
 
     public string ActLabel()
-        => $"Launch with {_staff.Data.AgentsAssignedToMissionCount} agents";
+        => $"Launch with {_agents.AgentsAssignedToMissionCount} agents";
 
     // Range input is permanently disabled for assigning agents to mission.
     public bool CanSetRangeInput => false;
 
-    public bool CanDecrementInput => _staff.Data.AgentsAssignedToMissionCount > 0;
+    public bool CanDecrementInput => _agents.AgentsAssignedToMissionCount > 0;
 
     public int Input
     {
-        get => _staff.Data.AgentsAssignedToMissionCount;
+        get => _agents.AgentsAssignedToMissionCount;
         // ReSharper disable once ValueParameterNotUsed
         set => Debug.Assert(false, 
             "Range input is permanently disabled for assigning agents to mission.");
@@ -50,7 +50,7 @@ class LaunchMissionPlayerAction : IPlayerActionOnRangeInput
 
     public void IncrementInput()
     {
-        var assignableAgents = _staff.Data
+        var assignableAgents = _agents
             .AssignableAgentsSortedByLaunchPriority(_timeline.Data.CurrentTime);
         Debug.Assert(assignableAgents.Any());
         assignableAgents.First().AssignToMission();
@@ -59,7 +59,7 @@ class LaunchMissionPlayerAction : IPlayerActionOnRangeInput
 
     public void DecrementInput()
     {
-        var assignedAgents = _staff.Data
+        var assignedAgents = _agents
             .AssignedAgentsSortedByDescendingLaunchPriority(_timeline.Data.CurrentTime);
         Debug.Assert(assignedAgents.Any());
         assignedAgents.First().UnassignFromMission();

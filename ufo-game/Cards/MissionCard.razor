@@ -6,6 +6,7 @@
 @inject Archive Archive
 @inject MissionPrep MissionPrep
 @inject PendingMission PendingMission
+@inject Agents Agents
 
 <Card Title="Mission">
     <CardDataRow Label="Available in" 
@@ -37,10 +38,10 @@
                  Value="@MissionPrep.Data.TransportCapacity"
                  Enabled="@PendingMission.CurrentlyAvailable" />
     <CardDataRow Label="Ready agents"
-                 Value="Staff.Data.AgentsSendableOnMissionCount"
+                 Value="Agents.AgentsSendableOnMissionCount"
                  ValueCssClass="text-success" />
     <CardDataRow Label="Agents to send" 
-                 Value="@Staff.Data.AgentsAssignedToMissionCount"
+                 Value="@Agents.AgentsAssignedToMissionCount"
                  Enabled="@PendingMission.CurrentlyAvailable" />
     <CardButtonWithRangeInput PlayerAction="LaunchMission" />
     <div class="row">

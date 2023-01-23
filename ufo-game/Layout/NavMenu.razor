@@ -1,8 +1,10 @@
 ﻿@using UfoGame.Model
+@using UfoGame.Model.Data
 @using UfoGame.ViewModel
 @inject Timeline Timeline
 @inject Accounting Accounting
 @inject Staff Staff
+@inject Agents Agents
 @inject PendingMission PendingMission
 @inject StateRefresh StateRefresh
 @inject PlayerScore PlayerScore
@@ -52,8 +54,8 @@
                     <div class="hstack gap-0 p-0" style="width: 105px">
                         <span class="oi oi-people" style="width: 24px" aria-hidden="true"></span>
                         @* <span>9999/9999</span> *@
-                        <span class="text-success">@Staff.Data.AgentsSendableOnMissionCount</span>
-                        <span>/@Staff.Data.AvailableAgents.Count</span>
+                        <span class="text-success">@Agents.AgentsSendableOnMissionCount</span>
+                        <span>/@Agents.AvailableAgents.Count</span>
                     </div>
                 </div>
             </div>

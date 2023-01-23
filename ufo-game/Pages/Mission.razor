@@ -2,11 +2,12 @@
 @using UfoGame.Components
 @using UfoGame.Model
 @using UfoGame.Cards
+@using UfoGame.Model.Data
 @using UfoGame.ViewModel
 @inject Timeline Timeline
 @inject NavigationManager Navigation
-@inject Staff Staff
 @inject StateRefresh StateRefresh
+@inject Agents Agents
 
 @* kja rename Mission page to Deployment *@
 <PageTitle>Mission</PageTitle>
@@ -21,7 +22,7 @@
 
 <div class="list-group">
     @{
-        var sortedAgents = Staff.Data.AvailableAgentsSortedByLaunchPriority(Timeline.Data.CurrentTime);
+        var sortedAgents = Agents.AvailableAgentsSortedByLaunchPriority(Timeline.Data.CurrentTime);
         @for (int i = 0; i < sortedAgents.Count; i++)
         {
             <AgentListItem Index="i" Agent="sortedAgents[i]" />

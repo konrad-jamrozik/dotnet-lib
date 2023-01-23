@@ -13,6 +13,7 @@ public class MissionLauncher
     private readonly Archive _archive;
     private readonly PlayerScore _playerScore;
     private readonly Staff _staff;
+    private readonly Agents _agents;
     private readonly Accounting _accounting;
     private readonly StateRefresh _stateRefresh;
     private readonly Timeline _timeline;
@@ -26,7 +27,8 @@ public class MissionLauncher
         Accounting accounting,
         StateRefresh stateRefresh,
         GameState gameState,
-        Timeline timeline)
+        Timeline timeline,
+        Agents agents)
     {
         _missionPrep = missionPrep;
         _archive = archive;
@@ -36,6 +38,7 @@ public class MissionLauncher
         _stateRefresh = stateRefresh;
         _gameState = gameState;
         _timeline = timeline;
+        _agents = agents;
     }
 
     private int ApplyMissionOutcome(PendingMission mission, bool success)
@@ -86,7 +89,7 @@ public class MissionLauncher
         if (_playerScore.GameOver || !mission.CurrentlyAvailable)
             return false;
 
-        return WithinRange(_staff.Data.AgentsAssignedToMissionCount + offset);
+        return WithinRange(_agents.AgentsAssignedToMissionCount + offset);
 
         bool WithinRange(int agentsAssignedToMission)
             => agentsAssignedToMission >= _missionPrep.MinAgentsSendableOnMission
@@ -98,11 +101,11 @@ public class MissionLauncher
     {
         Debug.Assert(CanLaunchMission(mission));
         var successChance = mission.SuccessChance;
-        var agentsSent = _staff.Data.AgentsAssignedToMission.Count;
+        var agentsSent = _agents.AgentsAssignedToMission.Count;
         var moneyReward = mission.MoneyReward;
         Console.Out.WriteLine($"Sent {agentsSent} agents.");
         var (roll, success) = RollMissionOutcome(mission);
-        var agentsLost = ProcessAgentUpdates(mission, success, _staff.Data.AgentsAssignedToMission);
+        var agentsLost = ProcessAgentUpdates(mission, success, _agents.AgentsAssignedToMission);
         var scoreDiff = ApplyMissionOutcome(mission, success);
         _archive.ArchiveMission(missionSuccessful: success);
         WriteLastMissionReport(mission, successChance, roll, success, scoreDiff, agentsLost, moneyReward);
@@ -161,7 +164,7 @@ public class MissionLauncher
 
             var inequalitySign = agentRoll <= agentSurvivalChance ? "<=" : ">";
             Console.Out.WriteLine(
-                $"Agent #{agent.Id} '{agent.FullName}' exp: {expBonus} : " +
+                $"Agent #{agent.Data.Id} '{agent.Data.FullName}' exp: {expBonus} : " +
                 $"{(agentSurvived ? "survived" : "lost")}. " +
                 $"Rolled {agentRoll} {inequalitySign} {agentSurvivalChance}." +
                 messageSuffix);

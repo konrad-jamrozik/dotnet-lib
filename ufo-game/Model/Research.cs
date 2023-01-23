@@ -11,6 +11,7 @@ public class Research
     private readonly Staff _staff;
     private readonly Timeline _timeline;
     private readonly PlayerScore _playerScore;
+    private readonly SickBay _sickBay;
 
     public Research(
         ResearchData data,
@@ -18,7 +19,8 @@ public class Research
         Accounting accounting,
         MissionPrep missionPrep,
         Staff staff,
-        PlayerScore playerScore)
+        PlayerScore playerScore,
+        SickBay sickBay)
     {
         Data = data;
         _timeline = timeline;
@@ -26,6 +28,7 @@ public class Research
         _missionPrep = missionPrep;
         _staff = staff;
         _playerScore = playerScore;
+        _sickBay = sickBay;
     }
 
     public bool CanResearchMoneyRaisingMethods()
@@ -84,7 +87,7 @@ public class Research
         Debug.Assert(CanResearchAgentRecoverySpeed());
         _accounting.PayForResearch(Data.AgentRecoverySpeedResearchCost);
         Data.AgentRecoverySpeedResearchCost += ResearchData.AgentRecoverySpeedResearchCostIncrement;
-        _staff.Data.ImproveAgentRecoverySpeed();
+        _sickBay.ImproveAgentRecoverySpeed();
         _timeline.AdvanceTime();
     }
 }

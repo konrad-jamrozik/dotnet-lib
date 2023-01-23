@@ -11,13 +11,13 @@ public class MissionPrep
 
     public int MaxAgentsSendableOnMission => Math.Min(
         Data.TransportCapacity,
-        _staff.Data.AgentsSendableOnMissionCount);
+        _agents.AgentsSendableOnMissionCount);
 
-    private readonly Staff _staff;
+    private readonly Agents _agents;
 
-    public MissionPrep(MissionPrepData data, Staff staff)
+    public MissionPrep(MissionPrepData data, Agents agents)
     {
         Data = data;
-        _staff = staff;
+        _agents = agents;
     }
 }

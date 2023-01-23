@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using UfoGame;
 using UfoGame.Infra;
 using UfoGame.Model;
+using UfoGame.Model.Data;
 using UfoGame.ViewModel;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
@@ -22,6 +23,7 @@ builder.Services.AddSingleton<PlayerScore>();
 builder.Services.AddSingleton<MissionPrep>();
 builder.Services.AddSingleton<PendingMission>();
 builder.Services.AddSingleton<Staff>();
+builder.Services.AddSingleton<Agents>();
 builder.Services.AddSingleton<Research>();
 builder.Services.AddSingleton<Procurement>();
 builder.Services.AddSingleton<MissionLauncher>();
