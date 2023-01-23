@@ -4,6 +4,7 @@
 @inject Game Game
 @inject ViewModel.LaunchMissionPlayerAction LaunchMission
 @inject Staff Staff
+@inject Archive Archive
 
 <Card Title="Mission">
     <CardDataRow Label="Available in" 
@@ -46,7 +47,7 @@
     </div>
     <div class="row">
         <div class="col @GetLastMissionReportCssClass()">
-            @Game.Archive.LastMissionReport
+            @Archive.LastMissionReport
         </div>
     </div>
 </Card>
@@ -55,7 +56,7 @@
 {
     private string GetLastMissionReportCssClass()
     {
-        var report = Game.Archive.LastMissionReport;
+        var report = Archive.LastMissionReport;
 
         if (report == Archive.NoMissionsReport)
             return "";
