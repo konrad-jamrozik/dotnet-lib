@@ -8,7 +8,6 @@ namespace UfoGame.Model;
 public class Game
 {
     public readonly Timeline Timeline;
-    public readonly Accounting Accounting;
     public readonly Staff Staff;
     public readonly Archive Archive;
     public readonly MissionPrep MissionPrep;
@@ -19,7 +18,6 @@ public class Game
 
     public Game(
         Timeline timeline,
-        Accounting accounting,
         Staff staff,
         Archive archive,
         MissionPrep missionPrep,
@@ -29,7 +27,6 @@ public class Game
         PlayerScore playerScore)
     {
         Timeline = timeline;
-        Accounting = accounting;
         Staff = staff;
         Archive = archive;
         MissionPrep = missionPrep;

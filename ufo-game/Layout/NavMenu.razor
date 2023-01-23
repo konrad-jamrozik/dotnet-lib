@@ -1,4 +1,6 @@
-﻿@inject Model.Game Game;
+﻿@using UfoGame.Model
+@inject Game Game
+@inject Accounting Accounting
 
 <div class="top-row ps-2 navbar fixed-top bg-body-tertiary" data-bs-theme="dark">
     <div class="container-fluid">
@@ -35,9 +37,9 @@
                     <div class="hstack gap-0 p-0" style="width: 135px">
                         <span class="oi oi-dollar" style="width: 17px" aria-hidden="true"></span>
                         @* <span>999999/-99999</span> *@
-                        <span>@Game.Accounting.CurrentMoney/</span>
-                        <span class="@(Game.Accounting.MoneyPerTurnAmount >= 0 ? "text-success" : "text-danger")">
-                            @Game.Accounting.MoneyPerTurnAmount
+                        <span>@Accounting.CurrentMoney/</span>
+                        <span class="@(Accounting.MoneyPerTurnAmount >= 0 ? "text-success" : "text-danger")">
+                            @Accounting.MoneyPerTurnAmount
                         </span>
                     </div>
                 </div>

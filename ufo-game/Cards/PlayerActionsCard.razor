@@ -4,13 +4,14 @@
 @using UfoGame.Model.Data
 @inject Game Game
 @inject Research Research
+@inject Accounting Accounting
 
 <Card Title="Actions">
     <CardDataRow Label="Current time" Value="Game.Timeline.Data.CurrentTime" />
     <div class="row">
         <CardButton Enabled="Game.CanRaiseMoney()"
                     OnClick="Game.RaiseMoney">
-            Raise money: $@Game.Accounting.Data.MoneyRaisedPerActionAmount
+            Raise money: $@Accounting.Data.MoneyRaisedPerActionAmount
         </CardButton>
         <CardButton Enabled="Research.CanResearchMoneyRaisingMethods()"
                     OnClick="Research.ResearchMoneyRaisingMethods">

@@ -1,13 +1,14 @@
 ﻿@using UfoGame.Cards.Components
-@inject Model.Game Game;
-@inject ViewModel.HireAgentsPlayerAction HireAgents;
+@using UfoGame.Model
+@inject Accounting Accounting
+@inject ViewModel.HireAgentsPlayerAction HireAgents
 
 
 <Card Title="Money">
-    <CardDataRow Label="Balance" Value="Game.Accounting.CurrentMoney" />
+    <CardDataRow Label="Balance" Value="Accounting.CurrentMoney" />
     <CardDataRow Label="Income per turn" 
-                 Value="Game.Accounting.MoneyPerTurnAmount" 
-                 ValueCssClass="@(Game.Accounting.MoneyPerTurnAmount >= 0 ? "text-success" : "text-danger")" />
-    <CardDataRow Label="Passive income" Value="Game.Accounting.PassiveIncome" ValueCssClass="text-success" />
-    <CardDataRow Label="Expenses" Value="Game.Accounting.Expenses" ValueCssClass="text-danger" />
+                 Value="Accounting.MoneyPerTurnAmount" 
+                 ValueCssClass="@(Accounting.MoneyPerTurnAmount >= 0 ? "text-success" : "text-danger")" />
+    <CardDataRow Label="Passive income" Value="Accounting.PassiveIncome" ValueCssClass="text-success" />
+    <CardDataRow Label="Expenses" Value="Accounting.Expenses" ValueCssClass="text-danger" />
 </Card>
