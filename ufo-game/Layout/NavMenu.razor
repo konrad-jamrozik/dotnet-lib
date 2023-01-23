@@ -1,6 +1,7 @@
 ﻿@using UfoGame.Model
 @using UfoGame.ViewModel
 @inject Game Game
+@inject Timeline Timeline
 @inject Accounting Accounting
 @inject Staff Staff
 @inject PendingMission PendingMission
@@ -23,7 +24,7 @@
                     <div class="hstack gap-0 p-0" style="width: 70px">
                         <span class="oi oi-calendar" aria-hidden="true"></span>
                         @* <span>9999</span> *@
-                        <span>@Game.Timeline.Data.CurrentTime</span>
+                        <span>@Timeline.Data.CurrentTime</span>
                     </div>
                 </div>
                 <div class="col px-0">

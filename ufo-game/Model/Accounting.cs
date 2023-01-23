@@ -39,6 +39,7 @@ public class Accounting
     public void PayForResearch(int cost)
         => Data.CurrentMoney -= cost;
 
+    // kja split it by introducing "AddRaisedMoney"; then introduce ITemporal interface for AdvanceTime.
     public void AdvanceTime(bool raisedMoney = false)
         => Data.CurrentMoney +=
             MoneyPerTurnAmount + (raisedMoney ? Data.MoneyRaisedPerActionAmount : 0);

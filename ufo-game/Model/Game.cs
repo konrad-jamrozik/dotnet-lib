@@ -4,14 +4,14 @@
 // to access logic. Remove all nontrivial logic from it, pushing down to relevant classes.
 public class Game
 {
-    public readonly Timeline Timeline;
+    private readonly Timeline _timeline;
     public readonly PlayerScore PlayerScore;
 
     public Game(
         Timeline timeline,
         PlayerScore playerScore)
     {
-        Timeline = timeline;
+        _timeline = timeline;
         PlayerScore = playerScore;
     }
 
@@ -25,5 +25,5 @@ public class Game
         => AdvanceTime(raisedMoney: true);
 
     private void AdvanceTime(bool raisedMoney = false)
-        => Timeline.AdvanceTime(raisedMoney);
+        => _timeline.AdvanceTime(raisedMoney);
 }
