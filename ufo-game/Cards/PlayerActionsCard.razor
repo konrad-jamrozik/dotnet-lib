@@ -2,20 +2,18 @@
 @using UfoGame.Model
 @using System.Diagnostics.CodeAnalysis
 @using UfoGame.Model.Data
-@inject Game Game
 @inject Timeline Timeline
 @inject Research Research
 @inject Accounting Accounting
 @inject PendingMission PendingMission
 @inject PlayerScore PlayerScore
+@inject ViewModel.RaiseMoneyPlayerAction RaiseMoney
+@inject ViewModel.DoNothingPlayerAction DoNothing
 
 <Card Title="Actions">
     <CardDataRow Label="Current time" Value="Timeline.Data.CurrentTime" />
     <div class="row">
-        <CardButton Enabled="Game.CanRaiseMoney()"
-                    OnClick="Game.RaiseMoney">
-            Raise money: $@Accounting.Data.MoneyRaisedPerActionAmount
-        </CardButton>
+        <CardButton2 PlayerAction="RaiseMoney" />
         <CardButton Enabled="Research.CanResearchMoneyRaisingMethods()"
                     OnClick="Research.ResearchMoneyRaisingMethods">
             Research money raising methods for $@Research.Data.MoneyRaisingMethodsResearchCost
@@ -44,10 +42,7 @@
         </CardButton>
     </div>
     <div class="row">
-        <CardButton Enabled="Game.CanDoNothing()"
-                    OnClick="Game.DoNothing">
-            Do nothing & advance time
-        </CardButton>
+        <CardButton2 PlayerAction="DoNothing" />
     </div>
     <div class="row mt-2 @(WarningMessagePresent ? "visible" : "invisible") ">
         <div class="col @(PlayerScore.PlayerWon ? "text-success": "text-danger")">

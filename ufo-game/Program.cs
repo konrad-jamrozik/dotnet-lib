@@ -25,10 +25,11 @@ builder.Services.AddSingleton<Staff>();
 builder.Services.AddSingleton<Research>();
 builder.Services.AddSingleton<Procurement>();
 builder.Services.AddSingleton<MissionLauncher>();
-builder.Services.AddSingleton<Game>();
 
 // ViewModel
 builder.Services.AddSingleton<StateRefresh>();
+builder.Services.AddSingleton<DoNothingPlayerAction>();
+builder.Services.AddSingleton<RaiseMoneyPlayerAction>();
 builder.Services.AddSingleton<HireAgentsPlayerAction>();
 builder.Services.AddSingleton<LaunchMissionPlayerAction>();
 

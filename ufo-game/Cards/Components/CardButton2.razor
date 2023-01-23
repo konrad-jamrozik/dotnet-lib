@@ -1,0 +1,16 @@
+﻿@using UfoGame.ViewModel
+<button class="btn btn-primary @CssClass"
+        @onclick="PlayerAction.Act"
+        disabled="@(!PlayerAction.CanAct())">
+    @PlayerAction.ActLabel()
+</button>
+@code
+{
+    [Parameter]
+    public string CssClass { get; set; } = "col m-1";
+
+    #nullable disable
+    [Parameter, EditorRequired]
+    public IPlayerActionOnButton PlayerAction { get; set; } 
+    #nullable enable
+}
