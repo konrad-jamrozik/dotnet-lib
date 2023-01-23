@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using UfoGame.Model;
 using UfoGame.Model.Data;
 using UfoGame.ViewModel;
 
@@ -29,7 +30,7 @@ public static class PersistedGameStateReader
             var pendingMissions = gameJson[nameof(PendingMissions)].Deserialize<PendingMissions>()!;
             var staffData = gameJson[nameof(StaffData)].Deserialize<StaffData>()!;
             var agentsData = gameJson[nameof(AgentsData)].Deserialize<AgentsData>()!;
-            var sickBay = gameJson[nameof(SickBay)].Deserialize<SickBay>()!;
+            var sickBayData = gameJson[nameof(SickBayData)].Deserialize<SickBayData>()!;
             var procurementData = gameJson[nameof(ProcurementData)].Deserialize<ProcurementData>()!;
             var modalsState = gameJson[nameof(ModalsState)].Deserialize<ModalsState>()!;
 
@@ -43,7 +44,7 @@ public static class PersistedGameStateReader
             services.AddSingleton(playerScoreData);
             services.AddSingleton(staffData);
             services.AddSingleton(agentsData);
-            services.AddSingleton(sickBay);
+            services.AddSingleton(sickBayData);
             services.AddSingleton(missionPrepData);
             services.AddSingleton(pendingMissions);
             services.AddSingleton(procurementData);
@@ -70,7 +71,7 @@ public static class PersistedGameStateReader
         services.AddSingleton(new PlayerScoreData());
         services.AddSingleton(new StaffData());
         services.AddSingleton(new AgentsData());
-        services.AddSingleton(new SickBay());
+        services.AddSingleton(new SickBayData());
         services.AddSingleton(new MissionPrepData());
         services.AddSingleton(new PendingMissions());
         services.AddSingleton(new ProcurementData());

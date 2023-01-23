@@ -78,7 +78,7 @@ public class Agents
 
     // kja move this to sick bay; requires extracting SickBayData
     public void AdvanceTime()
-        => AgentsInRecovery.ForEach(agent => agent.TickRecovery(_sickBay.AgentRecoverySpeed));
+        => AgentsInRecovery.ForEach(agent => agent.TickRecovery(_sickBay.Data.AgentRecoverySpeed));
 
     public void AddNewRandomAgents(int agentsToAdd)
     {

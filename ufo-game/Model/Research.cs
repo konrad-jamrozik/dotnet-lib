@@ -87,7 +87,7 @@ public class Research
         Debug.Assert(CanResearchAgentRecoverySpeed());
         _accounting.PayForResearch(Data.AgentRecoverySpeedResearchCost);
         Data.AgentRecoverySpeedResearchCost += ResearchData.AgentRecoverySpeedResearchCostIncrement;
-        _sickBay.ImproveAgentRecoverySpeed();
+        _sickBay.Data.ImproveAgentRecoverySpeed();
         _timeline.AdvanceTime();
     }
 }

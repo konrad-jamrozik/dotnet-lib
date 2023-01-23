@@ -24,6 +24,7 @@ builder.Services.AddSingleton<MissionPrep>();
 builder.Services.AddSingleton<PendingMission>();
 builder.Services.AddSingleton<Staff>();
 builder.Services.AddSingleton<Agents>();
+builder.Services.AddSingleton<SickBay>();
 builder.Services.AddSingleton<Research>();
 builder.Services.AddSingleton<Procurement>();
 builder.Services.AddSingleton<MissionLauncher>();

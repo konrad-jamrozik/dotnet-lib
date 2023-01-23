@@ -1,21 +1,15 @@
-﻿using System.Text.Json.Serialization;
+﻿using UfoGame.Model.Data;
 
-namespace UfoGame.Model.Data;
+namespace UfoGame.Model;
 
 public class SickBay
 {
-    private const float AgentRecoverySpeedImprovement = 0.25f;
+    public readonly SickBayData Data;
 
-    [JsonInclude] public float AgentRecoverySpeed { get; private set; }
-
-    public SickBay() 
-        => Reset();
-
-    public void Reset()
+    public SickBay(SickBayData data)
     {
-        AgentRecoverySpeed = 0.5f;
+        Data = data;
     }
 
-    public void ImproveAgentRecoverySpeed()
-        => AgentRecoverySpeed += AgentRecoverySpeedImprovement;
+    
 }
