@@ -12,7 +12,6 @@ public class MissionLauncher
     private readonly MissionPrep _missionPrep;
     private readonly Archive _archive;
     private readonly PlayerScore _playerScore;
-    private readonly Staff _staff;
     private readonly Agents _agents;
     private readonly Accounting _accounting;
     private readonly StateRefresh _stateRefresh;
@@ -22,7 +21,6 @@ public class MissionLauncher
         MissionPrep missionPrep,
         Archive archive,
         PlayerScore playerScore,
-        Staff staff,
         Accounting accounting,
         StateRefresh stateRefresh,
         GameState gameState,
@@ -31,7 +29,6 @@ public class MissionLauncher
         _missionPrep = missionPrep;
         _archive = archive;
         _playerScore = playerScore;
-        _staff = staff;
         _accounting = accounting;
         _stateRefresh = stateRefresh;
         _gameState = gameState;
