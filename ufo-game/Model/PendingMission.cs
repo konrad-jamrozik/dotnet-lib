@@ -61,9 +61,7 @@ public class PendingMission
 
     public int AgentSurvivabilityPower => _staff.Data.AgentsAssignedToMissionCount * _staff.Data.AgentSurvivability;
 
-    public readonly PendingMissions Missions;
-
-    public PendingMissionData Data => Missions.Data[0];
+    public PendingMissionData Data => _pendingMissions.Data[0];
 
     public Faction Faction => _factions.Data.Single(f => f.Name == Data.FactionName);
 
@@ -78,35 +76,37 @@ public class PendingMission
     // ReSharper disable once PossibleLossOfFraction
     public int MoneyReward => (int)(Faction.Score/2 * Data.MoneyRewardCoefficient);
 
+    // kja consolidate all Random gens into one
     private readonly Random _random = new Random();
     private readonly Archive _archive;
     private readonly Factions _factions;
     private readonly PlayerScore _playerScore;
     private readonly Staff _staff;
     private readonly TimelineData _timelineData;
+    private readonly PendingMissions _pendingMissions;
 
     public PendingMission(
-        PendingMissions missions,
+        PendingMissions pendingMissions,
         Archive archive,
         Factions factions,
         PlayerScore playerScore,
         Staff staff,
         TimelineData timelineData)
     {
-        Missions = missions;
+        _pendingMissions = pendingMissions;
         _archive = archive;
         _factions = factions;
         _playerScore = playerScore;
         _staff = staff;
         _timelineData = timelineData;
         if (Data.IsNoMission)
-            Missions.New(_playerScore, _random, _factions);
+            _pendingMissions.New(_playerScore, _random, _factions);
     }
 
     public void AdvanceTime()
     {
+        Console.WriteLine("PendingMission - AdvanceTime");
         Debug.Assert(!_playerScore.GameOver);
-        Console.Out.WriteLine("PendingMission - AdvanceTime");
         if (CurrentlyAvailable)
         {
             Debug.Assert(Data.ExpiresIn >= 1);
@@ -134,6 +134,12 @@ public class PendingMission
         }
     }
 
+    public void Reset()
+    {
+        _pendingMissions.Reset();
+        GenerateNewOrClearMission();
+    }
+
     public void GenerateNewOrClearMission()
-        => Missions.New(_playerScore, _random, _factions);
+        => _pendingMissions.New(_playerScore, _random, _factions);
 }

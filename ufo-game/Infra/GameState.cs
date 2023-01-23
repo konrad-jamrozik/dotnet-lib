@@ -1,4 +1,5 @@
 ﻿using System.Text.Json.Serialization;
+using UfoGame.Model;
 using UfoGame.Model.Data;
 using UfoGame.ViewModel;
 
@@ -18,6 +19,8 @@ public class GameState
     [JsonInclude] public readonly ProcurementData ProcurementData;
     [JsonInclude] public readonly ModalsState ModalsState;
 
+    [JsonIgnore] public readonly PendingMission PendingMission;
+
     private readonly StateRefresh _stateRefresh;
 
     private readonly GameStateStorage _storage;
@@ -28,6 +31,7 @@ public class GameState
         StaffData staffData,
         Archive archive,
         PendingMissions pendingMissions,
+        PendingMission pendingMission,
         MissionPrepData missionPrepData,
         Factions factions,
         PlayerScoreData playerScoreData,
@@ -42,6 +46,7 @@ public class GameState
         StaffData = staffData;
         Archive = archive;
         PendingMissions = pendingMissions;
+        PendingMission = pendingMission;
         MissionPrepData = missionPrepData;
         Factions = factions;
         PlayerScoreData = playerScoreData;
@@ -65,7 +70,7 @@ public class GameState
         Factions.Reset();
         PlayerScoreData.Reset();
         ResearchData.Reset();
-        PendingMissions.Reset();
+        PendingMission.Reset();
         ProcurementData.Reset();
         ModalsState.Reset();
         _storage.Clear();
