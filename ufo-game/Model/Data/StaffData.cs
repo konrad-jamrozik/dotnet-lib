@@ -90,6 +90,6 @@ public class StaffData
                         AgentNames.RandomName(),
                         currentTime)));
         NextAgentId += agentsToAdd;
-        Console.Out.WriteLine($"Added {agentsToAdd} new, random agents. Available agents now at {AvailableAgents}.");
+        Console.Out.WriteLine($"Added {agentsToAdd} new, random agents. Available agents now at {AvailableAgents.Count}.");
     }
 }
