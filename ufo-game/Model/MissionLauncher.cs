@@ -168,7 +168,7 @@ public class MissionLauncher
         }
 
         if (lostAgents.Count > 0)
-            _staff.LoseAgents(lostAgents);
+            _agents.LoseAgents(lostAgents);
         else
             Console.Out.WriteLine("No agents lost! \\o/");
 

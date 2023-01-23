@@ -7,10 +7,11 @@ public class Agents
     private readonly AgentsData _agentsData;
     private readonly TimelineData _timelineData;
     private readonly SickBay _sickBay;
-    public List<Agent> Data;
+    private readonly Archive _archive;
+    private List<Agent> _data;
 
     [JsonIgnore]
-    public List<Agent> AvailableAgents => Data.Where(agent => agent.Available).ToList();
+    public List<Agent> AvailableAgents => _data.Where(agent => agent.Available).ToList();
 
     public List<Agent> AvailableAgentsSortedByLaunchPriority()
         => AvailableAgents
@@ -38,34 +39,41 @@ public class Agents
             .Reverse()
             .ToList();
 
-    public int AgentsAssignedToMissionCount => Data.Count(agent => agent.Data.AssignedToMission);
+    public int AgentsAssignedToMissionCount => _data.Count(agent => agent.Data.AssignedToMission);
 
     [JsonIgnore]
     public List<Agent> AgentsAssignedToMission
-        => Data.Where(agent => agent.Data.AssignedToMission).ToList();
+        => _data.Where(agent => agent.Data.AssignedToMission).ToList();
 
     [JsonIgnore]
     public List<Agent> AgentsInRecovery
-        => Data.Where(agent => agent.IsRecovering).ToList();
+        => _data.Where(agent => agent.IsRecovering).ToList();
 
     [JsonIgnore]
     public int AgentsInRecoveryCount
-        => Data.Count(agent => agent.IsRecovering);
+        => _data.Count(agent => agent.IsRecovering);
 
     public int AgentsSendableOnMissionCount
-        => Data.Count(agent => agent.CanSendOnMission);
+        => _data.Count(agent => agent.CanSendOnMission);
 
-    public Agents(AgentsData agentsData, TimelineData timelineData, SickBay sickBay)
+    public void LoseAgents(List<(Agent agent, bool missionSuccess)> agents)
+    {
+        agents.ForEach(data => data.agent.SetAsLost(data.missionSuccess));
+        _archive.RecordLostAgents(agents.Count);
+    }
+
+    public Agents(AgentsData agentsData, TimelineData timelineData, SickBay sickBay, Archive archive)
     {
         _agentsData = agentsData;
         _timelineData = timelineData;
         _sickBay = sickBay;
-        Data = AgentsFromData(_agentsData.Data).ToList();
+        _archive = archive;
+        _data = AgentsFromData(_agentsData.Data).ToList();
     }
     public void Reset()
     {
         _agentsData.Reset();
-        Data = AgentsFromData(_agentsData.Data).ToList();
+        _data = AgentsFromData(_agentsData.Data).ToList();
     }
 
     // kja move this to sick bay; requires extracting SickBayData
@@ -75,7 +83,7 @@ public class Agents
     public void AddNewRandomAgents(int agentsToAdd)
     {
         var addedAgentsData = _agentsData.AddNewRandomAgents(agentsToAdd, _timelineData.CurrentTime);
-        Data.AddRange(AgentsFromData(addedAgentsData));
+        _data.AddRange(AgentsFromData(addedAgentsData));
     }
 
     private IEnumerable<Agent> AgentsFromData(List<AgentData> agentsData)
