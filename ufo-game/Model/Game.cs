@@ -5,21 +5,21 @@
 public class Game
 {
     private readonly Timeline _timeline;
-    public readonly PlayerScore PlayerScore;
+    private readonly PlayerScore _playerScore;
 
     public Game(
         Timeline timeline,
         PlayerScore playerScore)
     {
         _timeline = timeline;
-        PlayerScore = playerScore;
+        _playerScore = playerScore;
     }
 
-    public bool CanDoNothing() => !PlayerScore.GameOver;
+    public bool CanDoNothing() => !_playerScore.GameOver;
 
     public void DoNothing() => AdvanceTime();
 
-    public bool CanRaiseMoney() => !PlayerScore.GameOver;
+    public bool CanRaiseMoney() => !_playerScore.GameOver;
 
     public void RaiseMoney()
         => AdvanceTime(raisedMoney: true);

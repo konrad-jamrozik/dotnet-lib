@@ -6,6 +6,7 @@
 @inject Staff Staff
 @inject PendingMission PendingMission
 @inject StateRefresh StateRefresh
+@inject PlayerScore PlayerScore
 
 <div class="top-row ps-2 navbar fixed-top bg-body-tertiary" data-bs-theme="dark">
     <div class="container-fluid">
@@ -17,7 +18,7 @@
                     <div class="hstack gap-0 p-0" style="width: 85px">
                         <span class="oi oi-badge" style="width: 19.5px; margin-left: 1px;" aria-hidden="true"></span>
                         @* <span>999999</span> *@
-                        <span>@Game.PlayerScore.Data.Value</span>
+                        <span>@PlayerScore.Data.Value</span>
                     </div>
                 </div>
                 <div class="col px-0">

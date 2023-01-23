@@ -3,13 +3,14 @@
 @using UfoGame.Model.Data
 @inject Game Game
 @inject Factions Factions
+@inject PlayerScore PlayerScore
 
 <Card Title="Faction score">
     @{
         var factions = Factions.Data
             .Where(faction => faction.Discovered)
             .ToList();
-        factions.Add(new Faction("Player", Game.PlayerScore.Data.Value, 0, true));
+        factions.Add(new Faction("Player", PlayerScore.Data.Value, 0, true));
         factions = factions.OrderByDescending(f => f.Score).ToList();
         foreach (var faction in factions)
         {
