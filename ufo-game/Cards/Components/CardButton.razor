@@ -1,19 +1,16 @@
-﻿<button class="btn btn-primary @CssClass"
-        @onclick="OnClick"
-        disabled="@(!Enabled)">
-    @ChildContent
+﻿@using UfoGame.ViewModel
+<button class="btn btn-primary @CssClass"
+        @onclick="PlayerAction.Act"
+        disabled="@(!PlayerAction.CanAct())">
+    @PlayerAction.ActLabel()
 </button>
 @code
 {
-    [Parameter, EditorRequired]
-    public EventCallback<MouseEventArgs> OnClick { get; set; }
-
-    [Parameter]
-    public bool Enabled { get; set; } = true;
-
     [Parameter]
     public string CssClass { get; set; } = "col m-1";
 
-    [Parameter]
-    public RenderFragment? ChildContent { get; set; }
+    #nullable disable
+    [Parameter, EditorRequired]
+    public IPlayerActionOnButton PlayerAction { get; set; } 
+    #nullable enable
 }

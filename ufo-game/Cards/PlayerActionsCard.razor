@@ -18,19 +18,19 @@
 <Card Title="Actions">
     <CardDataRow Label="Current time" Value="Timeline.Data.CurrentTime" />
     <div class="row">
-        <CardButton2 PlayerAction="RaiseMoney" />
-        <CardButton2 PlayerAction="ResearchMoneyRaisingMethods" />
+        <CardButton PlayerAction="RaiseMoney" />
+        <CardButton PlayerAction="ResearchMoneyRaisingMethods" />
     </div>
     <div class="row">
-        <CardButton2 PlayerAction="ResearchAgentEffectiveness" />
-        <CardButton2 PlayerAction="ResearchAgentSurvivability" />
+        <CardButton PlayerAction="ResearchAgentEffectiveness" />
+        <CardButton PlayerAction="ResearchAgentSurvivability" />
     </div>
     <div class="row">
-        <CardButton2 PlayerAction="ResearchTransportCapacity" />
-        <CardButton2 PlayerAction="ResearchAgentRecoverySpeed" />
+        <CardButton PlayerAction="ResearchTransportCapacity" />
+        <CardButton PlayerAction="ResearchAgentRecoverySpeed" />
     </div>
     <div class="row">
-        <CardButton2 PlayerAction="DoNothing" />
+        <CardButton PlayerAction="DoNothing" />
     </div>
     <div class="row mt-2 @(WarningMessagePresent ? "visible" : "invisible") ">
         <div class="col @(PlayerScore.PlayerWon ? "text-success": "text-danger")">
