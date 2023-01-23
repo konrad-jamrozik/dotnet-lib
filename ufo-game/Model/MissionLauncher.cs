@@ -161,7 +161,7 @@ public class MissionLauncher
 
             var inequalitySign = agentRoll <= agentSurvivalChance ? "<=" : ">";
             Console.Out.WriteLine(
-                $"Agent #{agent.Id} '{agent.Nickname}' exp: {expBonus} : " +
+                $"Agent #{agent.Id} '{agent.FullName}' exp: {expBonus} : " +
                 $"{(agentSurvived ? "survived" : "lost")}. " +
                 $"Rolled {agentRoll} {inequalitySign} {agentSurvivalChance}." +
                 messageSuffix);

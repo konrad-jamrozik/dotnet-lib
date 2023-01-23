@@ -6,7 +6,7 @@ namespace UfoGame.Model.Data;
 public class Agent
 {
     [JsonInclude] public int Id { get; private set; }
-    [JsonInclude] public string Nickname { get; private set; }
+    [JsonInclude] public string FullName { get; private set; }
     [JsonInclude] public int TimeHired { get; private set; }
     [JsonInclude] public int SuccessfulMissions { get; private set; }
     [JsonInclude] public int FailedMissions { get; private set; }
@@ -62,10 +62,10 @@ public class Agent
     public bool IsUnassignableFromMission => IsAtFullHealth && AssignedToMission;
     public bool CouldHaveBeenSentOnMission => IsAtFullHealth;
 
-    public Agent(int id, string nickname, int timeHired)
+    public Agent(int id, string fullName, int timeHired)
     {
         Id = id;
-        Nickname = nickname;
+        FullName = fullName;
         TimeHired = timeHired;
     }
 
