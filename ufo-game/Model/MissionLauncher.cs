@@ -108,6 +108,8 @@ public class MissionLauncher
         _viewStateRefresh.Trigger();
     }
 
+    // kja introduce class like "MissionOutcome" which will have method like "roll" and
+    // many of the stats currently on PendingMission
     private (int roll, bool success) RollMissionOutcome(PendingMission mission)
     {
         // Roll between 1 and 100.
