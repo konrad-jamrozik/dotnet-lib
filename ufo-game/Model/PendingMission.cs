@@ -67,7 +67,7 @@ public class PendingMission
 
     public int EnemyPower => (int)(Faction.Score * Data.EnemyPowerCoefficient);
 
-    public int CountDown => CurrentlyAvailable ? -Data.ExpiresIn : Data.AvailableIn;
+    public int Countdown => CurrentlyAvailable ? -Data.ExpiresIn : Data.AvailableIn;
 
     public bool CurrentlyAvailable => Data.AvailableIn == 0 && Data.ExpiresIn > 0;
     
