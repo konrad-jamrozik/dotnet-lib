@@ -8,38 +8,26 @@
 @inject PendingMission PendingMission
 @inject PlayerScore PlayerScore
 @inject ViewModel.RaiseMoneyPlayerAction RaiseMoney
+@inject ViewModel.ResearchMoneyRaisingMethodsPlayerAction ResearchMoneyRaisingMethods
+@inject ViewModel.ResearchAgentEffectivenessPlayerAction ResearchAgentEffectiveness
+@inject ViewModel.ResearchAgentSurvivabilityPlayerAction ResearchAgentSurvivability
+@inject ViewModel.ResearchTransportCapacityPlayerAction ResearchTransportCapacity
+@inject ViewModel.ResearchAgentRecoverySpeedPlayerAction ResearchAgentRecoverySpeed
 @inject ViewModel.DoNothingPlayerAction DoNothing
 
 <Card Title="Actions">
     <CardDataRow Label="Current time" Value="Timeline.Data.CurrentTime" />
     <div class="row">
         <CardButton2 PlayerAction="RaiseMoney" />
-        <CardButton Enabled="Research.CanResearchMoneyRaisingMethods()"
-                    OnClick="Research.ResearchMoneyRaisingMethods">
-            Research money raising methods for $@Research.Data.MoneyRaisingMethodsResearchCost
-        </CardButton>
+        <CardButton2 PlayerAction="ResearchMoneyRaisingMethods" />
     </div>
     <div class="row">
-        <CardButton Enabled="Research.CanResearchAgentEffectiveness()"
-                    OnClick="Research.ResearchAgentEffectiveness">
-            Research agent effectiveness for $@Research.Data.AgentEffectivenessResearchCost
-        </CardButton>
-        <CardButton Enabled="Research.CanResearchAgentSurvivability()"
-                    OnClick="Research.ResearchAgentSurvivability">
-            Research agent survivability for $@Research.Data.AgentSurvivabilityResearchCost
-        </CardButton>
+        <CardButton2 PlayerAction="ResearchAgentEffectiveness" />
+        <CardButton2 PlayerAction="ResearchAgentSurvivability" />
     </div>
     <div class="row">
-        <CardButton Enabled="Research.CanResearchTransportCapacity()"
-                    OnClick="Research.ResearchTransportCapacity">
-            Increase transport capacity by @MissionPrepData.TransportCapacityImprovement for 
-            $@Research.Data.TransportCapacityResearchCost
-        </CardButton>
-        <CardButton Enabled="Research.CanResearchAgentRecoverySpeed()"
-                    OnClick="Research.ResearchAgentRecoverySpeed">
-            Increase agent recovery speed by @StaffData.AgentRecoverySpeedImprovement for 
-            $@Research.Data.AgentRecoverySpeedResearchCost
-        </CardButton>
+        <CardButton2 PlayerAction="ResearchTransportCapacity" />
+        <CardButton2 PlayerAction="ResearchAgentRecoverySpeed" />
     </div>
     <div class="row">
         <CardButton2 PlayerAction="DoNothing" />

@@ -4,7 +4,7 @@ namespace UfoGame.Model.Data;
 
 public class MissionPrepData
 {
-    public const int TransportCapacityImprovement = 2;
+    public readonly int TransportCapacityImprovement = 2;
 
     [JsonInclude] public int TransportCapacity { get; private set; }
 

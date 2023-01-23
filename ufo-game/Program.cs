@@ -28,10 +28,15 @@ builder.Services.AddSingleton<MissionLauncher>();
 
 // ViewModel
 builder.Services.AddSingleton<StateRefresh>();
-builder.Services.AddSingleton<DoNothingPlayerAction>();
 builder.Services.AddSingleton<RaiseMoneyPlayerAction>();
 builder.Services.AddSingleton<HireAgentsPlayerAction>();
 builder.Services.AddSingleton<LaunchMissionPlayerAction>();
+builder.Services.AddSingleton<DoNothingPlayerAction>();
+builder.Services.AddSingleton<ResearchMoneyRaisingMethodsPlayerAction>();
+builder.Services.AddSingleton<ResearchAgentEffectivenessPlayerAction>();
+builder.Services.AddSingleton<ResearchAgentSurvivabilityPlayerAction>();
+builder.Services.AddSingleton<ResearchTransportCapacityPlayerAction>();
+builder.Services.AddSingleton<ResearchAgentRecoverySpeedPlayerAction>();
 
 await builder.Build().RunAsync();
 
