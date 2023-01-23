@@ -12,7 +12,7 @@ public class Agents
     [JsonIgnore]
     public List<Agent> AvailableAgents => Data.Where(agent => agent.Available).ToList();
 
-    public List<Agent> AvailableAgentsSortedByLaunchPriority(int currentTime)
+    public List<Agent> AvailableAgentsSortedByLaunchPriority()
         => AvailableAgents
             // First list agents that can be sent on a mission.
             .OrderByDescending(agent => agent.CanSendOnMission)
@@ -21,19 +21,19 @@ public class Agents
             .ThenBy(agent => agent.Data.Recovery)
             // Then sort agents by exp ascending
             // (rookies to be sent first, hence listed  first).
-            .ThenBy(agent => agent.ExperienceBonus(currentTime))
+            .ThenBy(agent => agent.ExperienceBonus())
             // Then from agents of the same experience bonus, first list
             // the ones hired more recently.
             .ThenByDescending(agent => agent.Data.Id)
             .ToList();
 
     public List<Agent> AssignableAgentsSortedByLaunchPriority(int currentTime)
-        => AvailableAgentsSortedByLaunchPriority(currentTime)
+        => AvailableAgentsSortedByLaunchPriority()
             .Where(s => !s.Data.AssignedToMission)
             .ToList();
 
     public List<Agent> AssignedAgentsSortedByDescendingLaunchPriority(int currentTime)
-        => AvailableAgentsSortedByLaunchPriority(currentTime)
+        => AvailableAgentsSortedByLaunchPriority()
             .Where(agent => agent.Data.AssignedToMission)
             .Reverse()
             .ToList();

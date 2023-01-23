@@ -7,38 +7,36 @@ public class Agent
     public readonly AgentData Data;
     private readonly TimelineData _timelineData;
 
-    // kja Agent: inject TimelineData instead of taking currentTime as param; this will likely require extracting AgentData
-
-    public int ExperienceBonus(int currentTime) 
+    public int ExperienceBonus() 
     {
-        Debug.Assert(currentTime >= Data.TimeHired);
-        return TrainingTime(currentTime) + ExperienceFromMissions;
+        Debug.Assert(_timelineData.CurrentTime >= Data.TimeHired);
+        return TrainingTime() + ExperienceFromMissions;
     }
 
     public int TimeToRecover(float recoverySpeed) => (int)Math.Ceiling(Data.Recovery / recoverySpeed);
 
     public int Salary => 5 + TotalMissions;
     
-    public int TrainingTime(int currentTime)
+    public int TrainingTime()
     {
-        Debug.Assert(currentTime >= Data.TimeHired);
-        var trainingTime = currentTime - Data.TimeHired - Data.TimeSpentRecovering;
+        Debug.Assert(_timelineData.CurrentTime >= Data.TimeHired);
+        var trainingTime = _timelineData.CurrentTime - Data.TimeHired - Data.TimeSpentRecovering;
         Debug.Assert(trainingTime >= 0);
         return trainingTime;
     }
 
-    public int TimeEmployed(int currentTime)
+    public int TimeEmployed()
     {
-        Debug.Assert(currentTime >= Data.TimeHired);
+        Debug.Assert(_timelineData.CurrentTime >= Data.TimeHired);
         int timeEmployed;
         if (MissingInAction)
         {
-            Debug.Assert(Data.TimeLost <= currentTime);
+            Debug.Assert(Data.TimeLost <= _timelineData.CurrentTime);
             timeEmployed = Data.TimeLost - Data.TimeHired;
         }
         else
         {
-            timeEmployed = currentTime - Data.TimeHired;
+            timeEmployed = _timelineData.CurrentTime - Data.TimeHired;
         }
         Debug.Assert(timeEmployed >= 0);
         return timeEmployed;
@@ -100,14 +98,14 @@ public class Agent
         Data.TimeSpentRecovering += 1;
     }
 
-    public void SetAsLost(int currentTime, bool missionSuccess)
+    public void SetAsLost(bool missionSuccess)
     {
-        Debug.Assert(currentTime >= Data.TimeHired);
+        Debug.Assert(_timelineData.CurrentTime >= Data.TimeHired);
         Debug.Assert(IsAtFullHealth);
         Debug.Assert(Data.AssignedToMission);
         RecordMissionOutcome(missionSuccess, recovery: 0);
         UnassignFromMission();
-        Data.TimeLost = currentTime;
+        Data.TimeLost = _timelineData.CurrentTime;
     }
 
     // As of 1/19/2023 worst case possible on successful mission is that agent will need

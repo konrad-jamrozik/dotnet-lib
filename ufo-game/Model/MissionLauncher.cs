@@ -16,7 +16,6 @@ public class MissionLauncher
     private readonly Agents _agents;
     private readonly Accounting _accounting;
     private readonly StateRefresh _stateRefresh;
-    private readonly Timeline _timeline;
     private readonly GameState _gameState;
 
     public MissionLauncher(
@@ -27,7 +26,6 @@ public class MissionLauncher
         Accounting accounting,
         StateRefresh stateRefresh,
         GameState gameState,
-        Timeline timeline,
         Agents agents)
     {
         _missionPrep = missionPrep;
@@ -37,7 +35,6 @@ public class MissionLauncher
         _accounting = accounting;
         _stateRefresh = stateRefresh;
         _gameState = gameState;
-        _timeline = timeline;
         _agents = agents;
     }
 
@@ -135,13 +132,13 @@ public class MissionLauncher
             // Roll between 1 and 100.
             // The lower the better.
             int agentRoll = _random.Next(1, 100 + 1);
-            var expBonus = agent.ExperienceBonus(_timeline.Data.CurrentTime);
+            var expBonus = agent.ExperienceBonus();
             var agentSurvivalChance
                 = mission.AgentSurvivalChance(expBonus);
             agentData.Add((agent, agentRoll, agentSurvivalChance, expBonus));
         }
 
-        List<(Agent agent, int lostTime, bool missionSuccess)> lostAgents = new List<(Agent, int, bool)>();
+        List<(Agent agent, bool missionSuccess)> lostAgents = new List<(Agent, bool)>();
         foreach (var data in agentData)
         {
             var (agent, agentRoll, agentSurvivalChance, expBonus) = data;
@@ -159,7 +156,7 @@ public class MissionLauncher
             }
             else
             {
-                lostAgents.Add((agent, _timeline.Data.CurrentTime, missionSuccess));
+                lostAgents.Add((agent, missionSuccess));
             }
 
             var inequalitySign = agentRoll <= agentSurvivalChance ? "<=" : ">";

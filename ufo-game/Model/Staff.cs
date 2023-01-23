@@ -14,9 +14,10 @@ public class Staff
         _archive = archive;
     }
 
-    public void LoseAgents(List<(Agent agent, int lostTime, bool missionSuccess)> agents)
+    // kja move this to Agents
+    public void LoseAgents(List<(Agent agent, bool missionSuccess)> agents)
     {
-        agents.ForEach(data => data.agent.SetAsLost(data.lostTime, data.missionSuccess));
+        agents.ForEach(data => data.agent.SetAsLost(data.missionSuccess));
         _archive.RecordLostAgents(agents.Count);
     }
 }

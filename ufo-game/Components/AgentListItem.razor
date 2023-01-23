@@ -2,8 +2,6 @@
 @using UfoGame.Model
 @using UfoGame.Model.Data
 @using UfoGame.ViewModel
-@inject Timeline Timeline
-@inject Staff Staff
 @inject StateRefresh StateRefresh
 @inject SickBay SickBay
 
@@ -15,7 +13,7 @@
                     <h5 class="ps-0 @NameTextColor">@Agent.Data.FullName</h5>
                 </div>
                 <div class="row row-cols-auto">
-                    <div class="col ps-0">Exp: @Agent.ExperienceBonus(Timeline.Data.CurrentTime)</div>
+                    <div class="col ps-0">Exp: @Agent.ExperienceBonus()</div>
                     <div class="col">Time to recover: @Agent.TimeToRecover(SickBay.AgentRecoverySpeed)</div>
                 </div>
             </div>
@@ -46,10 +44,10 @@
         <CardDataRow Label="Id" Value="@Agent.Data.Id" />
         <CardDataRow Label="Salary" Value="@Agent.Salary"/>
         <CardDataRow Label="Remaining recovery" Value="@Agent.Data.Recovery" />
-        <CardDataRow Label="Training time" Value="@Agent.TrainingTime(Timeline.Data.CurrentTime)"/>
+        <CardDataRow Label="Training time" Value="@Agent.TrainingTime()"/>
         <CardDataRow Label="Time spent recovering" Value="@Agent.Data.TimeSpentRecovering" />
         <CardDataRow Label="Time hired" Value="@Agent.Data.TimeHired"/>
-        <CardDataRow Label="Time employed" Value="@Agent.TimeEmployed(Timeline.Data.CurrentTime)"/>
+        <CardDataRow Label="Time employed" Value="@Agent.TimeEmployed()"/>
         <CardDataRow Label="Total missions" Value="@Agent.TotalMissions"/>
         <CardDataRow Label="Successful missions" Value="@Agent.Data.SuccessfulMissions"/>
         <CardDataRow Label="Failed missions" Value="@Agent.Data.FailedMissions"/>
