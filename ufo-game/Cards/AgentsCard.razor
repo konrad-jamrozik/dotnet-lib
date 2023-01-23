@@ -4,9 +4,10 @@
 @inject ViewModel.HireAgentsPlayerAction HireAgents
 @inject NavigationManager Navigation
 @inject Staff Staff
+@inject MissionPrep MissionPrep
 
 <Card Title="Agents">
-    <CardDataRow Label="Transport capacity" Value="Game.MissionPrep.Data.TransportCapacity"/>
+    <CardDataRow Label="Transport capacity" Value="MissionPrep.Data.TransportCapacity"/>
     <CardDataRow Label="All agents" Value="Staff.Data.AvailableAgents.Count"/>
     <CardDataRow Label="Ready agents" 
                  Value="Staff.Data.AgentsSendableOnMissionCount"

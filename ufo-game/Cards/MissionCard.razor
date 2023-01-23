@@ -5,6 +5,7 @@
 @inject ViewModel.LaunchMissionPlayerAction LaunchMission
 @inject Staff Staff
 @inject Archive Archive
+@inject MissionPrep MissionPrep
 
 <Card Title="Mission">
     <CardDataRow Label="Available in" 
@@ -33,7 +34,7 @@
                  Value="@(Game.PendingMission.BaselineAgentSurvivalChance + "%")"
                  Enabled="@Game.PendingMission.CurrentlyAvailable" />
     <CardDataRow Label="Transport capacity"
-                 Value="@Game.MissionPrep.Data.TransportCapacity"
+                 Value="@MissionPrep.Data.TransportCapacity"
                  Enabled="@Game.PendingMission.CurrentlyAvailable" />
     <CardDataRow Label="Ready agents"
                  Value="Staff.Data.AgentsSendableOnMissionCount"
