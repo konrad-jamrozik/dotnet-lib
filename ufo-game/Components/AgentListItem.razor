@@ -2,6 +2,7 @@
 @using UfoGame.Model
 @using UfoGame.Model.Data
 @inject Game Game
+@inject Staff Staff
 
 <div class="list-group-item list-group-item-action" aria-current="true">
     <div class="container-fluid">
@@ -12,7 +13,7 @@
                 </div>
                 <div class="row row-cols-auto">
                     <div class="col ps-0">Exp: @Agent.ExperienceBonus(Game.Timeline.Data.CurrentTime)</div>
-                    <div class="col">Time to recover: @Agent.TimeToRecover(Game.Staff.Data.AgentRecoverySpeed)</div>
+                    <div class="col">Time to recover: @Agent.TimeToRecover(Staff.Data.AgentRecoverySpeed)</div>
                 </div>
             </div>
             <div class="col col-auto align-self-center d-flex justify-content-center">

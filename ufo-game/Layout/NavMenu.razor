@@ -1,6 +1,7 @@
 ﻿@using UfoGame.Model
 @inject Game Game
 @inject Accounting Accounting
+@inject Staff Staff
 
 <div class="top-row ps-2 navbar fixed-top bg-body-tertiary" data-bs-theme="dark">
     <div class="container-fluid">
@@ -47,8 +48,8 @@
                     <div class="hstack gap-0 p-0" style="width: 105px">
                         <span class="oi oi-people" style="width: 24px" aria-hidden="true"></span>
                         @* <span>9999/9999</span> *@
-                        <span class="text-success">@Game.Staff.Data.AgentsSendableOnMissionCount</span>
-                        <span>/@Game.Staff.Data.AvailableAgents.Count</span>
+                        <span class="text-success">@Staff.Data.AgentsSendableOnMissionCount</span>
+                        <span>/@Staff.Data.AvailableAgents.Count</span>
                     </div>
                 </div>
             </div>

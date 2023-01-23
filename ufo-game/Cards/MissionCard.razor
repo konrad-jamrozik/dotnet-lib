@@ -1,8 +1,9 @@
 ﻿@using UfoGame.Cards.Components
 @using UfoGame.Model
 @using UfoGame.Model.Data
-@inject Game Game;
-@inject ViewModel.LaunchMissionPlayerAction LaunchMission;
+@inject Game Game
+@inject ViewModel.LaunchMissionPlayerAction LaunchMission
+@inject Staff Staff
 
 <Card Title="Mission">
     <CardDataRow Label="Available in" 
@@ -34,10 +35,10 @@
                  Value="@Game.MissionPrep.Data.TransportCapacity"
                  Enabled="@Game.PendingMission.CurrentlyAvailable" />
     <CardDataRow Label="Ready agents"
-                 Value="Game.Staff.Data.AgentsSendableOnMissionCount"
+                 Value="Staff.Data.AgentsSendableOnMissionCount"
                  ValueCssClass="text-success" />
     <CardDataRow Label="Agents to send" 
-                 Value="@Game.Staff.Data.AgentsAssignedToMissionCount"
+                 Value="@Staff.Data.AgentsAssignedToMissionCount"
                  Enabled="@Game.PendingMission.CurrentlyAvailable" />
     <CardButtonWithRangeInput PlayerAction="LaunchMission" />
     <div class="row">

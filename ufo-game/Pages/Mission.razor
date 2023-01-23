@@ -4,6 +4,7 @@
 @using UfoGame.Cards
 @inject Game Game
 @inject NavigationManager Navigation
+@inject Staff Staff
 
 @* kja rename Mission page to Deployment *@
 <PageTitle>Mission</PageTitle>
@@ -18,7 +19,7 @@
 
 <div class="list-group">
     @{
-        var sortedAgents = Game.Staff.Data.AvailableAgentsSortedByLaunchPriority(Game.Timeline.Data.CurrentTime);
+        var sortedAgents = Staff.Data.AvailableAgentsSortedByLaunchPriority(Game.Timeline.Data.CurrentTime);
         @for (int i = 0; i < sortedAgents.Count; i++)
         {
             <AgentListItem Index="i" Agent="sortedAgents[i]" />

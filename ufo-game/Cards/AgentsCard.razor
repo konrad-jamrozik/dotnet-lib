@@ -1,20 +1,22 @@
 ﻿@using UfoGame.Cards.Components
-@inject Model.Game Game;
+@using UfoGame.Model
+@inject Game Game
 @inject ViewModel.HireAgentsPlayerAction HireAgents
 @inject NavigationManager Navigation
+@inject Staff Staff
 
 <Card Title="Agents">
     <CardDataRow Label="Transport capacity" Value="Game.MissionPrep.Data.TransportCapacity"/>
-    <CardDataRow Label="All agents" Value="Game.Staff.Data.AvailableAgents.Count"/>
+    <CardDataRow Label="All agents" Value="Staff.Data.AvailableAgents.Count"/>
     <CardDataRow Label="Ready agents" 
-                 Value="Game.Staff.Data.AgentsSendableOnMissionCount"
+                 Value="Staff.Data.AgentsSendableOnMissionCount"
                  ValueCssClass="text-success"/>
     <CardDataRow Label="Recovering agents" 
-                 Value="Game.Staff.Data.AgentsInRecoveryCount"
+                 Value="Staff.Data.AgentsInRecoveryCount"
                  ValueCssClass="text-danger" />
-    <CardDataRow Label="Agent recovery speed" Value="Game.Staff.Data.AgentRecoverySpeed"/>
-    <CardDataRow Label="Agent effectiveness" Value="Game.Staff.Data.AgentEffectiveness"/>
-    <CardDataRow Label="Agent survivability" Value="Game.Staff.Data.AgentSurvivability"/>
+    <CardDataRow Label="Agent recovery speed" Value="Staff.Data.AgentRecoverySpeed"/>
+    <CardDataRow Label="Agent effectiveness" Value="Staff.Data.AgentEffectiveness"/>
+    <CardDataRow Label="Agent survivability" Value="Staff.Data.AgentSurvivability"/>
     <CardButtonWithRangeInput PlayerAction="HireAgents"/>
     <div class="row align-items-center">
         <div class="col">
