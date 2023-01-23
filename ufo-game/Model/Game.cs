@@ -1,6 +1,4 @@
-﻿using UfoGame.ViewModel;
-
-namespace UfoGame.Model;
+﻿namespace UfoGame.Model;
 
 // kja rename "Game" class to "Model" and move it to ViewModel, as a hook point for UI
 // to access logic. Remove all nontrivial logic from it, pushing down to relevant classes.
@@ -8,15 +6,12 @@ public class Game
 {
     public readonly Timeline Timeline;
     public readonly PlayerScore PlayerScore;
-    public readonly StateRefresh StateRefresh;
 
     public Game(
         Timeline timeline,
-        StateRefresh stateRefresh,
         PlayerScore playerScore)
     {
         Timeline = timeline;
-        StateRefresh = stateRefresh;
         PlayerScore = playerScore;
     }
 

@@ -2,9 +2,11 @@
 @using UfoGame.Components
 @using UfoGame.Model
 @using UfoGame.Cards
+@using UfoGame.ViewModel
 @inject Game Game
 @inject NavigationManager Navigation
 @inject Staff Staff
+@inject StateRefresh StateRefresh
 
 @* kja rename Mission page to Deployment *@
 <PageTitle>Mission</PageTitle>
@@ -40,6 +42,6 @@
     protected override void OnInitialized()
     {
         base.OnInitialized();
-        Game.StateRefresh.Event += StateHasChanged;
+        StateRefresh.Event += StateHasChanged;
     }
 }

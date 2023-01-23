@@ -1,5 +1,7 @@
 ﻿@using UfoGame.Model
-@inject Game Game;
+@using UfoGame.ViewModel
+@inject Game Game
+@inject StateRefresh StateRefresh
 
 <div class="card px-0">
     <div class="card-body pt-2 pb-2">
@@ -19,6 +21,6 @@
     protected override void OnInitialized()
     {
         base.OnInitialized();
-        Game.StateRefresh.Event += StateHasChanged;
+        StateRefresh.Event += StateHasChanged;
     }
 }

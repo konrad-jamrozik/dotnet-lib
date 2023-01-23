@@ -1,8 +1,10 @@
 ﻿@using UfoGame.Model
+@using UfoGame.ViewModel
 @inject Game Game
 @inject Accounting Accounting
 @inject Staff Staff
 @inject PendingMission PendingMission
+@inject StateRefresh StateRefresh
 
 <div class="top-row ps-2 navbar fixed-top bg-body-tertiary" data-bs-theme="dark">
     <div class="container-fluid">
@@ -120,6 +122,6 @@
     protected override void OnInitialized()
     {
         base.OnInitialized();
-        Game.StateRefresh.Event += StateHasChanged;
+        StateRefresh.Event += StateHasChanged;
     }
 }
