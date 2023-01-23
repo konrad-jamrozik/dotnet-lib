@@ -1,6 +1,4 @@
-﻿using System.Diagnostics;
-using UfoGame.Infra;
-using UfoGame.Model.Data;
+﻿using UfoGame.Model.Data;
 using UfoGame.ViewModel;
 
 namespace UfoGame.Model;
@@ -30,8 +28,7 @@ public class Game
         StateRefresh stateRefresh,
         Factions factions,
         PlayerScore playerScore,
-        Research research,
-        GameState gameState)
+        Research research)
     {
         Timeline = timeline;
         Accounting = accounting;
@@ -55,64 +52,34 @@ public class Game
         => AdvanceTime(raisedMoney: true);
 
     public bool CanResearchMoneyRaisingMethods()
-        => !PlayerScore.GameOver && Accounting.CurrentMoney >= Research.Data.MoneyRaisingMethodsResearchCost;
+        => Research.CanResearchMoneyRaisingMethods();
 
     public void ResearchMoneyRaisingMethods()
-    {
-        Debug.Assert(CanResearchMoneyRaisingMethods());
-        Accounting.PayForResearch(Research.Data.MoneyRaisingMethodsResearchCost);
-        Research.Data.MoneyRaisingMethodsResearchCost += ResearchData.MoneyRaisingMethodsResearchCostIncrement;
-        Accounting.Data.MoneyRaisedPerActionAmount += 25;
-        AdvanceTime();
-    }
+        => Research.ResearchMoneyRaisingMethods();
 
     public bool CanResearchTransportCapacity()
-        => !PlayerScore.GameOver && Accounting.CurrentMoney >= Research.Data.TransportCapacityResearchCost;
+        => Research.CanResearchTransportCapacity();
 
     public void ResearchTransportCapacity()
-    {
-        Debug.Assert(CanResearchTransportCapacity());
-        Accounting.PayForResearch(Research.Data.TransportCapacityResearchCost);
-        Research.Data.TransportCapacityResearchCost += ResearchData.TransportCapacityResearchCostIncrement;
-        MissionPrep.Data.ImproveTransportCapacity();
-        AdvanceTime();
-    }
+        => Research.ResearchTransportCapacity();
 
     public bool CanResearchAgentEffectiveness()
-        => !PlayerScore.GameOver && Accounting.CurrentMoney >= Research.Data.AgentEffectivenessResearchCost;
+        => Research.CanResearchAgentEffectiveness();
 
     public void ResearchAgentEffectiveness()
-    {
-        Debug.Assert(CanResearchAgentEffectiveness());
-        Accounting.PayForResearch(Research.Data.AgentEffectivenessResearchCost);
-        Research.Data.AgentEffectivenessResearchCost += ResearchData.AgentEffectivenessResearchCostIncrement;
-        Staff.Data.AgentEffectiveness += 25;
-        AdvanceTime();
-    }
+        => Research.ResearchAgentEffectiveness();
 
     public bool CanResearchAgentSurvivability()
-        => !PlayerScore.GameOver && Accounting.CurrentMoney >= Research.Data.AgentSurvivabilityResearchCost;
+        => Research.CanResearchAgentSurvivability();
 
     public void ResearchAgentSurvivability()
-    {
-        Debug.Assert(CanResearchAgentSurvivability());
-        Accounting.PayForResearch(Research.Data.AgentSurvivabilityResearchCost);
-        Research.Data.AgentSurvivabilityResearchCost += ResearchData.AgentSurvivabilityResearchCostIncrement;
-        Staff.Data.AgentSurvivability += 25;
-        AdvanceTime();
-    }
+        => Research.ResearchAgentSurvivability();
 
     public bool CanResearchAgentRecoverySpeed()
-        => !PlayerScore.GameOver && Accounting.CurrentMoney >= Research.Data.AgentRecoverySpeedResearchCost;
+        => Research.CanResearchAgentRecoverySpeed();
 
     public void ResearchAgentRecoverySpeed()
-    {
-        Debug.Assert(CanResearchAgentRecoverySpeed());
-        Accounting.PayForResearch(Research.Data.AgentRecoverySpeedResearchCost);
-        Research.Data.AgentRecoverySpeedResearchCost += ResearchData.AgentRecoverySpeedResearchCostIncrement;
-        Staff.Data.ImproveAgentRecoverySpeed();
-        AdvanceTime();
-    }
+        => Research.ResearchAgentRecoverySpeed();
 
     private void AdvanceTime(bool raisedMoney = false)
         => Timeline.AdvanceTime(raisedMoney);
