@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics;
 using UfoGame.Model.Data;
-using Archive = UfoGame.Model.Data.Archive;
 
 namespace UfoGame.Model;
 
@@ -17,27 +16,18 @@ public class Procurement
     public int MaxAgentsToHire => _accounting.CurrentMoney / AgentPrice;
 
     private readonly Accounting _accounting;
-    private readonly Staff _staff;
     private readonly PlayerScore _playerScore;
-    private readonly Archive _archive;
-    private readonly Timeline _timeline;
     private readonly Agents _agents;
 
     public Procurement(
         ProcurementData data,
         Accounting accounting,
-        Staff staff,
         PlayerScore playerScore,
-        Archive archive,
-        Timeline timeline,
         Agents agents)
     {
         Data = data;
         _accounting = accounting;
-        _staff = staff;
         _playerScore = playerScore;
-        _archive = archive;
-        _timeline = timeline;
         _agents = agents;
     }
 
@@ -67,8 +57,6 @@ public class Procurement
     {
         Debug.Assert(CanHireAgents(tryNarrow: false));
         _accounting.PayForHiringAgents(AgentsToHireCost);
-        _archive.RecordHiredAgents(Data.AgentsToHire);
-        _agents.AddNewRandomAgents(Data.AgentsToHire);
-        
+        _agents.HireAgents(Data.AgentsToHire);
     }
 }

@@ -6,7 +6,6 @@ public class Agents
 {
     private readonly AgentsData _agentsData;
     private readonly TimelineData _timelineData;
-    private readonly SickBay _sickBay;
     private readonly Archive _archive;
     private List<Agent> _data;
 
@@ -62,11 +61,10 @@ public class Agents
         _archive.RecordLostAgents(agents.Count);
     }
 
-    public Agents(AgentsData agentsData, TimelineData timelineData, SickBay sickBay, Archive archive)
+    public Agents(AgentsData agentsData, TimelineData timelineData, Archive archive)
     {
         _agentsData = agentsData;
         _timelineData = timelineData;
-        _sickBay = sickBay;
         _archive = archive;
         _data = AgentsFromData(_agentsData.Data).ToList();
     }
@@ -76,14 +74,11 @@ public class Agents
         _data = AgentsFromData(_agentsData.Data).ToList();
     }
 
-    // kja move this to sick bay; requires extracting SickBayData
-    public void AdvanceTime()
-        => AgentsInRecovery.ForEach(agent => agent.TickRecovery(_sickBay.Data.AgentRecoverySpeed));
-
-    public void AddNewRandomAgents(int agentsToAdd)
+    public void HireAgents(int agentsToHire)
     {
-        var addedAgentsData = _agentsData.AddNewRandomAgents(agentsToAdd, _timelineData.CurrentTime);
+        var addedAgentsData = _agentsData.AddNewRandomAgents(agentsToHire, _timelineData.CurrentTime);
         _data.AddRange(AgentsFromData(addedAgentsData));
+        _archive.RecordHiredAgents(agentsToHire);
     }
 
     private IEnumerable<Agent> AgentsFromData(List<AgentData> agentsData)

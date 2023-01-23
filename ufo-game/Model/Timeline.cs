@@ -14,7 +14,7 @@ public class Timeline
     private readonly GameState _gameState;
     private readonly StateRefresh _stateRefresh;
     private readonly PlayerScore _playerScore;
-    private readonly Agents _agents;
+    private readonly SickBay _sickBay;
 
     public Timeline(
         TimelineData data,
@@ -24,7 +24,7 @@ public class Timeline
         GameState gameState,
         StateRefresh stateRefresh,
         PlayerScore playerScore,
-        Agents agents)
+        SickBay sickBay)
     {
         Data = data;
         _factions = factions;
@@ -33,7 +33,7 @@ public class Timeline
         _gameState = gameState;
         _stateRefresh = stateRefresh;
         _playerScore = playerScore;
-        _agents = agents;
+        _sickBay = sickBay;
     }
 
     public void AdvanceTime(bool raisedMoney = false)
@@ -43,7 +43,7 @@ public class Timeline
         _pendingMission.AdvanceTime();
         _factions.AdvanceTime();
         _accounting.AdvanceTime(raisedMoney);
-        _agents.AdvanceTime();
+        _sickBay.AdvanceTime();
         _gameState.PersistGameState();
         _stateRefresh.Trigger();
     }
