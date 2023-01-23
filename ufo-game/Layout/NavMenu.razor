@@ -2,6 +2,7 @@
 @inject Game Game
 @inject Accounting Accounting
 @inject Staff Staff
+@inject PendingMission PendingMission
 
 <div class="top-row ps-2 navbar fixed-top bg-body-tertiary" data-bs-theme="dark">
     <div class="container-fluid">
@@ -27,8 +28,8 @@
                     <div class="hstack gap-0 p-0" style="width: 50px">
                         <span class="oi oi-timer" style="width: 23px" aria-hidden="true"></span>
                         @* <span>-99</span> *@
-                        <span class="@(Game.PendingMission.MissionAboutToExpire ? "text-danger" : "")">
-                            @Game.PendingMission.CountDown
+                        <span class="@(PendingMission.MissionAboutToExpire ? "text-danger" : "")">
+                            @PendingMission.CountDown
                         </span>
                     </div>
                 </div>

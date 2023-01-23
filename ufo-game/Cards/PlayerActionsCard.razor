@@ -5,6 +5,7 @@
 @inject Game Game
 @inject Research Research
 @inject Accounting Accounting
+@inject PendingMission PendingMission
 
 <Card Title="Actions">
     <CardDataRow Label="Current time" Value="Game.Timeline.Data.CurrentTime" />
@@ -55,7 +56,7 @@
 
 @code
 {
-    private bool WarningMessagePresent => Game.PlayerScore.GameOver || Game.PendingMission.MissionAboutToExpire;
+    private bool WarningMessagePresent => Game.PlayerScore.GameOver || PendingMission.MissionAboutToExpire;
 
     private string WarningMessage()
     {
@@ -64,7 +65,7 @@
                    + (Game.PlayerScore.PlayerWon 
                        ? $"YOU WON! Score: {Game.PlayerScore.Data.Value}. Turn: {Game.Timeline.Data.CurrentTime}" 
                        : $"YOU LOST! Lasted until turn: {Game.Timeline.Data.CurrentTime}.");
-        else if (Game.PendingMission.MissionAboutToExpire)
+        else if (PendingMission.MissionAboutToExpire)
             return $"If you don't launch mission now, you will lose {PlayerScore.IgnoreMissionScoreLoss} score for ignoring pending mission!";
         else
             return "If you don't launch mission now, you will lose 1000 score for ignoring pending mission!";

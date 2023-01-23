@@ -7,18 +7,15 @@ namespace UfoGame.Model;
 public class Game
 {
     public readonly Timeline Timeline;
-    public readonly PendingMission PendingMission;
     public readonly PlayerScore PlayerScore;
     public readonly StateRefresh StateRefresh;
 
     public Game(
         Timeline timeline,
-        PendingMission pendingMission,
         StateRefresh stateRefresh,
         PlayerScore playerScore)
     {
         Timeline = timeline;
-        PendingMission = pendingMission;
         StateRefresh = stateRefresh;
         PlayerScore = playerScore;
     }
