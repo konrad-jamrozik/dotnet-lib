@@ -2,7 +2,8 @@
 @using UfoGame.Model
 @using System.Diagnostics.CodeAnalysis
 @using UfoGame.Model.Data
-@inject Game Game;
+@inject Game Game
+@inject Research Research
 
 <Card Title="Actions">
     <CardDataRow Label="Current time" Value="Game.Timeline.Data.CurrentTime" />
@@ -11,31 +12,31 @@
                     OnClick="Game.RaiseMoney">
             Raise money: $@Game.Accounting.Data.MoneyRaisedPerActionAmount
         </CardButton>
-        <CardButton Enabled="Game.CanResearchMoneyRaisingMethods()"
-                    OnClick="Game.ResearchMoneyRaisingMethods">
-            Research money raising methods for $@Game.Research.Data.MoneyRaisingMethodsResearchCost
+        <CardButton Enabled="Research.CanResearchMoneyRaisingMethods()"
+                    OnClick="Research.ResearchMoneyRaisingMethods">
+            Research money raising methods for $@Research.Data.MoneyRaisingMethodsResearchCost
         </CardButton>
     </div>
     <div class="row">
-        <CardButton Enabled="Game.CanResearchAgentEffectiveness()"
-                    OnClick="Game.ResearchAgentEffectiveness">
-            Research agent effectiveness for $@Game.Research.Data.AgentEffectivenessResearchCost
+        <CardButton Enabled="Research.CanResearchAgentEffectiveness()"
+                    OnClick="Research.ResearchAgentEffectiveness">
+            Research agent effectiveness for $@Research.Data.AgentEffectivenessResearchCost
         </CardButton>
-        <CardButton Enabled="Game.CanResearchAgentSurvivability()"
-                    OnClick="Game.ResearchAgentSurvivability">
-            Research agent survivability for $@Game.Research.Data.AgentSurvivabilityResearchCost
+        <CardButton Enabled="Research.CanResearchAgentSurvivability()"
+                    OnClick="Research.ResearchAgentSurvivability">
+            Research agent survivability for $@Research.Data.AgentSurvivabilityResearchCost
         </CardButton>
     </div>
     <div class="row">
-        <CardButton Enabled="Game.CanResearchTransportCapacity()"
-                    OnClick="Game.ResearchTransportCapacity">
+        <CardButton Enabled="Research.CanResearchTransportCapacity()"
+                    OnClick="Research.ResearchTransportCapacity">
             Increase transport capacity by @MissionPrepData.TransportCapacityImprovement for 
-            $@Game.Research.Data.TransportCapacityResearchCost
+            $@Research.Data.TransportCapacityResearchCost
         </CardButton>
-        <CardButton Enabled="Game.CanResearchAgentRecoverySpeed()"
-                    OnClick="Game.ResearchAgentRecoverySpeed">
+        <CardButton Enabled="Research.CanResearchAgentRecoverySpeed()"
+                    OnClick="Research.ResearchAgentRecoverySpeed">
             Increase agent recovery speed by @StaffData.AgentRecoverySpeedImprovement for 
-            $@Game.Research.Data.AgentRecoverySpeedResearchCost
+            $@Research.Data.AgentRecoverySpeedResearchCost
         </CardButton>
     </div>
     <div class="row">

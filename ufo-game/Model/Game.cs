@@ -15,7 +15,6 @@ public class Game
     public readonly PendingMission PendingMission;
     public readonly Factions Factions;
     public readonly PlayerScore PlayerScore;
-    public readonly Research Research;
     public readonly StateRefresh StateRefresh;
 
     public Game(
@@ -27,8 +26,7 @@ public class Game
         PendingMission pendingMission,
         StateRefresh stateRefresh,
         Factions factions,
-        PlayerScore playerScore,
-        Research research)
+        PlayerScore playerScore)
     {
         Timeline = timeline;
         Accounting = accounting;
@@ -39,7 +37,6 @@ public class Game
         StateRefresh = stateRefresh;
         Factions = factions;
         PlayerScore = playerScore;
-        Research = research;
     }
 
     public bool CanDoNothing() => !PlayerScore.GameOver;
@@ -50,36 +47,6 @@ public class Game
 
     public void RaiseMoney()
         => AdvanceTime(raisedMoney: true);
-
-    public bool CanResearchMoneyRaisingMethods()
-        => Research.CanResearchMoneyRaisingMethods();
-
-    public void ResearchMoneyRaisingMethods()
-        => Research.ResearchMoneyRaisingMethods();
-
-    public bool CanResearchTransportCapacity()
-        => Research.CanResearchTransportCapacity();
-
-    public void ResearchTransportCapacity()
-        => Research.ResearchTransportCapacity();
-
-    public bool CanResearchAgentEffectiveness()
-        => Research.CanResearchAgentEffectiveness();
-
-    public void ResearchAgentEffectiveness()
-        => Research.ResearchAgentEffectiveness();
-
-    public bool CanResearchAgentSurvivability()
-        => Research.CanResearchAgentSurvivability();
-
-    public void ResearchAgentSurvivability()
-        => Research.ResearchAgentSurvivability();
-
-    public bool CanResearchAgentRecoverySpeed()
-        => Research.CanResearchAgentRecoverySpeed();
-
-    public void ResearchAgentRecoverySpeed()
-        => Research.ResearchAgentRecoverySpeed();
 
     private void AdvanceTime(bool raisedMoney = false)
         => Timeline.AdvanceTime(raisedMoney);
