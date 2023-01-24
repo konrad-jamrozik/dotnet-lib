@@ -64,6 +64,9 @@ public class GameState
         ModalsState = modalsState;
     }
 
+    // kja instead use reflection to persist all classes that implement IDeserializable.
+    // Then rename IDeserializable to IPersistable.
+    // This will require figuring out how to ensure the json has correct format.
     public void PersistGameState()
         => _storage.Persist(this);
 
