@@ -2,7 +2,7 @@
 
 namespace UfoGame.Model.Data;
 
-public class ArchiveData
+public class ArchiveData : IData
 {
     public const string NoMissionsReport = "No missions yet!";
 

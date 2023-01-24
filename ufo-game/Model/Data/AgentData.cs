@@ -2,7 +2,7 @@
 
 namespace UfoGame.Model.Data;
 
-public class AgentData
+public class AgentData : IData
 {
     [JsonInclude] public int Id;
     [JsonInclude] public string FullName;

@@ -2,7 +2,7 @@
 
 namespace UfoGame.Model.Data;
 
-public class ProcurementData
+public class ProcurementData : IData
 {
     [JsonInclude] public int AgentsToHire;
     [JsonInclude] public int AgentsToFire;

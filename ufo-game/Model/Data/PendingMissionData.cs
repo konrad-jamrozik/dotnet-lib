@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace UfoGame.Model.Data;
 
-public class PendingMissionData
+public class PendingMissionData : IData
 {
     public static PendingMissionData New(PlayerScore playerScore, Random random, FactionsData factionsData)
         => !playerScore.GameOver

@@ -2,7 +2,7 @@
 
 namespace UfoGame.Model.Data;
 
-public class PlayerScoreData
+public class PlayerScoreData : IData
 {
     [JsonInclude] public int Value;
 

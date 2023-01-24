@@ -2,7 +2,7 @@
 
 namespace UfoGame.Model.Data;
 
-public class AgentsData
+public class AgentsData : IData
 {
     [JsonInclude] public int NextAgentId;
     [JsonInclude] public List<AgentData> Data { get; private set; } = new List<AgentData>();

@@ -2,7 +2,7 @@
 
 namespace UfoGame.Model.Data;
 
-public class AccountingData
+public class AccountingData : IData
 {
     [JsonInclude] public int CurrentMoney { get; set; }
     [JsonInclude] public int MoneyRaisedPerActionAmount;

@@ -2,7 +2,7 @@
 
 namespace UfoGame.Model.Data;
 
-public class TimelineData : ITemporal
+public class TimelineData : ITemporal, IData
 {
     [JsonInclude] public int CurrentTime { get; private set; }
 

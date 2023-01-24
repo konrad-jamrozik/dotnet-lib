@@ -2,7 +2,7 @@
 
 namespace UfoGame.Model.Data;
 
-public class ResearchData
+public class ResearchData : IData
 {
     public const int MoneyRaisingMethodsResearchCostIncrement = 100;
     public const int TransportCapacityResearchCostIncrement = 200;
