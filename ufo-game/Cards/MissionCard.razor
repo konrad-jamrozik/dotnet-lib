@@ -17,7 +17,7 @@
                  Enabled="@PendingMission.CurrentlyAvailable"
                  ValueCssClass="@(PendingMission.MissionAboutToExpire ? "text-danger" : "")"/>
     <CardDataRow Label="Enemy faction"
-                 Value="@PendingMission.Faction.Name"
+                 Value="@PendingMission.FactionData.Name"
                  Enabled="@PendingMission.CurrentlyAvailable" />
     <CardDataRow Label="Money reward"
                  Value="@("$"+PendingMission.MoneyReward)"

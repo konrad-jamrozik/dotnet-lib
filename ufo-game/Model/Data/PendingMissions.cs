@@ -12,8 +12,8 @@ public class PendingMissions
     public void Reset()
         => Data = new List<PendingMissionData> { PendingMissionData.NewEmpty };
 
-    public void New(PlayerScore playerScore, Random random, Factions factions)
+    public void New(PlayerScore playerScore, Random random, FactionsData factionsData)
     {
-        Data[0] = PendingMissionData.New(playerScore, random, factions);
+        Data[0] = PendingMissionData.New(playerScore, random, factionsData);
     }
 }

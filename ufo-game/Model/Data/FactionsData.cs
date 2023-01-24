@@ -2,9 +2,9 @@
 
 namespace UfoGame.Model.Data;
 
-public class Factions : ITemporal
+public class FactionsData : ITemporal
 {
-    [JsonInclude] public List<Faction> Data = new List<Faction>();
+    [JsonInclude] public List<FactionData> Data = new List<FactionData>();
 
     /// <summary>
     /// Placeholder faction for "no faction", or "null faction".
@@ -14,7 +14,7 @@ public class Factions : ITemporal
     /// 
     public const string NoFaction = "no_faction";
 
-    public Factions()
+    public FactionsData()
         => Reset();
 
     public void Reset()
@@ -34,13 +34,13 @@ public class Factions : ITemporal
                 // // Non-canon:
                 // "Man-Bear-Pigs, "Vampires", "Werewolves", "Shapeshifters",
             }
-            .Select(faction => new Faction(faction.name, faction.score, faction.scoreTick))
+            .Select(faction => new FactionData(faction.name, faction.score, faction.scoreTick))
             .ToList();
     }
 
     public bool AllFactionsDefeated => Data.TrueForAll(f => f.Defeated);
 
-    public Faction RandomUndefeatedFaction
+    public FactionData RandomUndefeatedFactionData
     {
         get
         {
@@ -51,7 +51,7 @@ public class Factions : ITemporal
 
     private readonly Random _random = new Random();
 
-    private List<Faction> UndefeatedFactions =>
+    private List<FactionData> UndefeatedFactions =>
         Data.Where(faction => !faction.Defeated && faction.Name != NoFaction).ToList();
 
     public void AdvanceTime()

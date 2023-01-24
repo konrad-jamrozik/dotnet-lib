@@ -8,7 +8,7 @@ namespace UfoGame.Model;
 public class Timeline
 {
     public readonly TimelineData Data;
-    private readonly Factions _factions;
+    private readonly FactionsData _factionsData;
     private readonly PendingMission _pendingMission;
     private readonly Accounting _accounting;
     private readonly GameState _gameState;
@@ -18,7 +18,7 @@ public class Timeline
 
     public Timeline(
         TimelineData data,
-        Factions factions,
+        FactionsData factionsData,
         PendingMission pendingMission,
         Accounting accounting,
         GameState gameState,
@@ -27,7 +27,7 @@ public class Timeline
         SickBay sickBay)
     {
         Data = data;
-        _factions = factions;
+        _factionsData = factionsData;
         _pendingMission = pendingMission;
         _accounting = accounting;
         _gameState = gameState;
@@ -42,7 +42,7 @@ public class Timeline
         
         Data.AdvanceTime();
         _pendingMission.AdvanceTime();
-        _factions.AdvanceTime();
+        _factionsData.AdvanceTime();
         _accounting.AdvanceTime();
         _sickBay.AdvanceTime();
         

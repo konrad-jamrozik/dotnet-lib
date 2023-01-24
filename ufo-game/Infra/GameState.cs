@@ -13,7 +13,7 @@ public class GameState
     [JsonInclude] public readonly Archive Archive;
     [JsonInclude] public readonly MissionPrepData MissionPrepData;
     [JsonInclude] public readonly PendingMissions PendingMissions;
-    [JsonInclude] public readonly Factions Factions;
+    [JsonInclude] public readonly FactionsData FactionsData;
     [JsonInclude] public readonly AgentsData AgentsData;
     [JsonInclude] public readonly SickBayData SickBayData;
     [JsonInclude] public readonly PlayerScoreData PlayerScoreData;
@@ -34,7 +34,7 @@ public class GameState
         PendingMissions pendingMissions,
         PendingMission pendingMission,
         MissionPrepData missionPrepData,
-        Factions factions,
+        FactionsData factionsData,
         AgentsData agentsData,
         Agents agents,
         SickBayData sickBayData,
@@ -52,7 +52,7 @@ public class GameState
         PendingMissions = pendingMissions;
         _pendingMission = pendingMission;
         MissionPrepData = missionPrepData;
-        Factions = factions;
+        FactionsData = factionsData;
         AgentsData = agentsData;
         _agents = agents;
         SickBayData = sickBayData;
@@ -74,7 +74,7 @@ public class GameState
         StaffData.Reset();
         Archive.Reset();
         MissionPrepData.Reset();
-        Factions.Reset();
+        FactionsData.Reset();
         SickBayData.Reset();
         PlayerScoreData.Reset();
         ResearchData.Reset();

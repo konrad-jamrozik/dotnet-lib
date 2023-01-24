@@ -1,15 +1,15 @@
 ﻿@using UfoGame.Cards.Components
 @using UfoGame.Model
 @using UfoGame.Model.Data
-@inject Factions Factions
+@inject FactionsData FactionsData
 @inject PlayerScore PlayerScore
 
 <Card Title="Faction score">
     @{
-        var factions = Factions.Data
+        var factions = FactionsData.Data
             .Where(faction => faction.Discovered)
             .ToList();
-        factions.Add(new Faction("Player", PlayerScore.Data.Value, 0, true));
+        factions.Add(new FactionData("Player", PlayerScore.Data.Value, 0, true));
         factions = factions.OrderByDescending(f => f.Score).ToList();
         foreach (var faction in factions)
         {
@@ -17,7 +17,7 @@
                          Value="faction.Score" 
                          CssClass="@(faction.Name == "Player" ? "text-success" : "text-danger")"/>
         }
-        if (Factions.Data.Any(faction => !faction.Discovered))
+        if (FactionsData.Data.Any(faction => !faction.Discovered))
         {
             <div class="row">
                 <div class="col">More factions may appear here as you discover them!</div>

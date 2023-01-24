@@ -22,7 +22,7 @@ public static class PersistedGameStateReader
 
             var timelineData = gameJson[nameof(TimelineData)].Deserialize<TimelineData>()!;
             var accountingData = gameJson[nameof(AccountingData)].Deserialize<AccountingData>()!;
-            var factions = gameJson[nameof(Factions)].Deserialize<Factions>()!;
+            var factions = gameJson[nameof(FactionsData)].Deserialize<FactionsData>()!;
             var researchData = gameJson[nameof(ResearchData)].Deserialize<ResearchData>()!;
             var archive = gameJson[nameof(Archive)].Deserialize<Archive>()!;
             var playerScoreData = gameJson[nameof(PlayerScoreData)].Deserialize<PlayerScoreData>()!;
@@ -63,7 +63,7 @@ public static class PersistedGameStateReader
 
     public static void Reset(IServiceCollection services)
     {
-        services.AddSingleton<Factions>();
+        services.AddSingleton<FactionsData>();
         services.AddSingleton<Archive>();
         services.AddSingleton(new TimelineData());
         services.AddSingleton(new ResearchData());

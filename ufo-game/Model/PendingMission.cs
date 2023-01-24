@@ -63,9 +63,9 @@ public class PendingMission : ITemporal
 
     public PendingMissionData Data => _pendingMissions.Data[0];
 
-    public Faction Faction => _factions.Data.Single(f => f.Name == Data.FactionName);
+    public FactionData FactionData => _factionsData.Data.Single(f => f.Name == Data.FactionName);
 
-    public int EnemyPower => (int)(Faction.Score * Data.EnemyPowerCoefficient);
+    public int EnemyPower => (int)(FactionData.Score * Data.EnemyPowerCoefficient);
 
     public int Countdown => CurrentlyAvailable ? -Data.ExpiresIn : Data.AvailableIn;
 
@@ -74,12 +74,12 @@ public class PendingMission : ITemporal
     public bool MissionAboutToExpire => CurrentlyAvailable && Data.ExpiresIn == 1;
 
     // ReSharper disable once PossibleLossOfFraction
-    public int MoneyReward => (int)(Faction.Score/2 * Data.MoneyRewardCoefficient);
+    public int MoneyReward => (int)(FactionData.Score/2 * Data.MoneyRewardCoefficient);
 
     // kja consolidate all Random gens into one
     private readonly Random _random = new Random();
     private readonly Archive _archive;
-    private readonly Factions _factions;
+    private readonly FactionsData _factionsData;
     private readonly PlayerScore _playerScore;
     private readonly Staff _staff;
     private readonly Agents _agents;
@@ -88,19 +88,19 @@ public class PendingMission : ITemporal
     public PendingMission(
         PendingMissions pendingMissions,
         Archive archive,
-        Factions factions,
+        FactionsData factionsData,
         PlayerScore playerScore,
         Staff staff,
         Agents agents)
     {
         _pendingMissions = pendingMissions;
         _archive = archive;
-        _factions = factions;
+        _factionsData = factionsData;
         _playerScore = playerScore;
         _staff = staff;
         _agents = agents;
         if (Data.IsNoMission)
-            _pendingMissions.New(_playerScore, _random, _factions);
+            _pendingMissions.New(_playerScore, _random, _factionsData);
     }
 
     public void AdvanceTime()
@@ -125,10 +125,10 @@ public class PendingMission : ITemporal
             Data.AvailableIn--;
             if (CurrentlyAvailable)
             {
-                if (!Faction.Discovered)
+                if (!FactionData.Discovered)
                 {
-                    Console.Out.WriteLine("Discovered faction! " + Faction.Name);
-                    Faction.Discovered = true;
+                    Console.Out.WriteLine("Discovered faction! " + FactionData.Name);
+                    FactionData.Discovered = true;
                 }
             }
         }
@@ -141,5 +141,5 @@ public class PendingMission : ITemporal
     }
 
     public void GenerateNewOrClearMission()
-        => _pendingMissions.New(_playerScore, _random, _factions);
+        => _pendingMissions.New(_playerScore, _random, _factionsData);
 }
