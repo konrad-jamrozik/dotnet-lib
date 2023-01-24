@@ -1,14 +1,14 @@
 ﻿@using UfoGame.Cards.Components
 @using UfoGame.Model
 @using UfoGame.Model.Data
-@inject Archive Archive
+@inject ArchiveData ArchiveData
 
 <Card Title="Operations stats">
-    <CardDataRow Label="Missions launched" Value="@Archive.MissionsLaunched" />
-    <CardDataRow Label="Successful missions" Value="@Archive.SuccessfulMissions" />
-    <CardDataRow Label="Failed missions" Value="@Archive.FailedMissions" />
-    <CardDataRow Label="Ignored missions" Value="@Archive.IgnoredMissions" />
-    <CardDataRow Label="Total agents hired" Value="@Archive.TotalAgentsHired" />
-    <CardDataRow Label="Total agents fired" Value="@Archive.TotalAgentsFired" />
-    <CardDataRow Label="Agents lost" Value="@Archive.AgentsLost" />
+    <CardDataRow Label="Missions launched" Value="@ArchiveData.MissionsLaunched" />
+    <CardDataRow Label="Successful missions" Value="@ArchiveData.SuccessfulMissions" />
+    <CardDataRow Label="Failed missions" Value="@ArchiveData.FailedMissions" />
+    <CardDataRow Label="Ignored missions" Value="@ArchiveData.IgnoredMissions" />
+    <CardDataRow Label="Total agents hired" Value="@ArchiveData.TotalAgentsHired" />
+    <CardDataRow Label="Total agents fired" Value="@ArchiveData.TotalAgentsFired" />
+    <CardDataRow Label="Agents lost" Value="@ArchiveData.AgentsLost" />
 </Card>

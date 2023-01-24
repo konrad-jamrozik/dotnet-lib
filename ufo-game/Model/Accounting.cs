@@ -6,23 +6,23 @@ public class Accounting : ITemporal
 {
     public readonly AccountingData Data;
 
-    private readonly Archive _archive;
+    private readonly ArchiveData _archiveData;
     private readonly Agents _agents;
 
     public int PassiveIncome =>
         80
-        + _archive.SuccessfulMissions * 10
-        + _archive.FailedMissions * -10
-        + _archive.IgnoredMissions * -5;
+        + _archiveData.SuccessfulMissions * 10
+        + _archiveData.FailedMissions * -10
+        + _archiveData.IgnoredMissions * -5;
 
     public int Expenses => _agents.AvailableAgents.Sum(agent => agent.Salary);
 
     public int MoneyPerTurnAmount => PassiveIncome - Expenses;
 
-    public Accounting(AccountingData data, Archive archive, Agents agents)
+    public Accounting(AccountingData data, ArchiveData archiveData, Agents agents)
     {
         Data = data;
-        _archive = archive;
+        _archiveData = archiveData;
         _agents = agents;
     }
 

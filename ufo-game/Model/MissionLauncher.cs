@@ -10,7 +10,7 @@ public class MissionLauncher
 {
     private readonly Random _random = new Random();
     private readonly MissionPrep _missionPrep;
-    private readonly Archive _archive;
+    private readonly ArchiveData _archiveData;
     private readonly PlayerScore _playerScore;
     private readonly Agents _agents;
     private readonly Accounting _accounting;
@@ -19,7 +19,7 @@ public class MissionLauncher
 
     public MissionLauncher(
         MissionPrep missionPrep,
-        Archive archive,
+        ArchiveData archiveData,
         PlayerScore playerScore,
         Accounting accounting,
         ViewStateRefresh viewStateRefresh,
@@ -27,7 +27,7 @@ public class MissionLauncher
         Agents agents)
     {
         _missionPrep = missionPrep;
-        _archive = archive;
+        _archiveData = archiveData;
         _playerScore = playerScore;
         _accounting = accounting;
         _viewStateRefresh = viewStateRefresh;
@@ -74,7 +74,7 @@ public class MissionLauncher
         string agentsLostReport = agentsLost > 0
             ? $"Number of agents lost: {agentsLost}."
             : "We didn't lose any agents.";
-        _archive.WriteLastMissionReport(
+        _archiveData.WriteLastMissionReport(
             $"The last mission was {missionSuccessReport} {agentsLostReport}");
     }
 
@@ -101,7 +101,7 @@ public class MissionLauncher
         var (roll, success) = RollMissionOutcome(mission);
         var agentsLost = ProcessAgentUpdates(mission, success, _agents.AgentsAssignedToMission);
         var scoreDiff = ApplyMissionOutcome(mission, success);
-        _archive.ArchiveMission(missionSuccessful: success);
+        _archiveData.ArchiveMission(missionSuccessful: success);
         WriteLastMissionReport(mission, successChance, roll, success, scoreDiff, agentsLost, moneyReward);
         mission.GenerateNewOrClearMission();
         _gameState.PersistGameState();

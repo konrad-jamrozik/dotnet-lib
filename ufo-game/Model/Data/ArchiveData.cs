@@ -2,7 +2,7 @@
 
 namespace UfoGame.Model.Data;
 
-public class Archive
+public class ArchiveData
 {
     public const string NoMissionsReport = "No missions yet!";
 
@@ -15,7 +15,7 @@ public class Archive
     [JsonInclude] public int AgentsLost { get; private set; }
     [JsonInclude] public string LastMissionReport { get; private set; } = string.Empty;
 
-    public Archive()
+    public ArchiveData()
         => Reset();
 
     public void Reset()

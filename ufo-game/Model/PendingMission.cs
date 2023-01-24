@@ -78,7 +78,7 @@ public class PendingMission : ITemporal
 
     // kja consolidate all Random gens into one
     private readonly Random _random = new Random();
-    private readonly Archive _archive;
+    private readonly ArchiveData _archiveData;
     private readonly FactionsData _factionsData;
     private readonly PlayerScore _playerScore;
     private readonly Staff _staff;
@@ -87,14 +87,14 @@ public class PendingMission : ITemporal
 
     public PendingMission(
         PendingMissionsData pendingMissionsData,
-        Archive archive,
+        ArchiveData archiveData,
         FactionsData factionsData,
         PlayerScore playerScore,
         Staff staff,
         Agents agents)
     {
         _pendingMissionsData = pendingMissionsData;
-        _archive = archive;
+        _archiveData = archiveData;
         _factionsData = factionsData;
         _playerScore = playerScore;
         _staff = staff;
@@ -112,7 +112,7 @@ public class PendingMission : ITemporal
             Debug.Assert(Data.ExpiresIn >= 1);
             if (MissionAboutToExpire)
             {
-                _archive.RecordIgnoredMission();
+                _archiveData.RecordIgnoredMission();
                 _playerScore.Data.Value -= PlayerScore.IgnoreMissionScoreLoss;
                 GenerateNewOrClearMission();
             }

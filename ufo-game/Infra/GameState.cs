@@ -10,7 +10,7 @@ public class GameState
     [JsonInclude] public readonly TimelineData TimelineData;
     [JsonInclude] public readonly AccountingData AccountingData;
     [JsonInclude] public readonly StaffData StaffData;
-    [JsonInclude] public readonly Archive Archive;
+    [JsonInclude] public readonly ArchiveData ArchiveData;
     [JsonInclude] public readonly MissionPrepData MissionPrepData;
     [JsonInclude] public readonly PendingMissionsData PendingMissionsData;
     [JsonInclude] public readonly FactionsData FactionsData;
@@ -30,7 +30,7 @@ public class GameState
         TimelineData timelineData,
         AccountingData accountingData,
         StaffData staffData,
-        Archive archive,
+        ArchiveData archiveData,
         PendingMissionsData pendingMissionsData,
         PendingMission pendingMission,
         MissionPrepData missionPrepData,
@@ -48,7 +48,7 @@ public class GameState
         TimelineData = timelineData;
         AccountingData = accountingData;
         StaffData = staffData;
-        Archive = archive;
+        ArchiveData = archiveData;
         PendingMissionsData = pendingMissionsData;
         _pendingMission = pendingMission;
         MissionPrepData = missionPrepData;
@@ -72,7 +72,7 @@ public class GameState
         TimelineData.Reset();
         AccountingData.Reset();
         StaffData.Reset();
-        Archive.Reset();
+        ArchiveData.Reset();
         MissionPrepData.Reset();
         FactionsData.Reset();
         SickBayData.Reset();

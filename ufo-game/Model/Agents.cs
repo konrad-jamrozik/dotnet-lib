@@ -7,7 +7,7 @@ public class Agents
 {
     private readonly AgentsData _agentsData;
     private readonly TimelineData _timelineData;
-    private readonly Archive _archive;
+    private readonly ArchiveData _archiveData;
     private List<Agent> _data;
 
     [JsonIgnore]
@@ -59,14 +59,14 @@ public class Agents
     public void LoseAgents(List<(Agent agent, bool missionSuccess)> agents)
     {
         agents.ForEach(data => data.agent.SetAsLost(data.missionSuccess));
-        _archive.RecordLostAgents(agents.Count);
+        _archiveData.RecordLostAgents(agents.Count);
     }
 
-    public Agents(AgentsData agentsData, TimelineData timelineData, Archive archive)
+    public Agents(AgentsData agentsData, TimelineData timelineData, ArchiveData archiveData)
     {
         _agentsData = agentsData;
         _timelineData = timelineData;
-        _archive = archive;
+        _archiveData = archiveData;
         _data = AgentsFromData(_agentsData.Data).ToList();
     }
     public void Reset()
@@ -79,7 +79,7 @@ public class Agents
     {
         var addedAgentsData = _agentsData.AddNewRandomAgents(agentsToHire, _timelineData.CurrentTime);
         _data.AddRange(AgentsFromData(addedAgentsData));
-        _archive.RecordHiredAgents(agentsToHire);
+        _archiveData.RecordHiredAgents(agentsToHire);
     }
 
     private IEnumerable<Agent> AgentsFromData(List<AgentData> agentsData)
