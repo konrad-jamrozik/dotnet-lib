@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using UfoGame.Model.Data;
@@ -19,36 +20,18 @@ public static class PersistedGameStateReader
 
             JsonObject gameJson = storage.Read();
 
-            var timelineData = gameJson[nameof(TimelineData)].Deserialize<TimelineData>()!;
-            var accountingData = gameJson[nameof(AccountingData)].Deserialize<AccountingData>()!;
-            var factionsData = gameJson[nameof(FactionsData)].Deserialize<FactionsData>()!;
-            var researchData = gameJson[nameof(ResearchData)].Deserialize<ResearchData>()!;
-            var archive = gameJson[nameof(ArchiveData)].Deserialize<ArchiveData>()!;
-            var playerScoreData = gameJson[nameof(PlayerScoreData)].Deserialize<PlayerScoreData>()!;
-            var missionPrepData = gameJson[nameof(MissionPrepData)].Deserialize<MissionPrepData>()!;
-            var pendingMissionsData = gameJson[nameof(PendingMissionsData)].Deserialize<PendingMissionsData>()!;
-            var staffData = gameJson[nameof(StaffData)].Deserialize<StaffData>()!;
-            var agentsData = gameJson[nameof(AgentsData)].Deserialize<AgentsData>()!;
-            var sickBayData = gameJson[nameof(SickBayData)].Deserialize<SickBayData>()!;
-            var procurementData = gameJson[nameof(ProcurementData)].Deserialize<ProcurementData>()!;
-            var modalsState = gameJson[nameof(ModalsState)].Deserialize<ModalsState>()!;
+            Assembly assembly = Assembly.GetExecutingAssembly();
 
-            // These cannot be rolled into loop, because then I would have to have IEnumerable<object>,
-            // and the generic "object" type will prevent the DI framework from recognizing the types.
-            services.AddSingleton(timelineData);
-            services.AddSingleton(accountingData);
-            services.AddSingleton(factionsData);
-            services.AddSingleton(researchData);
-            services.AddSingleton(archive);
-            services.AddSingleton(playerScoreData);
-            services.AddSingleton(staffData);
-            services.AddSingleton(agentsData);
-            services.AddSingleton(sickBayData);
-            services.AddSingleton(missionPrepData);
-            services.AddSingleton(pendingMissionsData);
-            services.AddSingleton(procurementData);
-            services.AddSingleton(modalsState);
-            Console.Out.WriteLine("Deserialized all game state and added to service collection.");
+            List<Type> persistableTypes = assembly.GetTypes().Where(ImplementsIData).ToList();
+            foreach (Type persistableType in persistableTypes)
+            {
+                var persistedData = gameJson[persistableType.Name].Deserialize(persistableType)!;
+                services.AddSingleton(persistableType, persistedData);
+            }
+
+            Console.Out.WriteLine(
+                "Deserialized all persisted game state and added to service collection. " +
+                $"Persistable data types added: {persistableTypes.Count}");
         }
         catch (Exception e)
         {
@@ -75,5 +58,15 @@ public static class PersistedGameStateReader
         services.AddSingleton(new PendingMissionsData());
         services.AddSingleton(new ProcurementData());
         services.AddSingleton(new ModalsState());
+    }
+
+    private static bool ImplementsIData(Type type)
+    {
+        return type.IsAssignableTo(typeof(IData))
+               && type != typeof(IData)
+               // kja replace with custom attribute
+               && type != typeof(AgentData)
+               && type != typeof(FactionData)
+               && type != typeof(PendingMissionData);
     }
 }
