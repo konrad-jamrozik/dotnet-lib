@@ -35,8 +35,9 @@ public static class PersistedGameStateReader
         }
         catch (Exception e)
         {
-            Console.Out.WriteLine("Reading persisted game failed! Exception written out to STDERR. " +
-                                  "Clearing persisted and resetting game state.");
+            Console.Out.WriteLine(
+                "Reading persisted game failed! Exception written out to STDERR. " +
+                "Clearing persisted and resetting game state.");
             Console.Error.WriteLine(e);
             storage.Clear();
             Reset(services);
@@ -61,12 +62,6 @@ public static class PersistedGameStateReader
     }
 
     private static bool IsDeserializable(Type type)
-    {
-        return type.IsAssignableTo(typeof(IDeserializable))
-               && type != typeof(IDeserializable)
-               // kja replace with custom attribute
-               && type != typeof(AgentData)
-               && type != typeof(FactionData)
-               && type != typeof(PendingMissionData);
-    }
+        => type.IsAssignableTo(typeof(IDeserializable))
+           && type != typeof(IDeserializable);
 }
