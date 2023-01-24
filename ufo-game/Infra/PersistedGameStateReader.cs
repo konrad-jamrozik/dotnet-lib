@@ -3,7 +3,6 @@ using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using UfoGame.Model.Data;
-using UfoGame.ViewModel;
 
 namespace UfoGame.Infra;
 
@@ -20,18 +19,17 @@ public static class PersistedGameStateReader
 
             JsonObject gameJson = storage.Read();
 
-            Assembly assembly = Assembly.GetExecutingAssembly();
-
-            List<Type> deserializableTypes = assembly.GetTypes().Where(IsDeserializable).ToList();
-            foreach (Type deserializableType in deserializableTypes)
-            {
-                var deserializedData = gameJson[deserializableType.Name].Deserialize(deserializableType)!;
-                services.AddSingleton(deserializableType, deserializedData);
-            }
+            List<Type> deserializableTypes = DeserializableTypes;
+            deserializableTypes.ForEach(
+                deserializableType =>
+                {
+                    var deserializedInstance = gameJson[deserializableType.Name].Deserialize(deserializableType)!;
+                    services.AddSingleton(deserializableType, deserializedInstance);
+                });
 
             Console.Out.WriteLine(
                 "Deserialized all persisted game state and added to service collection. " +
-                $"Data types deserialized & added: {deserializableTypes.Count}");
+                $"Type instances deserialized & added: {deserializableTypes.Count}");
         }
         catch (Exception e)
         {
@@ -46,22 +44,29 @@ public static class PersistedGameStateReader
 
     public static void Reset(IServiceCollection services)
     {
-        services.AddSingleton<FactionsData>();
-        services.AddSingleton<ArchiveData>();
-        services.AddSingleton(new TimelineData());
-        services.AddSingleton(new ResearchData());
-        services.AddSingleton(new AccountingData());
-        services.AddSingleton(new PlayerScoreData());
-        services.AddSingleton(new StaffData());
-        services.AddSingleton(new AgentsData());
-        services.AddSingleton(new SickBayData());
-        services.AddSingleton(new MissionPrepData());
-        services.AddSingleton(new PendingMissionsData());
-        services.AddSingleton(new ProcurementData());
-        services.AddSingleton(new ModalsState());
+        List<Type> deserializableTypes = DeserializableTypes;
+        deserializableTypes.ForEach(
+            deserializableType =>
+            {
+                var newInstance = Activator.CreateInstance(deserializableType)!;
+                services.AddSingleton(deserializableType, newInstance);
+            });
+        Console.Out.WriteLine(
+            "Created new instances of all deserializable types and added to service collection. " +
+            $"Type instances created & added: {deserializableTypes.Count}");
     }
 
-    private static bool IsDeserializable(Type type)
-        => type.IsAssignableTo(typeof(IDeserializable))
-           && type != typeof(IDeserializable);
+    private static List<Type> DeserializableTypes
+    {
+        get
+        {
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            List<Type> deserializableTypes = assembly.GetTypes().Where(IsDeserializable).ToList();
+            return deserializableTypes;
+
+            bool IsDeserializable(Type type)
+                => type.IsAssignableTo(typeof(IDeserializable))
+                   && type != typeof(IDeserializable);
+        }
+    }
 }
