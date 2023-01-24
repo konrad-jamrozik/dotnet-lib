@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using UfoGame;
 using UfoGame.Infra;
 using UfoGame.Model;
-using UfoGame.Model.Data;
 using UfoGame.ViewModel;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);

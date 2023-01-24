@@ -1,7 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Text.Json;
 using System.Text.Json.Nodes;
-using UfoGame.Model;
 using UfoGame.Model.Data;
 using UfoGame.ViewModel;
 

@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics;
 using UfoGame.Model;
-using UfoGame.Model.Data;
 
 namespace UfoGame.ViewModel;
 
