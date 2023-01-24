@@ -2,7 +2,7 @@
 
 namespace UfoGame.Model.Data;
 
-public class StaffData : IData, IResettable
+public class StaffData : IDeserializable, IResettable
 {
     [JsonInclude] public int AgentEffectiveness;
     [JsonInclude] public int AgentSurvivability;

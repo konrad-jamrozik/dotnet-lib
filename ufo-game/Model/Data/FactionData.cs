@@ -2,7 +2,7 @@
 
 namespace UfoGame.Model.Data;
 
-public class FactionData : IData
+public class FactionData : IDeserializable
 {
     [JsonInclude] public string Name { get; private set; }
 

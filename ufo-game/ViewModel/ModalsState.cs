@@ -3,7 +3,7 @@ using UfoGame.Model.Data;
 
 namespace UfoGame.ViewModel;
 
-public class ModalsState : IData, IResettable
+public class ModalsState : IDeserializable, IResettable
 {
     [JsonInclude] public bool IntroModalShown;
 

@@ -2,7 +2,7 @@
 
 namespace UfoGame.Model.Data;
 
-public class AgentsData : IData, IResettable
+public class AgentsData : IDeserializable, IResettable
 {
     [JsonInclude] public int NextAgentId;
     [JsonInclude] public List<AgentData> Data { get; private set; } = new List<AgentData>();

@@ -2,7 +2,7 @@
 
 namespace UfoGame.Model.Data;
 
-public class SickBayData : IData, IResettable
+public class SickBayData : IDeserializable, IResettable
 {
     private const float AgentRecoverySpeedImprovement = 0.25f;
 

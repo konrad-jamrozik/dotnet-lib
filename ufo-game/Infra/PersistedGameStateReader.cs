@@ -22,16 +22,16 @@ public static class PersistedGameStateReader
 
             Assembly assembly = Assembly.GetExecutingAssembly();
 
-            List<Type> persistableTypes = assembly.GetTypes().Where(ImplementsIData).ToList();
-            foreach (Type persistableType in persistableTypes)
+            List<Type> deserializableTypes = assembly.GetTypes().Where(IsDeserializable).ToList();
+            foreach (Type deserializableType in deserializableTypes)
             {
-                var persistedData = gameJson[persistableType.Name].Deserialize(persistableType)!;
-                services.AddSingleton(persistableType, persistedData);
+                var deserializedData = gameJson[deserializableType.Name].Deserialize(deserializableType)!;
+                services.AddSingleton(deserializableType, deserializedData);
             }
 
             Console.Out.WriteLine(
                 "Deserialized all persisted game state and added to service collection. " +
-                $"Persistable data types added: {persistableTypes.Count}");
+                $"Data types deserialized & added: {deserializableTypes.Count}");
         }
         catch (Exception e)
         {
@@ -60,10 +60,10 @@ public static class PersistedGameStateReader
         services.AddSingleton(new ModalsState());
     }
 
-    private static bool ImplementsIData(Type type)
+    private static bool IsDeserializable(Type type)
     {
-        return type.IsAssignableTo(typeof(IData))
-               && type != typeof(IData)
+        return type.IsAssignableTo(typeof(IDeserializable))
+               && type != typeof(IDeserializable)
                // kja replace with custom attribute
                && type != typeof(AgentData)
                && type != typeof(FactionData)

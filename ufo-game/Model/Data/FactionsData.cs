@@ -2,7 +2,7 @@
 
 namespace UfoGame.Model.Data;
 
-public class FactionsData : ITemporal, IData, IResettable
+public class FactionsData : ITemporal, IDeserializable, IResettable
 {
     [JsonInclude] public List<FactionData> Data = new List<FactionData>();
 
