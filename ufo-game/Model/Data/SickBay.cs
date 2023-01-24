@@ -2,7 +2,7 @@
 
 namespace UfoGame.Model;
 
-public class SickBay
+public class SickBay : ITemporal
 {
     public readonly SickBayData Data;
     private readonly Agents _agents;

@@ -2,7 +2,7 @@
 
 namespace UfoGame.Model;
 
-public class Accounting
+public class Accounting : ITemporal
 {
     public readonly AccountingData Data;
 
@@ -39,8 +39,9 @@ public class Accounting
     public void PayForResearch(int cost)
         => Data.CurrentMoney -= cost;
 
-    // kja split it by introducing "AddRaisedMoney"; then introduce ITemporal interface for AdvanceTime.
-    public void AdvanceTime(bool raisedMoney = false)
-        => Data.CurrentMoney +=
-            MoneyPerTurnAmount + (raisedMoney ? Data.MoneyRaisedPerActionAmount : 0);
+    public void AddRaisedMoney()
+        => Data.CurrentMoney += Data.MoneyRaisedPerActionAmount;
+
+    public void AdvanceTime()
+        => Data.CurrentMoney += MoneyPerTurnAmount;
 }

@@ -2,7 +2,7 @@
 
 namespace UfoGame.Model.Data;
 
-public class Factions
+public class Factions : ITemporal
 {
     [JsonInclude] public List<Faction> Data = new List<Faction>();
 

@@ -39,12 +39,18 @@ public class Timeline
     public void AdvanceTime(bool raisedMoney = false)
     {
         Debug.Assert(!_playerScore.GameOver);
+        
         Data.AdvanceTime();
         _pendingMission.AdvanceTime();
         _factions.AdvanceTime();
-        _accounting.AdvanceTime(raisedMoney);
+        _accounting.AdvanceTime();
         _sickBay.AdvanceTime();
+        
+        if (raisedMoney)
+            _accounting.AddRaisedMoney();
+        
         _gameState.PersistGameState();
+
         _viewStateRefresh.Trigger();
     }
 }
