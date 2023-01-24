@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
+using UfoGame.Model.Data;
 
-namespace UfoGame.Model.Data;
+namespace UfoGame.Model;
 
 public class Agent
 {

@@ -1,6 +1,7 @@
 ﻿using System.Text.Json.Serialization;
+using UfoGame.Model.Data;
 
-namespace UfoGame.Model.Data;
+namespace UfoGame.Model;
 
 public class Agents
 {
