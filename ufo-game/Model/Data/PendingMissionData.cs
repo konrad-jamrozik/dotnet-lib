@@ -30,7 +30,7 @@ public class PendingMissionData : IData
     [JsonInclude] public int ExpiresIn;
     [JsonInclude] public float MoneyRewardCoefficient;
     [JsonInclude] public float EnemyPowerCoefficient;
-    [JsonInclude] public string FactionName = FactionsData.NoFaction;
+    [JsonInclude] public string FactionName;
 
     public bool IsNoMission => FactionName == FactionsData.NoFaction;
 
