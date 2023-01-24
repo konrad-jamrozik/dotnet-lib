@@ -61,7 +61,7 @@ public class PendingMission : ITemporal
 
     public int AgentSurvivabilityPower => _agents.AgentsAssignedToMissionCount * _staff.Data.AgentSurvivability;
 
-    public PendingMissionData Data => _pendingMissions.Data[0];
+    public PendingMissionData Data => _pendingMissionsData.Data[0];
 
     public FactionData FactionData => _factionsData.Data.Single(f => f.Name == Data.FactionName);
 
@@ -83,24 +83,24 @@ public class PendingMission : ITemporal
     private readonly PlayerScore _playerScore;
     private readonly Staff _staff;
     private readonly Agents _agents;
-    private readonly PendingMissions _pendingMissions;
+    private readonly PendingMissionsData _pendingMissionsData;
 
     public PendingMission(
-        PendingMissions pendingMissions,
+        PendingMissionsData pendingMissionsData,
         Archive archive,
         FactionsData factionsData,
         PlayerScore playerScore,
         Staff staff,
         Agents agents)
     {
-        _pendingMissions = pendingMissions;
+        _pendingMissionsData = pendingMissionsData;
         _archive = archive;
         _factionsData = factionsData;
         _playerScore = playerScore;
         _staff = staff;
         _agents = agents;
         if (Data.IsNoMission)
-            _pendingMissions.New(_playerScore, _random, _factionsData);
+            _pendingMissionsData.New(_playerScore, _random, _factionsData);
     }
 
     public void AdvanceTime()
@@ -136,10 +136,10 @@ public class PendingMission : ITemporal
 
     public void Reset()
     {
-        _pendingMissions.Reset();
+        _pendingMissionsData.Reset();
         GenerateNewOrClearMission();
     }
 
     public void GenerateNewOrClearMission()
-        => _pendingMissions.New(_playerScore, _random, _factionsData);
+        => _pendingMissionsData.New(_playerScore, _random, _factionsData);
 }

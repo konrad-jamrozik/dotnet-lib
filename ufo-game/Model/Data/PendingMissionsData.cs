@@ -2,11 +2,11 @@
 
 namespace UfoGame.Model.Data;
 
-public class PendingMissions
+public class PendingMissionsData
 {
     [JsonInclude] public List<PendingMissionData> Data { get; private set; } = new List<PendingMissionData>();
 
-    public PendingMissions()
+    public PendingMissionsData()
         => Reset();
 
     public void Reset()

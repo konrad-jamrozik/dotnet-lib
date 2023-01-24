@@ -12,7 +12,7 @@ public class GameState
     [JsonInclude] public readonly StaffData StaffData;
     [JsonInclude] public readonly Archive Archive;
     [JsonInclude] public readonly MissionPrepData MissionPrepData;
-    [JsonInclude] public readonly PendingMissions PendingMissions;
+    [JsonInclude] public readonly PendingMissionsData PendingMissionsData;
     [JsonInclude] public readonly FactionsData FactionsData;
     [JsonInclude] public readonly AgentsData AgentsData;
     [JsonInclude] public readonly SickBayData SickBayData;
@@ -31,7 +31,7 @@ public class GameState
         AccountingData accountingData,
         StaffData staffData,
         Archive archive,
-        PendingMissions pendingMissions,
+        PendingMissionsData pendingMissionsData,
         PendingMission pendingMission,
         MissionPrepData missionPrepData,
         FactionsData factionsData,
@@ -49,7 +49,7 @@ public class GameState
         AccountingData = accountingData;
         StaffData = staffData;
         Archive = archive;
-        PendingMissions = pendingMissions;
+        PendingMissionsData = pendingMissionsData;
         _pendingMission = pendingMission;
         MissionPrepData = missionPrepData;
         FactionsData = factionsData;

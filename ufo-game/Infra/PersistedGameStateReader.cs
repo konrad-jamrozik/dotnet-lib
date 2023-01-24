@@ -22,12 +22,12 @@ public static class PersistedGameStateReader
 
             var timelineData = gameJson[nameof(TimelineData)].Deserialize<TimelineData>()!;
             var accountingData = gameJson[nameof(AccountingData)].Deserialize<AccountingData>()!;
-            var factions = gameJson[nameof(FactionsData)].Deserialize<FactionsData>()!;
+            var factionsData = gameJson[nameof(FactionsData)].Deserialize<FactionsData>()!;
             var researchData = gameJson[nameof(ResearchData)].Deserialize<ResearchData>()!;
             var archive = gameJson[nameof(Archive)].Deserialize<Archive>()!;
             var playerScoreData = gameJson[nameof(PlayerScoreData)].Deserialize<PlayerScoreData>()!;
             var missionPrepData = gameJson[nameof(MissionPrepData)].Deserialize<MissionPrepData>()!;
-            var pendingMissions = gameJson[nameof(PendingMissions)].Deserialize<PendingMissions>()!;
+            var pendingMissionsData = gameJson[nameof(PendingMissionsData)].Deserialize<PendingMissionsData>()!;
             var staffData = gameJson[nameof(StaffData)].Deserialize<StaffData>()!;
             var agentsData = gameJson[nameof(AgentsData)].Deserialize<AgentsData>()!;
             var sickBayData = gameJson[nameof(SickBayData)].Deserialize<SickBayData>()!;
@@ -38,7 +38,7 @@ public static class PersistedGameStateReader
             // and the generic "object" type will prevent the DI framework from recognizing the types.
             services.AddSingleton(timelineData);
             services.AddSingleton(accountingData);
-            services.AddSingleton(factions);
+            services.AddSingleton(factionsData);
             services.AddSingleton(researchData);
             services.AddSingleton(archive);
             services.AddSingleton(playerScoreData);
@@ -46,7 +46,7 @@ public static class PersistedGameStateReader
             services.AddSingleton(agentsData);
             services.AddSingleton(sickBayData);
             services.AddSingleton(missionPrepData);
-            services.AddSingleton(pendingMissions);
+            services.AddSingleton(pendingMissionsData);
             services.AddSingleton(procurementData);
             services.AddSingleton(modalsState);
             Console.Out.WriteLine("Deserialized all game state and added to service collection.");
@@ -73,7 +73,7 @@ public static class PersistedGameStateReader
         services.AddSingleton(new AgentsData());
         services.AddSingleton(new SickBayData());
         services.AddSingleton(new MissionPrepData());
-        services.AddSingleton(new PendingMissions());
+        services.AddSingleton(new PendingMissionsData());
         services.AddSingleton(new ProcurementData());
         services.AddSingleton(new ModalsState());
     }
