@@ -40,6 +40,12 @@ public class Timeline
     {
         Debug.Assert(!_playerScore.GameOver);
         
+        // kja instead use reflection to call AdvanceTime() on a collection
+        // of all injected types that implement ITemporal.
+        // Note: need to be careful about ordering. Ideally it shouldn't matter.
+        // For example, _pendingMission.AdvanceTime(); may generate new mission,
+        // which calculates values based on faction. It shouldn't matter
+        // if faction time was advanced before or after the mission got generated.
         Data.AdvanceTime();
         _pendingMission.AdvanceTime();
         _factionsData.AdvanceTime();

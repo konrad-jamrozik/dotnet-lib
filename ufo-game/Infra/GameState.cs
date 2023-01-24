@@ -69,6 +69,8 @@ public class GameState
 
     public void Reset()
     {
+        // kja instead use reflection to call Reset() on a collection
+        // of all injected types that implement IResettable.
         TimelineData.Reset();
         AccountingData.Reset();
         StaffData.Reset();
