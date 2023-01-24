@@ -82,7 +82,9 @@ public class GameState
         ModalsState.Reset();
         _agents.Reset();
         _pendingMission.Reset();
+
         _storage.Clear();
+
         _viewStateRefresh.Trigger();
     }
 }

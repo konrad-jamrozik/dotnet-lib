@@ -1,8 +1,9 @@
 ﻿using System.Text.Json.Serialization;
+using UfoGame.Model.Data;
 
 namespace UfoGame.ViewModel;
 
-public class ModalsState
+public class ModalsState : IResettable
 {
     [JsonInclude] public bool IntroModalShown;
 

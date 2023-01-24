@@ -49,9 +49,6 @@ public class PendingMissionData : IData
     }
 
     public PendingMissionData()
-        => Reset();
-
-    private void Reset()
     {
         AvailableIn = 0;
         ExpiresIn = 0;
