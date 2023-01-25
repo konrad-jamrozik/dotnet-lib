@@ -20,6 +20,10 @@ AddGameStateServices(builder);
 // kja instead of manually registering for interfaces like IResettable or ITemporal, just pass a list of
 // types and use reflection to do all the necessary registration: the type itself, plus any interfaces
 // it implements.
+// Alternatively, do it like:
+// UfoGame.Infra.PersistedGameStateReader.DeserializableTypes
+// i.e. get the types from executing assembly, then register. For IDeserializable, IResettable, ITemporal, etc.
+// Just need to remember to not register when an instance is already registered.
 builder.Services.AddSingleton<Timeline>();
 builder.Services.AddSingleton<Accounting>();
 builder.Services.AddSingleton<PlayerScore>();
