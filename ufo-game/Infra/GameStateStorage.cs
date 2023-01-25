@@ -30,22 +30,20 @@ public class GameStateStorage
     public void Persist(GameState gameState)
     {
         Console.Out.WriteLine("Persisting game state");
-        //_localStorage.SetItem(nameof(GameState), gameState);
         JsonObject gameStateObject = new JsonObject();
         foreach (IDeserializable item in gameState.Deserializables)
         {
             // Obtain actual, most-derived runtime type
             // Based on https://stackoverflow.com/a/2520710/986533
             Type itemType = item.GetType();
-            // Obtain object representing the data of the runtime type, instead of just
-            // the interface.
+            // Obtain object representing the data of the runtime type, instead of just the interface.
             // Based on https://stackoverflow.com/a/36067601/986533
             object itemData = Convert.ChangeType(item, itemType);
             // Based on https://learn.microsoft.com/en-us/dotnet/standard/serialization/system-text-json/use-dom-utf8jsonreader-utf8jsonwriter?pivots=dotnet-7-0#create-a-jsonnode-dom-with-object-initializers-and-make-changes
             gameStateObject.Add(itemType.Name, JsonSerializer.SerializeToNode(itemData, _serializationOptions)!);
 
             // Alternative approach, simpler, but ends up having one key per class in local storage,
-            // instead of just one key:
+            // instead of just one key (and hence would require deserialization logic adjustment):
             //_localStorage.SetItem(itemType.Name, itemData);
         }
         _localStorage.SetItem(nameof(GameState), gameStateObject);

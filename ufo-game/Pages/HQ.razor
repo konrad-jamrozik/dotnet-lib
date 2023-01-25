@@ -2,8 +2,8 @@
 @page "/hq"
 @using UfoGame.Cards
 @using UfoGame.Components
-@using UfoGame.Infra
-@inject GameState GameState
+@using UfoGame.ViewModel
+@inject ModalsState ModalsState
 
 <PageTitle>HQ</PageTitle>
 
@@ -38,7 +38,7 @@
     protected override void OnInitialized()
     {
         base.OnInitialized();
-        if (!GameState.ModalsState.IntroModalShown)
+        if (!ModalsState.IntroModalShown)
             ShowIntroModal();
     }
 

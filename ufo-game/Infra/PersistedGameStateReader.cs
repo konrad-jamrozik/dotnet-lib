@@ -24,14 +24,7 @@ public static class PersistedGameStateReader
                 deserializableType =>
                 {
                     var deserializedInstance = gameJson[deserializableType.Name].Deserialize(deserializableType)!;
-                    services.AddSingleton(deserializableType, deserializedInstance);
-                    // Add each instance as implementing its interface, to allows
-                    // injection of enumerable of all types with this interface,
-                    // to allow serialization.
-                    // Based on https://stackoverflow.com/a/39569277/986533
-                    services.AddSingleton(typeof(IDeserializable), deserializedInstance);
-                    if (deserializableType.IsAssignableTo(typeof(IResettable)))
-                        services.AddSingleton(typeof(IResettable), deserializedInstance);
+                    AddToServices(services, deserializableType, deserializedInstance);
                 });
 
             Console.Out.WriteLine(
@@ -56,7 +49,7 @@ public static class PersistedGameStateReader
             deserializableType =>
             {
                 var newInstance = Activator.CreateInstance(deserializableType)!;
-                services.AddSingleton(deserializableType, newInstance);
+                AddToServices(services, deserializableType, newInstance);
             });
         Console.Out.WriteLine(
             "Created new instances of all deserializable types and added to service collection. " +
@@ -75,5 +68,17 @@ public static class PersistedGameStateReader
                 => type.IsAssignableTo(typeof(IDeserializable))
                    && type != typeof(IDeserializable);
         }
+    }
+
+    private static void AddToServices(IServiceCollection services, Type deserializableType, object instance)
+    {
+        services.AddSingleton(deserializableType, instance);
+        // Add each instance as implementing its interface, to allows
+        // injection of enumerable of all types with this interface,
+        // to allow serialization.
+        // Based on https://stackoverflow.com/a/39569277/986533
+        services.AddSingleton(typeof(IDeserializable), instance);
+        if (deserializableType.IsAssignableTo(typeof(IResettable)))
+            services.AddSingleton(typeof(IResettable), instance);
     }
 }

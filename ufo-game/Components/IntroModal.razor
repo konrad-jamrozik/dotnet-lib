@@ -1,5 +1,7 @@
 ﻿@using UfoGame.Infra
+@using UfoGame.ViewModel
 @inject GameState GameState
+@inject ModalsState ModalsState
 
 <div class="modal fade show d-block" tabindex="-1" role="dialog">
     <div class="modal-backdrop fade show" @onclick="Cancel"></div>
@@ -30,7 +32,7 @@
 
     private void ModalShown()
     {
-        GameState.ModalsState.IntroModalShown = true;
+        ModalsState.IntroModalShown = true;
         GameState.PersistGameState();
     }
 
