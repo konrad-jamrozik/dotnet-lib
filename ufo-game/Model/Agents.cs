@@ -3,7 +3,7 @@ using UfoGame.Model.Data;
 
 namespace UfoGame.Model;
 
-public class Agents
+public class Agents : IResettable
 {
     private readonly AgentsData _agentsData;
     private readonly TimelineData _timelineData;

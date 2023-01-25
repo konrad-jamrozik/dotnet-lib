@@ -21,6 +21,7 @@ public class GameState
     [JsonInclude] public readonly ProcurementData ProcurementData;
     [JsonInclude] public readonly ModalsState ModalsState;
     public readonly List<IDeserializable> Deserializables;
+    public readonly List<IResettable> Resettables;
 
     private readonly PendingMission _pendingMission;
     private readonly Agents _agents;
@@ -45,7 +46,8 @@ public class GameState
         GameStateStorage storage,
         ViewStateRefresh viewStateRefresh,
         ModalsState modalsState,
-        IEnumerable<IDeserializable> deserializables)
+        IEnumerable<IDeserializable> deserializables,
+        IEnumerable<IResettable> resettables)
     {
         TimelineData = timelineData;
         AccountingData = accountingData;
@@ -65,6 +67,7 @@ public class GameState
         _viewStateRefresh = viewStateRefresh;
         ModalsState = modalsState;
         Deserializables = deserializables.ToList();
+        Resettables = resettables.ToList();
     }
 
     // kja instead use reflection to persist all classes that implement IDeserializable.
@@ -75,21 +78,7 @@ public class GameState
 
     public void Reset()
     {
-        // kja instead use reflection to call Reset() on a collection
-        // of all injected types that implement IResettable.
-        TimelineData.Reset();
-        AccountingData.Reset();
-        StaffData.Reset();
-        ArchiveData.Reset();
-        MissionPrepData.Reset();
-        FactionsData.Reset();
-        SickBayData.Reset();
-        PlayerScoreData.Reset();
-        ResearchData.Reset();
-        ProcurementData.Reset();
-        ModalsState.Reset();
-        _agents.Reset();
-        _pendingMission.Reset();
+        Resettables.ForEach(resettable => resettable.Reset());
 
         _storage.Clear();
 

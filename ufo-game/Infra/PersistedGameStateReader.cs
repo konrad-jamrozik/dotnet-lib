@@ -30,6 +30,8 @@ public static class PersistedGameStateReader
                     // to allow serialization.
                     // Based on https://stackoverflow.com/a/39569277/986533
                     services.AddSingleton(typeof(IDeserializable), deserializedInstance);
+                    if (deserializableType.IsAssignableTo(typeof(IResettable)))
+                        services.AddSingleton(typeof(IResettable), deserializedInstance);
                 });
 
             Console.Out.WriteLine(

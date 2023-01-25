@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using UfoGame;
 using UfoGame.Infra;
 using UfoGame.Model;
+using UfoGame.Model.Data;
 using UfoGame.ViewModel;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
@@ -16,13 +17,18 @@ builder.Services.AddScoped(_ => new HttpClient { BaseAddress = new Uri(builder.H
 
 AddGameStateServices(builder);
 
+// kja instead of manually registering for interfaces like IResettable or ITemporal, just pass a list of
+// types and use reflection to do all the necessary registration: the type itself, plus any interfaces
+// it implements.
 builder.Services.AddSingleton<Timeline>();
 builder.Services.AddSingleton<Accounting>();
 builder.Services.AddSingleton<PlayerScore>();
 builder.Services.AddSingleton<MissionPrep>();
 builder.Services.AddSingleton<PendingMission>();
+builder.Services.AddSingleton<IResettable, PendingMission>();
 builder.Services.AddSingleton<Staff>();
 builder.Services.AddSingleton<Agents>();
+builder.Services.AddSingleton<IResettable, Agents>();
 builder.Services.AddSingleton<SickBay>();
 builder.Services.AddSingleton<Research>();
 builder.Services.AddSingleton<Procurement>();
