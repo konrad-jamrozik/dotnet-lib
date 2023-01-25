@@ -20,6 +20,7 @@ public class GameState
     [JsonInclude] public readonly ResearchData ResearchData;
     [JsonInclude] public readonly ProcurementData ProcurementData;
     [JsonInclude] public readonly ModalsState ModalsState;
+    public readonly List<IDeserializable> Deserializables;
 
     private readonly PendingMission _pendingMission;
     private readonly Agents _agents;
@@ -43,7 +44,8 @@ public class GameState
         ProcurementData procurementData,
         GameStateStorage storage,
         ViewStateRefresh viewStateRefresh,
-        ModalsState modalsState)
+        ModalsState modalsState,
+        IEnumerable<IDeserializable> deserializables)
     {
         TimelineData = timelineData;
         AccountingData = accountingData;
@@ -62,6 +64,7 @@ public class GameState
         _storage = storage;
         _viewStateRefresh = viewStateRefresh;
         ModalsState = modalsState;
+        Deserializables = deserializables.ToList();
     }
 
     // kja instead use reflection to persist all classes that implement IDeserializable.

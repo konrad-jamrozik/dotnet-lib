@@ -25,6 +25,11 @@ public static class PersistedGameStateReader
                 {
                     var deserializedInstance = gameJson[deserializableType.Name].Deserialize(deserializableType)!;
                     services.AddSingleton(deserializableType, deserializedInstance);
+                    // Add each instance as implementing its interface, to allows
+                    // injection of enumerable of all types with this interface,
+                    // to allow serialization.
+                    // Based on https://stackoverflow.com/a/39569277/986533
+                    services.AddSingleton(typeof(IDeserializable), deserializedInstance);
                 });
 
             Console.Out.WriteLine(
