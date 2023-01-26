@@ -28,6 +28,12 @@ builder.Services.AddSingleton<Timeline>();
 builder.Services.AddSingleton<Accounting>();
 builder.Services.AddSingleton<PlayerScore>();
 builder.Services.AddSingleton<MissionPrep>();
+// kja ongoing experimental work
+// List<Type> typesToRegister = new List<Type>
+// {
+//     typeof(PendingMission), typeof(Staff), typeof(Agents)
+// };
+// typesToRegister.ForEach(builder.Services.AddSingletonWithInterfaces);
 builder.Services.AddSingleton<PendingMission>();
 builder.Services.AddSingleton<IResettable, PendingMission>();
 builder.Services.AddSingleton<Staff>();

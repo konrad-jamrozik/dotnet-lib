@@ -71,8 +71,10 @@ public class Agents : IResettable
     }
     public void Reset()
     {
+        Console.WriteLine("Resetting agents!"); // kja temp debug
         _agentsData.Reset();
         _data = AgentsFromData(_agentsData.Data).ToList();
+        Console.WriteLine($"New agents data: " + _data.Count);
     }
 
     public void HireAgents(int agentsToHire)

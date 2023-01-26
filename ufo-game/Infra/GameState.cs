@@ -29,6 +29,7 @@ public class GameState
 
     public void Reset()
     {
+        Console.WriteLine("Resetting!"); // kja temp debug
         Resettables.ForEach(resettable => resettable.Reset());
 
         _storage.Clear();

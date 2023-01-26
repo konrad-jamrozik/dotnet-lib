@@ -24,7 +24,9 @@ public static class PersistedGameStateReader
                 deserializableType =>
                 {
                     var deserializedInstance = gameJson[deserializableType.Name].Deserialize(deserializableType)!;
-                    AddToServices(services, deserializableType, deserializedInstance);
+                    services.AddSingletonWithInterfaces(deserializableType, deserializedInstance);
+                    // kja to remove
+                    // AddToServices(services, deserializableType, deserializedInstance);
                 });
 
             Console.Out.WriteLine(
@@ -49,7 +51,9 @@ public static class PersistedGameStateReader
             deserializableType =>
             {
                 var newInstance = Activator.CreateInstance(deserializableType)!;
-                AddToServices(services, deserializableType, newInstance);
+                services.AddSingletonWithInterfaces(deserializableType, newInstance);
+                // kja to remove
+                // AddToServices(services, deserializableType, deserializedInstance);
             });
         Console.Out.WriteLine(
             "Created new instances of all deserializable types and added to service collection. " +
@@ -70,6 +74,7 @@ public static class PersistedGameStateReader
         }
     }
 
+    // kja to remove
     private static void AddToServices(IServiceCollection services, Type deserializableType, object instance)
     {
         services.AddSingleton(deserializableType, instance);
