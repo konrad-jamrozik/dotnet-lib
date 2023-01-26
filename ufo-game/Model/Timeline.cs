@@ -52,6 +52,8 @@ public class Timeline
         _accounting.AdvanceTime();
         _sickBay.AdvanceTime();
         
+        // kja once the "raisedMoney" this thing is gone, Timeline can become part of Infra namespace.
+        // And can be renamed, like GameStateTicker (to align with the GameState___ convention).
         if (raisedMoney)
             _accounting.AddRaisedMoney();
         

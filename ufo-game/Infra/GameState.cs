@@ -1,4 +1,5 @@
-﻿using UfoGame.Model.Data;
+﻿using UfoGame.Model;
+using UfoGame.Model.Data;
 using UfoGame.ViewModel;
 
 namespace UfoGame.Infra;
@@ -24,7 +25,7 @@ public class GameState
     }
 
     // kja rename IDeserializable to IPersistable.
-    public void PersistGameState()
+    public void PersistGameState() // kja rename to Persist
         => _storage.Persist(this);
 
     public void Reset()

@@ -1,4 +1,6 @@
-﻿using UfoGame.Model;
+﻿using System.Reflection;
+using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using UfoGame.Model;
 using UfoGame.Model.Data;
 
 namespace UfoGame.Infra;
@@ -51,21 +53,35 @@ public static class ServiceCollectionExtensions
             services.AddSingleton(typeof(ITemporal), instance);
     }
 
+    private static readonly Type[] InterfaceTypes = new Type[]
+        { typeof(IDeserializable), typeof(IResettable), typeof(ITemporal) };
+
     /// <summary>
-    /// This method is analogous to its overload but with the "instance" parameter.
-    /// This overload is registering the "type" type directly, instead of
-    /// instance "instance" of the type "type".
+    /// This method resolves instance of type 'type' from 'serviceProvider'
+    /// and registers it as a singleton in 'services', in addition to registering
+    /// it as all applicable IFoo interfaces it implements, the same way it is
+    /// done in the other overload of this method.
+    ///
+    /// Note this maneuver of first resolving an instance and then registering
+    /// it is necessary; otherwise, if the the registrations for the IFoo interfaces
+    /// would be made directly using just the type, without the instance,
+    /// it would lead to creation of multiple instances (one per each IFoo interface
+    /// plus the non-interface one) instead of just one.
     /// </summary>
-    public static void AddSingletonWithInterfaces(this IServiceCollection services, Type type)
+    public static void AddSingletonWithInterfaces(
+        this IServiceProvider serviceProvider,
+        IServiceCollection services,
+        Type type)
     {
-        services.AddSingleton(type);
+        if (!InterfaceTypes.Any(type.IsAssignableTo))
+            return;
+
+        object service = serviceProvider.GetService(type)!;
+        services.AddSingleton(type, service);
         // Implementation based on https://stackoverflow.com/a/39569277/986533
-        if (type.IsAssignableTo(typeof(IDeserializable)))
-            services.AddSingleton(typeof(IDeserializable), type);
-        if (type.IsAssignableTo(typeof(IResettable)))
-            services.AddSingleton(typeof(IResettable), type);
-        if (type.IsAssignableTo(typeof(ITemporal)))
-            services.AddSingleton(typeof(ITemporal), type);
+        foreach (var interfaceType in InterfaceTypes)
+            if (type.IsAssignableTo(interfaceType))
+                services.AddSingleton(interfaceType, service);
     }
 }
 
