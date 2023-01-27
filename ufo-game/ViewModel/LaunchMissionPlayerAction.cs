@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using UfoGame.Model;
+using UfoGame.Model.Data;
 
 namespace UfoGame.ViewModel;
 
@@ -9,23 +10,22 @@ class LaunchMissionPlayerAction : IPlayerActionOnRangeInput
     private readonly MissionPrep _missionPrep;
     private readonly PendingMission _pendingMission;
     private readonly MissionLauncher _missionLauncher;
-    private readonly Timeline _timeline;
+    private readonly TimelineData _timelineData;
     private readonly ViewStateRefresh _viewStateRefresh;
-
 
     public LaunchMissionPlayerAction(
         MissionPrep missionPrep,
         PendingMission pendingMission,
         ViewStateRefresh viewStateRefresh,
         MissionLauncher missionLauncher,
-        Timeline timeline,
+        TimelineData timelineData,
         Agents agents)
     {
         _missionPrep = missionPrep;
         _pendingMission = pendingMission;
         _viewStateRefresh = viewStateRefresh;
         _missionLauncher = missionLauncher;
-        _timeline = timeline;
+        _timelineData = timelineData;
         _agents = agents;
     }
 
@@ -50,7 +50,7 @@ class LaunchMissionPlayerAction : IPlayerActionOnRangeInput
     public void IncrementInput()
     {
         var assignableAgents = _agents
-            .AssignableAgentsSortedByLaunchPriority(_timeline.Data.CurrentTime);
+            .AssignableAgentsSortedByLaunchPriority(_timelineData.CurrentTime);
         Debug.Assert(assignableAgents.Any());
         assignableAgents.First().AssignToMission();
         _viewStateRefresh.Trigger();
@@ -59,7 +59,7 @@ class LaunchMissionPlayerAction : IPlayerActionOnRangeInput
     public void DecrementInput()
     {
         var assignedAgents = _agents
-            .AssignedAgentsSortedByDescendingLaunchPriority(_timeline.Data.CurrentTime);
+            .AssignedAgentsSortedByDescendingLaunchPriority(_timelineData.CurrentTime);
         Debug.Assert(assignedAgents.Any());
         assignedAgents.First().UnassignFromMission();
         _viewStateRefresh.Trigger();

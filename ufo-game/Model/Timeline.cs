@@ -1,13 +1,11 @@
 ﻿using System.Diagnostics;
 using UfoGame.Infra;
-using UfoGame.Model.Data;
 using UfoGame.ViewModel;
 
 namespace UfoGame.Model;
 
 public class Timeline
 {
-    public readonly TimelineData Data;
     private readonly PlayerScore _playerScore;
     private readonly List<ITemporal> _temporals;
     private readonly Accounting _accounting;
@@ -15,14 +13,12 @@ public class Timeline
     private readonly ViewStateRefresh _viewStateRefresh;
 
     public Timeline(
-        TimelineData data,
+        PlayerScore playerScore,
+        IEnumerable<ITemporal> temporals,
         Accounting accounting,
         GameState gameState,
-        ViewStateRefresh viewStateRefresh,
-        PlayerScore playerScore,
-        IEnumerable<ITemporal> temporals)
+        ViewStateRefresh viewStateRefresh)
     {
-        Data = data;
         _accounting = accounting;
         _gameState = gameState;
         _viewStateRefresh = viewStateRefresh;
@@ -35,8 +31,6 @@ public class Timeline
         Debug.Assert(!_playerScore.GameOver);
         _temporals.ForEach(temporal => temporal.AdvanceTime());
         
-        // kja once the "raisedMoney" this thing is gone, Timeline can become part of Infra namespace.
-        // And can be renamed, like GameStateTicker (to align with the GameState___ convention).
         if (raisedMoney)
             _accounting.AddRaisedMoney();
         
