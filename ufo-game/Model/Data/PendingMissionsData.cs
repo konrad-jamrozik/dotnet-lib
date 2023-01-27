@@ -2,11 +2,11 @@
 
 namespace UfoGame.Model.Data;
 
-public class PendingMissionsData : IPersistable
+public class MissionSitesData : IPersistable
 {
     [JsonInclude] public List<MissionSiteData> Data { get; private set; } = new List<MissionSiteData>();
 
-    public PendingMissionsData()
+    public MissionSitesData()
         => Reset();
 
     public void Reset()

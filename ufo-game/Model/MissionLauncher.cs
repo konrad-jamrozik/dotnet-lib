@@ -110,7 +110,7 @@ public class MissionLauncher
     }
 
     // kja introduce class like "MissionOutcome" which will have method like "roll" and
-    // many of the stats currently on PendingMission
+    // many of the stats currently on MissionSite
     private (int roll, bool success) RollMissionOutcome(MissionSite missionSite)
     {
         // Roll between 1 and 100.

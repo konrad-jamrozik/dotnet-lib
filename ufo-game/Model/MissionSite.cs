@@ -60,7 +60,7 @@ public class MissionSite : ITemporal, IResettable
 
     public int AgentSurvivabilityPower => _agents.AgentsAssignedToMissionCount * _staffData.AgentSurvivability;
 
-    public MissionSiteData Data => _pendingMissionsData.Data[0];
+    public MissionSiteData Data => _missionSitesData.Data[0];
 
     public FactionData FactionData => _factionsData.Data.Single(f => f.Name == Data.FactionName);
 
@@ -82,24 +82,24 @@ public class MissionSite : ITemporal, IResettable
     private readonly PlayerScore _playerScore;
     private readonly StaffData _staffData;
     private readonly Agents _agents;
-    private readonly PendingMissionsData _pendingMissionsData;
+    private readonly MissionSitesData _missionSitesData;
 
     public MissionSite(
-        PendingMissionsData pendingMissionsData,
+        MissionSitesData missionSitesData,
         ArchiveData archiveData,
         FactionsData factionsData,
         PlayerScore playerScore,
         StaffData staffData,
         Agents agents)
     {
-        _pendingMissionsData = pendingMissionsData;
+        _missionSitesData = missionSitesData;
         _archiveData = archiveData;
         _factionsData = factionsData;
         _playerScore = playerScore;
         _staffData = staffData;
         _agents = agents;
         if (Data.IsNoMission)
-            _pendingMissionsData.New(_playerScore, _random, _factionsData);
+            _missionSitesData.New(_playerScore, _random, _factionsData);
     }
 
     public void AdvanceTime()
@@ -134,10 +134,10 @@ public class MissionSite : ITemporal, IResettable
 
     public void Reset()
     {
-        _pendingMissionsData.Reset();
+        _missionSitesData.Reset();
         GenerateNewOrClearMission();
     }
 
     public void GenerateNewOrClearMission()
-        => _pendingMissionsData.New(_playerScore, _random, _factionsData);
+        => _missionSitesData.New(_playerScore, _random, _factionsData);
 }

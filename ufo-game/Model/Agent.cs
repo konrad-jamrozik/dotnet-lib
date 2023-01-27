@@ -110,7 +110,7 @@ public class Agent
     }
 
     // As of 1/19/2023 worst case possible on successful mission is that agent will need
-    // PendingMission.MaxAgentSurvivalChance / 2 recovery units at recovery speed of 1.
+    // MissionSite.MaxAgentSurvivalChance / 2 recovery units at recovery speed of 1.
     // This is 99 / 2 = 49.
     // Because agents train 1 experience per turn, this means that going on 
     // a successful mission always makes the agent improve faster,
