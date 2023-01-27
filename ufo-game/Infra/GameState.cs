@@ -24,7 +24,7 @@ public class GameState
     }
 
     // kja rename IDeserializable to IPersistable.
-    public void PersistGameState() // kja rename to Persist
+    public void Persist()
         => _storage.Persist(this);
 
     public void Reset()

@@ -34,7 +34,7 @@ public class Timeline
         if (raisedMoney)
             _accounting.AddRaisedMoney();
         
-        _gameState.PersistGameState();
+        _gameState.Persist();
 
         _viewStateRefresh.Trigger();
     }

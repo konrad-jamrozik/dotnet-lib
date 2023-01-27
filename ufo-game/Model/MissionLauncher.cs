@@ -104,7 +104,7 @@ public class MissionLauncher
         _archiveData.ArchiveMission(missionSuccessful: success);
         WriteLastMissionReport(mission, successChance, roll, success, scoreDiff, agentsLost, moneyReward);
         mission.GenerateNewOrClearMission();
-        _gameState.PersistGameState();
+        _gameState.Persist();
         _viewStateRefresh.Trigger();
     }
 
