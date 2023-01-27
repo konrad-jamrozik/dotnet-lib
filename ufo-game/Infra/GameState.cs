@@ -1,5 +1,4 @@
-﻿using UfoGame.Model;
-using UfoGame.Model.Data;
+﻿using UfoGame.Model.Data;
 using UfoGame.ViewModel;
 
 namespace UfoGame.Infra;
@@ -7,7 +6,7 @@ namespace UfoGame.Infra;
 public class GameState
 {
     public readonly List<IDeserializable> Deserializables;
-    public readonly List<IResettable> Resettables;
+    private readonly List<IResettable> _resettables;
 
     private readonly ViewStateRefresh _viewStateRefresh;
     private readonly GameStateStorage _storage;
@@ -18,10 +17,10 @@ public class GameState
         IEnumerable<IDeserializable> deserializables,
         IEnumerable<IResettable> resettables)
     {
+        Deserializables = deserializables.ToList();
+        _resettables = resettables.ToList();
         _storage = storage;
         _viewStateRefresh = viewStateRefresh;
-        Deserializables = deserializables.ToList();
-        Resettables = resettables.ToList();
     }
 
     // kja rename IDeserializable to IPersistable.
@@ -30,11 +29,8 @@ public class GameState
 
     public void Reset()
     {
-        Console.WriteLine("Resetting!"); // kja temp debug
-        Resettables.ForEach(resettable => resettable.Reset());
-
+        _resettables.ForEach(resettable => resettable.Reset());
         _storage.Clear();
-
         _viewStateRefresh.Trigger();
     }
 }

@@ -17,7 +17,5 @@ public class ViewStateRefresh
         Event();
     }
 
-    public Action Event = () =>
-    {
-    };
+    public Action Event = () => { };
 }
