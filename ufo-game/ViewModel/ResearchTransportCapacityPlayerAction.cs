@@ -20,6 +20,7 @@ public class ResearchTransportCapacityPlayerAction : IPlayerActionOnButton
         => _research.ResearchTransportCapacity();
 
     public string ActLabel()
-        => $"Increase transport capacity by {_missionPrep.Data.TransportCapacity} " +
+        => $"Increase transport capacity to " +
+           $"{_missionPrep.Data.TransportCapacity + _missionPrep.Data.TransportCapacityImprovement} " +
            $"for {_research.Data.TransportCapacityResearchCost}";
 }
