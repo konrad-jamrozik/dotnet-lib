@@ -3,22 +3,22 @@ using System.Text.Json.Serialization;
 
 namespace UfoGame.Model.Data;
 
-public class PendingMissionData
+public class MissionSiteData
 {
-    public static PendingMissionData New(PlayerScore playerScore, Random random, FactionsData factionsData)
+    public static MissionSiteData New(PlayerScore playerScore, Random random, FactionsData factionsData)
         => !playerScore.GameOver
             ? NewValid(playerScore, random, factionsData)
             : NewEmpty;
 
-    public static PendingMissionData NewEmpty => new PendingMissionData();
+    public static MissionSiteData NewEmpty => new MissionSiteData();
 
-    private static PendingMissionData NewValid(
+    private static MissionSiteData NewValid(
         PlayerScore playerScore,
         Random random,
         FactionsData factionsData)
     {
         Debug.Assert(!playerScore.GameOver);
-        return new PendingMissionData(
+        return new MissionSiteData(
             availableIn: random.Next(1, 6 + 1),
             expiresIn: 3,
             moneyRewardCoefficient: random.Next(5, 15 + 1) / (float)10,
@@ -34,7 +34,7 @@ public class PendingMissionData
 
     public bool IsNoMission => FactionName == FactionsData.NoFaction;
 
-    public PendingMissionData(
+    public MissionSiteData(
         int availableIn,
         int expiresIn,
         float moneyRewardCoefficient,
@@ -48,7 +48,7 @@ public class PendingMissionData
         FactionName = factionName;
     }
 
-    public PendingMissionData()
+    public MissionSiteData()
     {
         AvailableIn = 0;
         ExpiresIn = 0;

@@ -60,7 +60,7 @@ public class MissionSite : ITemporal, IResettable
 
     public int AgentSurvivabilityPower => _agents.AgentsAssignedToMissionCount * _staffData.AgentSurvivability;
 
-    public PendingMissionData Data => _pendingMissionsData.Data[0];
+    public MissionSiteData Data => _pendingMissionsData.Data[0];
 
     public FactionData FactionData => _factionsData.Data.Single(f => f.Name == Data.FactionName);
 
