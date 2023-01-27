@@ -5,12 +5,12 @@ namespace UfoGame.ViewModel;
 public class ResearchTransportCapacityPlayerAction : IPlayerActionOnButton
 {
     private readonly Research _research;
-    private readonly MissionPrep _missionPrep;
+    private readonly MissionDeployment _missionDeployment;
 
-    public ResearchTransportCapacityPlayerAction(Research research, MissionPrep missionPrep)
+    public ResearchTransportCapacityPlayerAction(Research research, MissionDeployment missionDeployment)
     {
         _research = research;
-        _missionPrep = missionPrep;
+        _missionDeployment = missionDeployment;
     }
 
     public bool CanAct() 
@@ -21,6 +21,6 @@ public class ResearchTransportCapacityPlayerAction : IPlayerActionOnButton
 
     public string ActLabel()
         => $"Increase transport capacity to " +
-           $"{_missionPrep.Data.TransportCapacity + _missionPrep.Data.TransportCapacityImprovement} " +
+           $"{_missionDeployment.Data.TransportCapacity + _missionDeployment.Data.TransportCapacityImprovement} " +
            $"for {_research.Data.TransportCapacityResearchCost}";
 }

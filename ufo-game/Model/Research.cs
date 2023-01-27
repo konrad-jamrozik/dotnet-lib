@@ -7,7 +7,7 @@ public class Research
 {
     public readonly ResearchData Data;
     private readonly Accounting _accounting;
-    private readonly MissionPrep _missionPrep;
+    private readonly MissionDeployment _missionDeployment;
     private readonly StaffData _staffData;
     private readonly Timeline _timeline;
     private readonly PlayerScore _playerScore;
@@ -17,7 +17,7 @@ public class Research
         ResearchData data,
         Timeline timeline,
         Accounting accounting,
-        MissionPrep missionPrep,
+        MissionDeployment missionDeployment,
         StaffData staffData,
         PlayerScore playerScore,
         SickBay sickBay)
@@ -25,7 +25,7 @@ public class Research
         Data = data;
         _timeline = timeline;
         _accounting = accounting;
-        _missionPrep = missionPrep;
+        _missionDeployment = missionDeployment;
         _staffData = staffData;
         _playerScore = playerScore;
         _sickBay = sickBay;
@@ -51,7 +51,7 @@ public class Research
         Debug.Assert(CanResearchTransportCapacity());
         _accounting.PayForResearch(Data.TransportCapacityResearchCost);
         Data.TransportCapacityResearchCost += ResearchData.TransportCapacityResearchCostIncrement;
-        _missionPrep.Data.ImproveTransportCapacity();
+        _missionDeployment.Data.ImproveTransportCapacity();
         _timeline.AdvanceTime();
     }
 

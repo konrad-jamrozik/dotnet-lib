@@ -4,7 +4,7 @@
 @inject ViewModel.LaunchMissionPlayerAction LaunchMission
 @inject StaffData StaffData
 @inject ArchiveData ArchiveData
-@inject MissionPrep MissionPrep
+@inject MissionDeployment MissionDeployment
 @inject MissionSite MissionSite
 @inject Agents Agents
 @* kja rename this card to Deployment *@
@@ -35,7 +35,7 @@
                  Value="@(MissionSite.BaselineAgentSurvivalChance + "%")"
                  Enabled="@MissionSite.CurrentlyAvailable" />
     <CardDataRow Label="Transport capacity"
-                 Value="@MissionPrep.Data.TransportCapacity"
+                 Value="@MissionDeployment.Data.TransportCapacity"
                  Enabled="@MissionSite.CurrentlyAvailable" />
     <CardDataRow Label="Ready agents"
                  Value="Agents.AgentsSendableOnMissionCount"

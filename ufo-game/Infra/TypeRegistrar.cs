@@ -48,7 +48,7 @@ public class TypeRegistrar
             typeof(Timeline),
             typeof(Accounting),
             typeof(PlayerScore),
-            typeof(MissionPrep),
+            typeof(MissionDeployment),
             typeof(SickBay),
             typeof(Research),
             typeof(Procurement),

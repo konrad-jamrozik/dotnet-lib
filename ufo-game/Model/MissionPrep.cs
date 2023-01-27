@@ -2,10 +2,9 @@
 
 namespace UfoGame.Model;
 
-// kja rename MissionPrep to MissionDeployment
-public class MissionPrep
+public class MissionDeployment
 {
-    public readonly MissionPrepData Data;
+    public readonly MissionDeploymentData Data;
 
     public int MinAgentsSendableOnMission => 1;
 
@@ -15,7 +14,7 @@ public class MissionPrep
 
     private readonly Agents _agents;
 
-    public MissionPrep(MissionPrepData data, Agents agents)
+    public MissionDeployment(MissionDeploymentData data, Agents agents)
     {
         Data = data;
         _agents = agents;

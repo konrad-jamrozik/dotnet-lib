@@ -9,7 +9,7 @@ namespace UfoGame.Model;
 public class MissionLauncher
 {
     private readonly Random _random = new Random();
-    private readonly MissionPrep _missionPrep;
+    private readonly MissionDeployment _missionDeployment;
     private readonly ArchiveData _archiveData;
     private readonly PlayerScore _playerScore;
     private readonly Agents _agents;
@@ -18,7 +18,7 @@ public class MissionLauncher
     private readonly GameState _gameState;
 
     public MissionLauncher(
-        MissionPrep missionPrep,
+        MissionDeployment missionDeployment,
         ArchiveData archiveData,
         PlayerScore playerScore,
         Accounting accounting,
@@ -26,7 +26,7 @@ public class MissionLauncher
         GameState gameState,
         Agents agents)
     {
-        _missionPrep = missionPrep;
+        _missionDeployment = missionDeployment;
         _archiveData = archiveData;
         _playerScore = playerScore;
         _accounting = accounting;
@@ -86,8 +86,8 @@ public class MissionLauncher
         return WithinRange(_agents.AgentsAssignedToMissionCount + offset);
 
         bool WithinRange(int agentsAssignedToMission)
-            => agentsAssignedToMission >= _missionPrep.MinAgentsSendableOnMission
-               && agentsAssignedToMission <= _missionPrep.MaxAgentsSendableOnMission;
+            => agentsAssignedToMission >= _missionDeployment.MinAgentsSendableOnMission
+               && agentsAssignedToMission <= _missionDeployment.MaxAgentsSendableOnMission;
     }
 
     // kja make LaunchMission() functional / immutable, to avoid unexpected mutations

@@ -7,21 +7,21 @@ namespace UfoGame.ViewModel;
 class LaunchMissionPlayerAction : IPlayerActionOnRangeInput
 {
     private readonly Agents _agents;
-    private readonly MissionPrep _missionPrep;
+    private readonly MissionDeployment _missionDeployment;
     private readonly MissionSite _missionSite;
     private readonly MissionLauncher _missionLauncher;
     private readonly TimelineData _timelineData;
     private readonly ViewStateRefresh _viewStateRefresh;
 
     public LaunchMissionPlayerAction(
-        MissionPrep missionPrep,
+        MissionDeployment missionDeployment,
         MissionSite missionSite,
         ViewStateRefresh viewStateRefresh,
         MissionLauncher missionLauncher,
         TimelineData timelineData,
         Agents agents)
     {
-        _missionPrep = missionPrep;
+        _missionDeployment = missionDeployment;
         _missionSite = missionSite;
         _viewStateRefresh = viewStateRefresh;
         _missionLauncher = missionLauncher;
@@ -69,8 +69,8 @@ class LaunchMissionPlayerAction : IPlayerActionOnRangeInput
 
     public bool CanAct(int value) => _missionLauncher.CanLaunchMission(_missionSite, value);
 
-    public int InputMax() => _missionPrep.MaxAgentsSendableOnMission;
+    public int InputMax() => _missionDeployment.MaxAgentsSendableOnMission;
 
-    public int InputMin() => _missionPrep.MinAgentsSendableOnMission;
+    public int InputMin() => _missionDeployment.MinAgentsSendableOnMission;
     
 }

@@ -4,12 +4,12 @@
 @inject ViewModel.HireAgentsPlayerAction HireAgents
 @inject NavigationManager Navigation
 @inject StaffData StaffData
-@inject MissionPrep MissionPrep
+@inject MissionDeployment MissionDeployment
 @inject Agents Agents
 @inject SickBay SickBay
 
 <Card Title="Agents">
-    <CardDataRow Label="Transport capacity" Value="MissionPrep.Data.TransportCapacity"/>
+    <CardDataRow Label="Transport capacity" Value="MissionDeployment.Data.TransportCapacity"/>
     <CardDataRow Label="All agents" Value="Agents.AvailableAgents.Count"/>
     <CardDataRow Label="Ready agents" 
                  Value="Agents.AgentsSendableOnMissionCount"
