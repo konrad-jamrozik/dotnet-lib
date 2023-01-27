@@ -45,8 +45,8 @@ public static class ServiceCollectionExtensions
     {
         services.AddSingleton(type, instance);
         // Implementation based on https://stackoverflow.com/a/39569277/986533
-        if (type.IsAssignableTo(typeof(IDeserializable)))
-            services.AddSingleton(typeof(IDeserializable), instance);
+        if (type.IsAssignableTo(typeof(IPersistable)))
+            services.AddSingleton(typeof(IPersistable), instance);
         if (type.IsAssignableTo(typeof(IResettable)))
             services.AddSingleton(typeof(IResettable), instance);
         if (type.IsAssignableTo(typeof(ITemporal)))
@@ -54,7 +54,7 @@ public static class ServiceCollectionExtensions
     }
 
     private static readonly Type[] InterfaceTypes = new Type[]
-        { typeof(IDeserializable), typeof(IResettable), typeof(ITemporal) };
+        { typeof(IPersistable), typeof(IResettable), typeof(ITemporal) };
 
     /// <summary>
     /// This method resolves instance of type 'type' from 'serviceProvider'

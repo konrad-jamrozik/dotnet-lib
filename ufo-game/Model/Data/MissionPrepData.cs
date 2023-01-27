@@ -2,7 +2,7 @@
 
 namespace UfoGame.Model.Data;
 
-public class MissionPrepData : IDeserializable, IResettable
+public class MissionPrepData : IPersistable, IResettable
 {
     public readonly int TransportCapacityImprovement = 2;
 

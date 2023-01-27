@@ -31,7 +31,7 @@ public class GameStateStorage
     {
         Console.Out.WriteLine("Persisting game state");
         JsonObject gameStateObject = new JsonObject();
-        foreach (IDeserializable item in gameState.Deserializables)
+        foreach (IPersistable item in gameState.Persistables)
         {
             // Obtain actual, most-derived runtime type
             // Based on https://stackoverflow.com/a/2520710/986533

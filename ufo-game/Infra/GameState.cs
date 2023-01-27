@@ -5,7 +5,7 @@ namespace UfoGame.Infra;
 
 public class GameState
 {
-    public readonly List<IDeserializable> Deserializables;
+    public readonly List<IPersistable> Persistables;
     private readonly List<IResettable> _resettables;
 
     private readonly ViewStateRefresh _viewStateRefresh;
@@ -14,16 +14,15 @@ public class GameState
     public GameState(
         GameStateStorage storage,
         ViewStateRefresh viewStateRefresh,
-        IEnumerable<IDeserializable> deserializables,
+        IEnumerable<IPersistable> persistables,
         IEnumerable<IResettable> resettables)
     {
-        Deserializables = deserializables.ToList();
+        Persistables = persistables.ToList();
         _resettables = resettables.ToList();
         _storage = storage;
         _viewStateRefresh = viewStateRefresh;
     }
 
-    // kja rename IDeserializable to IPersistable.
     public void Persist()
         => _storage.Persist(this);
 

@@ -2,7 +2,7 @@
 
 namespace UfoGame.Model.Data;
 
-public class ResearchData : IDeserializable, IResettable
+public class ResearchData : IPersistable, IResettable
 {
     public const int MoneyRaisingMethodsResearchCostIncrement = 100;
     public const int TransportCapacityResearchCostIncrement = 200;

@@ -19,19 +19,17 @@ public static class PersistedGameStateReader
 
             JsonObject gameJson = storage.Read();
 
-            List<Type> deserializableTypes = DeserializableTypes;
-            deserializableTypes.ForEach(
-                deserializableType =>
+            List<Type> persistableTypes = PersistableTypes;
+            persistableTypes.ForEach(
+                persistableType =>
                 {
-                    var deserializedInstance = gameJson[deserializableType.Name].Deserialize(deserializableType)!;
-                    services.AddSingletonWithInterfaces(deserializableType, deserializedInstance);
-                    // kja to remove
-                    // AddToServices(services, deserializableType, deserializedInstance);
+                    var deserializedInstance = gameJson[persistableType.Name].Deserialize(persistableType)!;
+                    services.AddSingletonWithInterfaces(persistableType, deserializedInstance);
                 });
 
             Console.Out.WriteLine(
                 "Deserialized all persisted game state and added to service collection. " +
-                $"Type instances deserialized & added: {deserializableTypes.Count}");
+                $"Type instances deserialized & added: {persistableTypes.Count}");
         }
         catch (Exception e)
         {
@@ -46,44 +44,29 @@ public static class PersistedGameStateReader
 
     public static void Reset(IServiceCollection services)
     {
-        List<Type> deserializableTypes = DeserializableTypes;
-        deserializableTypes.ForEach(
-            deserializableType =>
+        List<Type> persistableTypes = PersistableTypes;
+        persistableTypes.ForEach(
+            persistableType =>
             {
-                var newInstance = Activator.CreateInstance(deserializableType)!;
-                services.AddSingletonWithInterfaces(deserializableType, newInstance);
-                // kja to remove
-                // AddToServices(services, deserializableType, deserializedInstance);
+                var newInstance = Activator.CreateInstance(persistableType)!;
+                services.AddSingletonWithInterfaces(persistableType, newInstance);
             });
         Console.Out.WriteLine(
-            "Created new instances of all deserializable types and added to service collection. " +
-            $"Type instances created & added: {deserializableTypes.Count}");
+            "Created new instances of all persistable types and added to service collection. " +
+            $"Type instances created & added: {persistableTypes.Count}");
     }
 
-    private static List<Type> DeserializableTypes
+    private static List<Type> PersistableTypes
     {
         get
         {
             Assembly assembly = Assembly.GetExecutingAssembly();
-            List<Type> deserializableTypes = assembly.GetTypes().Where(IsDeserializable).ToList();
-            return deserializableTypes;
+            List<Type> persistableTypes = assembly.GetTypes().Where(IsPersistable).ToList();
+            return persistableTypes;
 
-            bool IsDeserializable(Type type)
-                => type.IsAssignableTo(typeof(IDeserializable))
-                   && type != typeof(IDeserializable);
+            bool IsPersistable(Type type)
+                => type.IsAssignableTo(typeof(IPersistable))
+                   && type != typeof(IPersistable);
         }
-    }
-
-    // kja to remove
-    private static void AddToServices(IServiceCollection services, Type deserializableType, object instance)
-    {
-        services.AddSingleton(deserializableType, instance);
-        // Add each instance as implementing its interface, to allows
-        // injection of enumerable of all types with this interface,
-        // to allow serialization.
-        // Based on https://stackoverflow.com/a/39569277/986533
-        services.AddSingleton(typeof(IDeserializable), instance);
-        if (deserializableType.IsAssignableTo(typeof(IResettable)))
-            services.AddSingleton(typeof(IResettable), instance);
     }
 }

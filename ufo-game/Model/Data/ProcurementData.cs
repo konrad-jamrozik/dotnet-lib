@@ -2,7 +2,7 @@
 
 namespace UfoGame.Model.Data;
 
-public class ProcurementData : IDeserializable, IResettable
+public class ProcurementData : IPersistable, IResettable
 {
     [JsonInclude] public int AgentsToHire;
     [JsonInclude] public int AgentsToFire;

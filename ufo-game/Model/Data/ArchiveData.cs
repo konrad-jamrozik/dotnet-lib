@@ -2,7 +2,7 @@
 
 namespace UfoGame.Model.Data;
 
-public class ArchiveData : IDeserializable, IResettable
+public class ArchiveData : IPersistable, IResettable
 {
     public const string NoMissionsReport = "No missions yet!";
 
