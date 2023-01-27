@@ -3,8 +3,9 @@ using UfoGame.Model.Data;
 
 namespace UfoGame.Model;
 
-// kja Need to rethink where to put mission stats, like "OurPower" or "SuccessChance".
-// Probably in "Mission" (currently "MissionLauncher") 
+// kja Move all derived properties like "OurPower" or "SuccessChance" to MissionStats.
+// MissionStats will be used by MissionLauncher and MissionCard.razor,
+// and will likely depend on MissionSiteData and FactionData through it.
 public class MissionSite : ITemporal, IResettable
 {
     private const int MaxAgentSurvivalChance = 99;

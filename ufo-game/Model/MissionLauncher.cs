@@ -109,7 +109,10 @@ public class MissionLauncher
     }
 
     // kja introduce class like "MissionOutcome" which will have method like "roll" and
-    // many of the stats currently on MissionSite
+    // will leverage MissionStats (to be introduced).
+    // That class will produce everything that needs to change as a result of the mission
+    // Then the launcher can do missionOutcome.Apply(), thus updating agents state,
+    // archiving things, giving mission rewards, etc.
     private (int roll, bool success) RollMissionOutcome(MissionSite missionSite)
     {
         // Roll between 1 and 100.
@@ -117,7 +120,8 @@ public class MissionLauncher
         int roll = _random.Next(1, 100 + 1);
         bool success = roll <= missionSite.SuccessChance;
         Console.Out.WriteLine(
-            $"Rolled {roll} against limit of {missionSite.SuccessChance} resulting in {(success ? "success" : "failure")}");
+            $"Rolled {roll} against limit of {missionSite.SuccessChance} " +
+            $"resulting in {(success ? "success" : "failure")}");
         return (roll, success);
     }
 
