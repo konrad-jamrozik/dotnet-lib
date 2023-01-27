@@ -5,7 +5,6 @@ using UfoGame.ViewModel;
 
 namespace UfoGame.Model;
 
-// kja rename MissionLauncher to Mission
 public class MissionLauncher
 {
     private readonly Random _random = new Random();

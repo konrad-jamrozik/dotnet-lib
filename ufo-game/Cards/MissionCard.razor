@@ -7,12 +7,11 @@
 @inject MissionDeployment MissionDeployment
 @inject MissionSite MissionSite
 @inject Agents Agents
-@* kja rename this card to Deployment *@
 <Card Title="Mission">
     <CardDataRow Label="Available in" 
                  Value="@MissionSite.Data.AvailableIn" 
                  Enabled="@(!MissionSite.CurrentlyAvailable)" />
-    <CardDataRow Label="Expires in" 
+    <CardDataRow Label="Expires in"
                  Value="@MissionSite.Data.ExpiresIn"
                  Enabled="@MissionSite.CurrentlyAvailable"
                  ValueCssClass="@(MissionSite.MissionAboutToExpire ? "text-danger" : "")"/>

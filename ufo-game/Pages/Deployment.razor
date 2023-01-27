@@ -1,4 +1,4 @@
-﻿@page "/mission"
+﻿@page "/deployment"
 @using UfoGame.Components
 @using UfoGame.Cards
 @using UfoGame.Model
@@ -7,10 +7,9 @@
 @inject ViewStateRefresh ViewStateRefresh
 @inject Agents Agents
 
-@* kja rename Mission page to Deployment *@
-<PageTitle>Mission</PageTitle>
+<PageTitle>Deployment</PageTitle>
 
-<h1>Mission</h1>
+<h1>Deployment</h1>
 
 <div class="container-fluid text-center px-2">
     <div class="row">
@@ -30,7 +29,7 @@
 <div class="container text-center pt-2" style="width: 300px">
     <div class="row">
         <button class="btn btn-primary" 
-                @onclick="@(() => Navigation.NavigateTo("hq"))">
+                @onclick="@(() => Navigation.NavigateTo("/hq"))">
             Go to HQ
         </button>
     </div>
