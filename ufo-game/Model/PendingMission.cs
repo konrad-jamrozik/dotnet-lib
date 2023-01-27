@@ -105,7 +105,6 @@ public class PendingMission : ITemporal, IResettable
 
     public void AdvanceTime()
     {
-        Console.WriteLine("PendingMission - AdvanceTime");
         Debug.Assert(!_playerScore.GameOver);
         if (CurrentlyAvailable)
         {

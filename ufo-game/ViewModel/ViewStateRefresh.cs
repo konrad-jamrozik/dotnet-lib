@@ -13,12 +13,11 @@ public class ViewStateRefresh
 {
     public void Trigger([CallerMemberName] string callerMemberName = "") 
     {
-        Console.Out.WriteLine("Triggering refresh from " + callerMemberName);
+        Console.Out.WriteLine("REFRESH - triggering from " + callerMemberName);
         Event();
     }
 
     public Action Event = () =>
     {
-        Console.Out.WriteLine("On refresh!");
     };
 }
