@@ -5,44 +5,44 @@
 @inject StaffData StaffData
 @inject ArchiveData ArchiveData
 @inject MissionPrep MissionPrep
-@inject PendingMission PendingMission
+@inject MissionSite MissionSite
 @inject Agents Agents
-
+@* kja rename this card to Deployment *@
 <Card Title="Mission">
     <CardDataRow Label="Available in" 
-                 Value="@PendingMission.Data.AvailableIn" 
-                 Enabled="@(!PendingMission.CurrentlyAvailable)" />
+                 Value="@MissionSite.Data.AvailableIn" 
+                 Enabled="@(!MissionSite.CurrentlyAvailable)" />
     <CardDataRow Label="Expires in" 
-                 Value="@PendingMission.Data.ExpiresIn"
-                 Enabled="@PendingMission.CurrentlyAvailable"
-                 ValueCssClass="@(PendingMission.MissionAboutToExpire ? "text-danger" : "")"/>
+                 Value="@MissionSite.Data.ExpiresIn"
+                 Enabled="@MissionSite.CurrentlyAvailable"
+                 ValueCssClass="@(MissionSite.MissionAboutToExpire ? "text-danger" : "")"/>
     <CardDataRow Label="Enemy faction"
-                 Value="@PendingMission.FactionData.Name"
-                 Enabled="@PendingMission.CurrentlyAvailable" />
+                 Value="@MissionSite.FactionData.Name"
+                 Enabled="@MissionSite.CurrentlyAvailable" />
     <CardDataRow Label="Money reward"
-                 Value="@("$"+PendingMission.MoneyReward)"
-                 Enabled="@PendingMission.CurrentlyAvailable" />
+                 Value="@("$"+MissionSite.MoneyReward)"
+                 Enabled="@MissionSite.CurrentlyAvailable" />
     <CardDataRow Label="Enemy power"
-                 Value="@PendingMission.EnemyPower"
-                 Enabled="@PendingMission.CurrentlyAvailable" />
+                 Value="@MissionSite.EnemyPower"
+                 Enabled="@MissionSite.CurrentlyAvailable" />
     <CardDataRow Label="Our power"
-                 Value="@PendingMission.OurPower"
-                 Enabled="@PendingMission.CurrentlyAvailable" />
+                 Value="@MissionSite.OurPower"
+                 Enabled="@MissionSite.CurrentlyAvailable" />
     <CardDataRow Label="Mission success %"
-                 Value="@(PendingMission.SuccessChance + "%")"
-                 Enabled="@PendingMission.CurrentlyAvailable" />
+                 Value="@(MissionSite.SuccessChance + "%")"
+                 Enabled="@MissionSite.CurrentlyAvailable" />
     <CardDataRow Label="Baseline sol. surv. %"
-                 Value="@(PendingMission.BaselineAgentSurvivalChance + "%")"
-                 Enabled="@PendingMission.CurrentlyAvailable" />
+                 Value="@(MissionSite.BaselineAgentSurvivalChance + "%")"
+                 Enabled="@MissionSite.CurrentlyAvailable" />
     <CardDataRow Label="Transport capacity"
                  Value="@MissionPrep.Data.TransportCapacity"
-                 Enabled="@PendingMission.CurrentlyAvailable" />
+                 Enabled="@MissionSite.CurrentlyAvailable" />
     <CardDataRow Label="Ready agents"
                  Value="Agents.AgentsSendableOnMissionCount"
                  ValueCssClass="text-success" />
     <CardDataRow Label="Agents to send" 
                  Value="@Agents.AgentsAssignedToMissionCount"
-                 Enabled="@PendingMission.CurrentlyAvailable" />
+                 Enabled="@MissionSite.CurrentlyAvailable" />
     <CardButtonWithRangeInput PlayerAction="LaunchMission" />
     <div class="row">
         <div class="col">Last mission debriefing:</div>

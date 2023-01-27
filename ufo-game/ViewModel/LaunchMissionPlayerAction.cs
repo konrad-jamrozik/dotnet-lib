@@ -8,28 +8,28 @@ class LaunchMissionPlayerAction : IPlayerActionOnRangeInput
 {
     private readonly Agents _agents;
     private readonly MissionPrep _missionPrep;
-    private readonly PendingMission _pendingMission;
+    private readonly MissionSite _missionSite;
     private readonly MissionLauncher _missionLauncher;
     private readonly TimelineData _timelineData;
     private readonly ViewStateRefresh _viewStateRefresh;
 
     public LaunchMissionPlayerAction(
         MissionPrep missionPrep,
-        PendingMission pendingMission,
+        MissionSite missionSite,
         ViewStateRefresh viewStateRefresh,
         MissionLauncher missionLauncher,
         TimelineData timelineData,
         Agents agents)
     {
         _missionPrep = missionPrep;
-        _pendingMission = pendingMission;
+        _missionSite = missionSite;
         _viewStateRefresh = viewStateRefresh;
         _missionLauncher = missionLauncher;
         _timelineData = timelineData;
         _agents = agents;
     }
 
-    public void Act() => _missionLauncher.LaunchMission(_pendingMission);
+    public void Act() => _missionLauncher.LaunchMission(_missionSite);
 
     public string ActLabel()
         => $"Launch with {_agents.AgentsAssignedToMissionCount} agents";
@@ -65,9 +65,9 @@ class LaunchMissionPlayerAction : IPlayerActionOnRangeInput
         _viewStateRefresh.Trigger();
     }
 
-    public bool CanAct() => _missionLauncher.CanLaunchMission(_pendingMission);
+    public bool CanAct() => _missionLauncher.CanLaunchMission(_missionSite);
 
-    public bool CanAct(int value) => _missionLauncher.CanLaunchMission(_pendingMission, value);
+    public bool CanAct(int value) => _missionLauncher.CanLaunchMission(_missionSite, value);
 
     public int InputMax() => _missionPrep.MaxAgentsSendableOnMission;
 

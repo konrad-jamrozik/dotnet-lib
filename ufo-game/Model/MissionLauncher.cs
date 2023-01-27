@@ -35,28 +35,28 @@ public class MissionLauncher
         _agents = agents;
     }
 
-    private int ApplyMissionOutcome(PendingMission mission, bool success)
+    private int ApplyMissionOutcome(MissionSite missionSite, bool success)
     {
         int scoreDiff;
         if (success)
         {
-            _accounting.AddMissionLoot(mission.MoneyReward);
-            scoreDiff = Math.Min(PlayerScore.WinScore, mission.FactionData.Score);
+            _accounting.AddMissionLoot(missionSite.MoneyReward);
+            scoreDiff = Math.Min(PlayerScore.WinScore, missionSite.FactionData.Score);
             _playerScore.Data.Value += scoreDiff;
-            mission.FactionData.Score -= scoreDiff;
+            missionSite.FactionData.Score -= scoreDiff;
         }
         else
         {
             scoreDiff = PlayerScore.LoseScore;
             _playerScore.Data.Value -= scoreDiff;
-            mission.FactionData.Score += scoreDiff;
+            missionSite.FactionData.Score += scoreDiff;
         }
 
         return scoreDiff;
     }
 
     private void WriteLastMissionReport(
-        PendingMission mission,
+        MissionSite missionSite,
         int successChance,
         int roll,
         bool success,
@@ -67,9 +67,9 @@ public class MissionLauncher
         string missionRollReport =
             $" (Rolled {roll} against limit of {successChance}.)";
         string missionSuccessReport = success
-            ? $"successful! {missionRollReport} We took {scoreDiff} score from {mission.FactionData.Name} " +
+            ? $"successful! {missionRollReport} We took {scoreDiff} score from {missionSite.FactionData.Name} " +
               $"and earned ${moneyReward}."
-            : $"a failure. {missionRollReport} We lost {scoreDiff} score to {mission.FactionData.Name}.";
+            : $"a failure. {missionRollReport} We lost {scoreDiff} score to {missionSite.FactionData.Name}.";
 
         string agentsLostReport = agentsLost > 0
             ? $"Number of agents lost: {agentsLost}."
@@ -78,9 +78,9 @@ public class MissionLauncher
             $"The last mission was {missionSuccessReport} {agentsLostReport}");
     }
 
-    public bool CanLaunchMission(PendingMission mission, int offset = 0)
+    public bool CanLaunchMission(MissionSite missionSite, int offset = 0)
     {
-        if (_playerScore.GameOver || !mission.CurrentlyAvailable)
+        if (_playerScore.GameOver || !missionSite.CurrentlyAvailable)
             return false;
 
         return WithinRange(_agents.AgentsAssignedToMissionCount + offset);
@@ -91,19 +91,19 @@ public class MissionLauncher
     }
 
     // kja make LaunchMission() functional / immutable, to avoid unexpected mutations
-    public void LaunchMission(PendingMission mission)
+    public void LaunchMission(MissionSite missionSite)
     {
-        Debug.Assert(CanLaunchMission(mission));
-        var successChance = mission.SuccessChance;
+        Debug.Assert(CanLaunchMission(missionSite));
+        var successChance = missionSite.SuccessChance;
         var agentsSent = _agents.AgentsAssignedToMission.Count;
-        var moneyReward = mission.MoneyReward;
+        var moneyReward = missionSite.MoneyReward;
         Console.Out.WriteLine($"Sent {agentsSent} agents.");
-        var (roll, success) = RollMissionOutcome(mission);
-        var agentsLost = ProcessAgentUpdates(mission, success, _agents.AgentsAssignedToMission);
-        var scoreDiff = ApplyMissionOutcome(mission, success);
+        var (roll, success) = RollMissionOutcome(missionSite);
+        var agentsLost = ProcessAgentUpdates(missionSite, success, _agents.AgentsAssignedToMission);
+        var scoreDiff = ApplyMissionOutcome(missionSite, success);
         _archiveData.ArchiveMission(missionSuccessful: success);
-        WriteLastMissionReport(mission, successChance, roll, success, scoreDiff, agentsLost, moneyReward);
-        mission.GenerateNewOrClearMission();
+        WriteLastMissionReport(missionSite, successChance, roll, success, scoreDiff, agentsLost, moneyReward);
+        missionSite.GenerateNewOrClearMission();
 
         _gameState.Persist();
         _viewStateRefresh.Trigger();
@@ -111,18 +111,18 @@ public class MissionLauncher
 
     // kja introduce class like "MissionOutcome" which will have method like "roll" and
     // many of the stats currently on PendingMission
-    private (int roll, bool success) RollMissionOutcome(PendingMission mission)
+    private (int roll, bool success) RollMissionOutcome(MissionSite missionSite)
     {
         // Roll between 1 and 100.
         // The lower the better.
         int roll = _random.Next(1, 100 + 1);
-        bool success = roll <= mission.SuccessChance;
+        bool success = roll <= missionSite.SuccessChance;
         Console.Out.WriteLine(
-            $"Rolled {roll} against limit of {mission.SuccessChance} resulting in {(success ? "success" : "failure")}");
+            $"Rolled {roll} against limit of {missionSite.SuccessChance} resulting in {(success ? "success" : "failure")}");
         return (roll, success);
     }
 
-    private int ProcessAgentUpdates(PendingMission mission, bool missionSuccess, List<Agent> sentAgents)
+    private int ProcessAgentUpdates(MissionSite missionSite, bool missionSuccess, List<Agent> sentAgents)
     {
         List<(Agent agent, int roll, int survivalChance, int expBonus)> agentData =
             new List<(Agent agent, int roll, int survivalChance, int expBonus)>();
@@ -134,7 +134,7 @@ public class MissionLauncher
             int agentRoll = _random.Next(1, 100 + 1);
             var expBonus = agent.ExperienceBonus();
             var agentSurvivalChance
-                = mission.AgentSurvivalChance(expBonus);
+                = missionSite.AgentSurvivalChance(expBonus);
             agentData.Add((agent, agentRoll, agentSurvivalChance, expBonus));
         }
 

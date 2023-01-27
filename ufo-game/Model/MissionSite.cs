@@ -3,10 +3,9 @@ using UfoGame.Model.Data;
 
 namespace UfoGame.Model;
 
-// kja rename PendingMission to MissionSite
-// Need to rethink where to put mission stats, like "OurPower" or "SuccessChance".
+// kja Need to rethink where to put mission stats, like "OurPower" or "SuccessChance".
 // Probably in "Mission" (currently "MissionLauncher") 
-public class PendingMission : ITemporal, IResettable
+public class MissionSite : ITemporal, IResettable
 {
     private const int MaxAgentSurvivalChance = 99;
 
@@ -85,7 +84,7 @@ public class PendingMission : ITemporal, IResettable
     private readonly Agents _agents;
     private readonly PendingMissionsData _pendingMissionsData;
 
-    public PendingMission(
+    public MissionSite(
         PendingMissionsData pendingMissionsData,
         ArchiveData archiveData,
         FactionsData factionsData,

@@ -54,7 +54,7 @@ public class TypeRegistrar
             typeof(Procurement),
             typeof(MissionLauncher),
             typeof(Agents),
-            typeof(PendingMission)
+            typeof(MissionSite)
         };
         typesToRegister.ForEach(type => builder.Services.AddSingleton(type));
         IServiceProvider serviceProvider = builder.Build().Services;
