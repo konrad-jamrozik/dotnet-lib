@@ -8,7 +8,7 @@ public class Research
     public readonly ResearchData Data;
     private readonly Accounting _accounting;
     private readonly MissionPrep _missionPrep;
-    private readonly Staff _staff;
+    private readonly StaffData _staffData;
     private readonly Timeline _timeline;
     private readonly PlayerScore _playerScore;
     private readonly SickBay _sickBay;
@@ -18,7 +18,7 @@ public class Research
         Timeline timeline,
         Accounting accounting,
         MissionPrep missionPrep,
-        Staff staff,
+        StaffData staffData,
         PlayerScore playerScore,
         SickBay sickBay)
     {
@@ -26,7 +26,7 @@ public class Research
         _timeline = timeline;
         _accounting = accounting;
         _missionPrep = missionPrep;
-        _staff = staff;
+        _staffData = staffData;
         _playerScore = playerScore;
         _sickBay = sickBay;
     }
@@ -63,7 +63,7 @@ public class Research
         Debug.Assert(CanResearchAgentEffectiveness());
         _accounting.PayForResearch(Data.AgentEffectivenessResearchCost);
         Data.AgentEffectivenessResearchCost += ResearchData.AgentEffectivenessResearchCostIncrement;
-        _staff.Data.AgentEffectiveness += 25;
+        _staffData.AgentEffectiveness += 25;
         _timeline.AdvanceTime();
     }
 
@@ -75,7 +75,7 @@ public class Research
         Debug.Assert(CanResearchAgentSurvivability());
         _accounting.PayForResearch(Data.AgentSurvivabilityResearchCost);
         Data.AgentSurvivabilityResearchCost += ResearchData.AgentSurvivabilityResearchCostIncrement;
-        _staff.Data.AgentSurvivability += 25;
+        _staffData.AgentSurvivability += 25;
         _timeline.AdvanceTime();
     }
 

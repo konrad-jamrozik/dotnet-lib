@@ -4,6 +4,7 @@ namespace UfoGame.Model.Data;
 
 public class StaffData : IDeserializable, IResettable
 {
+    // kja move StaffData contents to appropriate class
     [JsonInclude] public int AgentEffectiveness;
     [JsonInclude] public int AgentSurvivability;
     

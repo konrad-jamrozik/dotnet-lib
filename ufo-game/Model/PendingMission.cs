@@ -19,7 +19,7 @@ public class PendingMission : ITemporal, IResettable
             var result
                 = _agents.AgentsAssignedToMission
                       .Sum(agent => 100 + agent.ExperienceBonus())
-                  * _staff.Data.AgentEffectiveness
+                  * _staffData.AgentEffectiveness
                   / 100;
             Debug.Assert(result >= 0);
             return result;
@@ -59,7 +59,7 @@ public class PendingMission : ITemporal, IResettable
         }
     }
 
-    public int AgentSurvivabilityPower => _agents.AgentsAssignedToMissionCount * _staff.Data.AgentSurvivability;
+    public int AgentSurvivabilityPower => _agents.AgentsAssignedToMissionCount * _staffData.AgentSurvivability;
 
     public PendingMissionData Data => _pendingMissionsData.Data[0];
 
@@ -81,7 +81,7 @@ public class PendingMission : ITemporal, IResettable
     private readonly ArchiveData _archiveData;
     private readonly FactionsData _factionsData;
     private readonly PlayerScore _playerScore;
-    private readonly Staff _staff;
+    private readonly StaffData _staffData;
     private readonly Agents _agents;
     private readonly PendingMissionsData _pendingMissionsData;
 
@@ -90,14 +90,14 @@ public class PendingMission : ITemporal, IResettable
         ArchiveData archiveData,
         FactionsData factionsData,
         PlayerScore playerScore,
-        Staff staff,
+        StaffData staffData,
         Agents agents)
     {
         _pendingMissionsData = pendingMissionsData;
         _archiveData = archiveData;
         _factionsData = factionsData;
         _playerScore = playerScore;
-        _staff = staff;
+        _staffData = staffData;
         _agents = agents;
         if (Data.IsNoMission)
             _pendingMissionsData.New(_playerScore, _random, _factionsData);

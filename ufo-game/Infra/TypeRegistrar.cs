@@ -49,7 +49,6 @@ public class TypeRegistrar
             typeof(Accounting),
             typeof(PlayerScore),
             typeof(MissionPrep),
-            typeof(Staff),
             typeof(SickBay),
             typeof(Research),
             typeof(Procurement),

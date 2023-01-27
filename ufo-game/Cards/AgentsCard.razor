@@ -3,7 +3,7 @@
 @using UfoGame.Model.Data
 @inject ViewModel.HireAgentsPlayerAction HireAgents
 @inject NavigationManager Navigation
-@inject Staff Staff
+@inject StaffData StaffData
 @inject MissionPrep MissionPrep
 @inject Agents Agents
 @inject SickBay SickBay
@@ -18,8 +18,8 @@
                  Value="Agents.AgentsInRecoveryCount"
                  ValueCssClass="text-danger" />
     <CardDataRow Label="Agent recovery speed" Value="SickBay.Data.AgentRecoverySpeed"/>
-    <CardDataRow Label="Agent effectiveness" Value="Staff.Data.AgentEffectiveness"/>
-    <CardDataRow Label="Agent survivability" Value="Staff.Data.AgentSurvivability"/>
+    <CardDataRow Label="Agent effectiveness" Value="StaffData.AgentEffectiveness"/>
+    <CardDataRow Label="Agent survivability" Value="StaffData.AgentSurvivability"/>
     <CardButtonWithRangeInput PlayerAction="HireAgents"/>
     <div class="row align-items-center">
         <div class="col">
