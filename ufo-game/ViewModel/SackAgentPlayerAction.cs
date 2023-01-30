@@ -21,8 +21,6 @@ public class SackAgentPlayerAction : IPlayerActionOnButton
     public bool CanAct()
         => _agent.CanSack;
 
-    // kja Act() should first display a modal. Need something like IPlayerActionOnButtonWithModal.
-    // See "settings.razor" for inspiration how to do it.
     public void Act()
     {
         _agents.SackAgent(_agent);

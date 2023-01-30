@@ -53,7 +53,11 @@
         <CardDataRow Label="Successful missions" Value="@Agent.Data.SuccessfulMissions"/>
         <CardDataRow Label="Failed missions" Value="@Agent.Data.FailedMissions"/>
         <CardDataRow Label="Time spent recovering" Value="@Agent.Data.TimeSpentRecovering"/>
-        <CardButton PlayerAction="_sackAgentPlayerAction" />
+        <CardButtonWithModal 
+            PlayerAction="_sackAgentPlayerAction" 
+            Index="Index" 
+            Label="Sack agent" 
+            Body="@($"Sack agent {Agent.Data.FullName}?")"/>
     </Card>
 </div>
 
