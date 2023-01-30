@@ -10,11 +10,11 @@ public class MissionSitesData : IPersistable
     public MissionSitesData()
         => Reset();
 
-    public void Reset()
-        => Data = new List<MissionSiteData> { MissionSiteData.NewEmpty };
-
     public void New(PlayerScore playerScore, RandomGen randomGen, FactionsData factionsData)
     {
         Data[0] = MissionSiteData.New(playerScore, randomGen, factionsData);
     }
+
+    public void Reset()
+        => Data = new List<MissionSiteData> { MissionSiteData.NewEmpty };
 }

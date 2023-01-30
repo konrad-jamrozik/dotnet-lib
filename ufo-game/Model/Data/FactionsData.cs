@@ -5,8 +5,6 @@ namespace UfoGame.Model.Data;
 
 public class FactionsData : ITemporal, IPersistable, IResettable
 {
-    [JsonInclude] public List<FactionData> Data = new List<FactionData>();
-
     /// <summary>
     /// Placeholder faction for "no faction", or "null faction".
     /// By design, it has no influence on the game at all;
@@ -15,8 +13,21 @@ public class FactionsData : ITemporal, IPersistable, IResettable
     /// 
     public const string NoFaction = "no_faction";
 
+    [JsonInclude] public List<FactionData> Data = new List<FactionData>();
+
     public FactionsData()
         => Reset();
+
+    public bool AllFactionsDefeated => Data.TrueForAll(f => f.Defeated);
+
+    public FactionData RandomUndefeatedFactionData(RandomGen randomGen)
+    {
+        var undefeatedFactions = UndefeatedFactions;
+        return undefeatedFactions[randomGen.Random.Next(undefeatedFactions.Count)];
+    }
+
+    private List<FactionData> UndefeatedFactions =>
+        Data.Where(faction => !faction.Defeated && faction.Name != NoFaction).ToList();
 
     public void Reset()
     {
@@ -38,17 +49,6 @@ public class FactionsData : ITemporal, IPersistable, IResettable
             .Select(faction => new FactionData(faction.name, faction.score, faction.scoreTick))
             .ToList();
     }
-
-    public bool AllFactionsDefeated => Data.TrueForAll(f => f.Defeated);
-
-    public FactionData RandomUndefeatedFactionData(RandomGen randomGen)
-    {
-        var undefeatedFactions = UndefeatedFactions;
-        return undefeatedFactions[randomGen.Random.Next(undefeatedFactions.Count)];
-    }
-
-    private List<FactionData> UndefeatedFactions =>
-        Data.Where(faction => !faction.Defeated && faction.Name != NoFaction).ToList();
 
     public void AdvanceTime()
     {

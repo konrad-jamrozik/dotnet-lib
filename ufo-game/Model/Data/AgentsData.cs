@@ -5,7 +5,7 @@ namespace UfoGame.Model.Data;
 
 public class AgentsData : IPersistable
 {
-    [JsonInclude] public int NextAgentId;
+    [JsonInclude] public int NextAgentId { get; private set; }
     [JsonInclude] public List<AgentData> Data { get; private set; } = new List<AgentData>();
 
     public AgentsData()

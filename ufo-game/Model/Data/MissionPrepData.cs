@@ -4,15 +4,15 @@ namespace UfoGame.Model.Data;
 
 public class MissionDeploymentData : IPersistable, IResettable
 {
-    public readonly int TransportCapacityImprovement = 2;
-
     [JsonInclude] public int TransportCapacity { get; private set; }
 
-    public void ImproveTransportCapacity()
-        => TransportCapacity += TransportCapacityImprovement;
+    public readonly int TransportCapacityImprovement = 2;
 
     public MissionDeploymentData()
         => Reset();
+
+    public void ImproveTransportCapacity()
+        => TransportCapacity += TransportCapacityImprovement;
 
     public void Reset()
     {

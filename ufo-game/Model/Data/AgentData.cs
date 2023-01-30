@@ -4,9 +4,9 @@ namespace UfoGame.Model.Data;
 
 public class AgentData
 {
-    [JsonInclude] public int Id;
-    [JsonInclude] public string FullName;
-    [JsonInclude] public int TimeHired;
+    [JsonInclude] public int Id { get; private set; }
+    [JsonInclude] public string FullName { get; private set; }
+    [JsonInclude] public int TimeHired { get; private set; }
     [JsonInclude] public int SuccessfulMissions;
     [JsonInclude] public int FailedMissions;
     [JsonInclude] public int TimeSpentRecovering;

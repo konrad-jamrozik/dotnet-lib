@@ -18,18 +18,6 @@ public class ArchiveData : IPersistable, IResettable
     public ArchiveData()
         => Reset();
 
-    public void Reset()
-    {
-        MissionsLaunched = 0;
-        SuccessfulMissions = 0;
-        FailedMissions = 0;
-        IgnoredMissions = 0;
-        TotalAgentsHired = 0;
-        TotalAgentsFired = 0;
-        AgentsLost = 0;
-        LastMissionReport = NoMissionsReport;
-    }
-
     public void ArchiveMission(bool missionSuccessful)
     {
         MissionsLaunched += 1;
@@ -68,5 +56,17 @@ public class ArchiveData : IPersistable, IResettable
     {
         AgentsLost += amount;
         Console.Out.WriteLine($"Recorded {amount} lost agents. Lost agents now at {AgentsLost}.");
+    }
+
+    public void Reset()
+    {
+        MissionsLaunched = 0;
+        SuccessfulMissions = 0;
+        FailedMissions = 0;
+        IgnoredMissions = 0;
+        TotalAgentsHired = 0;
+        TotalAgentsFired = 0;
+        AgentsLost = 0;
+        LastMissionReport = NoMissionsReport;
     }
 }

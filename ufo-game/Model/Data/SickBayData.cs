@@ -8,9 +8,9 @@ public class SickBayData : IPersistable, IResettable
 
     [JsonInclude] public float AgentRecoverySpeed { get; private set; }
 
-    public void Reset()
-        => AgentRecoverySpeed = 0.5f;
-
     public void ImproveAgentRecoverySpeed()
         => AgentRecoverySpeed += AgentRecoverySpeedImprovement;
+
+    public void Reset()
+        => AgentRecoverySpeed = 0.5f;
 }

@@ -6,7 +6,7 @@ public class StaffData : IPersistable, IResettable
 {
     [JsonInclude] public int AgentEffectiveness;
     [JsonInclude] public int AgentSurvivability;
-    
+
     public StaffData()
         => Reset();
 

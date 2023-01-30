@@ -4,7 +4,7 @@ namespace UfoGame.Model.Data;
 
 public class AccountingData : IPersistable, IResettable
 {
-    [JsonInclude] public int CurrentMoney { get; set; }
+    [JsonInclude] public int CurrentMoney;
     [JsonInclude] public int MoneyRaisedPerActionAmount;
 
     public AccountingData()

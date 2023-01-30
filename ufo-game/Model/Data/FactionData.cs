@@ -12,13 +12,12 @@ public class FactionData
         get => _score;
         set => _score = Math.Max(value, 0);
     }
-    private int _score;
 
     [JsonInclude] public int ScoreTick { get; private set; }
 
-    [JsonInclude] public bool Discovered { get; set; } = false;
+    [JsonInclude] public bool Discovered { get; set; }
 
-    public bool Defeated => Score <= 0;
+    private int _score;
 
     public FactionData(string name, int score, int scoreTick, bool discovered = false)
     {
@@ -27,4 +26,6 @@ public class FactionData
         ScoreTick = scoreTick;
         Discovered = discovered;
     }
+
+    public bool Defeated => Score <= 0;
 }
