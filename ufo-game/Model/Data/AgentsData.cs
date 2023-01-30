@@ -1,4 +1,5 @@
 ﻿using System.Text.Json.Serialization;
+using UfoGame.Infra;
 
 namespace UfoGame.Model.Data;
 
@@ -16,7 +17,7 @@ public class AgentsData : IPersistable
         Data = new List<AgentData>();
     }
 
-    public List<AgentData> AddNewRandomAgents(int agentsToAdd, int currentTime)
+    public List<AgentData> AddNewRandomAgents(int agentsToAdd, int currentTime, RandomGen randomGen)
     {
         List<AgentData> addedAgentsData = Enumerable.Range(NextAgentId, agentsToAdd)
             .ToList()
@@ -24,7 +25,7 @@ public class AgentsData : IPersistable
                 id => 
                     new AgentData(
                         id,
-                        AgentNames.RandomName(),
+                        AgentNames.RandomName(randomGen),
                         currentTime)).ToList();
         Data.AddRange(addedAgentsData);
         NextAgentId += agentsToAdd;

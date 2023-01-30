@@ -2,9 +2,9 @@
 
 namespace UfoGame.Model;
 
+// kja apply ctrl+alt+F -> Apply file layout on all files
 public class MissionOutcome
 {
-    // kja consolidate all Random gens into one: RandomGen
     private readonly RandomGen _randomGen;
 
     public MissionOutcome(RandomGen randomGen)

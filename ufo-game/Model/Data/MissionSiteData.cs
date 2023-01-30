@@ -1,29 +1,30 @@
 ﻿using System.Diagnostics;
 using System.Text.Json.Serialization;
+using UfoGame.Infra;
 
 namespace UfoGame.Model.Data;
 
 public class MissionSiteData
 {
-    public static MissionSiteData New(PlayerScore playerScore, Random random, FactionsData factionsData)
+    public static MissionSiteData New(PlayerScore playerScore, RandomGen randomGen, FactionsData factionsData)
         => !playerScore.GameOver
-            ? NewValid(playerScore, random, factionsData)
+            ? NewValid(playerScore, randomGen, factionsData)
             : NewEmpty;
 
     public static MissionSiteData NewEmpty => new MissionSiteData();
 
     private static MissionSiteData NewValid(
         PlayerScore playerScore,
-        Random random,
+        RandomGen randomGen,
         FactionsData factionsData)
     {
         Debug.Assert(!playerScore.GameOver);
         return new MissionSiteData(
-            availableIn: random.Next(1, 6 + 1),
+            availableIn: randomGen.Random.Next(1, 6 + 1),
             expiresIn: 3,
-            moneyRewardCoefficient: random.Next(5, 15 + 1) / (float)10,
-            enemyPowerCoefficient: random.Next(5, 15 + 1) / (float)10,
-            factionName: factionsData.RandomUndefeatedFactionData.Name);
+            moneyRewardCoefficient: randomGen.Random.Next(5, 15 + 1) / (float)10,
+            enemyPowerCoefficient: randomGen.Random.Next(5, 15 + 1) / (float)10,
+            factionName: factionsData.RandomUndefeatedFactionData(randomGen).Name);
     }
 
     [JsonInclude] public int AvailableIn;

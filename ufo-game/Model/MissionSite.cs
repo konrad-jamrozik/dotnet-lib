@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using UfoGame.Infra;
 using UfoGame.Model.Data;
 
 namespace UfoGame.Model;
@@ -15,7 +16,7 @@ public class MissionSite : ITemporal, IResettable
     
     public bool MissionAboutToExpire => CurrentlyAvailable && Data.ExpiresIn == 1;
 
-    private readonly Random _random = new Random();
+    private readonly RandomGen _randomGen;
     private readonly ArchiveData _archiveData;
     private readonly FactionsData _factionsData;
     private readonly PlayerScore _playerScore;
@@ -27,15 +28,17 @@ public class MissionSite : ITemporal, IResettable
         ArchiveData archiveData,
         FactionsData factionsData,
         PlayerScore playerScore,
-        MissionStats missionStats)
+        MissionStats missionStats,
+        RandomGen randomGen)
     {
         _missionSitesData = missionSitesData;
         _archiveData = archiveData;
         _factionsData = factionsData;
         _playerScore = playerScore;
         MissionStats = missionStats;
+        _randomGen = randomGen;
         if (Data.IsNoMission)
-            _missionSitesData.New(_playerScore, _random, _factionsData);
+            _missionSitesData.New(_playerScore, _randomGen, _factionsData);
     }
 
     public void AdvanceTime()
@@ -75,5 +78,5 @@ public class MissionSite : ITemporal, IResettable
     }
 
     public void GenerateNewOrClearMission()
-        => _missionSitesData.New(_playerScore, _random, _factionsData);
+        => _missionSitesData.New(_playerScore, _randomGen, _factionsData);
 }

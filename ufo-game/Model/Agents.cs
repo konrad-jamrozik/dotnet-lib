@@ -1,4 +1,5 @@
 ﻿using System.Text.Json.Serialization;
+using UfoGame.Infra;
 using UfoGame.Model.Data;
 
 namespace UfoGame.Model;
@@ -9,6 +10,7 @@ public class Agents : IResettable
     private readonly TimelineData _timelineData;
     private readonly ArchiveData _archiveData;
     private List<Agent> _data;
+    private readonly RandomGen _randomGen;
 
     [JsonIgnore]
     public List<Agent> AvailableAgents => _data.Where(agent => agent.Available).ToList();
@@ -62,11 +64,12 @@ public class Agents : IResettable
         _archiveData.RecordLostAgents(agents.Count);
     }
 
-    public Agents(AgentsData agentsData, TimelineData timelineData, ArchiveData archiveData)
+    public Agents(AgentsData agentsData, TimelineData timelineData, ArchiveData archiveData, RandomGen randomGen)
     {
         _agentsData = agentsData;
         _timelineData = timelineData;
         _archiveData = archiveData;
+        _randomGen = randomGen;
         _data = AgentsFromData(_agentsData.Data).ToList();
     }
 
@@ -78,7 +81,7 @@ public class Agents : IResettable
 
     public void HireAgents(int agentsToHire)
     {
-        var addedAgentsData = _agentsData.AddNewRandomAgents(agentsToHire, _timelineData.CurrentTime);
+        var addedAgentsData = _agentsData.AddNewRandomAgents(agentsToHire, _timelineData.CurrentTime, _randomGen);
         _data.AddRange(AgentsFromData(addedAgentsData));
         _archiveData.RecordHiredAgents(agentsToHire);
     }

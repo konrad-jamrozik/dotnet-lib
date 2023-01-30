@@ -1,4 +1,5 @@
 ﻿using System.Text.Json.Serialization;
+using UfoGame.Infra;
 
 namespace UfoGame.Model.Data;
 
@@ -40,16 +41,11 @@ public class FactionsData : ITemporal, IPersistable, IResettable
 
     public bool AllFactionsDefeated => Data.TrueForAll(f => f.Defeated);
 
-    public FactionData RandomUndefeatedFactionData
+    public FactionData RandomUndefeatedFactionData(RandomGen randomGen)
     {
-        get
-        {
-            var undefeatedFactions = UndefeatedFactions;
-            return undefeatedFactions[_random.Next(undefeatedFactions.Count)];
-        }
+        var undefeatedFactions = UndefeatedFactions;
+        return undefeatedFactions[randomGen.Random.Next(undefeatedFactions.Count)];
     }
-
-    private readonly Random _random = new Random();
 
     private List<FactionData> UndefeatedFactions =>
         Data.Where(faction => !faction.Defeated && faction.Name != NoFaction).ToList();

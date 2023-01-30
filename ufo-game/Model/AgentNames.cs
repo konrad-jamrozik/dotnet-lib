@@ -1,4 +1,6 @@
-﻿namespace UfoGame.Model;
+﻿using UfoGame.Infra;
+
+namespace UfoGame.Model;
 
 public static class AgentNames
 {
@@ -7,7 +9,7 @@ public static class AgentNames
     // ^  - (.*)$
     // Replace with: 
     // "(\1)",
-    
+
     private static readonly string[] MaleFirstNames = 
     {
         "Adam",
@@ -416,15 +418,13 @@ public static class AgentNames
         "Żukowska",
     };
 
-    private static readonly Random Random = new Random();
-
-    public static string RandomName()
+    public static string RandomName(RandomGen randomGen)
     {
-        var maleName = Random.Next(0, 2) % 2 == 0;
+        var maleName = randomGen.Random.Next(0, 2) % 2 == 0;
         return maleName
-            ? MaleFirstNames[Random.Next(0, MaleFirstNames.Length)] + " " +
-              MaleLastNames[Random.Next(0, MaleLastNames.Length)]
-            : FemaleFirstNames[Random.Next(0, FemaleFirstNames.Length)] + " " +
-              FemaleLastNames[Random.Next(0, FemaleLastNames.Length)];
+            ? MaleFirstNames[randomGen.Random.Next(0, MaleFirstNames.Length)] + " " +
+              MaleLastNames[randomGen.Random.Next(0, MaleLastNames.Length)]
+            : FemaleFirstNames[randomGen.Random.Next(0, FemaleFirstNames.Length)] + " " +
+              FemaleLastNames[randomGen.Random.Next(0, FemaleLastNames.Length)];
     }
 }

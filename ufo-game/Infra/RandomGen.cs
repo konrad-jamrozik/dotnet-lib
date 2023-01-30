@@ -7,6 +7,7 @@ public class RandomGen
     public RandomGen()
     {
         int seed = new Random().Next();
+        Console.WriteLine("RandomGen seed: " + seed);
         Random = new Random(seed);
     }
 }
