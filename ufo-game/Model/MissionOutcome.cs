@@ -2,7 +2,6 @@
 
 namespace UfoGame.Model;
 
-// kja apply ctrl+alt+F -> Apply file layout on all files
 public class MissionOutcome
 {
     private readonly RandomGen _randomGen;

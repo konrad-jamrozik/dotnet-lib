@@ -11,11 +11,11 @@ namespace UfoGame.ViewModel;
 /// </summary>
 public class ViewStateRefresh
 {
+    public Action Event = () => { };
+
     public void Trigger([CallerMemberName] string callerMemberName = "") 
     {
         Console.Out.WriteLine("REFRESH - triggering from " + callerMemberName);
         Event();
     }
-
-    public Action Event = () => { };
 }

@@ -1,12 +1,13 @@
-﻿using System.Reflection;
-using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using UfoGame.Model;
+﻿using UfoGame.Model;
 using UfoGame.Model.Data;
 
 namespace UfoGame.Infra;
 
 public static class ServiceCollectionExtensions
 {
+    private static readonly Type[] InterfaceTypes = new Type[]
+        { typeof(IPersistable), typeof(IResettable), typeof(ITemporal) };
+
     /// <summary>
     /// Calls:
     ///
@@ -52,9 +53,6 @@ public static class ServiceCollectionExtensions
         if (type.IsAssignableTo(typeof(ITemporal)))
             services.AddSingleton(typeof(ITemporal), instance);
     }
-
-    private static readonly Type[] InterfaceTypes = new Type[]
-        { typeof(IPersistable), typeof(IResettable), typeof(ITemporal) };
 
     /// <summary>
     /// This method resolves instance of type 'type' from 'serviceProvider'

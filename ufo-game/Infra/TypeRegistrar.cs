@@ -47,8 +47,12 @@ public static class TypeRegistrar
     /// All non-static classes in UfoGame.Model namespace SHOULD NOT implement IPersistable interface.
     ///
     /// Types implementing IPersistable interface should:
-    /// - all be in UfoGame.Model.Data namespace
-    /// - have their name end with "Data"
+    /// - be in UfoGame.Model.Data namespace;
+    /// - have their name end with "Data".
+    /// 
+    /// Alternatively, such types should:
+    /// - be in UfoGame.ViewModel namespace;
+    /// - have their name end with "State".
     ///
     /// All such types are registered in the
     ///

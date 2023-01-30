@@ -72,5 +72,4 @@ class LaunchMissionPlayerAction : IPlayerActionOnRangeInput
     public int InputMax() => _missionDeployment.MaxAgentsSendableOnMission;
 
     public int InputMin() => _missionDeployment.MinAgentsSendableOnMission;
-    
 }

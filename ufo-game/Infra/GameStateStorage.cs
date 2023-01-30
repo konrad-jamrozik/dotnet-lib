@@ -13,6 +13,11 @@ public class GameStateStorage
 {
     private readonly ISyncLocalStorageService _localStorage;
 
+    private readonly JsonSerializerOptions _serializationOptions = new JsonSerializerOptions
+    {
+        IgnoreReadOnlyProperties = true
+    };
+
     public GameStateStorage(ISyncLocalStorageService localStorage)
         => _localStorage = localStorage;
 
@@ -21,11 +26,6 @@ public class GameStateStorage
 
     public JsonObject Read()
         => _localStorage.GetItem<JsonNode>(nameof(GameState)).AsObject();
-
-    private readonly JsonSerializerOptions _serializationOptions = new JsonSerializerOptions
-    {
-        IgnoreReadOnlyProperties = true
-    };
 
     public void Persist(GameState gameState)
     {
