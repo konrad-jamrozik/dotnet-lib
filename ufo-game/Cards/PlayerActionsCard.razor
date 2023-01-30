@@ -41,7 +41,7 @@
 
 @code
 {
-    private bool WarningMessagePresent => PlayerScore.GameOver || MissionSite.MissionAboutToExpire;
+    private bool WarningMessagePresent => PlayerScore.GameOver || MissionSite.AboutToExpire;
 
     private string WarningMessage()
     {
@@ -50,7 +50,7 @@
                    + (PlayerScore.PlayerWon 
                        ? $"YOU WON! Score: {PlayerScore.Data.Value}. Turn: {TimelineData.CurrentTime}" 
                        : $"YOU LOST! Lasted until turn: {TimelineData.CurrentTime}.");
-        else if (MissionSite.MissionAboutToExpire)
+        else if (MissionSite.AboutToExpire)
             return $"If you don't launch mission now, you will lose {PlayerScore.IgnoreMissionScoreLoss} score for ignoring pending mission!";
         else
             return "If you don't launch mission now, you will lose 1000 score for ignoring pending mission!";

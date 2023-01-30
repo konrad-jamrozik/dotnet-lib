@@ -33,7 +33,7 @@
                     <div class="hstack gap-0 p-0" style="width: 50px">
                         <span class="oi oi-timer" style="width: 23px" aria-hidden="true"></span>
                         @* <span>-99</span> *@
-                        <span class="@(MissionSite.MissionAboutToExpire ? "text-danger" : "")">
+                        <span class="@(MissionSite.AboutToExpire ? "text-danger" : "")">
                             @MissionSite.Countdown
                         </span>
                     </div>

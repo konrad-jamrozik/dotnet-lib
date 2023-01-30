@@ -40,7 +40,7 @@ public class MissionSite : ITemporal, IResettable
 
     public bool CurrentlyAvailable => Data.AvailableIn == 0 && Data.ExpiresIn > 0;
 
-    public bool MissionAboutToExpire => CurrentlyAvailable && Data.ExpiresIn == 1;
+    public bool AboutToExpire => CurrentlyAvailable && Data.ExpiresIn == 1;
 
     public void GenerateNewOrClearMission()
         => _missionSitesData.New(_playerScore, _randomGen, _factionsData);
@@ -53,11 +53,14 @@ public class MissionSite : ITemporal, IResettable
 
     public void AdvanceTime()
     {
+        // Console.WriteLine(
+        //     $"MissionSite.AdvanceTime Data.AvailableIn {Data.AvailableIn} Data.ExpiresIn {Data.ExpiresIn} " +
+        //     $"CurrentlyAvailable {CurrentlyAvailable} AboutToExpire {AboutToExpire}");
         Debug.Assert(!_playerScore.GameOver);
         if (CurrentlyAvailable)
         {
             Debug.Assert(Data.ExpiresIn >= 1);
-            if (MissionAboutToExpire)
+            if (AboutToExpire)
             {
                 _archiveData.RecordIgnoredMission();
                 _playerScore.Data.Value -= PlayerScore.IgnoreMissionScoreLoss;

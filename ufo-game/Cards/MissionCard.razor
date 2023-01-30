@@ -15,7 +15,7 @@
     <CardDataRow Label="Expires in"
                  Value="@MissionSite.Data.ExpiresIn"
                  Enabled="@MissionSite.CurrentlyAvailable"
-                 ValueCssClass="@(MissionSite.MissionAboutToExpire ? "text-danger" : "")"/>
+                 ValueCssClass="@(MissionSite.AboutToExpire ? "text-danger" : "")"/>
     <CardDataRow Label="Enemy faction"
                  Value="@MissionSite.FactionData.Name"
                  Enabled="@MissionSite.CurrentlyAvailable" />

@@ -43,5 +43,10 @@ public class Accounting : ITemporal
         => Data.CurrentMoney += Data.MoneyRaisedPerActionAmount;
 
     public void AdvanceTime()
-        => Data.CurrentMoney += MoneyPerTurnAmount;
+    {
+        // Console.WriteLine($"Accounting.AdvanceTime: " +
+        //                   $"Data.CurrentMoney {Data.CurrentMoney} MoneyPerTurnAmount {MoneyPerTurnAmount} " +
+        //                   $"PassiveIncome {PassiveIncome} Expenses {Expenses}");
+        Data.CurrentMoney += MoneyPerTurnAmount;
+    }
 }
