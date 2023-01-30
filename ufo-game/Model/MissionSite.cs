@@ -6,6 +6,32 @@ namespace UfoGame.Model;
 
 public class MissionSite : ITemporal, IResettable
 {
+    public readonly MissionStats MissionStats;
+
+    private readonly MissionSitesData _missionSitesData;
+    private readonly FactionsData _factionsData;
+    private readonly ArchiveData _archiveData;
+    private readonly PlayerScore _playerScore;
+    private readonly RandomGen _randomGen;
+
+    public MissionSite(
+        MissionStats missionStats,
+        MissionSitesData missionSitesData,
+        FactionsData factionsData,
+        ArchiveData archiveData,
+        PlayerScore playerScore,
+        RandomGen randomGen)
+    {
+        MissionStats = missionStats;
+        _missionSitesData = missionSitesData;
+        _factionsData = factionsData;
+        _archiveData = archiveData;
+        _playerScore = playerScore;
+        _randomGen = randomGen;
+        if (Data.IsNoMission)
+            _missionSitesData.New(_playerScore, _randomGen, _factionsData);
+    }
+
     public MissionSiteData Data => _missionSitesData.Data[0];
 
     public FactionData FactionData => _factionsData.Data.Single(f => f.Name == Data.FactionName);
@@ -13,32 +39,16 @@ public class MissionSite : ITemporal, IResettable
     public int Countdown => CurrentlyAvailable ? -Data.ExpiresIn : Data.AvailableIn;
 
     public bool CurrentlyAvailable => Data.AvailableIn == 0 && Data.ExpiresIn > 0;
-    
+
     public bool MissionAboutToExpire => CurrentlyAvailable && Data.ExpiresIn == 1;
 
-    private readonly RandomGen _randomGen;
-    private readonly ArchiveData _archiveData;
-    private readonly FactionsData _factionsData;
-    private readonly PlayerScore _playerScore;
-    private readonly MissionSitesData _missionSitesData;
-    public readonly MissionStats MissionStats;
+    public void GenerateNewOrClearMission()
+        => _missionSitesData.New(_playerScore, _randomGen, _factionsData);
 
-    public MissionSite(
-        MissionSitesData missionSitesData,
-        ArchiveData archiveData,
-        FactionsData factionsData,
-        PlayerScore playerScore,
-        MissionStats missionStats,
-        RandomGen randomGen)
+    public void Reset()
     {
-        _missionSitesData = missionSitesData;
-        _archiveData = archiveData;
-        _factionsData = factionsData;
-        _playerScore = playerScore;
-        MissionStats = missionStats;
-        _randomGen = randomGen;
-        if (Data.IsNoMission)
-            _missionSitesData.New(_playerScore, _randomGen, _factionsData);
+        _missionSitesData.Reset();
+        GenerateNewOrClearMission();
     }
 
     public void AdvanceTime()
@@ -70,13 +80,4 @@ public class MissionSite : ITemporal, IResettable
             }
         }
     }
-
-    public void Reset()
-    {
-        _missionSitesData.Reset();
-        GenerateNewOrClearMission();
-    }
-
-    public void GenerateNewOrClearMission()
-        => _missionSitesData.New(_playerScore, _randomGen, _factionsData);
 }

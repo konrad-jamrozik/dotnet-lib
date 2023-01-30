@@ -8,6 +8,25 @@ public class Agent
     public readonly AgentData Data;
     private readonly TimelineData _timelineData;
 
+    // As of 1/19/2023 worst case possible on successful mission is that agent will need
+    // MissionSite.MaxAgentSurvivalChance / 2 recovery units at recovery speed of 1.
+    // This is 99 / 2 = 49.
+    // Because agents train 1 experience per turn, this means that going on 
+    // a successful mission always makes the agent improve faster,
+    // because in the worst case an agent will miss 49 days of training
+    // but gain 50 experience, so ahead by 1.
+    // Note that this is true only if recovery speed is 1 or more, and currently it starts at 0.5.
+    private readonly int[] _missionExperienceBonus = 
+    {
+        150, 125, 100, 75, 50 // Sum: 500
+    };
+
+    public Agent(AgentData data, TimelineData timelineData)
+    {
+        Data = data;
+        _timelineData = timelineData;
+    }
+
     public int ExperienceBonus() 
     {
         Debug.Assert(_timelineData.CurrentTime >= Data.TimeHired);
@@ -17,7 +36,7 @@ public class Agent
     public int TimeToRecover(float recoverySpeed) => (int)Math.Ceiling(Data.Recovery / recoverySpeed);
 
     public int Salary => 5 + TotalMissions;
-    
+
     public int TrainingTime()
     {
         Debug.Assert(_timelineData.CurrentTime >= Data.TimeHired);
@@ -44,20 +63,9 @@ public class Agent
     }
 
     public int TotalMissions => Data.SuccessfulMissions + Data.FailedMissions;
-    public bool MissingInAction => Data.TimeLost != 0;
     public bool Available => !MissingInAction;
     public bool IsRecovering => !MissingInAction && Data.Recovery > 0;
-    public bool IsAtFullHealth => !MissingInAction && !IsRecovering;
     public bool CanSendOnMission => IsAtFullHealth;
-    public bool IsAssignableToMission => CanSendOnMission && !Data.AssignedToMission;
-    public bool IsUnassignableFromMission => IsAtFullHealth && Data.AssignedToMission;
-    public bool CouldHaveBeenSentOnMission => IsAtFullHealth;
-
-    public Agent(AgentData data, TimelineData timelineData)
-    {
-        Data = data;
-        _timelineData = timelineData;
-    }
 
     public void AssignToMission()
     {
@@ -109,18 +117,11 @@ public class Agent
         Data.TimeLost = _timelineData.CurrentTime;
     }
 
-    // As of 1/19/2023 worst case possible on successful mission is that agent will need
-    // MissionSite.MaxAgentSurvivalChance / 2 recovery units at recovery speed of 1.
-    // This is 99 / 2 = 49.
-    // Because agents train 1 experience per turn, this means that going on 
-    // a successful mission always makes the agent improve faster,
-    // because in the worst case an agent will miss 49 days of training
-    // but gain 50 experience, so ahead by 1.
-    // Note that this is true only if recovery speed is 1 or more, and currently it starts at 0.5.
-    private readonly int[] _missionExperienceBonus = 
-    {
-        150, 125, 100, 75, 50 // Sum: 500
-    };
+    private bool MissingInAction => Data.TimeLost != 0;
+    private bool IsAtFullHealth => !MissingInAction && !IsRecovering;
+    private bool IsAssignableToMission => CanSendOnMission && !Data.AssignedToMission;
+    private bool IsUnassignableFromMission => IsAtFullHealth && Data.AssignedToMission;
+    private bool CouldHaveBeenSentOnMission => IsAtFullHealth;
 
     /// <summary>
     /// Agent that was on N missions gets sum of experience from

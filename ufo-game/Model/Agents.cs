@@ -9,8 +9,18 @@ public class Agents : IResettable
     private readonly AgentsData _agentsData;
     private readonly TimelineData _timelineData;
     private readonly ArchiveData _archiveData;
-    private List<Agent> _data;
     private readonly RandomGen _randomGen;
+
+    private List<Agent> _data;
+
+    public Agents(AgentsData agentsData, TimelineData timelineData, ArchiveData archiveData, RandomGen randomGen)
+    {
+        _agentsData = agentsData;
+        _timelineData = timelineData;
+        _archiveData = archiveData;
+        _randomGen = randomGen;
+        _data = AgentsFromData(_agentsData.Data).ToList();
+    }
 
     [JsonIgnore]
     public List<Agent> AvailableAgents => _data.Where(agent => agent.Available).ToList();
@@ -64,21 +74,6 @@ public class Agents : IResettable
         _archiveData.RecordLostAgents(agents.Count);
     }
 
-    public Agents(AgentsData agentsData, TimelineData timelineData, ArchiveData archiveData, RandomGen randomGen)
-    {
-        _agentsData = agentsData;
-        _timelineData = timelineData;
-        _archiveData = archiveData;
-        _randomGen = randomGen;
-        _data = AgentsFromData(_agentsData.Data).ToList();
-    }
-
-    public void Reset()
-    {
-        _agentsData.Reset();
-        _data = AgentsFromData(_agentsData.Data).ToList();
-    }
-
     public void HireAgents(int agentsToHire)
     {
         var addedAgentsData = _agentsData.AddNewRandomAgents(agentsToHire, _timelineData.CurrentTime, _randomGen);
@@ -88,4 +83,10 @@ public class Agents : IResettable
 
     private IEnumerable<Agent> AgentsFromData(List<AgentData> agentsData)
         => agentsData.Select(data => new Agent(data, _timelineData));
+
+    public void Reset()
+    {
+        _agentsData.Reset();
+        _data = AgentsFromData(_agentsData.Data).ToList();
+    }
 }

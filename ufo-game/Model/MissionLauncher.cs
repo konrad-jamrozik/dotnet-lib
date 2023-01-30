@@ -10,65 +10,30 @@ public class MissionLauncher
     private readonly MissionDeployment _missionDeployment;
     private readonly ArchiveData _archiveData;
     private readonly PlayerScore _playerScore;
-    private readonly Agents _agents;
     private readonly Accounting _accounting;
-    private readonly ViewStateRefresh _viewStateRefresh;
-    private readonly GameState _gameState;
+    private readonly Agents _agents;
     private readonly MissionOutcome _missionOutcome;
+    private readonly GameState _gameState;
+    private readonly ViewStateRefresh _viewStateRefresh;
 
     public MissionLauncher(
         MissionDeployment missionDeployment,
         ArchiveData archiveData,
         PlayerScore playerScore,
         Accounting accounting,
-        ViewStateRefresh viewStateRefresh,
-        GameState gameState,
         Agents agents,
-        MissionOutcome missionOutcome)
+        MissionOutcome missionOutcome,
+        GameState gameState,
+        ViewStateRefresh viewStateRefresh)
     {
         _missionDeployment = missionDeployment;
         _archiveData = archiveData;
         _playerScore = playerScore;
         _accounting = accounting;
-        _viewStateRefresh = viewStateRefresh;
-        _gameState = gameState;
         _agents = agents;
         _missionOutcome = missionOutcome;
-    }
-
-    private void ApplyMissionOutcome(MissionSite missionSite, bool missionSuccessful, int scoreDiff)
-    {
-        if (missionSuccessful)
-            _accounting.AddMissionLoot(missionSite.MissionStats.MoneyReward);
-
-        _playerScore.Data.Value += scoreDiff;
-        missionSite.FactionData.Score -= scoreDiff;
-    }
-
-    private int ScoreDiff(bool missionSuccessful, int factionScore)
-        => missionSuccessful ? Math.Min(PlayerScore.WinScore, factionScore) : PlayerScore.LoseScore;
-
-    private void WriteMissionReport(
-        string factionName,
-        int successChance,
-        int roll,
-        bool success,
-        int scoreDiff,
-        int agentsLost,
-        int moneyReward)
-    {
-        string missionRollReport =
-            $" (Rolled {roll} against limit of {successChance}.)";
-        string missionSuccessReport = success
-            ? $"successful! {missionRollReport} We took {scoreDiff} score from {factionName} " +
-              $"and earned ${moneyReward}."
-            : $"a failure. {missionRollReport} We lost {scoreDiff} score to {factionName}.";
-
-        string agentsLostReport = agentsLost > 0
-            ? $"Number of agents lost: {agentsLost}."
-            : "We didn't lose any agents.";
-        _archiveData.WriteLastMissionReport(
-            $"The last mission was {missionSuccessReport} {agentsLostReport}");
+        _gameState = gameState;
+        _viewStateRefresh = viewStateRefresh;
     }
 
     public bool CanLaunchMission(MissionSite missionSite, int offset = 0)
@@ -111,6 +76,41 @@ public class MissionLauncher
 
         _gameState.Persist();
         _viewStateRefresh.Trigger();
+    }
+
+    private void ApplyMissionOutcome(MissionSite missionSite, bool missionSuccessful, int scoreDiff)
+    {
+        if (missionSuccessful)
+            _accounting.AddMissionLoot(missionSite.MissionStats.MoneyReward);
+
+        _playerScore.Data.Value += scoreDiff;
+        missionSite.FactionData.Score -= scoreDiff;
+    }
+
+    private int ScoreDiff(bool missionSuccessful, int factionScore)
+        => missionSuccessful ? Math.Min(PlayerScore.WinScore, factionScore) : PlayerScore.LoseScore;
+
+    private void WriteMissionReport(
+        string factionName,
+        int successChance,
+        int roll,
+        bool success,
+        int scoreDiff,
+        int agentsLost,
+        int moneyReward)
+    {
+        string missionRollReport =
+            $" (Rolled {roll} against limit of {successChance}.)";
+        string missionSuccessReport = success
+            ? $"successful! {missionRollReport} We took {scoreDiff} score from {factionName} " +
+              $"and earned ${moneyReward}."
+            : $"a failure. {missionRollReport} We lost {scoreDiff} score to {factionName}.";
+
+        string agentsLostReport = agentsLost > 0
+            ? $"Number of agents lost: {agentsLost}."
+            : "We didn't lose any agents.";
+        _archiveData.WriteLastMissionReport(
+            $"The last mission was {missionSuccessReport} {agentsLostReport}");
     }
 
     private void ApplyAgentOutcomes(

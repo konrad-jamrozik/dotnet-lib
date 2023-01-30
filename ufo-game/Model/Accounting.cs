@@ -9,6 +9,13 @@ public class Accounting : ITemporal
     private readonly ArchiveData _archiveData;
     private readonly Agents _agents;
 
+    public Accounting(AccountingData data, ArchiveData archiveData, Agents agents)
+    {
+        Data = data;
+        _archiveData = archiveData;
+        _agents = agents;
+    }
+
     public int PassiveIncome =>
         80
         + _archiveData.SuccessfulMissions * 10
@@ -18,13 +25,6 @@ public class Accounting : ITemporal
     public int Expenses => _agents.AvailableAgents.Sum(agent => agent.Salary);
 
     public int MoneyPerTurnAmount => PassiveIncome - Expenses;
-
-    public Accounting(AccountingData data, ArchiveData archiveData, Agents agents)
-    {
-        Data = data;
-        _archiveData = archiveData;
-        _agents = agents;
-    }
 
     public int CurrentMoney => Data.CurrentMoney;
 

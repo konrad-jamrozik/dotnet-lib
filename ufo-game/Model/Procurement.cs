@@ -5,15 +5,9 @@ namespace UfoGame.Model;
 
 public class Procurement
 {
-    public readonly ProcurementData Data;
-    
     private const int AgentPrice = 50;
 
-    public int AgentsToHireCost => Data.AgentsToHire * AgentPrice;
-
-    public int MinAgentsToHire => 1;
-
-    public int MaxAgentsToHire => _accounting.CurrentMoney / AgentPrice;
+    public readonly ProcurementData Data;
 
     private readonly Accounting _accounting;
     private readonly PlayerScore _playerScore;
@@ -30,6 +24,12 @@ public class Procurement
         _playerScore = playerScore;
         _agents = agents;
     }
+
+    public int AgentsToHireCost => Data.AgentsToHire * AgentPrice;
+
+    public int MinAgentsToHire => 1;
+
+    public int MaxAgentsToHire => _accounting.CurrentMoney / AgentPrice;
 
     public bool CanHireAgents(int offset = 0, bool tryNarrow = true)
     {

@@ -6,12 +6,6 @@ public class MissionDeployment
 {
     public readonly MissionDeploymentData Data;
 
-    public int MinAgentsSendableOnMission => 1;
-
-    public int MaxAgentsSendableOnMission => Math.Min(
-        Data.TransportCapacity,
-        _agents.AgentsSendableOnMissionCount);
-
     private readonly Agents _agents;
 
     public MissionDeployment(MissionDeploymentData data, Agents agents)
@@ -19,4 +13,10 @@ public class MissionDeployment
         Data = data;
         _agents = agents;
     }
+
+    public int MinAgentsSendableOnMission => 1;
+
+    public int MaxAgentsSendableOnMission => Math.Min(
+        Data.TransportCapacity,
+        _agents.AgentsSendableOnMissionCount);
 }

@@ -6,10 +6,10 @@ namespace UfoGame.Model;
 public class Research
 {
     public readonly ResearchData Data;
+    private readonly Timeline _timeline;
     private readonly Accounting _accounting;
     private readonly MissionDeployment _missionDeployment;
     private readonly StaffData _staffData;
-    private readonly Timeline _timeline;
     private readonly PlayerScore _playerScore;
     private readonly SickBay _sickBay;
 
