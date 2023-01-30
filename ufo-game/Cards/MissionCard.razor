@@ -6,6 +6,7 @@
 @inject ArchiveData ArchiveData
 @inject MissionDeployment MissionDeployment
 @inject MissionSite MissionSite
+@inject MissionStats MissionStats
 @inject Agents Agents
 <Card Title="Mission">
     <CardDataRow Label="Available in" 
@@ -19,19 +20,19 @@
                  Value="@MissionSite.FactionData.Name"
                  Enabled="@MissionSite.CurrentlyAvailable" />
     <CardDataRow Label="Money reward"
-                 Value="@("$"+MissionSite.MoneyReward)"
+                 Value="@("$"+MissionStats.MoneyReward)"
                  Enabled="@MissionSite.CurrentlyAvailable" />
     <CardDataRow Label="Enemy power"
-                 Value="@MissionSite.EnemyPower"
+                 Value="@MissionStats.EnemyPower"
                  Enabled="@MissionSite.CurrentlyAvailable" />
     <CardDataRow Label="Our power"
-                 Value="@MissionSite.OurPower"
+                 Value="@MissionStats.OurPower"
                  Enabled="@MissionSite.CurrentlyAvailable" />
     <CardDataRow Label="Mission success %"
-                 Value="@(MissionSite.SuccessChance + "%")"
+                 Value="@(MissionStats.SuccessChance + "%")"
                  Enabled="@MissionSite.CurrentlyAvailable" />
     <CardDataRow Label="Baseline sol. surv. %"
-                 Value="@(MissionSite.BaselineAgentSurvivalChance + "%")"
+                 Value="@(MissionStats.BaselineAgentSurvivalChance + "%")"
                  Enabled="@MissionSite.CurrentlyAvailable" />
     <CardDataRow Label="Transport capacity"
                  Value="@MissionDeployment.Data.TransportCapacity"

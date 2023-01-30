@@ -7,6 +7,6 @@ var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
-new TypeRegistrar().RegisterTypes(builder);
+TypeRegistrar.RegisterTypes(builder);
 
 await builder.Build().RunAsync();

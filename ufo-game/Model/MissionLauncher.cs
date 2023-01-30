@@ -7,7 +7,6 @@ namespace UfoGame.Model;
 
 public class MissionLauncher
 {
-    private readonly Random _random = new Random();
     private readonly MissionDeployment _missionDeployment;
     private readonly ArchiveData _archiveData;
     private readonly PlayerScore _playerScore;
@@ -15,6 +14,7 @@ public class MissionLauncher
     private readonly Accounting _accounting;
     private readonly ViewStateRefresh _viewStateRefresh;
     private readonly GameState _gameState;
+    private readonly MissionOutcome _missionOutcome;
 
     public MissionLauncher(
         MissionDeployment missionDeployment,
@@ -23,7 +23,8 @@ public class MissionLauncher
         Accounting accounting,
         ViewStateRefresh viewStateRefresh,
         GameState gameState,
-        Agents agents)
+        Agents agents,
+        MissionOutcome missionOutcome)
     {
         _missionDeployment = missionDeployment;
         _archiveData = archiveData;
@@ -32,27 +33,20 @@ public class MissionLauncher
         _viewStateRefresh = viewStateRefresh;
         _gameState = gameState;
         _agents = agents;
+        _missionOutcome = missionOutcome;
     }
 
-    private int ApplyMissionOutcome(MissionSite missionSite, bool success)
+    private void ApplyMissionOutcome(MissionSite missionSite, bool missionSuccessful, int scoreDiff)
     {
-        int scoreDiff;
-        if (success)
-        {
-            _accounting.AddMissionLoot(missionSite.MoneyReward);
-            scoreDiff = Math.Min(PlayerScore.WinScore, missionSite.FactionData.Score);
-            _playerScore.Data.Value += scoreDiff;
-            missionSite.FactionData.Score -= scoreDiff;
-        }
-        else
-        {
-            scoreDiff = PlayerScore.LoseScore;
-            _playerScore.Data.Value -= scoreDiff;
-            missionSite.FactionData.Score += scoreDiff;
-        }
+        if (missionSuccessful)
+            _accounting.AddMissionLoot(missionSite.MissionStats.MoneyReward);
 
-        return scoreDiff;
+        _playerScore.Data.Value += scoreDiff;
+        missionSite.FactionData.Score -= scoreDiff;
     }
+
+    private int ScoreDiff(bool missionSuccessful, int factionScore)
+        => missionSuccessful ? Math.Min(PlayerScore.WinScore, factionScore) : PlayerScore.LoseScore;
 
     private void WriteLastMissionReport(
         MissionSite missionSite,
@@ -89,84 +83,60 @@ public class MissionLauncher
                && agentsAssignedToMission <= _missionDeployment.MaxAgentsSendableOnMission;
     }
 
-    // kja make LaunchMission() functional / immutable, to avoid unexpected mutations
+    // kja make LaunchMission() functional / immutable
     public void LaunchMission(MissionSite missionSite)
     {
         Debug.Assert(CanLaunchMission(missionSite));
-        var successChance = missionSite.SuccessChance;
-        var agentsSent = _agents.AgentsAssignedToMission.Count;
-        var moneyReward = missionSite.MoneyReward;
+        int successChance = missionSite.MissionStats.SuccessChance;
+        int agentsSent = _agents.AgentsAssignedToMission.Count;
+        int moneyReward = missionSite.MissionStats.MoneyReward;
         Console.Out.WriteLine($"Sent {agentsSent} agents.");
-        var (roll, success) = RollMissionOutcome(missionSite);
-        var agentsLost = ProcessAgentUpdates(missionSite, success, _agents.AgentsAssignedToMission);
-        var scoreDiff = ApplyMissionOutcome(missionSite, success);
-        _archiveData.ArchiveMission(missionSuccessful: success);
-        WriteLastMissionReport(missionSite, successChance, roll, success, scoreDiff, agentsLost, moneyReward);
+
+        (int missionRoll, bool missionSuccessful, List<MissionOutcome.AgentOutcome> agentOutcomes) =
+            _missionOutcome.Roll(missionSite.MissionStats, sentAgents: _agents.AgentsAssignedToMission);
+
+        int agentsLost = agentOutcomes.Count(agent => agent.Lost);
+        int scoreDiff = ScoreDiff(missionSuccessful, missionSite.FactionData.Score);
+        
+        WriteLastMissionReport(missionSite, successChance, missionRoll, missionSuccessful, scoreDiff, agentsLost, moneyReward);
+
+        ApplyAgentOutcomes(missionSuccessful, agentOutcomes);
+        ApplyMissionOutcome(missionSite, missionSuccessful, scoreDiff);
+
+        _archiveData.ArchiveMission(missionSuccessful);
+
+        
         missionSite.GenerateNewOrClearMission();
 
         _gameState.Persist();
         _viewStateRefresh.Trigger();
     }
 
-    // kja introduce class like "MissionOutcome" which will have method like "roll" and
-    // will leverage MissionStats (to be introduced).
-    // That class will produce everything that needs to change as a result of the mission
-    // Then the launcher can do missionOutcome.Apply(), thus updating agents state,
-    // archiving things, giving mission rewards, etc.
-    private (int roll, bool success) RollMissionOutcome(MissionSite missionSite)
+    private void ApplyAgentOutcomes(
+        bool missionSuccessful,
+        List<MissionOutcome.AgentOutcome> agentOutcomes)
     {
-        // Roll between 1 and 100.
-        // The lower the better.
-        int roll = _random.Next(1, 100 + 1);
-        bool success = roll <= missionSite.SuccessChance;
-        Console.Out.WriteLine(
-            $"Rolled {roll} against limit of {missionSite.SuccessChance} " +
-            $"resulting in {(success ? "success" : "failure")}");
-        return (roll, success);
-    }
-
-    private int ProcessAgentUpdates(MissionSite missionSite, bool missionSuccess, List<Agent> sentAgents)
-    {
-        List<(Agent agent, int roll, int survivalChance, int expBonus)> agentData =
-            new List<(Agent agent, int roll, int survivalChance, int expBonus)>();
-
-        foreach (Agent agent in sentAgents)
-        {
-            // Roll between 1 and 100.
-            // The lower the better.
-            int agentRoll = _random.Next(1, 100 + 1);
-            var expBonus = agent.ExperienceBonus();
-            var agentSurvivalChance
-                = missionSite.AgentSurvivalChance(expBonus);
-            agentData.Add((agent, agentRoll, agentSurvivalChance, expBonus));
-        }
-
         List<(Agent agent, bool missionSuccess)> lostAgents = new List<(Agent, bool)>();
-        foreach (var data in agentData)
+        foreach (var agentOutcome in agentOutcomes)
         {
-            var (agent, agentRoll, agentSurvivalChance, expBonus) = data;
-            bool agentSurvived = agentRoll <= agentSurvivalChance;
             string messageSuffix = "";
 
-            if (agentSurvived)
+            if (agentOutcome.Survived)
             {
-                // Higher roll means it was a closer call, so agent needs more time to recover from fatigue 
-                // and wounds. This means that if a agent is very good at surviving, they may barely survive,
-                // but need tons of time to recover.
-                var recovery = (float)Math.Round(agentRoll * (missionSuccess ? 0.5f : 1), 2);
-                agent.RecordMissionOutcome(missionSuccess, recovery);
-                messageSuffix = agentSurvived ? $" Need {recovery} units of recovery." : "";
+                float recovery = agentOutcome.Recovery(missionSuccessful);
+                agentOutcome.Agent.RecordMissionOutcome(missionSuccessful, recovery);
+                messageSuffix = agentOutcome.Survived ? $" Need {recovery} units of recovery." : "";
             }
             else
             {
-                lostAgents.Add((agent, missionSuccess));
+                lostAgents.Add((agentOutcome.Agent, missionSuccessful));
             }
 
-            var inequalitySign = agentRoll <= agentSurvivalChance ? "<=" : ">";
+            var inequalitySign = agentOutcome.Roll <= agentOutcome.SurvivalChance ? "<=" : ">";
             Console.Out.WriteLine(
-                $"Agent #{agent.Data.Id} '{agent.Data.FullName}' exp: {expBonus} : " +
-                $"{(agentSurvived ? "survived" : "lost")}. " +
-                $"Rolled {agentRoll} {inequalitySign} {agentSurvivalChance}." +
+                $"Agent #{agentOutcome.Agent.Data.Id} '{agentOutcome.Agent.Data.FullName}' exp: {agentOutcome.ExpBonus} : " +
+                $"{(agentOutcome.Survived ? "survived" : "lost")}. " +
+                $"Rolled {agentOutcome.Roll} {inequalitySign} {agentOutcome.SurvivalChance}." +
                 messageSuffix);
         }
 
@@ -174,7 +144,5 @@ public class MissionLauncher
             _agents.LoseAgents(lostAgents);
         else
             Console.Out.WriteLine("No agents lost! \\o/");
-
-        return lostAgents.Count;
     }
 }
