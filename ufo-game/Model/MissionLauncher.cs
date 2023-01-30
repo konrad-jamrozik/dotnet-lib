@@ -48,8 +48,8 @@ public class MissionLauncher
     private int ScoreDiff(bool missionSuccessful, int factionScore)
         => missionSuccessful ? Math.Min(PlayerScore.WinScore, factionScore) : PlayerScore.LoseScore;
 
-    private void WriteLastMissionReport(
-        MissionSite missionSite,
+    private void WriteMissionReport(
+        string factionName,
         int successChance,
         int roll,
         bool success,
@@ -60,9 +60,9 @@ public class MissionLauncher
         string missionRollReport =
             $" (Rolled {roll} against limit of {successChance}.)";
         string missionSuccessReport = success
-            ? $"successful! {missionRollReport} We took {scoreDiff} score from {missionSite.FactionData.Name} " +
+            ? $"successful! {missionRollReport} We took {scoreDiff} score from {factionName} " +
               $"and earned ${moneyReward}."
-            : $"a failure. {missionRollReport} We lost {scoreDiff} score to {missionSite.FactionData.Name}.";
+            : $"a failure. {missionRollReport} We lost {scoreDiff} score to {factionName}.";
 
         string agentsLostReport = agentsLost > 0
             ? $"Number of agents lost: {agentsLost}."
@@ -83,28 +83,29 @@ public class MissionLauncher
                && agentsAssignedToMission <= _missionDeployment.MaxAgentsSendableOnMission;
     }
 
-    // kja make LaunchMission() functional / immutable
     public void LaunchMission(MissionSite missionSite)
     {
         Debug.Assert(CanLaunchMission(missionSite));
-        int successChance = missionSite.MissionStats.SuccessChance;
-        int agentsSent = _agents.AgentsAssignedToMission.Count;
-        int moneyReward = missionSite.MissionStats.MoneyReward;
-        Console.Out.WriteLine($"Sent {agentsSent} agents.");
+        Console.Out.WriteLine($"Sent {_agents.AgentsAssignedToMission.Count} agents.");
 
         (int missionRoll, bool missionSuccessful, List<MissionOutcome.AgentOutcome> agentOutcomes) =
             _missionOutcome.Roll(missionSite.MissionStats, sentAgents: _agents.AgentsAssignedToMission);
 
-        int agentsLost = agentOutcomes.Count(agent => agent.Lost);
-        int scoreDiff = ScoreDiff(missionSuccessful, missionSite.FactionData.Score);
-        
-        WriteLastMissionReport(missionSite, successChance, missionRoll, missionSuccessful, scoreDiff, agentsLost, moneyReward);
+        int scoreDiff = ScoreDiff(missionSuccessful, factionScore: missionSite.FactionData.Score);
+
+        WriteMissionReport(
+            factionName: missionSite.FactionData.Name,
+            successChance: missionSite.MissionStats.SuccessChance,
+            missionRoll,
+            missionSuccessful,
+            scoreDiff,
+            agentsLost: agentOutcomes.Count(agent => agent.Lost),
+            moneyReward: missionSite.MissionStats.MoneyReward);
 
         ApplyAgentOutcomes(missionSuccessful, agentOutcomes);
         ApplyMissionOutcome(missionSite, missionSuccessful, scoreDiff);
 
         _archiveData.ArchiveMission(missionSuccessful);
-
         
         missionSite.GenerateNewOrClearMission();
 
@@ -117,7 +118,7 @@ public class MissionLauncher
         List<MissionOutcome.AgentOutcome> agentOutcomes)
     {
         List<(Agent agent, bool missionSuccess)> lostAgents = new List<(Agent, bool)>();
-        foreach (var agentOutcome in agentOutcomes)
+        foreach (MissionOutcome.AgentOutcome agentOutcome in agentOutcomes)
         {
             string messageSuffix = "";
 
@@ -134,7 +135,8 @@ public class MissionLauncher
 
             var inequalitySign = agentOutcome.Roll <= agentOutcome.SurvivalChance ? "<=" : ">";
             Console.Out.WriteLine(
-                $"Agent #{agentOutcome.Agent.Data.Id} '{agentOutcome.Agent.Data.FullName}' exp: {agentOutcome.ExpBonus} : " +
+                $"Agent #{agentOutcome.Agent.Data.Id} '{agentOutcome.Agent.Data.FullName}' " +
+                $"exp: {agentOutcome.ExpBonus} : " +
                 $"{(agentOutcome.Survived ? "survived" : "lost")}. " +
                 $"Rolled {agentOutcome.Roll} {inequalitySign} {agentOutcome.SurvivalChance}." +
                 messageSuffix);

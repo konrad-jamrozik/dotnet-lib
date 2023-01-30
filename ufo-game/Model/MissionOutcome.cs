@@ -21,12 +21,7 @@ public class MissionOutcome
         return (missionRoll, missionSuccessful, agentOutcomes);
     }
 
-    // kja introduce class like "MissionOutcome" which will have method like "roll" and
-    // will leverage MissionStats (to be introduced).
-    // That class will produce everything that needs to change as a result of the mission
-    // Then the launcher can do missionOutcome.Apply(), thus updating agents state,
-    // archiving things, giving mission rewards, etc.
-    public (int missionRoll, bool missionSuccessful) RollMissionOutcome(MissionStats missionStats)
+    private (int missionRoll, bool missionSuccessful) RollMissionOutcome(MissionStats missionStats)
     {
         // Roll between 1 and 100.
         // The lower the better.
@@ -38,7 +33,7 @@ public class MissionOutcome
         return (missionRoll, missionSuccessful);
     }
 
-    public List<AgentOutcome> RollAgentOutcomes(
+    private List<AgentOutcome> RollAgentOutcomes(
         MissionStats missionStats,
         List<Agent> sentAgents)
     {
