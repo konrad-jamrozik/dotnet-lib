@@ -5,7 +5,6 @@ namespace UfoGame.Model.Data;
 public class ProcurementData : IPersistable, IResettable
 {
     [JsonInclude] public int AgentsToHire;
-    [JsonInclude] public int AgentsToFire;
 
     public ProcurementData()
         => Reset();
@@ -13,6 +12,5 @@ public class ProcurementData : IPersistable, IResettable
     public void Reset()
     {
         AgentsToHire = 1;
-        AgentsToFire = 1;
     }
 }

@@ -4,6 +4,7 @@
 @using UfoGame.ViewModel
 @inject ViewStateRefresh ViewStateRefresh
 @inject SickBay SickBay
+@inject Agents Agents
 
 <div class="list-group-item list-group-item-action" aria-current="true">
     <div class="container-fluid">
@@ -52,8 +53,8 @@
         <CardDataRow Label="Successful missions" Value="@Agent.Data.SuccessfulMissions"/>
         <CardDataRow Label="Failed missions" Value="@Agent.Data.FailedMissions"/>
         <CardDataRow Label="Time spent recovering" Value="@Agent.Data.TimeSpentRecovering"/>
+        <CardButton PlayerAction="_sackAgentPlayerAction" />
     </Card>
-    @* kja AgentListItem.razor: add button to sack agent, with modal; rename "fire" to "sack" *@
 </div>
 
 @code 
@@ -65,6 +66,16 @@
     [Parameter, EditorRequired]
     public Agent Agent { get; set; }
     #nullable enable
+
+    #nullable disable
+    private SackAgentPlayerAction _sackAgentPlayerAction;
+    #nullable enable
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        _sackAgentPlayerAction = new SackAgentPlayerAction(ViewStateRefresh, Agents, Agent);
+    }
 
     private void OnChangeAgentMissionAssignment(object eventArgsValue)
     {

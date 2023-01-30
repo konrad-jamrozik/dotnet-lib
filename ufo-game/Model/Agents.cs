@@ -68,17 +68,23 @@ public class Agents : IResettable
     public int AgentsSendableOnMissionCount
         => _data.Count(agent => agent.CanSendOnMission);
 
-    public void LoseAgents(List<(Agent agent, bool missionSuccess)> agents)
-    {
-        agents.ForEach(data => data.agent.SetAsLost(data.missionSuccess));
-        _archiveData.RecordLostAgents(agents.Count);
-    }
-
     public void HireAgents(int agentsToHire)
     {
         var addedAgentsData = _agentsData.AddNewRandomAgents(agentsToHire, _timelineData.CurrentTime, _randomGen);
         _data.AddRange(AgentsFromData(addedAgentsData));
         _archiveData.RecordHiredAgents(agentsToHire);
+    }
+
+    public void SackAgent(Agent agent)
+    {
+        agent.Sack();
+        _archiveData.RecordSackedAgent();
+    }
+
+    public void LoseAgents(List<(Agent agent, bool missionSuccess)> agents)
+    {
+        agents.ForEach(data => data.agent.SetAsLost(data.missionSuccess));
+        _archiveData.RecordLostAgents(agents.Count);
     }
 
     private IEnumerable<Agent> AgentsFromData(List<AgentData> agentsData)

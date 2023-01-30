@@ -117,6 +117,15 @@ public class Agent
         Data.TimeLost = _timelineData.CurrentTime;
     }
 
+    public bool CanSack => IsAtFullHealth;
+
+    public void Sack()
+    {
+        Debug.Assert(CanSack);
+        // kja need to add TimeSacked, and fix all props that currently use only TimeLost. Introduce TimeRemoved => TimeLost || TimeSacked
+        Data.TimeLost = _timelineData.CurrentTime;
+    }
+
     private bool MissingInAction => Data.TimeLost != 0;
     private bool IsAtFullHealth => !MissingInAction && !IsRecovering;
     private bool IsAssignableToMission => CanSendOnMission && !Data.AssignedToMission;
