@@ -117,7 +117,7 @@ public class Agent
         Data.TimeLost = _timelineData.CurrentTime;
     }
 
-    public bool CanSack => IsAtFullHealth;
+    public bool CanSack => IsAtFullHealth && !Data.AssignedToMission;
 
     public void Sack()
     {
