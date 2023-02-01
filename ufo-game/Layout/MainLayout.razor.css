@@ -15,12 +15,12 @@ main {
         
         64px is the height of the navbar with stats, as measured with Chrome dev tools.
         40px is the height of the navbar with buttons, as measured with Chrome dev tools.
-        64px+40px = 104px
+        64px+30.4px = 94.4px
 
         Note there is additional padding-top in app.css .content
         which applies to <article/> in MainLayout.css
     */
-    padding-top: 104px;
+    padding-top: 94.4px;
 }
 
 @media (min-width: 641px) {
