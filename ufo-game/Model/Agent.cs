@@ -105,8 +105,7 @@ public class Agent
     {
         Debug.Assert(_timelineData.CurrentTime >= Data.TimeHired);
         Debug.Assert(Data.AssignedToMission);
-        // kja maybe actually it should say: health is negative. To see how badly the agent got over-killed.
-        Debug.Assert(IsAtFullHealth, "If an agent got lost, we assume they didn't suffer any health damage beforehand");
+        Debug.Assert(IsAtFullHealth, "If an agent got lost, we assume no recovery was computed for them.");
         RecordMissionOutcome(missionSuccess, recovery: 0);
         UnassignFromMission();
         Data.TimeLost = _timelineData.CurrentTime;
@@ -122,10 +121,10 @@ public class Agent
     }
 
     public int TotalMissions => Data.SuccessfulMissions + Data.FailedMissions;
+    public bool IsRecovering => Available && Data.Recovery > 0;
     public bool Available => !Lost && !Sacked;
     public bool Lost => Data.TimeLost != 0;
     public bool Sacked => Data.TimeSacked != 0;
-    public bool IsRecovering => Available && Data.Recovery > 0;
     public bool CanSendOnMission => IsAtFullHealth;
     private bool IsAssignableToMission => CanSendOnMission && !Data.AssignedToMission;
     private bool CouldHaveBeenSentOnMission => IsAtFullHealth;
