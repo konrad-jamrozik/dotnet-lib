@@ -10,10 +10,6 @@ public class ArchiveData : IPersistable, IResettable
     [JsonInclude] public int SuccessfulMissions { get; private set; }
     [JsonInclude] public int FailedMissions { get; private set; }
     [JsonInclude] public int IgnoredMissions { get; private set; }
-    // kja TotalGentsHired, Sacked, and Lost can be derived; doesn't have to be saved.
-    [JsonInclude] public int AgentsHired { get; private set; }
-    [JsonInclude] public int AgentsSacked { get; private set; }
-    [JsonInclude] public int AgentsLost { get; private set; }
     [JsonInclude] public string LastMissionReport { get; private set; } = string.Empty;
 
     public ArchiveData()
@@ -41,33 +37,12 @@ public class ArchiveData : IPersistable, IResettable
         Console.Out.WriteLine($"Recorded ignored mission. Total: {IgnoredMissions}.");
     }
 
-    public void RecordHiredAgents(int count)
-    {
-        AgentsHired += count;
-        Console.Out.WriteLine($"Recorded hired {count} agents. Total: {AgentsHired}.");
-    }
-
-    public void RecordSackedAgent()
-    {
-        AgentsSacked += 1;
-        Console.Out.WriteLine($"Recorded sacked agent. Total: {AgentsSacked}.");
-    }
-
-    public void RecordLostAgents(int amount)
-    {
-        AgentsLost += amount;
-        Console.Out.WriteLine($"Recorded {amount} lost agents. Lost agents now at {AgentsLost}.");
-    }
-
     public void Reset()
     {
         MissionsLaunched = 0;
         SuccessfulMissions = 0;
         FailedMissions = 0;
         IgnoredMissions = 0;
-        AgentsHired = 0;
-        AgentsSacked = 0;
-        AgentsLost = 0;
         LastMissionReport = NoMissionsReport;
     }
 }

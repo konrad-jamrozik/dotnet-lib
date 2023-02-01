@@ -61,11 +61,6 @@ public class Agent
         return timeEmployed;
     }
 
-    public int TotalMissions => Data.SuccessfulMissions + Data.FailedMissions;
-    public bool Available => !Lost && !Sacked;
-    public bool IsRecovering => Available && Data.Recovery > 0;
-    public bool CanSendOnMission => IsAtFullHealth;
-
     public void AssignToMission()
     {
         Debug.Assert(IsAssignableToMission);
@@ -126,12 +121,16 @@ public class Agent
         Data.TimeSacked = _timelineData.CurrentTime;
     }
 
-    private bool Lost => Data.TimeLost != 0;
-    private bool Sacked => Data.TimeSacked != 0;
-    private bool IsAtFullHealth => Available && !IsRecovering;
+    public int TotalMissions => Data.SuccessfulMissions + Data.FailedMissions;
+    public bool Available => !Lost && !Sacked;
+    public bool Lost => Data.TimeLost != 0;
+    public bool Sacked => Data.TimeSacked != 0;
+    public bool IsRecovering => Available && Data.Recovery > 0;
+    public bool CanSendOnMission => IsAtFullHealth;
     private bool IsAssignableToMission => CanSendOnMission && !Data.AssignedToMission;
-    private bool IsUnassignableFromMission => IsAtFullHealth && Data.AssignedToMission;
     private bool CouldHaveBeenSentOnMission => IsAtFullHealth;
+    private bool IsAtFullHealth => Available && !IsRecovering;
+    private bool IsUnassignableFromMission => IsAtFullHealth && Data.AssignedToMission;
 
     /// <summary>
     /// Agent that was on N missions gets sum of experience from
