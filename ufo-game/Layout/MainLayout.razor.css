@@ -14,6 +14,9 @@ main {
         https://getbootstrap.com/docs/5.3/components/navbar/#placement
         
         56px is the height of the navbar, as measured with Chrome dev tools.
+
+        Note there is additional padding in app.css .content
+        which applies to <article/> in MainLayout.css
     */
     padding-top: 56px;
 }
