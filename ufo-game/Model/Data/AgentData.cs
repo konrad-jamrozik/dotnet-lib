@@ -12,7 +12,10 @@ public class AgentData
     [JsonInclude] public int TimeSpentRecovering;
     [JsonInclude] public float Recovery;
     [JsonInclude] public int TimeLost;
+    [JsonInclude] public int TimeSacked;
     [JsonInclude] public bool AssignedToMission;
+
+    public int TimeLostOrSacked => Math.Max(TimeLost, TimeSacked);
 
     public AgentData(int id, string fullName, int timeHired)
     {

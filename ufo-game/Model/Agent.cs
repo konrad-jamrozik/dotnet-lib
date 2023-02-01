@@ -49,10 +49,9 @@ public class Agent
     {
         Debug.Assert(_timelineData.CurrentTime >= Data.TimeHired);
         int timeEmployed;
-        if (MissingInAction)
+        if (!Available)
         {
-            Debug.Assert(Data.TimeLost <= _timelineData.CurrentTime);
-            timeEmployed = Data.TimeLost - Data.TimeHired;
+            timeEmployed = Data.TimeLostOrSacked - Data.TimeHired;
         }
         else
         {
@@ -63,8 +62,8 @@ public class Agent
     }
 
     public int TotalMissions => Data.SuccessfulMissions + Data.FailedMissions;
-    public bool Available => !MissingInAction;
-    public bool IsRecovering => !MissingInAction && Data.Recovery > 0;
+    public bool Available => !Lost && !Sacked;
+    public bool IsRecovering => Available && Data.Recovery > 0;
     public bool CanSendOnMission => IsAtFullHealth;
 
     public void AssignToMission()
@@ -110,24 +109,26 @@ public class Agent
     public void SetAsLost(bool missionSuccess)
     {
         Debug.Assert(_timelineData.CurrentTime >= Data.TimeHired);
-        Debug.Assert(IsAtFullHealth);
         Debug.Assert(Data.AssignedToMission);
+        // kja maybe actually it should say: health is negative. To see how badly the agent got over-killed.
+        Debug.Assert(IsAtFullHealth, "If an agent got lost, we assume they didn't suffer any health damage beforehand");
         RecordMissionOutcome(missionSuccess, recovery: 0);
         UnassignFromMission();
         Data.TimeLost = _timelineData.CurrentTime;
     }
 
-    public bool CanSack => IsAtFullHealth && !Data.AssignedToMission;
+    public bool CanSack => IsAssignableToMission;
 
     public void Sack()
     {
         Debug.Assert(CanSack);
-        // kja need to add TimeSacked, and fix all props that currently use only TimeLost. Introduce TimeRemoved => TimeLost || TimeSacked
-        Data.TimeLost = _timelineData.CurrentTime;
+        Debug.Assert(_timelineData.CurrentTime >= Data.TimeHired);
+        Data.TimeSacked = _timelineData.CurrentTime;
     }
 
-    private bool MissingInAction => Data.TimeLost != 0;
-    private bool IsAtFullHealth => !MissingInAction && !IsRecovering;
+    private bool Lost => Data.TimeLost != 0;
+    private bool Sacked => Data.TimeSacked != 0;
+    private bool IsAtFullHealth => Available && !IsRecovering;
     private bool IsAssignableToMission => CanSendOnMission && !Data.AssignedToMission;
     private bool IsUnassignableFromMission => IsAtFullHealth && Data.AssignedToMission;
     private bool CouldHaveBeenSentOnMission => IsAtFullHealth;

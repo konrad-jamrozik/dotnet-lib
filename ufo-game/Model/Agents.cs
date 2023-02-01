@@ -25,7 +25,7 @@ public class Agents : IResettable
     [JsonIgnore]
     public List<Agent> AvailableAgents => _data.Where(agent => agent.Available).ToList();
 
-    public List<Agent> AvailableAgentsSortedByLaunchPriority()
+    public List<Agent> AgentsSendableOnMissionSortedByLaunchPriority()
         => AvailableAgents
             // First list agents that can be sent on a mission.
             .OrderByDescending(agent => agent.CanSendOnMission)
@@ -41,12 +41,12 @@ public class Agents : IResettable
             .ToList();
 
     public List<Agent> AssignableAgentsSortedByLaunchPriority(int currentTime)
-        => AvailableAgentsSortedByLaunchPriority()
+        => AgentsSendableOnMissionSortedByLaunchPriority()
             .Where(s => !s.Data.AssignedToMission)
             .ToList();
 
     public List<Agent> AssignedAgentsSortedByDescendingLaunchPriority(int currentTime)
-        => AvailableAgentsSortedByLaunchPriority()
+        => AgentsSendableOnMissionSortedByLaunchPriority()
             .Where(agent => agent.Data.AssignedToMission)
             .Reverse()
             .ToList();

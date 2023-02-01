@@ -19,7 +19,7 @@
 
 <div class="list-group">
     @{
-        var sortedAgents = Agents.AvailableAgentsSortedByLaunchPriority();
+        var sortedAgents = Agents.AgentsSendableOnMissionSortedByLaunchPriority();
         @for (int i = 0; i < sortedAgents.Count; i++)
         {
             <AgentListItem Index="i" Agent="sortedAgents[i]" />
