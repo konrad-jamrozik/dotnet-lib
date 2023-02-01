@@ -15,5 +15,5 @@ public class ResearchAgentRecoverySpeedPlayerAction : IPlayerActionOnButton
 
     public void Act() => _research.ResearchAgentRecoverySpeed();
 
-    public string ActLabel() => $"Research agent effectiveness for {_research.Data.AgentRecoverySpeedResearchCost}";
+    public string ActLabel() => $"Research agent recovery speed for {_research.Data.AgentRecoverySpeedResearchCost}";
 }
