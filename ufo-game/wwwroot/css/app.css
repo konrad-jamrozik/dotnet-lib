@@ -111,3 +111,19 @@ a, .btn-link {
      */
     max-width: 385.7px;
 }
+
+/**
+    kja TODO do .nav-link padding by SASS variables
+    This is required for 
+    NavMenu.razor / nav / nav-link
+    It should be replaced with adjustement to SASS variables of:
+    --bs-nav-link-padding-x
+    --bs-nav-link-padding-y
+    https://getbootstrap.com/docs/5.3/components/navs-tabs/#variables
+*/
+.nav-link {
+    padding-top: 0.2rem;
+    padding-bottom: 0.2rem;
+    padding-left: 0rem;
+    padding-right: 0rem;
+}

@@ -9,80 +9,90 @@
 @inject ViewStateRefresh ViewStateRefresh
 @inject PlayerScore PlayerScore
 
-<div class="top-row ps-2 navbar fixed-top bg-body-tertiary" data-bs-theme="dark">
-    <div class="container-fluid">
-        @* col-auto here ensures the column of the "NavigationMenu" button is pushed away to the right. See https://getbootstrap.com/docs/5.3/layout/columns/ *@
-        <div class="col col-auto">
-            @* row-cols-auto here ensures the column in the row are left-stacked to their width. See https://getbootstrap.com/docs/5.3/layout/grid/#row-columns*@
-            <div class="row row-cols-auto">
-                <div class="col px-0">
-                    <div class="hstack gap-0 p-0" style="width: 85px">
-                        <span class="oi oi-badge" style="width: 19.5px; margin-left: 1px;" aria-hidden="true"></span>
-                        @* <span>999999</span> *@
-                        <span>@PlayerScore.Data.Value</span>
+<div class="fixed-top bg-body-tertiary">
+    <div class="top-row ps-2 navbar bg-body-tertiary" data-bs-theme="dark">
+        <div class="container-fluid">
+            @* col-auto here ensures the column of the "NavigationMenu" button is pushed away to the right. See https://getbootstrap.com/docs/5.3/layout/columns/ *@
+            <div class="col col-auto">
+                @* row-cols-auto here ensures the column in the row are left-stacked to their width. See https://getbootstrap.com/docs/5.3/layout/grid/#row-columns*@
+                <div class="row row-cols-auto">
+                    <div class="col px-0">
+                        <div class="hstack gap-0 p-0" style="width: 85px">
+                            <span class="oi oi-badge" style="width: 19.5px; margin-left: 1px;" aria-hidden="true"></span>
+                            @* <span>999999</span> *@
+                            <span>@PlayerScore.Data.Value</span>
+                        </div>
+                    </div>
+                    <div class="col px-0">
+                        <div class="hstack gap-0 p-0" style="width: 70px">
+                            <span class="oi oi-calendar" aria-hidden="true"></span>
+                            @* <span>9999</span> *@
+                            <span>@TimelineData.CurrentTime</span>
+                        </div>
+                    </div>
+                    <div class="col px-0">
+                        <div class="hstack gap-0 p-0" style="width: 50px">
+                            <span class="oi oi-timer" style="width: 23px" aria-hidden="true"></span>
+                            @* <span>-99</span> *@
+                            <span class="@(MissionSite.AboutToExpire ? "text-danger" : "")">
+                                @MissionSite.Countdown
+                            </span>
+                        </div>
                     </div>
                 </div>
-                <div class="col px-0">
-                    <div class="hstack gap-0 p-0" style="width: 70px">
-                        <span class="oi oi-calendar" aria-hidden="true"></span>
-                        @* <span>9999</span> *@
-                        <span>@TimelineData.CurrentTime</span>
+                <div class="row">
+                    <div class="col px-0 ps-1">
+                        <div class="hstack gap-0 p-0" style="width: 135px">
+                            <span class="oi oi-dollar" style="width: 17px" aria-hidden="true"></span>
+                            @* <span>999999/-99999</span> *@
+                            <span>@Accounting.CurrentMoney/</span>
+                            <span class="@(Accounting.MoneyPerTurnAmount >= 0 ? "text-success" : "text-danger")">
+                                @Accounting.MoneyPerTurnAmount
+                            </span>
+                        </div>
                     </div>
-                </div>
-                <div class="col px-0">
-                    <div class="hstack gap-0 p-0" style="width: 50px">
-                        <span class="oi oi-timer" style="width: 23px" aria-hidden="true"></span>
-                        @* <span>-99</span> *@
-                        <span class="@(MissionSite.AboutToExpire ? "text-danger" : "")">
-                            @MissionSite.Countdown
-                        </span>
+                    <div class="col px-0">
+                        <div class="hstack gap-0 p-0" style="width: 105px">
+                            <span class="oi oi-people" style="width: 24px" aria-hidden="true"></span>
+                            @* <span>9999/9999</span> *@
+                            <span class="text-success">@Agents.AgentsSendableOnMissionCount</span>
+                            <span>/@Agents.AvailableAgents.Count</span>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="row">
-                <div class="col px-0 ps-1">
-                    <div class="hstack gap-0 p-0" style="width: 135px">
-                        <span class="oi oi-dollar" style="width: 17px" aria-hidden="true"></span>
-                        @* <span>999999/-99999</span> *@
-                        <span>@Accounting.CurrentMoney/</span>
-                        <span class="@(Accounting.MoneyPerTurnAmount >= 0 ? "text-success" : "text-danger")">
-                            @Accounting.MoneyPerTurnAmount
-                        </span>
-                    </div>
-                </div>
-                <div class="col px-0">
-                    <div class="hstack gap-0 p-0" style="width: 105px">
-                        <span class="oi oi-people" style="width: 24px" aria-hidden="true"></span>
-                        @* <span>9999/9999</span> *@
-                        <span class="text-success">@Agents.AgentsSendableOnMissionCount</span>
-                        <span>/@Agents.AvailableAgents.Count</span>
-                    </div>
-                </div>
+            @* See description of "col-auto" on its occurrence above. *@
+            <div class="col col-auto">
+                <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
             </div>
-        </div>
-        @* See description of "col-auto" on its occurrence above. *@
-        <div class="col col-auto">
-            <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
-                <span class="navbar-toggler-icon"></span>
-            </button>
         </div>
     </div>
+    <nav class="nav nav-pills nav-fill">
+        <NavLink class="nav-link" href="/hq" Match="NavLinkMatch.All">
+            <span class="oi oi-globe" aria-hidden="true"></span>
+        </NavLink>
+        <NavLink class="nav-link" href="/deployment">
+            <span class="oi oi-random" aria-hidden="true"></span>
+        </NavLink>
+        <NavLink class="nav-link" href="/manufacturing">
+            <span class="oi oi-spreadsheet" aria-hidden="true"></span>
+        </NavLink>
+        <NavLink class="nav-link" href="/research">
+            <span class="oi oi-beaker" aria-hidden="true"></span>
+        </NavLink>
+        <NavLink class="nav-link" href="/archive">
+            <span class="oi oi-book" aria-hidden="true"></span>
+        </NavLink>
+        <NavLink class="nav-link" href="/charts">
+            <span class="oi oi-bar-chart" aria-hidden="true"></span>
+        </NavLink>
+        <NavLink class="nav-link" href="/settings">
+            <span class="oi oi-wrench" aria-hidden="true"></span>
+        </NavLink>
+    </nav>
 </div>
-<nav class="nav nav-pills nav-fill bg-body-tertiary fixed-top" style="padding-top: 64px; z-index: 1010">
-    <NavLink class="nav-link" href="/hq" Match="NavLinkMatch.All">
-        <span class="oi oi-globe" aria-hidden="true"></span>HQ
-    </NavLink>
-    <NavLink class="nav-link" href="/deployment">
-        <span class="oi oi-random" aria-hidden="true"></span>Depl.
-    </NavLink>
-    <NavLink class="nav-link" href="/settings">
-        <span class="oi oi-wrench" aria-hidden="true"></span>Sett.
-    </NavLink>
-    @* <a class="nav-link active" aria-current="page" href="#">ICN1</a> *@
-    @* <a class="nav-link" href="#">ICN2</a> *@
-    @* <a class="nav-link" href="#">ICN3</a> *@
-    @* <a class="nav-link disabled">ICN4</a> *@
-</nav>
 
 @* <div class="@NavMenuCssClass nav-scrollable" @onclick="ToggleNavMenu"> *@
 @*     <nav class="flex-column"> *@
@@ -101,26 +111,26 @@
 @*                 <span class="oi oi-wrench" aria-hidden="true"></span>Settings *@
 @*             </NavLink> *@
 @*         </div> *@
-@*         $1$ <div class="nav-item px-3"> #1# *@
-@*         $1$     <NavLink class="nav-link" href="manufacturing"> #1# *@
-@*         $1$         <span class="oi oi-spreadsheet" aria-hidden="true"></span>Manufacturing #1# *@
-@*         $1$     </NavLink> #1# *@
-@*         $1$ </div> #1# *@
-@*         $1$ <div class="nav-item px-3"> #1# *@
-@*         $1$     <NavLink class="nav-link" href="research"> #1# *@
-@*         $1$         <span class="oi oi-beaker" aria-hidden="true"></span>Research #1# *@
-@*         $1$     </NavLink> #1# *@
-@*         $1$ </div> #1# *@
-@*         $1$ <div class="nav-item px-3"> #1# *@
-@*         $1$     <NavLink class="nav-link" href="archive"> #1# *@
-@*         $1$         <span class="oi oi-book" aria-hidden="true"></span>Archive #1# *@
-@*         $1$     </NavLink> #1# *@
-@*         $1$ </div> #1# *@
-@*         $1$ <div class="nav-item px-3"> #1# *@
-@*         $1$     <NavLink class="nav-link" href="charts"> #1# *@
-@*         $1$         <span class="oi oi-bar-chart" aria-hidden="true"></span>Charts #1# *@
-@*         $1$     </NavLink> #1# *@
-@*         $1$ </div> #1# *@
+         @* <div class="nav-item px-3"> *@
+         @*     <NavLink class="nav-link" href="manufacturing"> *@
+         @*         <span class="oi oi-spreadsheet" aria-hidden="true"></span>Manufacturing *@
+         @*     </NavLink> *@
+         @* </div> *@
+         @* <div class="nav-item px-3"> *@
+         @*     <NavLink class="nav-link" href="research"> *@
+         @*         <span class="oi oi-beaker" aria-hidden="true"></span>Research *@
+         @*     </NavLink> *@
+         @* </div> *@
+         @* <div class="nav-item px-3"> *@
+         @*     <NavLink class="nav-link" href="archive"> *@
+         @*         <span class="oi oi-book" aria-hidden="true"></span>Archive *@
+         @*     </NavLink> *@
+         @* </div> *@
+         @* <div class="nav-item px-3"> *@
+         @*     <NavLink class="nav-link" href="charts"> *@
+         @*         <span class="oi oi-bar-chart" aria-hidden="true"></span>Charts *@
+         @*     </NavLink> *@
+         @* </div> *@
 @*     </nav> *@
 @* </div> *@
 
