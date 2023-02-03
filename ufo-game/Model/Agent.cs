@@ -126,7 +126,7 @@ public class Agent
     public bool Lost => Data.TimeLost != 0;
     public bool Sacked => Data.TimeSacked != 0;
     public bool CanSendOnMission => IsAtFullHealth;
-    private bool IsAssignableToMission => CanSendOnMission && !Data.AssignedToMission;
+    public bool IsAssignableToMission => CanSendOnMission && !Data.AssignedToMission;
     private bool CouldHaveBeenSentOnMission => IsAtFullHealth;
     private bool IsAtFullHealth => Available && !IsRecovering;
     private bool IsUnassignableFromMission => IsAtFullHealth && Data.AssignedToMission;

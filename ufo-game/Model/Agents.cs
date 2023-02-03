@@ -60,6 +60,10 @@ public class Agents : IResettable
         => _data.Where(agent => agent.Data.AssignedToMission).ToList();
 
     [JsonIgnore]
+    public List<Agent> AgentsAssignableToMission
+        => _data.Where(agent => agent.IsAssignableToMission).ToList();
+
+    [JsonIgnore]
     public List<Agent> AgentsInRecovery
         => _data.Where(agent => agent.IsRecovering).ToList();
 

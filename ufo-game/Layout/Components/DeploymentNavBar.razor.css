@@ -1,0 +1,33 @@
+﻿.oi {
+    width: 2rem;
+    font-size: 1.1rem;
+    vertical-align: text-top;
+    top: -2px;
+}
+
+.top-row .oi {
+    top: -3px;
+    width: 1.1rem;
+}
+
+.top-row .oi.oi-badge {
+    padding-left: 0.25rem;
+    width: 1.5rem;
+}
+
+.top-row .oi.oi-calendar {
+    width: 1.5rem;
+}
+
+.top-row .oi.oi-dollar {
+    width: 1.6rem;
+}
+
+.top-row .oi.oi-timer {
+    width: 1.8rem;
+}
+
+.top-row .oi.oi-people {
+    top: -1px;
+    width: 1.6rem;
+}
