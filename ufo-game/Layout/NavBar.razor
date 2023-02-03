@@ -7,7 +7,6 @@
 @inject StaffData StaffData
 @inject Agents Agents
 @inject MissionSite MissionSite
-@inject ViewStateRefresh ViewStateRefresh
 @inject PlayerScore PlayerScore
 
 <div class="fixed-top bg-body-tertiary">
@@ -40,12 +39,3 @@
         </NavLink>
     </nav>
 </div>
-
-@code
-{
-    protected override void OnInitialized()
-    {
-        base.OnInitialized();
-        ViewStateRefresh.Event += StateHasChanged;
-    }
-}
