@@ -8,11 +8,12 @@
 @inject Agents Agents
 @inject MissionSite MissionSite
 @inject PlayerScore PlayerScore
+@inject NavigationManager Navigation
 
 <div class="fixed-top bg-body-tertiary">
     <div class="top-row ps-2 navbar bg-body-tertiary" data-bs-theme="dark">
         <div class="container-fluid">
-            <HQNavBar />
+            @ChildContent
         </div>
     </div>
     <nav class="nav nav-pills nav-fill">
@@ -39,3 +40,9 @@
         </NavLink>
     </nav>
 </div>
+
+@code
+{
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+}

@@ -1,0 +1,50 @@
+﻿@using UfoGame.Model
+@using UfoGame.Model.Data
+@using UfoGame.ViewModel
+@inject Accounting Accounting
+@inject TimelineData TimelineData
+@inject Agents Agents
+@inject MissionSite MissionSite
+@inject PlayerScore PlayerScore
+@inject ViewStateRefresh ViewStateRefresh
+
+<div class="col">
+    @* row-cols-auto here ensures the column in the row are left-stacked to their width. See https://getbootstrap.com/docs/5.3/layout/grid/#row-columns *@
+    <div class="row row-cols-auto">
+        <div class="col px-0">
+            <div class="hstack gap-0 p-0" style="width: 85px">
+                <span class="oi oi-badge" style="width: 19.5px; margin-left: 1px;" aria-hidden="true"></span>
+                @* <span>999999</span> *@
+                <span>@PlayerScore.Data.Value</span>
+            </div>
+        </div>
+        <div class="col px-0">
+            <div class="hstack gap-0 p-0" style="width: 70px">
+                <span class="oi oi-calendar" aria-hidden="true"></span>
+                @* <span>9999</span> *@
+                <span>@TimelineData.CurrentTime</span>
+            </div>
+        </div>
+    </div>
+    <div class="row row-cols-auto">
+        <div class="col px-0 ps-1">
+            <div class="hstack gap-0 p-0" style="width: 135px">
+                <span class="oi oi-dollar" style="width: 17px" aria-hidden="true"></span>
+                @* <span>999999/-99999</span> *@
+                <span>@Accounting.CurrentMoney/</span>
+                <span class="@(Accounting.MoneyPerTurnAmount >= 0 ? "text-success" : "text-danger")">
+                    @Accounting.MoneyPerTurnAmount
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code
+{
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        ViewStateRefresh.Event += StateHasChanged;
+    }
+}
