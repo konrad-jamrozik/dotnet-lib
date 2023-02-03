@@ -11,11 +11,14 @@
     is too low by default; this moves it up a bit.
 */
 .oi.oi-beaker {
-    top: -3.5px;
+    top: -1px;
 }
 
+/* The book icon in NavBar / nav / nav-link 
+    is too high by default; this moves it down a bit.
+*/
 .oi.oi-book {
-    top: -0.5px;
+    top: 1.5px;
 }
 
 /* .nav-item { */
