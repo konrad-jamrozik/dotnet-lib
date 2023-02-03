@@ -1,4 +1,8 @@
-﻿.oi {
+﻿
+/* kja dedup these rules into MainLayout.razor by using ::deep:
+    https://learn.microsoft.com/en-us/aspnet/core/blazor/components/css-isolation?view=aspnetcore-7.0#child-component-support
+*/
+.oi {
     width: 2rem;
     font-size: 1.1rem;
     vertical-align: text-top;
@@ -30,4 +34,18 @@
 .top-row .oi.oi-people {
     top: -1px;
     width: 1.6rem;
+}
+
+iconify-icon[icon="icon-park-solid:success"] {
+    width: 1.2rem
+}
+
+.fist-bump {
+    width: 50px
+}
+
+/* lower the fists to make them align better */
+.fist-bump iconify-icon {
+    position: relative; /* by default it is static, preventing "top" from working */
+    top: 1.8px;
 }
