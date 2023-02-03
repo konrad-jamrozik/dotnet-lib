@@ -115,7 +115,7 @@ a, .btn-link {
 /**
     kja TODO do .nav-link padding by SASS variables
     This is required for 
-    NavMenu.razor / nav / nav-link
+    NavBar.razor / nav / nav-link
     It should be replaced with adjustement to SASS variables of:
     --bs-nav-link-padding-x
     --bs-nav-link-padding-y
