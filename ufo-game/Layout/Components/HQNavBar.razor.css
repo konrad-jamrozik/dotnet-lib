@@ -12,10 +12,11 @@
 
 .top-row .oi.oi-badge {
     padding-left: 0.25rem;
-    width: 1.5rem;
+    top: -0.5px;
 }
 
 .top-row .oi.oi-calendar {
+    top: -1px;
     width: 1.5rem;
 }
 
