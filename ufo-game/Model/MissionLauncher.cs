@@ -125,6 +125,10 @@ public class MissionLauncher
             if (agentOutcome.Survived)
             {
                 float recovery = agentOutcome.Recovery(missionSuccessful);
+                // As of 2/4/2023 We always unassign agents, even if they have recovery == 0,
+                // because once a mission is completed, the next one is not yet available,
+                // so no agent can be assigned to it.
+                agentOutcome.Agent.UnassignFromMission();
                 agentOutcome.Agent.RecordMissionOutcome(missionSuccessful, recovery);
                 messageSuffix = agentOutcome.Survived ? $" Need {recovery} units of recovery." : "";
             }

@@ -42,7 +42,7 @@
         <div class="col px-0">
             <div class="text-start" style="width: 38px">
                 @* <span class="text-danger">9999</span> *@
-                <span class="text-danger">@MissionStats.EnemyPower</span>
+                <span class="text-danger">@( MissionSite.CurrentlyAvailable ? MissionStats.EnemyPower : "-" )</span>
             </div>
         </div>
     </div>

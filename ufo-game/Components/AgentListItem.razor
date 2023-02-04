@@ -5,6 +5,7 @@
 @inject ViewStateRefresh ViewStateRefresh
 @inject SickBay SickBay
 @inject Agents Agents
+@inject MissionSite MissionSite
 
 <div class="list-group-item" aria-current="true">
     <div class="container-fluid px-0">
@@ -31,7 +32,7 @@
                     <div class="form-check form-switch ps-0">
                         <input class="form-check-input ms-0" type="checkbox" role="switch" 
                                id="flip_switch_@Index"
-                               disabled="@(!Agent.CanSendOnMission)"
+                               disabled="@(!MissionSite.CurrentlyAvailable || !Agent.CanSendOnMission)"
                                @onchange="@(eventArgs => OnChangeAgentMissionAssignment(eventArgs.Value!))" 
                                checked="@Agent.Data.AssignedToMission"/>
                     </div>

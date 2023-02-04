@@ -87,9 +87,6 @@ public class Agent
             Data.FailedMissions += 1;
         }
 
-        if (recovery > 0)
-            UnassignFromMission();
-
         Data.Recovery += recovery;
     }
 
@@ -106,8 +103,8 @@ public class Agent
         Debug.Assert(_timelineData.CurrentTime >= Data.TimeHired);
         Debug.Assert(Data.AssignedToMission);
         Debug.Assert(IsAtFullHealth, "If an agent got lost, we assume no recovery was computed for them.");
-        RecordMissionOutcome(missionSuccess, recovery: 0);
         UnassignFromMission();
+        RecordMissionOutcome(missionSuccess, recovery: 0);
         Data.TimeLost = _timelineData.CurrentTime;
     }
 
@@ -127,9 +124,9 @@ public class Agent
     public bool Sacked => Data.TimeSacked != 0;
     public bool CanSendOnMission => IsAtFullHealth;
     public bool IsAssignableToMission => CanSendOnMission && !Data.AssignedToMission;
+    private bool IsUnassignableFromMission => IsAtFullHealth && Data.AssignedToMission;
     private bool CouldHaveBeenSentOnMission => IsAtFullHealth;
     private bool IsAtFullHealth => Available && !IsRecovering;
-    private bool IsUnassignableFromMission => IsAtFullHealth && Data.AssignedToMission;
 
     /// <summary>
     /// Agent that was on N missions gets sum of experience from
