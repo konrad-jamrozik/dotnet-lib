@@ -23,13 +23,13 @@ main {
     padding-top: 94.4px;
 }
 
-@media (min-width: 641px) {
-    .page {
-        flex-direction: row;
-    }
-
-    article {
-        padding-left: 2rem !important;
-        padding-right: 1.5rem !important;
-    }
-}
+/* @media (min-width: 641px) { */
+/*     .page { */
+/*         flex-direction: row; */
+/*     } */
+/* */
+/*     article { */
+/*         padding-left: 2rem !important; */
+/*         padding-right: 1.5rem !important; */
+/*     } */
+/* } */
