@@ -112,6 +112,12 @@ a, .btn-link {
     max-width: 385.7px;
 }
 
+/** 
+============================================================
+rules for Deployment.razor & AgentListItem.razor 
+============================================================
+*/
+
 .list-group {
     /* 
         These two properties enable list to wrap not only vertically or only horizontally,
@@ -119,7 +125,8 @@ a, .btn-link {
         As of 2/3/2023 used only in Deployment.razor / AgentListItem.razor 
     */
     flex-direction: row; 
-    flex-wrap: wrap
+    /* ReSharper disable once CssBrowserCompatibility */
+    flex-wrap: wrap;
 }
 
 .list-group-item {
@@ -133,7 +140,6 @@ a, .btn-link {
     */
     width: 100%;
 }
-
 
 .list-group-item+.list-group-item {
     /** Bootstrap by default removes border for two adjacent list group items, 
@@ -155,6 +161,12 @@ a, .btn-link {
     */
     border-top-width: 0.889px;
 }
+
+/** 
+------------------------------------------------------------
+End of rules for Deployment.razor & AgentListItem.razor 
+============================================================
+*/
 
 /**
     kja TODO do .nav-link padding by SASS variables
