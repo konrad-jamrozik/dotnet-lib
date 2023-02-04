@@ -1,3 +1,37 @@
+::deep .oi {
+    width: 2rem;
+    font-size: 1.1rem;
+    vertical-align: text-top;
+    top: -2px;
+}
+
+::deep .top-row .oi {
+    top: -3px;
+    width: 1.1rem;
+}
+
+::deep .top-row .oi.oi-badge {
+    padding-left: 0.25rem;
+    top: -0.5px;
+}
+
+::deep .top-row .oi.oi-calendar {
+    top: -1px;
+    width: 1.5rem;
+}
+
+::deep .top-row .oi.oi-dollar {
+    width: 1.6rem;
+}
+
+::deep .top-row .oi.oi-timer {
+    width: 1.8rem;
+}
+
+::deep .top-row .oi.oi-people {
+    top: -1px;
+    width: 1.6rem;
+}
 
 .navbar-toggler {
     background-color: rgba(255, 255, 255, 0.1);
@@ -11,14 +45,14 @@
     is too low by default; this moves it up a bit.
 */
 .oi.oi-beaker {
-    top: -1px;
+    top: -2.3px;
 }
 
 /* The book icon in NavBar / nav / nav-link 
     is too high by default; this moves it down a bit.
 */
 .oi.oi-book {
-    top: 1.5px;
+    top: 0.3px;
 }
 
 /* .nav-item { */
