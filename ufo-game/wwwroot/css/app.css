@@ -182,4 +182,5 @@ End of rules for Deployment.razor & AgentListItem.razor
     padding-bottom: 0.2rem;
     padding-left: 0rem;
     padding-right: 0rem;
+    max-width: 120px;
 }
