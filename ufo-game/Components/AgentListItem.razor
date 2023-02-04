@@ -6,7 +6,7 @@
 @inject SickBay SickBay
 @inject Agents Agents
 
-<div class="list-group-item list-group-item-action" aria-current="true">
+<div class="list-group-item" aria-current="true">
     <div class="container-fluid px-0">
         <div class="row px-2">
             <div class="col col-auto me-auto">
@@ -52,8 +52,8 @@
                 <CardDataRow Label="Successful missions" Value="@Agent.Data.SuccessfulMissions"/>
                 <CardDataRow Label="Failed missions" Value="@Agent.Data.FailedMissions"/>
                 <CardDataRow Label="Time spent recovering" Value="@Agent.Data.TimeSpentRecovering"/>
-                @* kja the fact this is inside the div instead of being outside (i.e. just above code block) somehow makes the modal busted.
-                    Need to fix it, either by decoupling just the modal from the button, or by figuring out the interferene and fixing it.
+                @* Note that presence of CardButtonWithModal precludes usage of list-group-item-action as its css
+                   class for hover interferes with the modal display.
                 *@
                 <CardButtonWithModal
                     PlayerAction="_sackAgentPlayerAction"
