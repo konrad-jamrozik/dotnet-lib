@@ -7,8 +7,8 @@
 @inject Agents Agents
 
 <div class="list-group-item list-group-item-action" aria-current="true">
-    <div class="container-fluid">
-        <div class="row">
+    <div class="container-fluid px-0">
+        <div class="row px-2">
             <div class="col col-auto me-auto">
                 <div class="row">
                     @* kja Longest name that fits: Stanisława Andruszkiewicz. Need to truncate. *@
@@ -39,28 +39,29 @@
                 </div>
             </div>
         </div>
+        <div class="row collapse px-0" id="agentInfo_@Index">
+            <Card Title="Agent info">
+                <CardDataRow Label="Id" Value="@Agent.Data.Id"/>
+                <CardDataRow Label="Salary" Value="@Agent.Salary"/>
+                <CardDataRow Label="Remaining recovery" Value="@Agent.Data.Recovery"/>
+                <CardDataRow Label="Training time" Value="@Agent.TrainingTime()"/>
+                <CardDataRow Label="Time spent recovering" Value="@Agent.Data.TimeSpentRecovering"/>
+                <CardDataRow Label="Time hired" Value="@Agent.Data.TimeHired"/>
+                <CardDataRow Label="Time employed" Value="@Agent.TimeEmployed()"/>
+                <CardDataRow Label="Total missions" Value="@Agent.TotalMissions"/>
+                <CardDataRow Label="Successful missions" Value="@Agent.Data.SuccessfulMissions"/>
+                <CardDataRow Label="Failed missions" Value="@Agent.Data.FailedMissions"/>
+                <CardDataRow Label="Time spent recovering" Value="@Agent.Data.TimeSpentRecovering"/>
+                <CardButtonWithModal
+                    PlayerAction="_sackAgentPlayerAction"
+                    Index="Index"
+                    Label="Sack agent"
+                    Body="@($"Sack agent {Agent.Data.FullName}?")"/>
+            </Card>
+        </div>
     </div>
 </div>
-<div class="collapse" id="agentInfo_@Index">
-    <Card Title="Agent info">
-        <CardDataRow Label="Id" Value="@Agent.Data.Id" />
-        <CardDataRow Label="Salary" Value="@Agent.Salary"/>
-        <CardDataRow Label="Remaining recovery" Value="@Agent.Data.Recovery" />
-        <CardDataRow Label="Training time" Value="@Agent.TrainingTime()"/>
-        <CardDataRow Label="Time spent recovering" Value="@Agent.Data.TimeSpentRecovering" />
-        <CardDataRow Label="Time hired" Value="@Agent.Data.TimeHired"/>
-        <CardDataRow Label="Time employed" Value="@Agent.TimeEmployed()"/>
-        <CardDataRow Label="Total missions" Value="@Agent.TotalMissions"/>
-        <CardDataRow Label="Successful missions" Value="@Agent.Data.SuccessfulMissions"/>
-        <CardDataRow Label="Failed missions" Value="@Agent.Data.FailedMissions"/>
-        <CardDataRow Label="Time spent recovering" Value="@Agent.Data.TimeSpentRecovering"/>
-        <CardButtonWithModal 
-            PlayerAction="_sackAgentPlayerAction" 
-            Index="Index" 
-            Label="Sack agent" 
-            Body="@($"Sack agent {Agent.Data.FullName}?")"/>
-    </Card>
-</div>
+
 
 @code 
 {

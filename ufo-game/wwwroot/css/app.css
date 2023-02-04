@@ -112,9 +112,41 @@ a, .btn-link {
     max-width: 385.7px;
 }
 
+.list-group {
+    /* 
+        These two properties enable list to wrap not only vertically or only horizontally,
+        but in both, left-to-right, top-to-bottom.
+        As of 2/3/2023 used only in Deployment.razor / AgentListItem.razor 
+    */
+    flex-direction: row; 
+    flex-wrap: wrap
+}
+
 .list-group-item {
     /* Reasoning same as for "card" above. */
     max-width: 385.7px;
+}
+
+
+.list-group-item+.list-group-item {
+    /** Bootstrap by default removes border for two adjacent list group items, 
+        so that when stacked vertically, they are not too thick.
+        But Bootstrap assumes these items are stacked either vertically or horizontally, not both.
+        I am stacking them both by adding 
+        
+          style="flex-direction: row; flex-wrap: wrap"
+        
+        to
+        
+          div class="list-group"
+        
+        hence I want to have this border, otherwise each the top list group item in each row
+        will be missing top border.
+
+        Here I hardcode it to 0.889 as this matches the value computed by Boostrap, but this 
+        is not ideal as it is hardcoded.
+    */
+    border-top-width: 0.889px;
 }
 
 /**
