@@ -169,7 +169,7 @@ End of rules for Deployment.razor & AgentListItem.razor
 */
 
 /**
-    kja TODO do .nav-link padding by SASS variables
+    kja do .nav-link padding by SASS variables
     This is required for 
     NavBar.razor / nav / nav-link
     It should be replaced with adjustement to SASS variables of:

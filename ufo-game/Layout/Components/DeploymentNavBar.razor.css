@@ -1,5 +1,7 @@
 ﻿iconify-icon[icon="icon-park-solid:success"] {
-    width: 1.3rem
+    width: 1.3rem;
+    position: relative; /* by default it is static, preventing "top" from working */
+    top: -1px;
 }
 
 .fist-bump {
