@@ -130,7 +130,7 @@ rules for Deployment.razor & AgentListItem.razor
 }
 
 .list-group-item {
-    /* Reasoning same as for "card" above. */
+    /* Reasoning same as for ".card" above. */
     max-width: 385.7px;
 
     /* Width 100% makes the list item expand to max of its width.
