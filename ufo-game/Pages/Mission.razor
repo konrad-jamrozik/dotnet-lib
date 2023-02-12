@@ -11,6 +11,28 @@
 
 <h1>Mission</h1>
 
+<div class="list-group">
+    @{
+        var indexes = Enumerable.Range(0, 3).Count();
+        for (int i = 0; i < indexes; i++)
+        {
+            <div class="list-group-item container">
+                <div class="row row-cols-auto">
+                    <div class="col me-auto align-self-center">
+                        Item @i
+                    </div>
+                    <div class="col">
+                        <button class="btn btn-primary py-0" type="button"
+                                data-bs-toggle="collapse" data-bs-target="#itemDetails_@i">
+                            i
+                        </button>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+</div>
+
 <div class="accordion" id="accordionExample">
     @{
         var indexes2 = Enumerable.Range(0, 3).Count();
