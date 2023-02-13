@@ -13,6 +13,7 @@ public class MissionLauncher
     private readonly Accounting _accounting;
     private readonly Agents _agents;
     private readonly MissionOutcome _missionOutcome;
+    private readonly MissionEventLogsData _missionEventLogsData;
     private readonly GameState _gameState;
     private readonly ViewStateRefresh _viewStateRefresh;
 
@@ -23,6 +24,7 @@ public class MissionLauncher
         Accounting accounting,
         Agents agents,
         MissionOutcome missionOutcome,
+        MissionEventLogsData missionEventLogsData,
         GameState gameState,
         ViewStateRefresh viewStateRefresh)
     {
@@ -32,6 +34,7 @@ public class MissionLauncher
         _accounting = accounting;
         _agents = agents;
         _missionOutcome = missionOutcome;
+        _missionEventLogsData = missionEventLogsData;
         _gameState = gameState;
         _viewStateRefresh = viewStateRefresh;
     }
@@ -52,6 +55,8 @@ public class MissionLauncher
     {
         Debug.Assert(CanLaunchMission(missionSite));
         Console.Out.WriteLine($"Sent {_agents.AgentsAssignedToMission.Count} agents.");
+        _missionEventLogsData.Reset();
+        _missionEventLogsData.Data.Add(new MissionEventLogData(description: $"Sent {_agents.AgentsAssignedToMission.Count} agents.", details: "N/A"));
 
         (int missionRoll, bool missionSuccessful, List<MissionOutcome.AgentOutcome> agentOutcomes) =
             _missionOutcome.Roll(missionSite.MissionStats, sentAgents: _agents.AgentsAssignedToMission);
@@ -67,11 +72,13 @@ public class MissionLauncher
             agentsLost: agentOutcomes.Count(agent => agent.Lost),
             moneyReward: missionSite.MissionStats.MoneyReward);
 
+        _missionEventLogsData.Data.Add(new MissionEventLogData(description: "Mission concluded.", details: "N/A"));
+
         ApplyAgentOutcomes(missionSuccessful, agentOutcomes);
         ApplyMissionOutcome(missionSite, missionSuccessful, scoreDiff);
 
         _archiveData.ArchiveMission(missionSuccessful);
-        
+
         missionSite.GenerateNewOrClearMission();
 
         _gameState.Persist();

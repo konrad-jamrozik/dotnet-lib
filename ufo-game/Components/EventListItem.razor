@@ -21,14 +21,16 @@
                     i
                 </button>
             </div>
-            @Index Agent 0123456789 0123456789 suffered 123 damage from enemy 01234567890123456789. Agent is incapacitated.
+            @Log.Description
+            @* @Index Agent 0123456789 0123456789 suffered 123 damage from enemy 01234567890123456789. Agent is incapacitated. *@
         </div>
                     
     </div>
     <div class="row collapse px-0" id="eventDetails_@Index">
         <div class="col">
-            Details of item @Index Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
-            labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
+            @Log.Details
+            @* Details of item @Index Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut *@
+            @* labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco *@
         </div>
     </div>
 </div>
@@ -38,4 +40,9 @@
 {
     [Parameter, EditorRequired]
     public int Index { get; set; }
+
+    #nullable disable
+    [Parameter, EditorRequired]
+    public MissionEventLogData Log { get; set; }
+    #nullable enable
 }
