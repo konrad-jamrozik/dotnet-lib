@@ -54,7 +54,6 @@ public class MissionLauncher
     public void LaunchMission(MissionSite missionSite)
     {
         Debug.Assert(CanLaunchMission(missionSite));
-        Console.Out.WriteLine($"Sent {_agents.AgentsAssignedToMission.Count} agents.");
         _missionEventLogsData.Reset();
         _missionEventLogsData.LogAgentsSent(_agents);
 
@@ -124,8 +123,6 @@ public class MissionLauncher
             $"Agents lost: {agentsLost}.";
 
         _missionEventLogsData.LogMissionReport(missionEventSummary, missionReport);
-
-
     }
 
     private void ApplyAgentOutcomes(
