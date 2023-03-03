@@ -20,6 +20,7 @@ public class MissionOutcome
     {
         (int missionRoll, bool missionSuccessful) = RollMissionOutcome(missionStats);
         List<AgentOutcome> agentOutcomes = RollAgentOutcomes(missionStats, sentAgents);
+
         return (missionRoll, missionSuccessful, agentOutcomes);
     }
 
@@ -49,7 +50,8 @@ public class MissionOutcome
             var expBonus = agent.ExperienceBonus();
             var agentSurvivalChance
                 = missionStats.AgentSurvivalChance(expBonus);
-            agentOutcomes.Add(new AgentOutcome(agent, agentRoll, agentSurvivalChance, expBonus));
+            var agentOutcome = new AgentOutcome(agent, agentRoll, agentSurvivalChance, expBonus);
+            agentOutcomes.Add(agentOutcome);
         }
 
         return agentOutcomes;

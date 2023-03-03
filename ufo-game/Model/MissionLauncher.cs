@@ -60,6 +60,8 @@ public class MissionLauncher
         (int missionRoll, bool missionSuccessful, List<MissionOutcome.AgentOutcome> agentOutcomes) =
             _missionOutcome.Roll(missionSite.MissionStats, sentAgents: _agents.AgentsAssignedToMission);
 
+        LogAgentOutcomes(agentOutcomes, missionSuccessful);
+
         int scoreDiff = ScoreDiff(missionSuccessful, factionScore: missionSite.FactionData.Score);
 
         WriteMissionReport(
@@ -80,6 +82,15 @@ public class MissionLauncher
 
         _gameState.Persist();
         _viewStateRefresh.Trigger();
+    }
+
+    private void LogAgentOutcomes(List<MissionOutcome.AgentOutcome> agentOutcomes, bool missionSuccessful)
+    {
+        foreach (var agentOutcome in agentOutcomes)
+            _missionEventLogsData.LogAgentOutcome(missionSuccessful, agentOutcome);
+
+        if (!agentOutcomes.Any(outcome => outcome.Lost))
+            _missionEventLogsData.Add("No agents lost! \\o/");
     }
 
     private void ApplyMissionOutcome(MissionSite missionSite, bool missionSuccessful, int scoreDiff)
@@ -132,8 +143,6 @@ public class MissionLauncher
         List<(Agent agent, bool missionSuccess)> lostAgents = new List<(Agent, bool)>();
         foreach (MissionOutcome.AgentOutcome agentOutcome in agentOutcomes)
         {
-            string messageSuffix = "";
-
             if (agentOutcome.Survived)
             {
                 float recovery = agentOutcome.Recovery(missionSuccessful);
@@ -142,25 +151,14 @@ public class MissionLauncher
                 // so no agent can be assigned to it.
                 agentOutcome.Agent.UnassignFromMission();
                 agentOutcome.Agent.RecordMissionOutcome(missionSuccessful, recovery);
-                messageSuffix = agentOutcome.Survived ? $" Need {recovery} units of recovery." : "";
             }
             else
             {
                 lostAgents.Add((agentOutcome.Agent, missionSuccessful));
             }
-
-            var inequalitySign = agentOutcome.Roll <= agentOutcome.SurvivalChance ? "<=" : ">";
-            _missionEventLogsData.Add(
-                $"Agent #{agentOutcome.Agent.Data.Id} '{agentOutcome.Agent.Data.FullName}' " +
-                $"exp: {agentOutcome.ExpBonus} : " +
-                $"{(agentOutcome.Survived ? "survived" : "lost")}. " +
-                $"Rolled {agentOutcome.Roll} {inequalitySign} {agentOutcome.SurvivalChance}." +
-                messageSuffix);
         }
 
         if (lostAgents.Count > 0)
             _agents.LoseAgents(lostAgents);
-        else
-            _missionEventLogsData.Add("No agents lost! \\o/");
     }
 }
