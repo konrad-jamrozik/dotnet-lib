@@ -4,12 +4,12 @@ namespace UfoGame.Model.Data;
 
 public class MissionEventLogData
 {
-    [JsonInclude] public string Description { get; private set; }
+    [JsonInclude] public string Summary { get; private set; }
     [JsonInclude] public string? Details { get; private set; }
 
-    public MissionEventLogData(string description, string? details = null)
+    public MissionEventLogData(string summary, string? details = null)
     {
-        Description = description;
+        Summary = summary;
         Details = details;
     }
 }

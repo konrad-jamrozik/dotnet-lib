@@ -57,7 +57,7 @@ public class MissionLauncher
         Console.Out.WriteLine($"Sent {_agents.AgentsAssignedToMission.Count} agents.");
         _missionEventLogsData.Reset();
         _missionEventLogsData.Data.Add(
-            new MissionEventLogData(description: $"Sent {_agents.AgentsAssignedToMission.Count} agents."));
+            new MissionEventLogData(summary: $"Sent {_agents.AgentsAssignedToMission.Count} agents."));
 
         (int missionRoll, bool missionSuccessful, List<MissionOutcome.AgentOutcome> agentOutcomes) =
             _missionOutcome.Roll(missionSite.MissionStats, sentAgents: _agents.AgentsAssignedToMission);
@@ -125,7 +125,7 @@ public class MissionLauncher
             $"Agents lost: {agentsLost}.";
 
         _missionEventLogsData.Data.Add(
-            new MissionEventLogData(description: missionEventSummary, details: missionReport));
+            new MissionEventLogData(summary: missionEventSummary, details: missionReport));
     }
 
     private void ApplyAgentOutcomes(
