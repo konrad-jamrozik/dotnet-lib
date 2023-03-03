@@ -150,7 +150,7 @@ public class MissionLauncher
             }
 
             var inequalitySign = agentOutcome.Roll <= agentOutcome.SurvivalChance ? "<=" : ">";
-            Console.Out.WriteLine(
+            _missionEventLogsData.Add(
                 $"Agent #{agentOutcome.Agent.Data.Id} '{agentOutcome.Agent.Data.FullName}' " +
                 $"exp: {agentOutcome.ExpBonus} : " +
                 $"{(agentOutcome.Survived ? "survived" : "lost")}. " +
@@ -161,6 +161,6 @@ public class MissionLauncher
         if (lostAgents.Count > 0)
             _agents.LoseAgents(lostAgents);
         else
-            Console.Out.WriteLine("No agents lost! \\o/");
+            _missionEventLogsData.Add("No agents lost! \\o/");
     }
 }

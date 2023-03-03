@@ -1,14 +1,17 @@
 ﻿using UfoGame.Infra;
+using UfoGame.Model.Data;
 
 namespace UfoGame.Model;
 
 public class MissionOutcome
 {
     private readonly RandomGen _randomGen;
+    private readonly MissionEventLogsData _missionEventLogsData;
 
-    public MissionOutcome(RandomGen randomGen)
+    public MissionOutcome(RandomGen randomGen, MissionEventLogsData missionEventLogsData)
     {
         _randomGen = randomGen;
+        _missionEventLogsData = missionEventLogsData;
     }
 
     public (int missionRoll, bool missionSuccessful, List<AgentOutcome> agentOutcomes) Roll(
@@ -26,7 +29,7 @@ public class MissionOutcome
         // The lower the better.
         int missionRoll = _randomGen.Random.Next(1, 100 + 1);
         bool missionSuccessful = missionRoll <= missionStats.SuccessChance;
-        Console.Out.WriteLine(
+        _missionEventLogsData.Add(
             $"Rolled {missionRoll} against limit of {missionStats.SuccessChance} " +
             $"resulting in {(missionSuccessful ? "success" : "failure")}");
         return (missionRoll, missionSuccessful);

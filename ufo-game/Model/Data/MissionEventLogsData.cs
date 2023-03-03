@@ -12,7 +12,7 @@ public class MissionEventLogsData : IPersistable, IResettable
     public void LogMissionReport(string missionEventSummary, string missionReport)
         => Add(summary: missionEventSummary, details: missionReport);
 
-    private void Add(string summary, string? details = null)
+    public void Add(string summary, string? details = null)
         => Data.Add(new MissionEventLogData(summary, details));
 
     public void Reset()
