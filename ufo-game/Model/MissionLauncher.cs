@@ -56,7 +56,8 @@ public class MissionLauncher
         Debug.Assert(CanLaunchMission(missionSite));
         Console.Out.WriteLine($"Sent {_agents.AgentsAssignedToMission.Count} agents.");
         _missionEventLogsData.Reset();
-        _missionEventLogsData.Data.Add(new MissionEventLogData(description: $"Sent {_agents.AgentsAssignedToMission.Count} agents.", details: "N/A"));
+        _missionEventLogsData.Data.Add(
+            new MissionEventLogData(description: $"Sent {_agents.AgentsAssignedToMission.Count} agents."));
 
         (int missionRoll, bool missionSuccessful, List<MissionOutcome.AgentOutcome> agentOutcomes) =
             _missionOutcome.Roll(missionSite.MissionStats, sentAgents: _agents.AgentsAssignedToMission);
@@ -120,8 +121,8 @@ public class MissionLauncher
 
         string missionEventSummary =
             $"The mission was a {(success ? "success" : "failure")}. " +
-            $"Score: {(success ? "" : "-")}{scoreDiff} " +
-            $"Agents lost: {agentsLost}";
+            $"Score change: {(success ? "" : "-")}{scoreDiff}. " +
+            $"Agents lost: {agentsLost}.";
 
         _missionEventLogsData.Data.Add(
             new MissionEventLogData(description: missionEventSummary, details: missionReport));
