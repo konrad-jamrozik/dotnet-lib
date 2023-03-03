@@ -72,8 +72,6 @@ public class MissionLauncher
             agentsLost: agentOutcomes.Count(agent => agent.Lost),
             moneyReward: missionSite.MissionStats.MoneyReward);
 
-        _missionEventLogsData.Data.Add(new MissionEventLogData(description: "Mission concluded.", details: "N/A"));
-
         ApplyAgentOutcomes(missionSuccessful, agentOutcomes);
         ApplyMissionOutcome(missionSite, missionSuccessful, scoreDiff);
 
@@ -116,8 +114,17 @@ public class MissionLauncher
         string agentsLostReport = agentsLost > 0
             ? $"Number of agents lost: {agentsLost}."
             : "We didn't lose any agents.";
-        _archiveData.WriteLastMissionReport(
-            $"The last mission was {missionSuccessReport} {agentsLostReport}");
+        
+        string missionReport = $"The last mission was {missionSuccessReport} {agentsLostReport}";
+        _archiveData.WriteLastMissionReport(missionReport);
+
+        string missionEventSummary =
+            $"The mission was a {(success ? "success" : "failure")}. " +
+            $"Score: {(success ? "" : "-")}{scoreDiff} " +
+            $"Agents lost: {agentsLost}";
+
+        _missionEventLogsData.Data.Add(
+            new MissionEventLogData(description: missionEventSummary, details: missionReport));
     }
 
     private void ApplyAgentOutcomes(
