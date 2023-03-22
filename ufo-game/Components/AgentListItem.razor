@@ -9,7 +9,12 @@
 
 <div class="list-group-item" aria-current="true">
     <div class="container-fluid px-0">
+        @* Row with the agent list item header: name, important details, button to expand details, etc. *@
         <div class="row px-2">
+            @* The leftmost column of the agent list item header, with name and stats underneath
+                col-auto (not strictly necessary): narrow the cell horizontally to fit the button
+                me-auto (not strictly necessary): expand End Margin to the max, pushing remaining columns to the right
+            *@
             <div class="col col-auto me-auto">
                 <div class="row">
                     @* kja Longest name that fits: Stanisława Andruszkiewicz. Need to truncate. See https://getbootstrap.com/docs/5.3/helpers/text-truncation/ *@
@@ -20,26 +25,32 @@
                     <div class="col">Time to recover: @Agent.TimeToRecover(SickBay.Data.AgentRecoverySpeed)</div>
                 </div>
             </div>
-            <div class="col col-auto align-self-center d-flex justify-content-center">
-                <button class="btn btn-primary" type="button" 
-                        data-bs-toggle="collapse" data-bs-target="#agentInfo_@Index" 
+            @* The middle column of the agent list item header, with the "i" button 
+                col-auto: narrow the cell horizontally to fit the button
+                align-self-center: narrow the button area vertically, to fit the label "i"
+            *@
+            <div class="col col-auto align-self-center">
+                <button class="btn btn-primary" type="button"
+                        data-bs-toggle="collapse" data-bs-target="#agentInfo_@Index"
                         aria-expanded="false" aria-controls="agentInfo_@Index">
                     i
                 </button>
             </div>
+            @* The rightmost column of the agent list item header, with the slider and "send" label underneath *@
             <div class="col col-auto px-0">
                 <div class="d-flex flex-column align-items-center">
                     <div class="form-check form-switch ps-0">
-                        <input class="form-check-input ms-0" type="checkbox" role="switch" 
+                        <input class="form-check-input ms-0" type="checkbox" role="switch"
                                id="flip_switch_@Index"
                                disabled="@(!MissionSite.CurrentlyAvailable || !Agent.CanSendOnMission)"
-                               @onchange="@(eventArgs => OnChangeAgentMissionAssignment(eventArgs.Value!))" 
+                               @onchange="@(eventArgs => OnChangeAgentMissionAssignment(eventArgs.Value!))"
                                checked="@Agent.Data.AssignedToMission"/>
                     </div>
                     <label class="form-check-label" for="flip_switch_@Index">Send</label>
                 </div>
             </div>
         </div>
+        @* Row, hidden by default, with the agent details card. *@
         <div class="row collapse px-0" id="agentInfo_@Index">
             <Card Title="Agent info">
                 <CardDataRow Label="Id" Value="@Agent.Data.Id"/>
@@ -65,7 +76,6 @@
         </div>
     </div>
 </div>
-
 
 @code 
 {

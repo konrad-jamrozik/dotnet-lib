@@ -7,7 +7,6 @@
 @inject Agents Agents
 @inject MissionSite MissionSite
 
-@* kja WIP: EventListItem.razor *@
 @* kja use SASS variables (or maybe just CSS variables is enough?) to replace py-1, px-2
                https://getbootstrap.com/docs/5.3/components/accordion/#sass-variables
                https://getbootstrap.com/docs/5.3/customize/css-variables/
@@ -17,6 +16,7 @@
         <div class="col">
             @if (Log.Details != null)
             {
+                @* Show the "i" button in upper-right corner that expands the details view when clicked. *@
                 <div class="float-end ms-1">
                     <button class="btn btn-secondary py-0" type="button"
                             data-bs-toggle="collapse" data-bs-target="#eventDetails_@Index">
@@ -30,6 +30,7 @@
     </div>
     @if (Log.Details != null)
     {
+        @* The details view that gets expanded when the "i" button in upper-right corner is clicked. *@
         <div class="row collapse px-0" id="eventDetails_@Index">
             <div class="col">
                 @Log.Details

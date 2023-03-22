@@ -3,6 +3,7 @@ using static UfoGame.Model.MissionOutcome;
 
 namespace UfoGame.Model.Data;
 
+// kja wip: stuff logged here should be added to the /mission page as well as to console.out
 public class MissionEventLogsData : IPersistable, IResettable
 {
     [JsonInclude] public List<MissionEventLogData> Data = new List<MissionEventLogData>();

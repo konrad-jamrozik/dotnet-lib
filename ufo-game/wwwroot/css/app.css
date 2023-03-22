@@ -101,8 +101,8 @@ a, .btn-link {
     }
 
 .card {
-    /* This ensures that cards are always not much wider than Pixel 5  thus 
-    preventing horizontal large gap between label and value in CardDataRow.
+    /* This ensures that cards are always not much wider than Pixel 5 thus 
+    preventing large horizontal gap between label and value in CardDataRow.
     It also helps detecting any mobile layout issues when working 
     on a wide screen.
 
@@ -156,7 +156,7 @@ rules for Deployment.razor & AgentListItem.razor
         hence I want to have this border, otherwise each the top list group item in each row
         will be missing top border.
 
-        Here I hardcode it to 0.889 as this matches the value computed by Boostrap, but this 
+        Here I hardcode it to 0.889 as this matches the value computed by Bootstrap, but this 
         is not ideal as it is hardcoded.
     */
     border-top-width: 0.889px;
