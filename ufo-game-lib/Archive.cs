@@ -1,7 +1,7 @@
 namespace UfoGameLib;
 
-public class Archive
+public record Archive
 {
-    public int AgentsHiredCount { get; }
-    public int MissionsLaunchedCount { get; }
+    public int AgentsHiredCount { get; set; }
+    public int MissionsLaunchedCount { get; set; }
 }

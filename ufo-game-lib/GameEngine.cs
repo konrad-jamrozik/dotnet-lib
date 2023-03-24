@@ -4,13 +4,14 @@ public class GameEngine
 {
     public GameState NewInitialGameState()
     {
-        throw new NotImplementedException();
+        return new GameState(new Archive());
     }
 
     public (GameState nextGameState, GameStateComputationLog log) ComputeNextGameState(
         GameState gameState,
         PlayerActions playerActions)
     {
-        throw new NotImplementedException();
+        GameState modifiedGameState = playerActions.Apply(gameState);
+        return (modifiedGameState, new GameStateComputationLog());
     }
 }

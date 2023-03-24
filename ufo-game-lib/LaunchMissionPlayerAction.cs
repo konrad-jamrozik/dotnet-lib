@@ -8,4 +8,9 @@ public class LaunchMissionPlayerAction : PlayerAction
     {
         AgentsCount = agentsCount;
     }
+
+    public override void Apply(GameState gameState)
+    {
+        gameState.Archive.MissionsLaunchedCount += 1;
+    }
 }

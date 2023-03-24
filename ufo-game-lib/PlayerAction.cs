@@ -1,6 +1,6 @@
 namespace UfoGameLib;
 
-public class PlayerAction
+public abstract class PlayerAction
 {
-
+    public abstract void Apply(GameState gameState);
 }

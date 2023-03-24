@@ -8,4 +8,9 @@ public class HireAgentsPlayerAction : PlayerAction
     {
         Count = count;
     }
+
+    public override void Apply(GameState gameState)
+    {
+        gameState.Archive.AgentsHiredCount += Count;
+    }
 }
