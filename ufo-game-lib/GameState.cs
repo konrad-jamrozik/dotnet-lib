@@ -1,6 +1,10 @@
 namespace UfoGameLib;
 
-public record GameState(Archive Archive)
+public record GameState(Timeline Timeline, Archive Archive)
 {
-    protected GameState(GameState original) => Archive = original.Archive with {};
+    protected GameState(GameState original)
+    {
+        Timeline = original.Timeline with { };
+        Archive = original.Archive with { };
+    }
 }

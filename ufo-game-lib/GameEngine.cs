@@ -4,7 +4,7 @@ public class GameEngine
 {
     public GameState NewInitialGameState()
     {
-        return new GameState(new Archive());
+        return new GameState(new Timeline(CurrentTurn: 0), new Archive());
     }
 
     public (GameState nextGameState, GameStateComputationLog log) ComputeNextGameState(
@@ -12,6 +12,7 @@ public class GameEngine
         PlayerActions playerActions)
     {
         GameState modifiedGameState = playerActions.Apply(gameState);
+        modifiedGameState.Timeline.CurrentTurn++;
         return (modifiedGameState, new GameStateComputationLog());
     }
 }
