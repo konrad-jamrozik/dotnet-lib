@@ -13,6 +13,10 @@ public record GameState(Timeline Timeline, Assets Assets, Missions Missions)
         Timeline = original.Timeline with { };
         Assets = original.Assets with { };
         Missions = (Missions)original.Missions.Clone();
+        // Do I really need to clone everything? I guess agents and missions
+        // that have been "archived" can be considered read-only and thus don't
+        // need to be cloned any more. I will worry about this later, when
+        // perf. benchmarking will prove that excessive cloning is on a hot path.
     }
 
     public bool GameOver => Assets.CurrentMoney < 0;
