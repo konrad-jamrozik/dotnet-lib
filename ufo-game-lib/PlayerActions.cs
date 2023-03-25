@@ -1,18 +1,15 @@
+using System.Diagnostics;
+
 namespace UfoGameLib;
 
-public class PlayerActions
+public class PlayerActions : List<PlayerAction>
 {
-    public List<PlayerAction> Actions;
-
-    public PlayerActions(params PlayerAction[] actions)
+    public PlayerActions(IEnumerable<PlayerAction> actions) : base(actions)
     {
-        Actions = actions.ToList();
     }
 
-    public GameState Apply(GameState gameState)
+    public void Apply(GameState state)
     {
-        GameState gameStateCopy = gameState with { };
-        Actions.ForEach(action => action.Apply(gameStateCopy));
-        return gameStateCopy;
+        ForEach(action => action.Apply(state));
     }
 }

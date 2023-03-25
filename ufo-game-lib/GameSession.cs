@@ -2,20 +2,29 @@ namespace UfoGameLib;
 
 public class GameSession
 {
-    private readonly GameEngine _gameEngine;
-    public readonly List<GameState> GameStates;
+    public readonly List<GameState> GameStates = new List<GameState> { GameState.NewInitialGameState() };
     public GameState CurrentGameState => GameStates.Last();
 
-    public GameSession()
+    public void ApplyPlayerActions(params PlayerAction[] actionsData)
     {
-        _gameEngine = new GameEngine();
-        GameStates = new List<GameState> {_gameEngine.NewInitialGameState() };
+        PlayerActions actions = new PlayerActions(actionsData);
+        (GameState updatedState, GameStateUpdateLog log) = UpdateGameState(CurrentGameState, actions);
+
+        GameStates.Add(updatedState);
+
+        // Keep only the most recent game states.
+        if (GameStates.Count > 5)
+            GameStates.RemoveAt(0);
+        Debug.Assert(GameStates.Count <= 5);
     }
 
-    public void ApplyPlayerActions(params PlayerAction[] actions)
+    private (GameState updatedState, GameStateUpdateLog log) UpdateGameState(
+        GameState state,
+        PlayerActions actions)
     {
-        PlayerActions playerActions = new PlayerActions(actions);
-        (GameState nextGameState, GameStateComputationLog log) = _gameEngine.ComputeNextGameState(CurrentGameState, playerActions);
-        GameStates.Add(nextGameState);
+        Debug.Assert(!state.GameOver);
+        GameState updatedState = state with { };
+        actions.Apply(updatedState);
+        return (updatedState, new GameStateUpdateLog());
     }
 }

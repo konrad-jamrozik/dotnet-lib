@@ -9,8 +9,11 @@ public class HireAgentsPlayerAction : PlayerAction
         Count = count;
     }
 
-    public override void Apply(GameState gameState)
+    public override void Apply(GameState state)
     {
-        gameState.Archive.AgentsHiredCount += Count;
+        for (int i = 0; i < Count; i++)
+            state.Assets.Agents.Add(new Agent(state.NextAgentId));
+
+        state.Archive.AgentsHiredCount += Count;
     }
 }
