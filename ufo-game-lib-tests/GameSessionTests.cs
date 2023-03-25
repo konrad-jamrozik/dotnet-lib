@@ -44,8 +44,8 @@ public class GameSessionTests
             () =>
             {
                 Assert.That(startingGameState.Timeline.CurrentTurn, Is.EqualTo(0));
-                Assert.That(startingGameState.Archive.AgentsHiredCount, Is.EqualTo(0));
-                Assert.That(startingGameState.Archive.MissionsLaunchedCount, Is.EqualTo(0));
+                Assert.That(startingGameState.Assets.Agents.Count, Is.EqualTo(0));
+                Assert.That(startingGameState.Missions.Count, Is.EqualTo(0));
             });
 
         // Act
@@ -58,10 +58,12 @@ public class GameSessionTests
 
         Assert.Multiple(() => {
             Assert.That(finalGameState.Timeline.CurrentTurn, Is.EqualTo(2), "currentTurn");
-            Assert.That(finalGameState.Archive.AgentsHiredCount, Is.EqualTo(3), "agentsHiredCount");
-            Assert.That(finalGameState.Archive.MissionsLaunchedCount, Is.EqualTo(1), "missionsLaunchedCount");
+            Assert.That(finalGameState.Assets.Agents.Count, Is.EqualTo(3), "agentsHiredCount");
+            Assert.That(finalGameState.Missions.Count, Is.EqualTo(1), "missionsLaunchedCount");
 
             Assert.That(startingGameState, Is.EqualTo(sim.GameSession.GameStates.First()), "states are different");
+            Assert.That(startingGameState.Assets.Agents, Is.Not.EqualTo(finalGameState.Assets.Agents));
+            Assert.That(startingGameState.Missions, Is.Not.EqualTo(finalGameState.Missions));
         });
     }
 }

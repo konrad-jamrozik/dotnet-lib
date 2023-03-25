@@ -11,6 +11,6 @@ public class LaunchMissionPlayerAction : PlayerAction
 
     public override void Apply(GameState state)
     {
-        state.Archive.MissionsLaunchedCount += 1;
+        state.Missions.Add(new Mission(state.NextMissionId));
     }
 }

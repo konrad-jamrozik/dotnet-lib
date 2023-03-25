@@ -13,7 +13,5 @@ public class HireAgentsPlayerAction : PlayerAction
     {
         for (int i = 0; i < Count; i++)
             state.Assets.Agents.Add(new Agent(state.NextAgentId));
-
-        state.Archive.AgentsHiredCount += Count;
     }
 }
