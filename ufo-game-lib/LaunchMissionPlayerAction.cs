@@ -2,11 +2,11 @@ namespace UfoGameLib;
 
 public class LaunchMissionPlayerAction : PlayerAction
 {
-    public int AgentsCount { get; }
+    public int AgentCount { get; }
 
-    public LaunchMissionPlayerAction(int agentsCount)
+    public LaunchMissionPlayerAction(int agentCount)
     {
-        AgentsCount = agentsCount;
+        AgentCount = agentCount;
     }
 
     public override void Apply(GameState gameState)
