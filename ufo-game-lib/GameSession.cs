@@ -12,7 +12,10 @@ public class GameSession
 
         GameStates.Add(updatedState);
 
-        // Keep only the most recent game states.
+        // Keep only the most recent game states to avoid eating too much memory.
+        // Consider that every GameState keeps track of all missions, so
+        // the space usage grows O(state_count * mission_count). Similar
+        // with agents.
         if (GameStates.Count > 5)
             GameStates.RemoveAt(0);
         Debug.Assert(GameStates.Count <= 5);
