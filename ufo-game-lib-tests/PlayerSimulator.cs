@@ -12,4 +12,9 @@ public class PlayerSimulator
 
     public void LaunchMission(int agentCount)
         => GameSession.ApplyPlayerActions(new LaunchMissionPlayerAction(agentCount));
+
+    public void FireAgents(IEnumerable<string> agentNames)
+    {
+        throw new NotImplementedException();
+    }
 }
