@@ -7,21 +7,53 @@ public class GameSessionTests
     {
     }
 
-    // kja 2 upcoming work:
+    // kja overall work plan:
     // reimplement a bit more logic
+    //   do so by starting with enumerating the to-implement capabilities of AutomatedPlayer.
+    //   Inheritance hierarchy:
+    //     HumanPlayer     : Player
+    //     AutomatedPlayer : Player
+    //   A Player can invoke GameSessionController methods to exert actions upon the game world.
+    //   Player can also invoke methods on GameSessionController to query player-visible parts of GameState.
+    //
+    //   AutomatedPlayer has a method like .PlayFullGameSession(GameSessionController) that allows it to play
+    //   the game session until the end, using its internal logic.
+    //
+    //   HumanPlayer doesn't have it, as it doesn't make any sense - HumanPlayer class reads input from
+    //   an actual human, fwds them to the GameSessionController, and returns the output back to the human.
+    //
+    //   Actually, having HumanPlayer seems dumb - see comments on ufo-game-cli.
+    //   So maybe the actual idea is like that, with following scenarios possible:
+    //                            AutomatedPlayer <--> GameSessionController <--> GameSession
+    //               Human <--.exe--> CLI Program <--> GameSessionController <--> GameSession
+    //   automated process <--.exe--> CLI Program <--> GameSessionController <--> GameSession
+    //
+    //   Here the GameSessionController provides convenience methods and by default restricts
+    //   access, unless admin-mode methods are invoked. They may require passing as argument
+    //   some form of "capability" (~permission), or the entire Controller needs to be instantiated
+    //   in admin mode, e.g. via inheritance, e.g. GameSessionAdmin(or Debug)Controller
+    //
     // implement IPersistable
     //   write unit tests confirming it works
+    //
     // implement IResettable
     //   write unit tests confirming it works
+    //
     // implement ITemporal
     //   write unit tests confirming it works
+    //
     // generate CLI interface based on available PlayerActions and contents of GameState
+    //
     // generate API Controller methods for REST API generation
+    //
     // deploy the game server with REST API locally
+    //
     // deploy the game server with REST API to Azure
+    //
     // generate swagger UI from the controller methods
+    //
     // when available, interface with the swagger UI via LLM, or with CLI by using GH CLI Copilot
-
+    //
     // Test strategy:
     // - One basic happy path test, showcasing concrete steps how player could interact with the API,
     // via usage of player simulator.
