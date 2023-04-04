@@ -5,6 +5,20 @@ public class GameSession
     public readonly List<GameState> GameStates = new List<GameState> { GameState.NewInitialGameState() };
     public GameState CurrentGameState => GameStates.Last();
 
+    public void AdvanceTime()
+        => ApplyPlayerActions(new AdvanceTimePlayerAction());
+
+    public void HireAgents(int count)
+        => ApplyPlayerActions(new HireAgentsPlayerAction(count));
+
+    public void LaunchMission(int agentCount)
+        => ApplyPlayerActions(new LaunchMissionPlayerAction(agentCount));
+
+    public void FireAgents(IEnumerable<string> agentNames)
+    {
+        throw new NotImplementedException();
+    }
+
     public void ApplyPlayerActions(params PlayerAction[] actionsData)
     {
         PlayerActions actions = new PlayerActions(actionsData);

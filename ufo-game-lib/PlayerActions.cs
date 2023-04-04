@@ -1,5 +1,3 @@
-using System.Diagnostics;
-
 namespace UfoGameLib;
 
 public class PlayerActions : List<PlayerAction>

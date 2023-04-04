@@ -26,8 +26,8 @@ public class GameSessionTests
     // - One basic happy path test, showcasing concrete steps how player could interact with the API,
     // via usage of player simulator.
     // - Smart player simulators, actually playing the game, designed in a way to exercise its features.
-    //   - Such simulators will exercise all of game logic by design, and some assertions may get made if given
-    //     feature was used at all.
+    //   - Such simulators will exercise all of the game logic by design, and I could add assertions checking
+    //     if given feature was used at least once during the simulated run.
     //   - Game sessions executed by this players will be captured as unit tests, by fixing appropriate
     //     random seed and letting the simulator play.
     // - All code augmented with strong suite of invariants: preconditions, postconditions, assertions.
@@ -36,9 +36,9 @@ public class GameSessionTests
     [Test]
     public void ConductBasicHappyPathGameSession()
     {
-        PlayerSimulator sim = new PlayerSimulator();
+        GameSession gameSession = new GameSession();
 
-        var startingGameState = sim.GameSession.CurrentGameState;
+        var startingGameState = gameSession.CurrentGameState;
 
         Assert.Multiple(
             () =>
@@ -49,19 +49,19 @@ public class GameSessionTests
             });
 
         // Act
-        sim.HireAgents(count: 3);
-        sim.AdvanceTime();
-        sim.LaunchMission(agentCount: 3);
-        sim.AdvanceTime();
+        gameSession.HireAgents(count: 3);
+        gameSession.AdvanceTime();
+        gameSession.LaunchMission(agentCount: 3);
+        gameSession.AdvanceTime();
 
-        var finalGameState = sim.GameSession.CurrentGameState;
+        var finalGameState = gameSession.CurrentGameState;
 
         Assert.Multiple(() => {
             Assert.That(finalGameState.Timeline.CurrentTurn, Is.EqualTo(2), "currentTurn");
             Assert.That(finalGameState.Assets.Agents.Count, Is.EqualTo(3), "agentsHiredCount");
             Assert.That(finalGameState.Missions.Count, Is.EqualTo(1), "missionsLaunchedCount");
 
-            Assert.That(startingGameState, Is.EqualTo(sim.GameSession.GameStates.First()), "states are different");
+            Assert.That(startingGameState, Is.EqualTo(gameSession.GameStates.First()), "states should be equal");
             Assert.That(startingGameState.Assets.Agents, Is.Not.EqualTo(finalGameState.Assets.Agents));
             Assert.That(startingGameState.Missions, Is.Not.EqualTo(finalGameState.Missions));
         });

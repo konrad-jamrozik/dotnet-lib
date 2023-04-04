@@ -1,6 +1,5 @@
 ﻿using CommandLine;
-using UfoGameLib.Tests;
-using System;
+using UfoGameLib;
 
 namespace UfoGameCli;
 
@@ -8,41 +7,42 @@ internal static class Program
 {
     static void Main(string[] args)
     {
-        var playerSimulator = new PlayerSimulator();
+        var gameSession = new GameSession();
 
         Parser.Default.ParseArguments<AdvanceTimeOptions, HireAgentsOptions, LaunchMissionOptions>(args)
-            .WithParsed<AdvanceTimeOptions>(options => ExecuteAdvanceTime(playerSimulator))
-            .WithParsed<HireAgentsOptions>(options => ExecuteHireAgents(playerSimulator, options.AgentCount))
+            .WithParsed<AdvanceTimeOptions>(options => ExecuteAdvanceTime(gameSession))
+            .WithParsed<HireAgentsOptions>(options => ExecuteHireAgents(gameSession, options.AgentCount))
             .WithParsed<LaunchMissionOptions>(
-                options => ExecuteLaunchMission(playerSimulator, options.AgentCount, options.Region))
-            .WithParsed<FireAgentsOptions>(options => ExecuteFireAgents(playerSimulator, options.AgentNames));
+                options => ExecuteLaunchMission(gameSession, options.AgentCount, options.Region))
+            .WithParsed<FireAgentsOptions>(options => ExecuteFireAgents(gameSession, options.AgentNames));
     }
 
-    static void ExecuteAdvanceTime(PlayerSimulator playerSimulator)
+    static void ExecuteAdvanceTime(GameSession gameSession)
     {
-        playerSimulator.AdvanceTime();
+        gameSession.AdvanceTime();
         Console.WriteLine("Time advanced.");
     }
 
-    static void ExecuteHireAgents(PlayerSimulator playerSimulator, int count)
+    static void ExecuteHireAgents(GameSession gameSession, int count)
     {
-        playerSimulator.HireAgents(count);
+        gameSession.HireAgents(count);
         Console.WriteLine($"Hired {count} agents.");
     }
 
-    static void ExecuteLaunchMission(PlayerSimulator playerSimulator, int count, string region)
+    static void ExecuteLaunchMission(GameSession gameSession, int count, string region)
     {
-        playerSimulator.LaunchMission(count);
+        gameSession.LaunchMission(count);
         Console.WriteLine($"Launched mission with {count} agents in region {region}.");
     }
 
-    static void ExecuteFireAgents(PlayerSimulator playerSimulator, IEnumerable<string> agentNames)
+    static void ExecuteFireAgents(GameSession gameSession, IEnumerable<string> agentNames)
     {
-        playerSimulator.FireAgents(agentNames);
+        gameSession.FireAgents(agentNames);
         Console.WriteLine($"Fired agents: {string.Join(", ", agentNames)}");
     }
 }
 
+// ReSharper disable ClassNeverInstantiated.Global
 [Verb("advance-time", HelpText = "Advance the game time.")]
 class AdvanceTimeOptions
 {
@@ -71,3 +71,4 @@ class FireAgentsOptions
     [Option('n', "names", Required = true, Separator = ',', HelpText = "Comma-separated list of agent names to fire.")]
     public IEnumerable<string> AgentNames { get; set; } = new List<string>();
 }
+// ReSharper restore ClassNeverInstantiated.Global
