@@ -27,11 +27,27 @@ public class GameSessionTests
     //                            AutomatedPlayer <--> GameSessionController <--> GameSession
     //               Human <--.exe--> CLI Program <--> GameSessionController <--> GameSession
     //   automated process <--.exe--> CLI Program <--> GameSessionController <--> GameSession
+    //   special case: use CLI program to start a new game session and launch AutomatedPlayer
+    //     to play it.
     //
     //   Here the GameSessionController provides convenience methods and by default restricts
     //   access, unless admin-mode methods are invoked. They may require passing as argument
     //   some form of "capability" (~permission), or the entire Controller needs to be instantiated
     //   in admin mode, e.g. via inheritance, e.g. GameSessionAdmin(or Debug)Controller
+    //   E.g. something like: the CLI can access full GameState via GameSessionController or do "invalid" operations
+    //   (like player conjuring lots of money) but for that it needs to pass "-cheat" (or "-debug") flag.
+    //   And the GameSessionController "cheaty" method implementations do precondition check
+    //   if the "-cheat" flag was passed. This would prevent human or process using CLI to avoid using the flag,
+    //   but AutomatedPlayer could still do it. Which is fine I guess, no need to restrict it.
+    //   Alternatively, maybe there should be a separate class, like CheatingGameSessionController, that
+    //   maybe just inherits from GameSessionController to provide full access to GameSession state + cheat methods.
+    //   Then AutomatedPlayer would only use GameSessionController and any implementers of it thus would only have
+    //   access to it, not CheatingGameSessionController.
+    //
+    //   Maybe I need something like Abstract Factory pattern? Where GameSession has GameState,
+    //   but a derived GameSession, like GameSessionForPlayer : GameSession,
+    //   narrows down the GameState property to be PlayerVisibleGameState : GameState.
+    //   https://www.dofactory.com/net/abstract-factory-design-pattern
     //
     // implement IPersistable
     //   write unit tests confirming it works
