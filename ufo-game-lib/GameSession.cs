@@ -1,5 +1,13 @@
 namespace UfoGameLib;
 
+/// <summary>
+/// GameSession represent an instance of a game session (playthrough).
+///
+/// As such, it maintains a reference to current GameState as well as few most recent states for limited undo capability.
+/// In addition, it allows updating of the game state by applying PlayerActions.
+///
+/// GameSession must be accessed directly only by GameSessionController.
+/// </summary>
 public class GameSession
 {
     public readonly List<GameState> GameStates = new List<GameState> { GameState.NewInitialGameState() };
