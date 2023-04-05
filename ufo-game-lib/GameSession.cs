@@ -16,21 +16,12 @@ public class GameSession
     // See also comment in GameSessionTests
     public GameState CurrentGameState => GameStates.Last();
 
-    public void AdvanceTime()
-        => ApplyPlayerActions(new AdvanceTimePlayerAction());
-
-    public void HireAgents(int count)
-        => ApplyPlayerActions(new HireAgentsPlayerAction(count));
-
-    public void LaunchMission(int agentCount)
-        => ApplyPlayerActions(new LaunchMissionPlayerAction(agentCount));
-
     public void FireAgents(IEnumerable<string> agentNames)
     {
         throw new NotImplementedException();
     }
 
-    private void ApplyPlayerActions(params PlayerAction[] actionsData)
+    public void ApplyPlayerActions(params PlayerAction[] actionsData)
     {
         PlayerActions actions = new PlayerActions(actionsData);
         (GameState updatedState, GameStateUpdateLog log) = UpdateGameState(CurrentGameState, actions);

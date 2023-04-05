@@ -7,17 +7,17 @@ internal static class Program
 {
     static void Main(string[] args)
     {
-        var gameSession = new GameSession();
+        var game = new GameSessionController(new GameSession());
 
         Parser.Default.ParseArguments<AdvanceTimeOptions, HireAgentsOptions, LaunchMissionOptions>(args)
-            .WithParsed<AdvanceTimeOptions>(options => ExecuteAdvanceTime(gameSession))
-            .WithParsed<HireAgentsOptions>(options => ExecuteHireAgents(gameSession, options.AgentCount))
+            .WithParsed<AdvanceTimeOptions>(options => InvokeAdvanceTime(game))
+            .WithParsed<HireAgentsOptions>(options => InvokeHireAgents(game, options.AgentCount))
             .WithParsed<LaunchMissionOptions>(
-                options => ExecuteLaunchMission(gameSession, options.AgentCount, options.Region))
-            .WithParsed<FireAgentsOptions>(options => ExecuteFireAgents(gameSession, options.AgentNames));
+                options => InvokeLaunchMission(game, options.AgentCount, options.Region))
+            .WithParsed<FireAgentsOptions>(options => InvokeFireAgents(game, options.AgentNames));
     }
 
-    static void ExecuteAdvanceTime(GameSession gameSession)
+    static void InvokeAdvanceTime(GameSessionController game)
     {
         // kja what should this be called?
         // gameSession means it gives it full access to GameState, which is not desired for human player
@@ -31,25 +31,25 @@ internal static class Program
         // invoke a CLI command that starts a new GameSession or loads and existing one. This would be done
         // via GameController. At this stage one would also determine if to enable cheating.
 
-        gameSession.AdvanceTime();
+        game.AdvanceTime();
         Console.WriteLine("Time advanced.");
     }
 
-    static void ExecuteHireAgents(GameSession gameSession, int count)
+    static void InvokeHireAgents(GameSessionController game, int count)
     {
-        gameSession.HireAgents(count);
+        game.HireAgents(count);
         Console.WriteLine($"Hired {count} agents.");
     }
 
-    static void ExecuteLaunchMission(GameSession gameSession, int count, string region)
+    static void InvokeLaunchMission(GameSessionController game, int count, string region)
     {
-        gameSession.LaunchMission(count);
+        game.LaunchMission(count);
         Console.WriteLine($"Launched mission with {count} agents in region {region}.");
     }
 
-    static void ExecuteFireAgents(GameSession gameSession, IEnumerable<string> agentNames)
+    static void InvokeFireAgents(GameSessionController game, IEnumerable<string> agentNames)
     {
-        gameSession.FireAgents(agentNames);
+        game.FireAgents(agentNames);
         Console.WriteLine($"Fired agents: {string.Join(", ", agentNames)}");
     }
 }
