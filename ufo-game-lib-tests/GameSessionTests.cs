@@ -8,46 +8,10 @@ public class GameSessionTests
     }
 
     // kja overall work plan:
+    // implement first AIPlayer
+    //
     // reimplement a bit more logic
-    //   do so by starting with enumerating the to-implement capabilities of AutomatedPlayer.
-    //   Inheritance hierarchy:
-    //     HumanPlayer     : Player
-    //     AutomatedPlayer : Player
-    //   A Player can invoke GameSessionController methods to exert actions upon the game world.
-    //   Player can also invoke methods on GameSessionController to query player-visible parts of GameState.
-    //
-    //   AutomatedPlayer has a method like .PlayFullGameSession(GameSessionController) that allows it to play
-    //   the game session until the end, using its internal logic.
-    //
-    //   HumanPlayer doesn't have it, as it doesn't make any sense - HumanPlayer class reads input from
-    //   an actual human, fwds them to the GameSessionController, and returns the output back to the human.
-    //
-    //   Actually, having HumanPlayer seems dumb - see comments on ufo-game-cli.
-    //   So maybe the actual idea is like that, with following scenarios possible:
-    //                            AutomatedPlayer <--> GameSessionController <--> GameSession
-    //               Human <--.exe--> CLI Program <--> GameSessionController <--> GameSession
-    //   automated process <--.exe--> CLI Program <--> GameSessionController <--> GameSession
-    //   special case: use CLI program to start a new game session and launch AutomatedPlayer
-    //     to play it.
-    //
-    //   Here the GameSessionController provides convenience methods and by default restricts
-    //   access, unless admin-mode methods are invoked. They may require passing as argument
-    //   some form of "capability" (~permission), or the entire Controller needs to be instantiated
-    //   in admin mode, e.g. via inheritance, e.g. GameSessionAdmin(or Debug)Controller
-    //   E.g. something like: the CLI can access full GameState via GameSessionController or do "invalid" operations
-    //   (like player conjuring lots of money) but for that it needs to pass "-cheat" (or "-debug") flag.
-    //   And the GameSessionController "cheaty" method implementations do precondition check
-    //   if the "-cheat" flag was passed. This would prevent human or process using CLI to avoid using the flag,
-    //   but AutomatedPlayer could still do it. Which is fine I guess, no need to restrict it.
-    //   Alternatively, maybe there should be a separate class, like CheatingGameSessionController, that
-    //   maybe just inherits from GameSessionController to provide full access to GameSession state + cheat methods.
-    //   Then AutomatedPlayer would only use GameSessionController and any implementers of it thus would only have
-    //   access to it, not CheatingGameSessionController.
-    //
-    //   Maybe I need something like Abstract Factory pattern? Where GameSession has GameState,
-    //   but a derived GameSession, like GameSessionForPlayer : GameSession,
-    //   narrows down the GameState property to be PlayerVisibleGameState : GameState.
-    //   https://www.dofactory.com/net/abstract-factory-design-pattern
+    //   start by adding new capabilities to AIPlayer (as if it tried to do a new thing) and implement going from there.
     //
     // implement IPersistable
     //   write unit tests confirming it works
