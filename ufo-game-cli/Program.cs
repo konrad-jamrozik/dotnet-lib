@@ -1,6 +1,6 @@
 ﻿using CommandLine;
-using UfoGameLib;
 using UfoGameLib.Infra;
+using UfoGameLib.Model;
 
 namespace UfoGameCli;
 
@@ -38,7 +38,7 @@ internal static class Program
 
     static void InvokeLaunchMission(GameSessionController game, int count, string region)
     {
-        game.LaunchMission(count);
+        game.LaunchMission(new Mission(0), count); // kja fix 'new Mission(0)'
         Console.WriteLine($"Launched mission with {count} agents in region {region}.");
     }
 

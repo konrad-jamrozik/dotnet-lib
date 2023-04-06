@@ -1,4 +1,5 @@
 using UfoGameLib.Infra;
+using UfoGameLib.Model;
 
 namespace UfoGameLib;
 
@@ -13,6 +14,18 @@ public class AIPlayer
 
     public void PlayGame()
     {
+        while (!_game.IsGameOver)
+        {
+            List<Mission> availableMissions = _game.AvailableMissions;
+            while (availableMissions.Any() && _game.TransportCapacity > 0)
+            {
+                var targetMission = availableMissions.First();
+                var missingAgents = Math.Max(_game.TransportCapacity - _game.Agents.Count, 0);
+                _game.HireAgents(missingAgents);
+                _game.LaunchMission(targetMission, _game.Agents.Count);
+            }
+            _game.AdvanceTime();
+        }
         // kja to implement AI Player
         // First level:
         // - Advance time until mission available

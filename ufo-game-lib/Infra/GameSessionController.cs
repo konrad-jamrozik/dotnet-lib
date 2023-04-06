@@ -1,3 +1,5 @@
+using UfoGameLib.Model;
+
 namespace UfoGameLib.Infra;
 
 /// <summary>
@@ -38,6 +40,13 @@ public class GameSessionController
         GameSession = gameSession;
     }
 
+    // kja for now, game ends in 10 turns, for testing purposes.
+    // kja instead of these drilldowns, return to the caller: GameSession.CurrentGameState.PlayerView
+    public bool IsGameOver => GameSession.CurrentGameState.Timeline.CurrentTurn > 10;
+    public Missions AvailableMissions => GameSession.CurrentGameState.Missions;
+    public List<Agent> Agents => GameSession.CurrentGameState.Assets.Agents;
+    public int TransportCapacity => GameSession.CurrentGameState.Assets.TransportCapacity;
+
     public void AdvanceTime()
         => GameSession.ApplyPlayerActions(new AdvanceTimePlayerAction());
 
@@ -47,6 +56,6 @@ public class GameSessionController
     public void FireAgents(IEnumerable<string> agentNames)
         => throw new NotImplementedException();
 
-    public void LaunchMission(int agentCount)
-        => GameSession.ApplyPlayerActions(new LaunchMissionPlayerAction(agentCount));
+    public void LaunchMission(Mission mission, int agentCount)
+        => GameSession.ApplyPlayerActions(new LaunchMissionPlayerAction(mission, agentCount));
 }

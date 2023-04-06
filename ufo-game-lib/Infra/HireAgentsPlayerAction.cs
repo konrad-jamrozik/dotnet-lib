@@ -13,6 +13,7 @@ public class HireAgentsPlayerAction : PlayerAction
 
     public override void Apply(GameState state)
     {
+        Console.Out.WriteLine($"HireAgentsPlayerAction.Apply Count: {Count}");
         for (int i = 0; i < Count; i++)
             state.Assets.Agents.Add(new Agent(state.NextAgentId));
     }

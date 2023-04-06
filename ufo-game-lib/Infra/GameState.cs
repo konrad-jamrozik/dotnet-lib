@@ -28,6 +28,6 @@ public record GameState(Timeline Timeline, Assets Assets, Missions Missions)
     public static GameState NewInitialGameState()
         => new GameState(
             new Timeline(CurrentTurn: 0),
-            new Assets(CurrentMoney: 100, new Agents()),
+            new Assets(CurrentMoney: 100, new Agents(), TransportCapacity: 4),
             new Missions());
 }

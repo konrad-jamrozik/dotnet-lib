@@ -1,4 +1,5 @@
 using UfoGameLib.Infra;
+using UfoGameLib.Model;
 
 namespace UfoGameLib.Tests;
 
@@ -66,7 +67,7 @@ public class GameSessionTests
         // Act
         controller.HireAgents(count: 3);
         controller.AdvanceTime();
-        controller.LaunchMission(agentCount: 3);
+        controller.LaunchMission(new Mission(0), 3); // kja fix 'new Mission(0)'
         controller.AdvanceTime();
 
         var finalGameState = session.CurrentGameState;
