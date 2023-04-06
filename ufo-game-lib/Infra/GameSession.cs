@@ -30,7 +30,7 @@ public class GameSession
         Debug.Assert(GameStates.Count <= 5);
     }
 
-    private (GameState updatedState, GameStateUpdateLog log) UpdateGameState(
+    private static (GameState updatedState, GameStateUpdateLog log) UpdateGameState(
         GameState state,
         PlayerActions actions)
     {

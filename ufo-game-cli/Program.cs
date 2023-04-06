@@ -20,17 +20,11 @@ internal static class Program
 
     static void InvokeAdvanceTime(GameSessionController game)
     {
-        // kja what should this be called?
-        // gameSession means it gives it full access to GameState, which is not desired for human player
-        // BUT it would be desired for debug statements / admin access. So having GameSession and GameSessionController
-        // to denote difference in access level is confusing.
-        // It could also invoke Player.AdvanceTime but then this is redundant with GameSessionController.AdvanceTime
-        // HumanPlayer.AdvanceTime is even sillier, because the CLI may not be called by a human.
-        // See more in comments in GameSessionTests
-        //
+        // kja what 'game' param should this be called?
         // Note there is also potential for Game and/or GameController. Like, one needs to be able to
         // invoke a CLI command that starts a new GameSession or loads and existing one. This would be done
         // via GameController. At this stage one would also determine if to enable cheating.
+        // Also, whether to use AIPlayer. See GameSessionController comment.
 
         game.AdvanceTime();
         Console.WriteLine("Time advanced.");

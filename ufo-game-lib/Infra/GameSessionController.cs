@@ -21,7 +21,7 @@ namespace UfoGameLib.Infra;
 /// invoking methods on GameSessionController.
 ///
 /// The scenarios above can be visualized as follows, where "--" should be read as:
-///   "Left side invokes right side, and right side returns to the left".
+///   "Left side invokes right side, and right side returns output to the left side".
 ///
 /// ```
 /// 1. Human player       -- CLI executable -- Program --             GameSessionController -- GameSession
