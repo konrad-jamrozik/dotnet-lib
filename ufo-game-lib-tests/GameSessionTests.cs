@@ -51,7 +51,7 @@ public class GameSessionTests
     public void ConductBasicHappyPathGameSession()
     {
         var session = new GameSession();
-        GameSessionController controller = new GameSessionController(session);
+        var controller = new GameSessionController(session);
 
         var startingGameState = session.CurrentGameState;
 
@@ -59,8 +59,8 @@ public class GameSessionTests
             () =>
             {
                 Assert.That(startingGameState.Timeline.CurrentTurn, Is.EqualTo(0));
-                Assert.That(startingGameState.Assets.Agents.Count, Is.EqualTo(0));
-                Assert.That(startingGameState.Missions.Count, Is.EqualTo(0));
+                Assert.That(startingGameState.Assets.Agents, Has.Count.EqualTo(0));
+                Assert.That(startingGameState.Missions, Has.Count.EqualTo(0));
             });
 
         // Act
@@ -73,8 +73,8 @@ public class GameSessionTests
 
         Assert.Multiple(() => {
             Assert.That(finalGameState.Timeline.CurrentTurn, Is.EqualTo(2), "currentTurn");
-            Assert.That(finalGameState.Assets.Agents.Count, Is.EqualTo(3), "agentsHiredCount");
-            Assert.That(finalGameState.Missions.Count, Is.EqualTo(1), "missionsLaunchedCount");
+            Assert.That(finalGameState.Assets.Agents, Has.Count.EqualTo(3), "agentsHiredCount");
+            Assert.That(finalGameState.Missions, Has.Count.EqualTo(1), "missionsLaunchedCount");
 
             Assert.That(startingGameState, Is.EqualTo(session.GameStates.First()), "states should be equal");
             Assert.That(startingGameState.Assets.Agents, Is.Not.EqualTo(finalGameState.Assets.Agents));
