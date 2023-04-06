@@ -1,3 +1,5 @@
+using UfoGameLib.Infra;
+
 namespace UfoGameLib.Tests;
 
 public class GameSessionTests

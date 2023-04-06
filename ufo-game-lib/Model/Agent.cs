@@ -1,3 +1,3 @@
-namespace UfoGameLib;
+namespace UfoGameLib.Model;
 
 public record Agent(int Id);

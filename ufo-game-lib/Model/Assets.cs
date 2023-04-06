@@ -1,4 +1,4 @@
-namespace UfoGameLib;
+namespace UfoGameLib.Model;
 
 public record Assets(int CurrentMoney, Agents Agents)
 {

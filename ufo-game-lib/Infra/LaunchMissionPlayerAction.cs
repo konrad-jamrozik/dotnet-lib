@@ -1,4 +1,6 @@
-namespace UfoGameLib;
+using UfoGameLib.Model;
+
+namespace UfoGameLib.Infra;
 
 public class LaunchMissionPlayerAction : PlayerAction
 {

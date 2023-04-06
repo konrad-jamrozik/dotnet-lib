@@ -1,4 +1,4 @@
-namespace UfoGameLib;
+namespace UfoGameLib.Infra;
 
 /// <summary>
 /// GameSession represent an instance of a game session (playthrough).

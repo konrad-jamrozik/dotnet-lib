@@ -1,4 +1,4 @@
-namespace UfoGameLib;
+namespace UfoGameLib.Infra;
 
 /// <summary>
 /// A GameSessionController that allows for cheating by making it possible to:

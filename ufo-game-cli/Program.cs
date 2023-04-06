@@ -1,5 +1,6 @@
 ﻿using CommandLine;
 using UfoGameLib;
+using UfoGameLib.Infra;
 
 namespace UfoGameCli;
 

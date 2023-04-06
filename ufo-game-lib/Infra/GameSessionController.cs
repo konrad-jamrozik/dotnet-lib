@@ -1,4 +1,4 @@
-namespace UfoGameLib;
+namespace UfoGameLib.Infra;
 
 /// <summary>
 /// Represents means for controlling GameSession, to be called by a client logic (e.g. CLI) acting on behalf of

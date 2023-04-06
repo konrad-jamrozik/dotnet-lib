@@ -1,4 +1,4 @@
-namespace UfoGameLib;
+namespace UfoGameLib.Model;
 
 public class Agents : List<Agent>, ICloneable
 {

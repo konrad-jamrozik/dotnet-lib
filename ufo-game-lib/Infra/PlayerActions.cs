@@ -1,4 +1,4 @@
-namespace UfoGameLib;
+namespace UfoGameLib.Infra;
 
 public class PlayerActions : List<PlayerAction>
 {

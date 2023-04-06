@@ -1,4 +1,6 @@
-namespace UfoGameLib;
+using UfoGameLib.Model;
+
+namespace UfoGameLib.Infra;
 
 public record GameState(Timeline Timeline, Assets Assets, Missions Missions)
 {
