@@ -15,5 +15,4 @@ public class GameStatePlayerView
     public bool IsGameOver => _gameState().IsGameOver;
     public Missions Missions => _gameState().Missions;
     public Assets Assets => _gameState().Assets;
-
 }

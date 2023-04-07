@@ -22,8 +22,8 @@ public class AIPlayer
             List<Mission> availableMissions = state.Missions;
             while (availableMissions.Any() && state.Assets.TransportCapacity > 0)
             {
-                var targetMission = availableMissions.First();
-                var missingAgents = Math.Max(state.Assets.TransportCapacity - state.Assets.Agents.Count, 0);
+                Mission targetMission = availableMissions.First();
+                int missingAgents = Math.Max(state.Assets.TransportCapacity - state.Assets.Agents.Count, 0);
                 _game.HireAgents(missingAgents);
                 _game.LaunchMission(targetMission, state.Assets.Agents.Count);
             }
