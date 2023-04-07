@@ -14,5 +14,6 @@ public class GameStatePlayerView
     public int CurrentTurn => _gameState().Timeline.CurrentTurn;
     public bool IsGameOver => _gameState().IsGameOver;
     public Missions Missions => _gameState().Missions;
+    public MissionSites MissionSites => _gameState().MissionSites;
     public Assets Assets => _gameState().Assets;
 }

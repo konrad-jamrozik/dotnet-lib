@@ -14,7 +14,7 @@ internal static class Program
             .WithParsed<AdvanceTimeOptions>(options => InvokeAdvanceTime(game))
             .WithParsed<HireAgentsOptions>(options => InvokeHireAgents(game, options.AgentCount))
             .WithParsed<LaunchMissionOptions>(
-                options => InvokeLaunchMission(game, options.AgentCount, options.Region))
+                options => InvokeLaunchMission(game, options.MissionSiteId, options.AgentCount, options.Region))
             .WithParsed<FireAgentsOptions>(options => InvokeFireAgents(game, options.AgentNames));
     }
 
@@ -36,9 +36,10 @@ internal static class Program
         Console.WriteLine($"Hired {count} agents.");
     }
 
-    static void InvokeLaunchMission(GameSessionController game, int count, string region)
+    static void InvokeLaunchMission(GameSessionController game, int siteId, int count, string region)
     {
-        game.LaunchMission(new Mission(0), count); // kja fix 'new Mission(0)'
+        MissionSite site = game.GameStatePlayerView.MissionSites.Single(site => site.Id == siteId);
+        game.LaunchMission(site, count);
         Console.WriteLine($"Launched mission with {count} agents in region {region}.");
     }
 
@@ -65,6 +66,9 @@ class HireAgentsOptions
 [Verb("launch-mission", HelpText = "Launch a mission with a specific number of agents.")]
 class LaunchMissionOptions
 {
+    [Option('i', "siteId", Required = true, HelpText = "ID of the mission site.")]
+    public int MissionSiteId { get; set; }
+
     [Option('c', "count", Required = true, HelpText = "Number of agents for the mission.")]
     public int AgentCount { get; set; }
 

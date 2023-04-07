@@ -2,7 +2,7 @@ using UfoGameLib.Model;
 
 namespace UfoGameLib.Infra;
 
-public record GameState(int Id, Timeline Timeline, Assets Assets, Missions Missions)
+public record GameState(int Id, Timeline Timeline, Assets Assets, MissionSites MissionSites, Missions Missions)
 {
     // Notes on deep copying / cloning:
     // https://stackoverflow.com/a/222623/986533
@@ -14,6 +14,7 @@ public record GameState(int Id, Timeline Timeline, Assets Assets, Missions Missi
     {
         Timeline = original.Timeline with { };
         Assets = original.Assets with { };
+        MissionSites = (MissionSites)original.MissionSites.Clone();
         Missions = (Missions)original.Missions.Clone();
         // Do I really need to clone everything? I guess agents and missions
         // that have been "archived" can be considered read-only and thus don't
@@ -21,17 +22,17 @@ public record GameState(int Id, Timeline Timeline, Assets Assets, Missions Missi
         // perf. benchmarking will prove that excessive cloning is on a hot path.
     }
 
-    // kja for now, game ends in 10 turns, for testing purposes.
-    public bool IsGameOver => Assets.CurrentMoney < 0 || Timeline.CurrentTurn > 10;
+    // kja for now game ends in 30 turns, to prevent the program from hanging.
+    public bool IsGameOver => Assets.CurrentMoney < 0 || Timeline.CurrentTurn > 30;
     public bool IsPast { get; set; } = false;
     public int NextAgentId => Assets.Agents.Count;
-    public int NextMissionId => Missions.Count;
-    
+    public int NextMissionSiteId => MissionSites.Count;
 
     public static GameState NewInitialGameState()
         => new GameState(
             Id: 0,
-            new Timeline(CurrentTurn: 0),
-            new Assets(CurrentMoney: 100, new Agents(), TransportCapacity: 4),
+            new Timeline(CurrentTurn: 1),
+            new Assets(CurrentMoney: 100, new Agents(), MaxTransportCapacity: 4, CurrentTransportCapacity: 4),
+            new MissionSites(),
             new Missions());
 }

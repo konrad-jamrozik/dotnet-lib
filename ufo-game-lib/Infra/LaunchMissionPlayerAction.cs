@@ -1,25 +1,27 @@
+using System.Runtime.CompilerServices;
 using UfoGameLib.Model;
 
 namespace UfoGameLib.Infra;
 
 public class LaunchMissionPlayerAction : PlayerAction
 {
-    private readonly Mission _mission;
+    private readonly MissionSite _site;
     public int AgentCount { get; }
 
-    public LaunchMissionPlayerAction(Mission mission, int agentCount)
+    public LaunchMissionPlayerAction(MissionSite site, int agentCount)
     {
-        _mission = mission;
+        _site = site;
         AgentCount = agentCount;
     }
 
     public override void Apply(GameState state)
     {
-        Console.Out.WriteLine($"LaunchMissionPlayerAction.Apply");
-        // kja NEXT use mission passed as param.
-        // The problem right now is that I am using "Mission" both as "Mission site pending deployment"
-        // as well as "Mission in progress"
+        Debug.Assert(state.MissionSites.Contains(_site));
+        Debug.Assert(state.Assets.CurrentTransportCapacity >= AgentCount);
+        Console.Out.WriteLine($"Launch mission. SiteId: {_site.Id} AgentCount: {AgentCount}");
         // kja need to decrease TransportCapacity by the agents sent until mission is completed (for now it just means time is advanced)
-        state.Missions.Add(new Mission(state.NextMissionId));
+        state.Missions.Add(new Mission(_site));
+        state.MissionSites.Single(site => site.Id == _site.Id).IsActive = false;
+        state.Assets.CurrentTransportCapacity -= AgentCount;
     }
 }

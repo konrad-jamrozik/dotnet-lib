@@ -13,6 +13,6 @@ public class AIPlayerTests
     public void AIPlayerPlaysGameUntilConclusion()
     {
         var aiPlayer = new AIPlayer(new GameSessionController(new GameSession()));
-        aiPlayer.PlayGame();
+        aiPlayer.PlayGameSession();
     }
 }

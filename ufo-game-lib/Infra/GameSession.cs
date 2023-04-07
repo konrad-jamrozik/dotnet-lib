@@ -1,3 +1,6 @@
+using System.Runtime.CompilerServices;
+using UfoGameLib.Model;
+
 namespace UfoGameLib.Infra;
 
 /// <summary>
@@ -27,9 +30,9 @@ public class GameSession
         // Consider that every GameState keeps track of all missions, so
         // the space usage grows O(state_count * mission_count). Similar
         // with agents.
-        if (GameStates.Count > 5)
+        if (GameStates.Count > 10)
             GameStates.RemoveAt(0);
-        Debug.Assert(GameStates.Count <= 5);
+        Debug.Assert(GameStates.Count <= 10);
     }
 
     private static (GameState updatedState, GameStateUpdateLog log) UpdateGameState(

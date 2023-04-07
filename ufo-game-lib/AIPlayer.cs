@@ -5,6 +5,7 @@ namespace UfoGameLib;
 
 public class AIPlayer
 {
+    private const int MaxAgentsToSendOnMission = 2;
     private readonly GameSessionController _game;
 
     public AIPlayer(GameSessionController game)
@@ -12,25 +13,29 @@ public class AIPlayer
         _game = game;
     }
 
-    public void PlayGame()
+    public void PlayGameSession()
     {
         GameStatePlayerView state = _game.GameStatePlayerView;
         while (!state.IsGameOver)
         {
             Console.Out.WriteLine(
-                $"AIPlayer.PlayGame Current turn: {state.CurrentTurn} Current money: {state.Assets.CurrentMoney}");
-            List<Mission> availableMissions = state.Missions;
-            while (availableMissions.Any() && state.Assets.TransportCapacity > 0)
+                $"----- AIPlayer Current turn: {state.CurrentTurn} Current money: {state.Assets.CurrentMoney}");
+            while (state.MissionSites.Any(site => site.IsActive) && state.Assets.CurrentTransportCapacity > 0)
             {
-                Mission targetMission = availableMissions.First();
-                int missingAgents = Math.Max(state.Assets.TransportCapacity - state.Assets.Agents.Count, 0);
-                _game.HireAgents(missingAgents);
-                _game.LaunchMission(targetMission, state.Assets.Agents.Count);
+                MissionSite targetSite = state.MissionSites.First(site => site.IsActive);
+                int agentsToHire = Math.Max(
+                    Math.Min(state.Assets.CurrentTransportCapacity, MaxAgentsToSendOnMission)
+                    - state.Assets.Agents.Count,
+                    0);
+                _game.HireAgents(agentsToHire);
+                _game.LaunchMission(targetSite, state.Assets.Agents.Count);
             }
+            Console.Out.WriteLine(
+                $"----- AIPlayer Current turn: {state.CurrentTurn} DONE");
             _game.AdvanceTime();
         }
         // kja to implement AI Player
-        // First level:
+        // DONE First level:
         // - Advance time until mission available
         // - Once mission available, hire agents up to transport limit and send on mission
         // - Repeat until player loses game (at this point impossible to win)

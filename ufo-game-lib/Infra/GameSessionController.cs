@@ -51,6 +51,6 @@ public class GameSessionController
     public void FireAgents(IEnumerable<string> agentNames)
         => throw new NotImplementedException();
 
-    public void LaunchMission(Mission mission, int agentCount)
-        => GameSession.ApplyPlayerActions(new LaunchMissionPlayerAction(mission, agentCount));
+    public void LaunchMission(MissionSite site, int agentCount)
+        => GameSession.ApplyPlayerActions(new LaunchMissionPlayerAction(site, agentCount));
 }
