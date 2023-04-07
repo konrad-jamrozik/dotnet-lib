@@ -2,7 +2,7 @@ using UfoGameLib.Model;
 
 namespace UfoGameLib.Infra;
 
-public record GameState(Timeline Timeline, Assets Assets, Missions Missions)
+public record GameState(int Id, Timeline Timeline, Assets Assets, Missions Missions)
 {
     // Notes on deep copying / cloning:
     // https://stackoverflow.com/a/222623/986533
@@ -21,12 +21,16 @@ public record GameState(Timeline Timeline, Assets Assets, Missions Missions)
         // perf. benchmarking will prove that excessive cloning is on a hot path.
     }
 
-    public bool GameOver => Assets.CurrentMoney < 0;
+    // kja for now, game ends in 10 turns, for testing purposes.
+    public bool IsGameOver => Assets.CurrentMoney < 0 || Timeline.CurrentTurn > 10;
+    public bool IsPast { get; set; } = false;
     public int NextAgentId => Assets.Agents.Count;
     public int NextMissionId => Missions.Count;
+    
 
     public static GameState NewInitialGameState()
         => new GameState(
+            Id: 0,
             new Timeline(CurrentTurn: 0),
             new Assets(CurrentMoney: 100, new Agents(), TransportCapacity: 4),
             new Missions());

@@ -3,7 +3,9 @@ namespace UfoGameLib.Infra;
 /// <summary>
 /// GameSession represent an instance of a game session (playthrough).
 ///
-/// As such, it maintains a reference to current GameState as well as few most recent states for limited undo capability.
+/// As such, it maintains a reference to current GameState as well as few most recent states for
+/// limited undo capability.
+///
 /// In addition, it allows updating of the game state by applying PlayerActions.
 ///
 /// GameSession must be accessed directly only by GameSessionController.
@@ -34,8 +36,10 @@ public class GameSession
         GameState state,
         PlayerActions actions)
     {
-        Debug.Assert(!state.GameOver);
-        GameState updatedState = state with { };
+        Debug.Assert(!state.IsGameOver);
+        Debug.Assert(!state.IsPast);
+        GameState updatedState = state with { Id = state.Id + 1 };
+        state.IsPast = true;
         actions.Apply(updatedState);
         return (updatedState, new GameStateUpdateLog());
     }

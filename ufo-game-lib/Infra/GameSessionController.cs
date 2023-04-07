@@ -40,12 +40,7 @@ public class GameSessionController
         GameSession = gameSession;
     }
 
-    // kja for now, game ends in 10 turns, for testing purposes.
-    // kja instead of these drilldowns, return to the caller: GameSession.CurrentGameState.PlayerView
-    public bool IsGameOver => GameSession.CurrentGameState.Timeline.CurrentTurn > 10;
-    public Missions AvailableMissions => GameSession.CurrentGameState.Missions;
-    public List<Agent> Agents => GameSession.CurrentGameState.Assets.Agents;
-    public int TransportCapacity => GameSession.CurrentGameState.Assets.TransportCapacity;
+    public GameStatePlayerView GameStatePlayerView => new GameStatePlayerView(GameSession);
 
     public void AdvanceTime()
         => GameSession.ApplyPlayerActions(new AdvanceTimePlayerAction());

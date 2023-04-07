@@ -14,15 +14,18 @@ public class AIPlayer
 
     public void PlayGame()
     {
-        while (!_game.IsGameOver)
+        GameStatePlayerView state = _game.GameStatePlayerView;
+        while (!state.IsGameOver)
         {
-            List<Mission> availableMissions = _game.AvailableMissions;
-            while (availableMissions.Any() && _game.TransportCapacity > 0)
+            Console.Out.WriteLine(
+                $"AIPlayer.PlayGame Current turn: {state.CurrentTurn} Current money: {state.Assets.CurrentMoney}");
+            List<Mission> availableMissions = state.Missions;
+            while (availableMissions.Any() && state.Assets.TransportCapacity > 0)
             {
                 var targetMission = availableMissions.First();
-                var missingAgents = Math.Max(_game.TransportCapacity - _game.Agents.Count, 0);
+                var missingAgents = Math.Max(state.Assets.TransportCapacity - state.Assets.Agents.Count, 0);
                 _game.HireAgents(missingAgents);
-                _game.LaunchMission(targetMission, _game.Agents.Count);
+                _game.LaunchMission(targetMission, state.Assets.Agents.Count);
             }
             _game.AdvanceTime();
         }
