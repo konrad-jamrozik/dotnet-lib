@@ -21,6 +21,7 @@ public class OxceTools
     }
 
     [Test]
+    [Ignore("Input Save file deleted")]
     public async Task ProcessSaveFileOld()
     {
         await ParameterizedProcessSaveFile(
