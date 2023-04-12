@@ -8,6 +8,8 @@ public class GameStatePlayerView
 
     public GameStatePlayerView(GameSession session)
     {
+        // kja this gameState lambda should really be unnecessary;
+        // instead, the gameState should be mutated.
         _gameState = () => session.CurrentGameState;
     }
 

@@ -32,6 +32,7 @@ public class AIPlayer
             }
             Console.Out.WriteLine(
                 $"----- AIPlayer Current turn: {state.CurrentTurn} DONE");
+            // kja this _game.AdvanceTime(), the while !GameOver and reference to state should come from base abstract/template method.
             _game.AdvanceTime();
         }
         // kja to implement AI Player

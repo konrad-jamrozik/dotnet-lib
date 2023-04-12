@@ -84,4 +84,22 @@ public class GameSessionTests
             Assert.That(startingGameState.Missions, Is.Not.EqualTo(finalGameState.Missions));
         });
     }
+
+    // kja curr TDD test
+    [Test]
+    public void SaveAndLoadGameSession()
+    {
+        var session = new GameSession();
+        var game = new GameSessionController(session);
+
+        var startingGameState = session.CurrentGameState;
+
+        var savedTurn = game.GameStatePlayerView.CurrentTurn;
+        game.Save();
+        game.AdvanceTime();
+        Assert.That(game.GameStatePlayerView.CurrentTurn, Is.EqualTo(savedTurn + 1), "savedTurn+1");
+        game.Load();
+        Assert.That(game.GameStatePlayerView.CurrentTurn, Is.EqualTo(savedTurn), "savedTurn");
+    }
+
 }

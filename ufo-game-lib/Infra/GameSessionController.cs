@@ -53,4 +53,13 @@ public class GameSessionController
 
     public void LaunchMission(MissionSite site, int agentCount)
         => GameSession.ApplyPlayerActions(new LaunchMissionPlayerAction(site, agentCount));
+
+    public void Save()
+    {
+        GameSession.CurrentGameState.Save();
+    }
+
+    public void Load()
+    {
+    }
 }

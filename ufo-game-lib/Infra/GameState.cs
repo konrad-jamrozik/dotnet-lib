@@ -35,4 +35,9 @@ public record GameState(int Id, Timeline Timeline, Assets Assets, MissionSites M
             new Assets(CurrentMoney: 100, new Agents(), MaxTransportCapacity: 4, CurrentTransportCapacity: 4),
             new MissionSites(),
             new Missions());
+
+    public void Save()
+    {
+        // kja curr work
+    }
 }
