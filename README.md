@@ -1,4 +1,4 @@
-[![License: CC BY-NC 4.0](https://licensebuttons.net/l/by-nc/4.0/88x31.png)](https://creativecommons.org/licenses/by-nc/4.0/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 # About
 
@@ -10,5 +10,4 @@ See [LICENSE](LICENSE)
 
 # Attribution
 
-Code in [ufo-game](ufo-game) leverages faction names X-COM Files by SolariusScorch.
-[Link to SolariusScorch / XComFiles repository](https://github.com/SolariusScorch/XComFiles).
+N/A
