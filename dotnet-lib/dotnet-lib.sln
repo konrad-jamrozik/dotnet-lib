@@ -27,14 +27,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "oxce-configs", "..\..\dotne
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "wikitools-configs", "..\..\dotnet-lib-private\wikitools-configs\wikitools-configs.csproj", "{28307DB7-9048-468B-B137-ECEEC25EAAA8}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ufo-game", "..\ufo-game\ufo-game.csproj", "{88F6EFC7-B76B-4771-AECD-1F22496A4B29}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ufo-game-lib", "..\ufo-game-lib\ufo-game-lib.csproj", "{884FBEA8-CFE6-4A57-9D8B-97D52CADBE58}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ufo-game-lib-tests", "..\ufo-game-lib-tests\ufo-game-lib-tests.csproj", "{37884289-0CCB-4E84-88D0-86D08BB0F8F6}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ufo-game-cli", "..\ufo-game-cli\ufo-game-cli.csproj", "{D1C72BA9-A5A7-4773-97AC-A07DF8BD1347}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -89,22 +81,6 @@ Global
 		{28307DB7-9048-468B-B137-ECEEC25EAAA8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{28307DB7-9048-468B-B137-ECEEC25EAAA8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{28307DB7-9048-468B-B137-ECEEC25EAAA8}.Release|Any CPU.Build.0 = Release|Any CPU
-		{88F6EFC7-B76B-4771-AECD-1F22496A4B29}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{88F6EFC7-B76B-4771-AECD-1F22496A4B29}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{88F6EFC7-B76B-4771-AECD-1F22496A4B29}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{88F6EFC7-B76B-4771-AECD-1F22496A4B29}.Release|Any CPU.Build.0 = Release|Any CPU
-		{884FBEA8-CFE6-4A57-9D8B-97D52CADBE58}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{884FBEA8-CFE6-4A57-9D8B-97D52CADBE58}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{884FBEA8-CFE6-4A57-9D8B-97D52CADBE58}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{884FBEA8-CFE6-4A57-9D8B-97D52CADBE58}.Release|Any CPU.Build.0 = Release|Any CPU
-		{37884289-0CCB-4E84-88D0-86D08BB0F8F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{37884289-0CCB-4E84-88D0-86D08BB0F8F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{37884289-0CCB-4E84-88D0-86D08BB0F8F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{37884289-0CCB-4E84-88D0-86D08BB0F8F6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D1C72BA9-A5A7-4773-97AC-A07DF8BD1347}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D1C72BA9-A5A7-4773-97AC-A07DF8BD1347}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D1C72BA9-A5A7-4773-97AC-A07DF8BD1347}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D1C72BA9-A5A7-4773-97AC-A07DF8BD1347}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
